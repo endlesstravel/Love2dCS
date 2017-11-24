@@ -4763,7 +4763,7 @@ namespace wrap
     void wrap_love_dll_type_ParticleSystem_getColors(ParticleSystem *t, Int4 **out_colorarray, int *out_colorarray_length)
     {
         const std::vector<Colorf> &colors = t->getColor();
-        *out_colorarray = new Float4[colors.size()];
+        *out_colorarray = new Int4[colors.size()];
         *out_colorarray_length = colors.size();
 
         for (size_t i = 0; i < colors.size(); i++)
