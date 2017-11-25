@@ -1,7 +1,6 @@
 
 
 NuGet has both a GUI and command-line interface to work with packages in your projects. 
----
 
 ### 1. Using GUI
 
