@@ -24,7 +24,7 @@ Setup
 
 2. And **REMEBER** enable native code debugging in VS : `Configuration Properties/Debugging/Enable native code debugging`
 
-More detail please reference [Setup-Detail](README-Install.md)
+3. More detail please reference [Setup-Detail](README-Install.md)
 
 Usage
 ---
@@ -140,7 +140,7 @@ Doucment
 ---
 *In development ...*
 
-Temporarily reference [love wiki](https://love2d.org/wiki/love)
+Temporarily please reference [love wiki](https://love2d.org/wiki/love)
 
 Develpoment
 ---
