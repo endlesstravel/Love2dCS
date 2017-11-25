@@ -2703,7 +2703,7 @@ namespace wrap
         love::graphics::opengl::Mesh::Usage usage = (love::graphics::opengl::Mesh::Usage)usage_type;
         return wrap_catchexcept([&]() { *out_mesh = graphicsInstance->newMesh(count, drawMode, usage); });
     }
-    bool4 wrap_love_dll_graphics_newText(love::graphics::opengl::Font *font, Int4 coloredStringColor[], const pchar coloredStringText[],  int coloredStringLength, Text** out_text)
+    bool4 wrap_love_dll_graphics_newText(love::graphics::opengl::Font *font, BytePtr coloredStringText[], Int4 coloredStringColor[],  int coloredStringLength, Text** out_text)
     {
         std::vector<love::graphics::opengl::Font::ColoredString> strings;
         strings.reserve(coloredStringLength);
@@ -2715,7 +2715,7 @@ namespace wrap
             coloredstr.color.g = coloredStringColor[i].g;
             coloredstr.color.b = coloredStringColor[i].b;
             coloredstr.color.a = coloredStringColor[i].a;
-            coloredstr.str = coloredStringText[i];
+            coloredstr.str = coloredStringText[i].data;
         }
 
         return wrap_catchexcept( [&]() { *out_text = graphicsInstance->newText(font, strings); });
@@ -3101,7 +3101,7 @@ namespace wrap
             texture->drawq(quad, x, y, a, sx, sy, ox, oy, kx, ky);
         });
     }
-    bool4 wrap_love_dll_graphics_print(const char **coloredStringListStr, Int4 coloredStringListColor[], int coloredStringListLength, float x, float y, float angle, float sx, float sy, float ox, float oy, float kx, float ky)
+    bool4 wrap_love_dll_graphics_print(BytePtr coloredStringListStr[], Int4 coloredStringListColor[], int coloredStringListLength, float x, float y, float angle, float sx, float sy, float ox, float oy, float kx, float ky)
     {
         std::vector<love::graphics::opengl::Font::ColoredString> coloredStrings;
         coloredStrings.reserve(coloredStringListLength);
@@ -3109,7 +3109,7 @@ namespace wrap
         for (int i = 0; i < coloredStringListLength; i++)
         {
             love::graphics::opengl::Font::ColoredString cs;
-            cs.str = coloredStringListStr[i];
+            cs.str = coloredStringListStr[i].data;
             cs.color.r = coloredStringListColor[i].r;
             cs.color.g = coloredStringListColor[i].g;
             cs.color.b = coloredStringListColor[i].b;
@@ -3120,7 +3120,7 @@ namespace wrap
 
         return wrap_catchexcept([&]() { graphicsInstance->print(coloredStrings, x, y, angle, sx, sy, ox, oy, kx, ky); });
     }
-    bool4 wrap_love_dll_graphics_printf(const char **coloredStringListStr, Int4 coloredStringListColor[], int coloredStringListLength, float x, float y, float wrap, int align_type, float angle, float sx, float sy, float ox, float oy, float kx, float ky)
+    bool4 wrap_love_dll_graphics_printf(BytePtr coloredStringListStr[], Int4 coloredStringListColor[], int coloredStringListLength, float x, float y, float wrap, int align_type, float angle, float sx, float sy, float ox, float oy, float kx, float ky)
     {
         std::vector<love::graphics::opengl::Font::ColoredString> coloredStrings;
         coloredStrings.reserve(coloredStringListLength);
@@ -3128,7 +3128,7 @@ namespace wrap
         for (int i = 0; i < coloredStringListLength; i++)
         {
             love::graphics::opengl::Font::ColoredString cs;
-            cs.str = coloredStringListStr[i];
+            cs.str = coloredStringListStr[i].data;
             cs.color.r = coloredStringListColor[i].r;
             cs.color.g = coloredStringListColor[i].g;
             cs.color.b = coloredStringListColor[i].b;
@@ -3894,7 +3894,7 @@ namespace wrap
     }
 
     bool4 wrap_love_dll_type_Font_getWrap(love::graphics::opengl::Font *t, 
-        Int4 coloredStringColor[], const pchar coloredStringText[], int coloredStringLength, float wrap,
+        BytePtr coloredStringText[], Int4 coloredStringColor[], int coloredStringLength, float wrap,
         int *out_maxWidth, WrapSequenceString **out_pws)
     {
         std::vector<love::graphics::opengl::Font::ColoredString> strings;
@@ -3907,7 +3907,7 @@ namespace wrap
             coloredstr.color.g = coloredStringColor[i].g;
             coloredstr.color.b = coloredStringColor[i].b;
             coloredstr.color.a = coloredStringColor[i].a;
-            coloredstr.str = coloredStringText[i];
+            coloredstr.str = coloredStringText[i].data;
         }
 
 
@@ -5113,7 +5113,7 @@ namespace wrap
         wrap_catchexcept([&]() { t->set(); });
     }
 
-    bool4 wrap_love_dll_type_Text_set_coloredstring(Text *t, Int4 coloredStringColor[], const pchar coloredStringText[], int coloredStringLength)
+    bool4 wrap_love_dll_type_Text_set_coloredstring(Text *t, BytePtr coloredStringText[], Int4 coloredStringColor[], int coloredStringLength)
     {
         // Single argument: unformatted text.
         std::vector<love::graphics::opengl::Font::ColoredString> strings;
@@ -5126,13 +5126,13 @@ namespace wrap
             coloredstr.color.g = coloredStringColor[i].g;
             coloredstr.color.b = coloredStringColor[i].b;
             coloredstr.color.a = coloredStringColor[i].a;
-            coloredstr.str = coloredStringText[i];
+            coloredstr.str = coloredStringText[i].data;
         }
 
         return wrap_catchexcept([&]() { t->set(strings); });
     }
 
-    bool4 wrap_love_dll_type_Text_setf(Text *t, Int4 coloredStringColor[], const pchar coloredStringText[], int coloredStringLength, float wraplimit, int align_type)
+    bool4 wrap_love_dll_type_Text_setf(Text *t, BytePtr coloredStringText[], Int4 coloredStringColor[], int coloredStringLength, float wraplimit, int align_type)
     {
         std::vector<love::graphics::opengl::Font::ColoredString> strings;
         strings.reserve(coloredStringLength);
@@ -5144,14 +5144,14 @@ namespace wrap
             coloredstr.color.g = coloredStringColor[i].g;
             coloredstr.color.b = coloredStringColor[i].b;
             coloredstr.color.a = coloredStringColor[i].a;
-            coloredstr.str = coloredStringText[i];
+            coloredstr.str = coloredStringText[i].data;
         }
 
         auto align = (love::graphics::opengl::Font::AlignMode)align_type;
         return wrap_catchexcept([&]() { t->set(strings, wraplimit, align); });
     }
 
-    bool4 wrap_love_dll_type_Text_add(Text *t, Int4 coloredStringColor[], const pchar coloredStringText[], int coloredStringLength,
+    bool4 wrap_love_dll_type_Text_add(Text *t, BytePtr coloredStringText[], Int4 coloredStringColor[], int coloredStringLength,
         float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, int *out_index)
     {
         std::vector<love::graphics::opengl::Font::ColoredString> strings;
@@ -5164,13 +5164,13 @@ namespace wrap
             coloredstr.color.g = coloredStringColor[i].g;
             coloredstr.color.b = coloredStringColor[i].b;
             coloredstr.color.a = coloredStringColor[i].a;
-            coloredstr.str = coloredStringText[i];
+            coloredstr.str = coloredStringText[i].data;
         }
 
         return wrap_catchexcept([&]() { *out_index = t->add(strings, x, y, a, sx, sy, ox, oy, kx, ky); });
     }
 
-    bool4 wrap_love_dll_type_Text_addf(Text *t, Int4 coloredStringColor[], const pchar coloredStringText[], int coloredStringLength,
+    bool4 wrap_love_dll_type_Text_addf(Text *t, BytePtr coloredStringText[], Int4 coloredStringColor[], int coloredStringLength,
         float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, float wraplimit, int align_type, int *out_index)
     {
         std::vector<love::graphics::opengl::Font::ColoredString> strings;
@@ -5183,7 +5183,7 @@ namespace wrap
             coloredstr.color.g = coloredStringColor[i].g;
             coloredstr.color.b = coloredStringColor[i].b;
             coloredstr.color.a = coloredStringColor[i].a;
-            coloredstr.str = coloredStringText[i];
+            coloredstr.str = coloredStringText[i].data;
         }
         auto align = (love::graphics::opengl::Font::AlignMode)align_type;
         return wrap_catchexcept([&]() { *out_index = t->addf(strings, wraplimit, align, x, y, a, sx, sy, ox, oy, kx, ky); });

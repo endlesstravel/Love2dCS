@@ -11,6 +11,7 @@ using Int64 = System.Int64;
 using UInt8 = System.Byte;
 
 using Love2d.Type;
+using System.IO;
 
 namespace Love2d
 {
@@ -529,7 +530,7 @@ namespace Love2d
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
         internal extern static bool wrap_love_dll_graphics_newMesh_count(int count, int drawMode_type, int usage_type, out IntPtr out_mesh);
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
-        internal extern static bool wrap_love_dll_graphics_newText(IntPtr font, Int4[] coloredStringColor, byte[][] coloredStringText,  int coloredStringLength, out IntPtr out_text);
+        internal extern static bool wrap_love_dll_graphics_newText(IntPtr font, BytePtr[] coloredStringText, Int4[] coloredStringColor,  int coloredStringLength, out IntPtr out_text);
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
         internal extern static bool wrap_love_dll_graphics_newVideo(IntPtr videoStream, out IntPtr out_video);
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
@@ -660,9 +661,9 @@ namespace Love2d
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
         internal extern static bool wrap_love_dll_graphics_draw_texture_quad(IntPtr quad, IntPtr texture, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky);
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
-        internal extern static bool wrap_love_dll_graphics_print(byte[][] coloredStringListStr, Int4[] coloredStringListColor, int coloredStringListLength, float x, float y, float angle, float sx, float sy, float ox, float oy, float kx, float ky);
+        internal extern static bool wrap_love_dll_graphics_print(BytePtr[] coloredStringListStr, Int4[] coloredStringListColor, int coloredStringListLength, float x, float y, float angle, float sx, float sy, float ox, float oy, float kx, float ky);
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
-        internal extern static bool wrap_love_dll_graphics_printf(byte[][] coloredStringListStr, Int4[] coloredStringListColor, int coloredStringListLength, float x, float y, float wrap, int align_type, float angle, float sx, float sy, float ox, float oy, float kx, float ky);
+        internal extern static bool wrap_love_dll_graphics_printf(BytePtr[] coloredStringListStr, Int4[] coloredStringListColor, int coloredStringListLength, float x, float y, float wrap, int align_type, float angle, float sx, float sy, float ox, float oy, float kx, float ky);
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
         internal extern static bool wrap_love_dll_graphics_rectangle(int mode_type, float x, float y, float w, float h);
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
@@ -903,7 +904,7 @@ namespace Love2d
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
         internal extern static bool wrap_love_dll_type_Font_getWidth(IntPtr t, byte[] str, out int out_width);
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
-        internal extern static bool wrap_love_dll_type_Font_getWrap(IntPtr t, Int4[] coloredStringColor, byte[][] coloredStringText, int coloredStringLength, float wrap, out int out_maxWidth, out IntPtr out_pws);
+        internal extern static bool wrap_love_dll_type_Font_getWrap(IntPtr t, BytePtr[] coloredStringText, Int4[] coloredStringColor, int coloredStringLength, float wrap, out int out_maxWidth, out IntPtr out_pws);
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
         internal extern static void wrap_love_dll_type_Font_setLineHeight(IntPtr t, float h);
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
@@ -1197,13 +1198,13 @@ namespace Love2d
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
         internal extern static void wrap_love_dll_type_Text_set_nil(IntPtr p);
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
-        internal extern static bool wrap_love_dll_type_Text_set_coloredstring(IntPtr p, Int4[] coloredStringColor, byte[][] coloredStringText, int coloredStringLength);
+        internal extern static bool wrap_love_dll_type_Text_set_coloredstring(IntPtr p, BytePtr[] coloredStringText, Int4[] coloredStringColor, int coloredStringLength);
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
-        internal extern static bool wrap_love_dll_type_Text_setf(IntPtr p, Int4[] coloredStringColor, byte[][] coloredStringText, int coloredStringLength, float wraplimit, int align_type);
+        internal extern static bool wrap_love_dll_type_Text_setf(IntPtr p, BytePtr[] coloredStringText, Int4[] coloredStringColor, int coloredStringLength, float wraplimit, int align_type);
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
-        internal extern static bool wrap_love_dll_type_Text_add(IntPtr p, Int4[] coloredStringColor, byte[][] coloredStringText, int coloredStringLength, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, out int out_index);
+        internal extern static bool wrap_love_dll_type_Text_add(IntPtr p, BytePtr[] coloredStringText, Int4[] coloredStringColor, int coloredStringLength, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, out int out_index);
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
-        internal extern static bool wrap_love_dll_type_Text_addf(IntPtr p, Int4[] coloredStringColor, byte[][] coloredStringText, int coloredStringLength, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, float wraplimit, int align_type, out int out_index);
+        internal extern static bool wrap_love_dll_type_Text_addf(IntPtr p, BytePtr[] coloredStringText, Int4[] coloredStringColor, int coloredStringLength, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, float wraplimit, int align_type, out int out_index);
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
         internal extern static void wrap_love_dll_type_Text_clear(IntPtr p);
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
@@ -1537,4 +1538,10 @@ namespace Love2d
         public float dx, dy, dz;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
+    public struct BytePtr
+    {
+        IntPtr bytes;
+        public BytePtr(IntPtr bytes) { this.bytes = bytes; }
+    }
 }

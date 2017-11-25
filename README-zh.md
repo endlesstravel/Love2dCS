@@ -2,14 +2,23 @@
 love2dCS - C# Wrapper for Love2d
 赋予 C# 使用 love2d 引擎的能力，LÖVE 官网 https://love2d.org/
 
-# 当前测试的平台
+# 当前已发布的平台
 windows x86
+
+# 安装
+
+* 项目已经发布到 NuGet https://www.nuget.org/packages/Love2dCS/
+
+仅提供 Visual Studio 安装方法
+1. 打开NuGet
+
 
 # Next to do
 - [x] retain的函数调用
 - [x] 完善C#中的love object继承关系
 - [x] string 与 UTF8 编码
 - [x] 完善C#实用性
+- [ ] 使用AOP截获异常
 - [ ] 写测试部分
 - [ ] 发布到NuGet
 

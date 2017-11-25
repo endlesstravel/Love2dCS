@@ -22,7 +22,6 @@ namespace Love2d
             return utf8.GetBytes(str);
         }
 
-
         public static ColoredString ToColoredStrings(string str)
         {
             ColoredString buffer = new ColoredString(new string[] {str }, new Int4[] { new Int4(255, 255, 255, 255) });
@@ -37,13 +36,13 @@ namespace Love2d
                 throw new Exception(getLoveLastError());
             }
         }
-        public static void checkSuccess(bool flag)
-        {
-            if (flag == false)
-            {
-                throw new Exception(getLoveLastError());
-            }
-        }
+        //public static void checkSuccess(bool flag)
+        //{
+        //    if (flag == false)
+        //    {
+        //        throw new Exception(getLoveLastError());
+        //    }
+        //}
         public static string getLoveLastError()
         {
             // 这里不能直接调用 WSToString(Love2dDll.wrap_love_dll_last_error());
@@ -1723,9 +1722,7 @@ namespace Love2d.Module
 
         public static bool init()
         {
-            var res = Love2dDll.wrap_love_dll_sound_luaopen_love_sound();
-            DllTool.checkSuccess(res);
-            return res;
+            return Love2dDll.wrap_love_dll_sound_luaopen_love_sound();
         }
     }
 
@@ -1764,9 +1761,7 @@ namespace Love2d.Module
 
         public static bool init()
         {
-            var res = Love2dDll.wrap_love_dll_audio_open_love_audio();
-            DllTool.checkSuccess(res);
-            return res;
+            return Love2dDll.wrap_love_dll_audio_open_love_audio();
         }
 
         public static int getSourceCount()
@@ -2261,11 +2256,12 @@ namespace Love2d.Module
             Love2dDll.wrap_love_dll_graphics_newMesh_count(count, (int)drawMode, (int)usage, out out_mesh);
             return LoveObject.newObject<Mesh>(out_mesh);
         }
-        public static Text newText(Font font, ColoredString coloredStrings)
+        public static Text newText(Font font, ColoredString coloredStr)
         {
-            var tmp = coloredStrings.ToPart();
             IntPtr out_text = IntPtr.Zero;
-            Love2dDll.wrap_love_dll_graphics_newText(font.p, tmp.Item1, tmp.Item2, coloredStrings.items.Length,out out_text);
+            coloredStr.ExecResource((Tuple<BytePtr[], Int4[]> tmp) => {
+                Love2dDll.wrap_love_dll_graphics_newText(font.p, tmp.Item1, tmp.Item2, coloredStr.items.Length, out out_text);
+            });
             return LoveObject.newObject<Text>(out_text);
         }
         public static Video newVideo(VideoStream videoStream)
@@ -2551,21 +2547,25 @@ namespace Love2d.Module
         {
             return Love2dDll.wrap_love_dll_graphics_draw_texture_quad(quad.p, texture.p, x, y, angle, sx, sy, ox, oy, kx, ky);
         }
-        public static bool print(string text, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public static void print(string text, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
-            ColoredString coloredStrings = DllTool.ToColoredStrings(text);
-            var buffer = coloredStrings.ToPart();
-            return Love2dDll.wrap_love_dll_graphics_print(buffer.Item2, buffer.Item1, coloredStrings.Length, x, y, angle, sx, sy, ox, oy, kx, ky);
+            ColoredString coloredStr = DllTool.ToColoredStrings(text);
+
+            coloredStr.ExecResource((Tuple<BytePtr[], Int4[]> tmp) =>{
+                Love2dDll.wrap_love_dll_graphics_print(tmp.Item1, tmp.Item2, coloredStr.Length, x, y, angle, sx, sy, ox, oy, kx, ky);
+            });
         }
-        public static bool print(ColoredString coloredStrings, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public static void print(ColoredString coloredStr, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
-            var buffer = coloredStrings.ToPart();
-            return Love2dDll.wrap_love_dll_graphics_print(buffer.Item2, buffer.Item1, coloredStrings.Length, x, y, angle, sx, sy, ox, oy, kx, ky);
+            coloredStr.ExecResource((Tuple<BytePtr[], Int4[]> tmp) =>{
+                Love2dDll.wrap_love_dll_graphics_print(tmp.Item1, tmp.Item2, coloredStr.Length, x, y, angle, sx, sy, ox, oy, kx, ky);
+            });
         }
-        public static bool printf(ColoredString coloredStrings, float x, float y, float wrap, Font.AlignMode align_type, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public static void printf(ColoredString coloredStr, float x, float y, float wrap, Font.AlignMode align_type, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
-            var buffer = coloredStrings.ToPart();
-            return Love2dDll.wrap_love_dll_graphics_printf(buffer.Item2, buffer.Item1, coloredStrings.Length, x, y, wrap, (int)align_type, angle, sx, sy, ox, oy, kx, ky);
+            coloredStr.ExecResource((Tuple<BytePtr[], Int4[]> tmp) =>{
+                Love2dDll.wrap_love_dll_graphics_printf(tmp.Item1, tmp.Item2, coloredStr.Length, x, y, wrap, (int)align_type, angle, sx, sy, ox, oy, kx, ky);
+            });
         }
         public static bool rectangle(DrawMode mode_type, float x, float y, float w, float h)
         {

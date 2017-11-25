@@ -15,6 +15,7 @@ using ls = Love2d.Module.Sound;
 using la = Love2d.Module.Audio;
 using li = Love2d.Module.ImageModule;
 using lg = Love2d.Module.Graphics;
+using fnt = Love2d.Module.FontModule;
 using timer = Love2d.Module.Timer;
 using mouse = Love2d.Module.Mouse;
 using keyboard = Love2d.Module.Keyboard;
@@ -84,6 +85,7 @@ namespace Love2d
             lf.init("");
             ls.init();
             la.init();
+            fnt.init();
             window.init();
             mouse.init();
             keyboard.init();
@@ -128,20 +130,27 @@ namespace Love2d
 
         static public void Run(Scene sence = null, EventHandler eventHandler = null, string[] args = null)
         {
-            Init();
+            try
+            {
+                Init();
 
-            if (sence == null)
-            {
-                Boot.sence = new Love2dNoGame();
-                Boot.eventHandler = new Love2dNoGame.NoGameEventHandler();
+                if (sence == null)
+                {
+                    Boot.sence = new Love2dNoGame();
+                    Boot.eventHandler = new Love2dNoGame.NoGameEventHandler();
+                }
+                else
+                {
+                    Boot.sence = sence;
+                    Boot.eventHandler = eventHandler;
+                    Boot.args = args;
+                }
+                Loop();
             }
-            else
+            catch (Exception e)
             {
-                Boot.sence = sence;
-                Boot.eventHandler = eventHandler;
-                Boot.args = args;
+                Console.WriteLine("error:" +  e);
             }
-            Loop();
         }
     }
 }

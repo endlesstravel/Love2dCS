@@ -574,17 +574,6 @@ namespace Love2d.Type
             Love2dDll.wrap_love_dll_type_Font_getWidth(p, str, out out_width);
             return out_width;
         }
-        public Tuple<string[], int> getWrap(byte[] str, float wrap_limit)
-        {
-            IntPtr out_pws = IntPtr.Zero;
-            Int4[] coloredStringColor = new Int4[1];
-            byte[][] coloredStringText = new byte[1][] { str };
-            int out_maxWidth;
-            Love2dDll.wrap_love_dll_type_Font_getWrap(p, coloredStringColor, coloredStringText, 1, wrap_limit, out out_maxWidth, out out_pws);
-
-            var lines = DllTool.WSSToStringListAndRelease(out_pws);
-            return new Tuple<string[], int>(lines, out_maxWidth);
-        }
         public void setLineHeight(float h)
         {
             Love2dDll.wrap_love_dll_type_Font_setLineHeight(p, h);
@@ -1371,29 +1360,32 @@ namespace Love2d.Type
             Love2dDll.wrap_love_dll_type_Text_set_nil(p);
             return;
         }
-        public void set(ColoredString coloredString)
+        public void set(ColoredString coloredStr)
         {
-            var buffer = coloredString.ToPart();
-            Love2dDll.wrap_love_dll_type_Text_set_coloredstring(p, buffer.Item1, buffer.Item2, coloredString.Length);
+            coloredStr.ExecResource((Tuple<BytePtr[], Int4[]> tmp) =>{
+                Love2dDll.wrap_love_dll_type_Text_set_coloredstring(p, tmp.Item1, tmp.Item2, coloredStr.Length);
+            });
         }
-        public void setf(ColoredString coloredString, float wraplimit, Font.AlignMode align_type)
+        public void setf(ColoredString coloredStr, float wraplimit, Font.AlignMode align_type)
         {
-            var buffer = coloredString.ToPart();
-            Love2dDll.wrap_love_dll_type_Text_setf(p, buffer.Item1, buffer.Item2, coloredString.Length, wraplimit, (int)align_type);
-            return;
+            coloredStr.ExecResource((Tuple<BytePtr[], Int4[]> tmp) =>{
+                Love2dDll.wrap_love_dll_type_Text_setf(p, tmp.Item1, tmp.Item2, coloredStr.Length, wraplimit, (int)align_type);
+            });
         }
-        public int add(ColoredString coloredString, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public int add(ColoredString coloredStr, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
             int out_index = 0;
-            var buffer = coloredString.ToPart();
-            Love2dDll.wrap_love_dll_type_Text_add(p, buffer.Item1, buffer.Item2, coloredString.Length, x, y, angle, sx, sy, ox, oy, kx, ky, out out_index);
+            coloredStr.ExecResource((Tuple<BytePtr[], Int4[]> tmp) =>{
+                Love2dDll.wrap_love_dll_type_Text_add(p, tmp.Item1, tmp.Item2, coloredStr.Length, x, y, angle, sx, sy, ox, oy, kx, ky, out out_index);
+            });
             return out_index;
         }
-        public int add(ColoredString coloredString, float wraplimit, Font.AlignMode align_type, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public int add(ColoredString coloredStr, float wraplimit, Font.AlignMode align_type, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
             int out_index = 0;
-            var buffer = coloredString.ToPart();
-            Love2dDll.wrap_love_dll_type_Text_addf(p, buffer.Item1, buffer.Item2, coloredString.Length, x, y, angle, sx, sy, ox, oy, kx, ky, wraplimit, (int)align_type, out out_index);
+            coloredStr.ExecResource((Tuple<BytePtr[], Int4[]> tmp) => {
+                Love2dDll.wrap_love_dll_type_Text_addf(p, tmp.Item1, tmp.Item2, coloredStr.Length, x, y, angle, sx, sy, ox, oy, kx, ky, wraplimit, (int)align_type, out out_index);
+            });
             return out_index;
         }
         public void clear()
@@ -2266,19 +2258,42 @@ namespace Love2d
             {
                 items[i] = new Item(texts[i], colors[i]);
             }
+
+            hObjects = new GCHandle[items.Length];
         }
 
-        public Tuple<Int4[], byte[][]> ToPart()
+        public delegate void ColoredStringTempResDelegate(Tuple<BytePtr[], Int4[]> tmp);
+        public void ExecResource(ColoredStringTempResDelegate func)
         {
+            var tmp = ToPart();
+            func?.Invoke(tmp);
+            Recycle();
+        }
+
+        GCHandle[] hObjects;
+        private Tuple<BytePtr[], Int4[]> ToPart()
+        {
+            var texts = new BytePtr[Length];
             var colors = new Int4[Length];
-            var texts = new byte[Length][];
             for (int i = 0; i < Length; i++)
             {
+                hObjects[i] = GCHandle.Alloc(DllTool.ToUTF8Bytes(items[i].text), GCHandleType.Pinned);
+                texts[i] = new BytePtr(hObjects[i].AddrOfPinnedObject());
                 colors[i] = items[i].color;
-                texts[i] = DllTool.ToUTF8Bytes(items[i].text);
             }
 
-            return new Tuple<Int4[], byte[][]>(colors, texts);
+            return new Tuple<BytePtr[], Int4[]>(texts, colors);
+        }
+
+        private void Recycle()
+        {
+            foreach (var h in hObjects)
+            {
+                if (h.IsAllocated)
+                    h.Free();
+            }
         }
     }
+
+
 }

@@ -9,6 +9,26 @@ using sd = Love2d.Module.Sound;
 
 using Love2d.Type;
 using Love2d.Module;
+using Love2d;
+
+namespace Example
+{
+    class Program : Love2d.Scene
+    {
+        public override void Draw()
+        {
+            Graphics.print("Hello World!", 400, 300);
+        }
+
+
+        static void Main(string[] args)
+        {
+            Love2d.Boot.Run(new Program());
+
+            Console.ReadKey();
+        }
+    }
+}
 
 //namespace Love2d
 //{
