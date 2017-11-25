@@ -9,6 +9,8 @@ Love2dCS was designed to be as close as possible to the original LÖVE API, as s
 
 Love2dCS currently supports Windows x86. The next step will be to support windows x64. Linux and OSX temporarily was not supported.
 
+Physical module temporary not support.
+
 Feature
 ---
 
@@ -141,6 +143,10 @@ Doucment
 *In development ...*
 
 Temporarily please reference [love wiki](https://love2d.org/wiki/love)
+
+Distribute
+---
+*In development ...*
 
 Develpoment
 ---

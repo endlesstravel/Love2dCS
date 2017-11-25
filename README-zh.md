@@ -7,20 +7,17 @@ windows x86
 
 # 安装
 
-* 项目已经发布到 NuGet https://www.nuget.org/packages/Love2dCS/
-
-仅提供 Visual Studio 安装方法
-1. 打开NuGet
-
+* 项目已经发布到 NuGet [https://www.nuget.org/packages/Love2dCS/]( https://www.nuget.org/packages/Love2dCS/)
 
 # Next to do
 - [x] retain的函数调用
 - [x] 完善C#中的love object继承关系
 - [x] string 与 UTF8 编码
 - [x] 完善C#实用性
+- [x] 发布到NuGet
 - [ ] 使用AOP截获异常
+- [ ] 物理模块
 - [ ] 写测试部分
-- [ ] 发布到NuGet
 
 # 特点
 用 C# 调用 love2d 引擎，一切方法都可以直接按照love2d含义使用 https://love2d.org/wiki/love
