@@ -1,8 +1,6 @@
 
-![logo](https://github.com/endlesstravel/Love2dCS/raw/master/img/logo.png "logo") 
+![logo](https://github.com/endlesstravel/Love2dCS/raw/master/img/logo.png "logo") love2dCS - C# Wrapper for Love2d
 
-love2dCS - C# Wrapper for Love2d
----
 
 Feature
 ---
