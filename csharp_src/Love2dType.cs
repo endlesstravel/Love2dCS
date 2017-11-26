@@ -8,9 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
-using Love2d.Module;
 
-namespace Love2d.Type
+namespace Love2d
 {
     public partial class LoveObject : IDisposable
     {

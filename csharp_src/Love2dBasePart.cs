@@ -8,8 +8,6 @@ using System.Runtime.InteropServices;
 using size_t = System.UInt32;
 using int64 = System.Int64;
 
-using Love2d.Type;
-
 namespace Love2d
 {
 
@@ -257,10 +255,7 @@ namespace Love2d
             return buffer;
         }
     }
-}
 
-namespace Love2d.Module
-{
     public partial class Common
     {
         public static string GetVersion()
@@ -1201,7 +1196,7 @@ namespace Love2d.Module
 
     }
 
-    public partial class JoystickModule
+    public partial class Joystick
     {
         public static void Init()
         {
@@ -1805,7 +1800,7 @@ namespace Love2d.Module
 
     }
 
-    public partial class ImageModule
+    public partial class Image // this is part of love module
     {
         //// raw new
         public static ImageData NewImageData(int w, int h, byte[] data)
@@ -1847,7 +1842,7 @@ namespace Love2d.Module
 
     }
 
-    public partial class FontModule
+    public partial class Font // this is part of love module
     {
         //// raw new
         public static Rasterizer NewRasterizer(FileData fileData)
@@ -1896,7 +1891,7 @@ namespace Love2d.Module
         }
     }
 
-    public partial class VideoModule
+    public partial class Video
     {
         //// raw new
         public static VideoStream NewVideoStream(File file)
@@ -1915,7 +1910,7 @@ namespace Love2d.Module
 
     }
 
-    public partial class MathModule
+    public partial class Mathf
     {
         static RandomGenerator rg = null;
         public static void Init()

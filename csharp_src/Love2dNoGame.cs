@@ -24,10 +24,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Love2d.Module;
-using Love2d.Type;
 using math = System.Math;
-using mathf = Love2d.Module.MathModule;
+using mathf = Love2d.Mathf;
 
 namespace Love2d
 {
@@ -379,7 +377,7 @@ namespace Love2d
         Image load_image(string str_contents, string filename)
         {
             var fdata = FileSystem.NewFileData(str_contents, filename, FileData.Decoder.BASE64);
-            var imgData = ImageModule.NewImageData(fdata);
+            var imgData = Image.NewImageData(fdata);
             return Graphics.NewImage( imgData );
         }
         public override void Load()

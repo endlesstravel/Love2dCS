@@ -6,20 +6,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Love2d.Module;
-using Love2d.Type;
 
-
-using lf = Love2d.Module.FileSystem;
-using ls = Love2d.Module.Sound;
-using la = Love2d.Module.Audio;
-using li = Love2d.Module.ImageModule;
-using lg = Love2d.Module.Graphics;
-using fnt = Love2d.Module.FontModule;
-using timer = Love2d.Module.Timer;
-using mouse = Love2d.Module.Mouse;
-using keyboard = Love2d.Module.Keyboard;
-using window = Love2d.Module.Window;
+using lf = Love2d.FileSystem;
+using ls = Love2d.Sound;
+using la = Love2d.Audio;
+using li = Love2d.Image;
+using lg = Love2d.Graphics;
+using fnt = Love2d.Font;
+using timer = Love2d.Timer;
+using mouse = Love2d.Mouse;
+using keyboard = Love2d.Keyboard;
+using window = Love2d.Window;
 
 namespace Love2d
 {
@@ -81,7 +78,7 @@ namespace Love2d
     {
         static void Init()
         {
-            MathModule.Init();
+            Mathf.Init();
             lf.Init("");
             ls.Init();
             la.Init();
@@ -89,7 +86,7 @@ namespace Love2d
             window.Init();
             mouse.Init();
             keyboard.Init();
-            JoystickModule.Init();
+            Joystick.Init();
             Touch.Init();
             Event.Init();
             li.Init();

@@ -10,8 +10,6 @@ using size_t = System.UInt32;
 using Int64 = System.Int64;
 using UInt8 = System.Byte;
 
-using Love2d.Type;
-using System.IO;
 
 namespace Love2d
 {

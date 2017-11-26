@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
-using fs = Love2d.Module.FileSystem;
-using au = Love2d.Module.Audio;
-using sd = Love2d.Module.Sound;
+using fs = Love2d.FileSystem;
+using au = Love2d.Audio;
+using sd = Love2d.Sound;
 
-using Love2d.Type;
-using Love2d.Module;
 using Love2d;
 
 namespace Example

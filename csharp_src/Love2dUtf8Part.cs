@@ -2,11 +2,11 @@
 // this file define function that trans string to utf8 bytes automatic to make libray easy to use
 
 using System;
-using Love2d.Type;
-using Love2d.Module;
 
-namespace Love2d.Module
+namespace Love2d
 {
+    #region Love Module
+
     public partial class FileSystem
     {
         public static File NewFile(string filename, File.Mode fmode_type = File.Mode.MODE_READ)
@@ -111,7 +111,7 @@ namespace Love2d.Module
         }
     }
 
-    public partial class JoystickModule
+    public partial class Joystick
     {
         public static bool SetGamepadMapping(string guid, Joystick.InputType gp_inputType_type, Joystick.InputType j_inputType_type, int inputIndex, Joystick.Hat hat_type)
         {
@@ -134,7 +134,7 @@ namespace Love2d.Module
             return LoveObject.NewObject<Shader>(out_shader);
         }
     }
-    public partial class FontModule
+    public partial class Font
     {
         Rasterizer newImageRasterizer(ImageData imageData, string glyphs, int extraspacing)
         {
@@ -146,11 +146,11 @@ namespace Love2d.Module
         }
     }
 
+    #endregion
 
-}
 
-namespace Love2d.Type
-{
+    #region Love Type
+
     public partial class Rasterizer
     {
         public GlyphData GetGlyphData(string str)
@@ -272,4 +272,5 @@ namespace Love2d.Type
         }
     }
 
+    #endregion
 }

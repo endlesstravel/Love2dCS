@@ -5,11 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Love2d.Module;
-using Love2d.Type;
-
-namespace Love2d.Module
+namespace Love2d
 {
+
+    #region Love Module
+
     public partial class Window
     {
         public static bool SetFullscreen(bool fullscreen)
@@ -81,7 +81,7 @@ namespace Love2d.Module
         //// end new plus
     }
 
-    public partial class ImageModule
+    public partial class Image  // this is part of love module
     {
         public static ImageData NewImageData(string filename)
         {
@@ -95,7 +95,7 @@ namespace Love2d.Module
         }
     }
 
-    public partial class FontModule
+    public partial class Font
     {
         public static Rasterizer NewRasterizer(string filename)
         {
@@ -104,7 +104,7 @@ namespace Love2d.Module
         }
     }
 
-    public partial class VideoModule
+    public partial class Video
     {
         public static VideoStream NewVideoStream(string filename)
         {
@@ -125,7 +125,7 @@ namespace Love2d.Module
         }
         public static Image NewImage(string filename)
         {
-            var filedata = ImageModule.NewImageData(filename);
+            var filedata = Image.NewImageData(filename);
             return NewImage(filedata);
         }
 
@@ -179,10 +179,12 @@ namespace Love2d.Module
         }
     }
 
-}
 
-namespace Love2d.Type
-{
+    #endregion
+
+
+    #region Love Type
+
     public partial class File
     {
         public void Write(byte[] data)
@@ -207,4 +209,6 @@ namespace Love2d.Type
         }
     }
 
+
+    #endregion
 }
