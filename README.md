@@ -48,7 +48,7 @@ class Program
 
 2. Drawing text
 ``` C#
-using Love2d.Module;
+using Love2d;
 namespace Example
 {
     class Program : Love2d.Scene
@@ -60,7 +60,7 @@ namespace Example
 
         static void Main(string[] args)
         {
-            Love2d.Boot.Run(new Program());
+            Boot.Run(new Program());
         }
     }
 }
@@ -68,8 +68,7 @@ namespace Example
 
 3. Drawing an image
 ``` C#
-using Love2d.Type;
-using Love2d.Module;
+using Love2d;
 namespace Example
 {
     class Program : Love2d.Scene
@@ -88,7 +87,7 @@ namespace Example
 
         static void Main(string[] args)
         {
-            Love2d.Boot.Run(new Program());
+            Boot.Run(new Program());
         }
     }
 }
@@ -96,8 +95,7 @@ namespace Example
 
 4. Playing a sound
 ``` C#
-using Love2d.Type;
-using Love2d.Module;
+using Love2d;
 namespace Example
 {
     class Program : Love2d.Scene
@@ -112,7 +110,7 @@ namespace Example
 
         static void Main(string[] args)
         {
-            Love2d.Boot.Run(new Program());
+            Boot.Run(new Program());
         }
     }
 }
@@ -120,23 +118,22 @@ namespace Example
 
 5. Key event handle - Press `Escape` to exit
 ``` C#
-using Love2d.Module;
+using Love2d;
 namespace Example
 {
-    class Program : Love2d.Scene
+    class Program : Scene
     {
-        class ExitEventHandler : Love2d.EventHandler
+        class ExitEventHandler : EventHandler
         {
             public override void KeyPressed(Keyboard.Key key, Keyboard.Scancode scancode, bool isRepeat)
             {
-                if (Keyboard.Key.KEY_ESCAPE == key)
-                    Event.Quit();
+                base.KeyPressed(key, scancode, isRepeat);
             }
         }
 
         static void Main(string[] args)
         {
-            Love2d.Boot.Run(new Program(), new ExitEventHandler());
+            Boot.Run(new Program(), new ExitEventHandler());
         }
     }
 }
