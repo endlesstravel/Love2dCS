@@ -5,7 +5,11 @@ Love2dCS - C# Wrapper for LÖVE
 ---
 Love2dCS is a C# Wrapper for [LÖVE game engine](https://love2d.org/), it can be used your C# based Application. 
 
-Love2dCS was designed to be as close as possible to the original LÖVE API, as such the documentation provided from LÖVE largely covers usage of Love2dCS. There is a slight difference between Love2dCS and LÖVE where is <*In development ...*>.
+Love2dCS was designed to be as close as possible to the original LÖVE API, as such the documentation provided from LÖVE largely covers usage of Love2dCS. There is a slight difference between Love2dCS and LÖVE where is :
+
+* The `love.math` module in Love2dCS is `Love2D.mathf`
+* Most index begin from 1 at LÖVE. However, index will begin from 0 at Love2dCS
+* *More in development ... *
 
 Love2dCS currently supports Windows x86. The next step will be to support windows x64. Linux and OSX temporarily was not supported.
 
