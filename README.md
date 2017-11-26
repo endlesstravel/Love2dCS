@@ -127,7 +127,8 @@ namespace Example
         {
             public override void KeyPressed(Keyboard.Key key, Keyboard.Scancode scancode, bool isRepeat)
             {
-                base.KeyPressed(key, scancode, isRepeat);
+                if (Keyboard.Key.KEY_ESCAPE == key)
+                    Event.Quit();
             }
         }
 
