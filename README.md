@@ -51,7 +51,7 @@ namespace Example
     {
         public override void Draw()
         {
-            Graphics.print("Hello World!", 400, 300);
+            Graphics.Print("Hello World!", 400, 300);
         }
 
         static void Main(string[] args)
@@ -74,12 +74,12 @@ namespace Example
 
         public override void Load()
         {
-            img = Graphics.newImage("logo.png");
+            img = Graphics.NewImage("logo.png");
         }
 
         public override void Draw()
         {
-            Graphics.draw(img, 300, 200);
+            Graphics.Draw(img, 300, 200);
         }
 
         static void Main(string[] args)
@@ -102,7 +102,7 @@ namespace Example
 
         public override void Load()
         {
-            source = Audio.newSource("music.mp3");
+            source = Audio.NewSource("music.mp3");
             source.play();
         }
 
@@ -126,7 +126,7 @@ namespace Example
             public override void KeyPressed(Keyboard.Key key, Keyboard.Scancode scancode, bool isRepeat)
             {
                 if (Keyboard.Key.KEY_ESCAPE == key)
-                    Event.quit();
+                    Event.Quit();
             }
         }
 
