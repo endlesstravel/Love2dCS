@@ -28,21 +28,6 @@ namespace Love2d
             return buffer;
         }
 
-
-        public static void checkPointZero(IntPtr ip)
-        {
-            if (ip == IntPtr.Zero)
-            {
-                throw new Exception(getLoveLastError());
-            }
-        }
-        //public static void checkSuccess(bool flag)
-        //{
-        //    if (flag == false)
-        //    {
-        //        throw new Exception(getLoveLastError());
-        //    }
-        //}
         public static string getLoveLastError()
         {
             // 这里不能直接调用 WSToString(Love2dDll.wrap_love_dll_last_error());

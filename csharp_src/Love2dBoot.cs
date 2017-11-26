@@ -149,7 +149,7 @@ namespace Love2d
             }
             catch (Exception e)
             {
-                Console.WriteLine("error:" +  e);
+                window.showMessageBox("error", e.ToString(), Window.MessageBoxType.MESSAGEBOX_ERROR);
             }
         }
     }
