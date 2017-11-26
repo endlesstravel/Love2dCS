@@ -15,7 +15,7 @@ namespace Love2d.Type
     public partial class LoveObject : IDisposable
     {
         // use factory design pattern
-        public static T newObject<T>(IntPtr ip) where T : LoveObject, new()
+        public static T NewObject<T>(IntPtr ip) where T : LoveObject, new()
         {
             if (IntPtr.Zero == ip)
             {
@@ -68,182 +68,182 @@ namespace Love2d.Type
             UNIT_MAX_ENUM
         };
 
-        public Source clone()
+        public Source Clone()
         {
             IntPtr out_clone = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_Source_clone(p, out out_clone);
-            return LoveObject.newObject<Source>(out_clone);
+            return LoveObject.NewObject<Source>(out_clone);
         }
-        public bool play()
+        public bool Play()
         {
             bool out_success = false;
             Love2dDll.wrap_love_dll_type_Source_play(p, out out_success);
             return out_success;
         }
-        public void stop()
+        public void Stop()
         {
             Love2dDll.wrap_love_dll_type_Source_stop(p);
         }
-        public void pause()
+        public void Pause()
         {
             Love2dDll.wrap_love_dll_type_Source_pause(p);
         }
-        public void resume()
+        public void Resume()
         {
             Love2dDll.wrap_love_dll_type_Source_resume(p);
         }
-        public void rewind()
+        public void Rewind()
         {
             Love2dDll.wrap_love_dll_type_Source_rewind(p);
             return;
         }
-        public void setPitch(float pitch)
+        public void SetPitch(float pitch)
         {
             Love2dDll.wrap_love_dll_type_Source_setPitch(p, pitch);
             return;
         }
-        public float getPitch()
+        public float GetPitch()
         {
             float out_pitch = 0;
             Love2dDll.wrap_love_dll_type_Source_getPitch(p, out out_pitch);
             return out_pitch;
         }
-        public void setVolume(float volume)
+        public void SetVolume(float volume)
         {
             Love2dDll.wrap_love_dll_type_Source_setVolume(p, volume);
         }
-        public float getVolume()
+        public float GetVolume()
         {
             float out_volume = 0;
             Love2dDll.wrap_love_dll_type_Source_getVolume(p, out out_volume);
             return out_volume;
         }
-        public void seek(float offset, TimeUnit unit_type)
+        public void Seek(float offset, TimeUnit unit_type)
         {
             Love2dDll.wrap_love_dll_type_Source_seek(p, offset, (int)unit_type);
         }
-        public float tell(TimeUnit unit_type)
+        public float Tell(TimeUnit unit_type)
         {
             float out_position = 0;
             Love2dDll.wrap_love_dll_type_Source_tell(p, (int)unit_type, out out_position);
             return out_position;
         }
-        public float getDuration(TimeUnit unit_type)
+        public float GetDuration(TimeUnit unit_type)
         {
             float out_duration = 0;
             Love2dDll.wrap_love_dll_type_Source_getDuration(p, (int)unit_type, out out_duration);
             return out_duration;
         }
-        public void setPosition(float x, float y, float z)
+        public void SetPosition(float x, float y, float z)
         {
             Love2dDll.wrap_love_dll_type_Source_setPosition(p, x, y, z);
         }
-        public Float3 getPosition()
+        public Float3 GetPosition()
         {
             float out_x = 0, out_y = 0, out_z = 0;
             Love2dDll.wrap_love_dll_type_Source_getPosition(p, out out_x, out out_y, out out_z);
             return new Float3(out_x, out_y, out_z);
         }
-        public void setVelocity(float x, float y, float z)
+        public void SetVelocity(float x, float y, float z)
         {
             Love2dDll.wrap_love_dll_type_Source_setVelocity(p, x, y, z);
         }
-        public Float3 getVelocity()
+        public Float3 GetVelocity()
         {
             float out_x = 0, out_y = 0, out_z = 0;
             Love2dDll.wrap_love_dll_type_Source_getVelocity(p, out out_x, out out_y, out out_z);
             return new Float3(out_x, out_y, out_z);
         }
-        public void setDirection(float x, float y, float z)
+        public void SetDirection(float x, float y, float z)
         {
             Love2dDll.wrap_love_dll_type_Source_setDirection(p, x, y, z);
             return;
         }
-        public Float3 getDirection()
+        public Float3 GetDirection()
         {
             float out_x = 0, out_y = 0, out_z = 0;
             Love2dDll.wrap_love_dll_type_Source_getDirection(p, out out_x, out out_y, out out_z);
             return new Float3(out_x, out_y, out_z);
         }
-        public void setCone(float innerAngle, float outerAngle, float outerVolume)
+        public void SetCone(float innerAngle, float outerAngle, float outerVolume)
         {
             Love2dDll.wrap_love_dll_type_Source_setCone(p, innerAngle, outerAngle, outerVolume);
         }
-        public void getCone(out float out_innerAngle, out float out_outerAngle, out float out_outerVolume)
+        public void GetCone(out float out_innerAngle, out float out_outerAngle, out float out_outerVolume)
         {
             Love2dDll.wrap_love_dll_type_Source_getCone(p, out out_innerAngle, out out_outerAngle, out out_outerVolume);
         }
-        public void setRelative(bool relative)
+        public void SetRelative(bool relative)
         {
             Love2dDll.wrap_love_dll_type_Source_setRelative(p, relative);
         }
-        public bool isRelative()
+        public bool IsRelative()
         {
             bool out_relative = false;
             Love2dDll.wrap_love_dll_type_Source_isRelative(p, out out_relative);
             return out_relative;
         }
-        public void setLooping(bool looping)
+        public void SetLooping(bool looping)
         {
             Love2dDll.wrap_love_dll_type_Source_setLooping(p, looping);
         }
-        public bool isLooping()
+        public bool IsLooping()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_Source_isLooping(p, out out_result);
             return out_result;
         }
-        public bool isStopped()
+        public bool IsStopped()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_Source_isStopped(p, out out_result);
             return out_result;
         }
-        public bool isPaused()
+        public bool IsPaused()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_Source_isPaused(p, out out_result);
             return out_result;
         }
-        public bool isPlaying()
+        public bool IsPlaying()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_Source_isPlaying(p, out out_result);
             return out_result;
         }
-        public void setVolumeLimits(float vmin, float vmax)
+        public void SetVolumeLimits(float vmin, float vmax)
         {
             Love2dDll.wrap_love_dll_type_Source_setVolumeLimits(p, vmin, vmax);
         }
-        public void getVolumeLimits(out float out_vmin, out float out_vmax)
+        public void GetVolumeLimits(out float out_vmin, out float out_vmax)
         {
             Love2dDll.wrap_love_dll_type_Source_getVolumeLimits(p, out out_vmin, out out_vmax);
         }
-        public void setAttenuationDistances(float dref, float dmax)
+        public void SetAttenuationDistances(float dref, float dmax)
         {
             Love2dDll.wrap_love_dll_type_Source_setAttenuationDistances(p, dref, dmax);
         }
-        public void getAttenuationDistances(out float out_dref, out float out_dmax)
+        public void GetAttenuationDistances(out float out_dref, out float out_dmax)
         {
             Love2dDll.wrap_love_dll_type_Source_getAttenuationDistances(p, out out_dref, out out_dmax);
         }
-        public void setRolloff(float rolloff)
+        public void SetRolloff(float rolloff)
         {
             Love2dDll.wrap_love_dll_type_Source_setRolloff(p, rolloff);
         }
-        public float getRolloff()
+        public float GetRolloff()
         {
             float out_rolloff = 0;
             Love2dDll.wrap_love_dll_type_Source_getRolloff(p, out out_rolloff);
             return out_rolloff;
         }
-        public int getChannels()
+        public int GetChannels()
         {
             int out_chanels = 0;
             Love2dDll.wrap_love_dll_type_Source_getChannels(p, out out_chanels);
             return out_chanels;
         }
-        public Type getType()
+        public Type GetType()
         {
             int out_type = 0;
             Love2dDll.wrap_love_dll_type_Source_getType(p, out out_type);
@@ -270,23 +270,23 @@ namespace Love2d.Type
             BUFFER_MAX_ENUM
         };
 
-        public double getSize()
+        public double GetSize()
         {
             double out_size = 0;
             Love2dDll.wrap_love_dll_type_File_getSize(p, out out_size);
             return out_size;
         }
-        public void open(Mode mode_type)
+        public void Open(Mode mode_type)
         {
             Love2dDll.wrap_love_dll_type_File_open(p, (int)mode_type);
         }
-        public bool close()
+        public bool Close()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_File_close(p, out out_result);
             return out_result;
         }
-        public bool isOpen()
+        public bool IsOpen()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_File_isOpen(p, out out_result);
@@ -300,57 +300,57 @@ namespace Love2d.Type
 
             return DllTool.readBytesAndRelease(out_data, out_readedSize);
         }
-        public void write(byte[] data, long datasize)
+        public void Write(byte[] data, long datasize)
         {
             Love2dDll.wrap_love_dll_type_File_write_String(p, data, datasize);
         }
-        public void write(Data data, long datasize)
+        public void Write(Data data, long datasize)
         {
             Love2dDll.wrap_love_dll_type_File_write_Data_datasize(p, data.p, datasize);
         }
-        public void flush()
+        public void Flush()
         {
             Love2dDll.wrap_love_dll_type_File_flush(p);
         }
-        public bool isEOF()
+        public bool IsEOF()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_File_isEOF(p, out out_result);
             return out_result;
         }
-        public long tell()
+        public long Tell()
         {
             long out_pos = 0;
             Love2dDll.wrap_love_dll_type_File_tell(p, out out_pos);
             return out_pos;
         }
-        public void seek(long pos)
+        public void Seek(long pos)
         {
             Love2dDll.wrap_love_dll_type_File_seek(p, pos);
         }
-        public void setBuffer(BufferMode bufmode_type, long size)
+        public void SetBuffer(BufferMode bufmode_type, long size)
         {
             Love2dDll.wrap_love_dll_type_File_setBuffer(p, (int)bufmode_type, size);
         }
-        public void getBuffer(out BufferMode out_bufmode_type, out long out_size)
+        public void GetBuffer(out BufferMode out_bufmode_type, out long out_size)
         {
             int bufmode_type = 0;
             Love2dDll.wrap_love_dll_type_File_getBuffer(p, out bufmode_type, out out_size);
             out_bufmode_type = (BufferMode)bufmode_type;
         }
-        public Mode getMode()
+        public Mode GetMode()
         {
             int mode_type = 0;
             Love2dDll.wrap_love_dll_type_File_getMode(p, out mode_type);
             return (Mode)mode_type;
         }
-        public string getFilename()
+        public string GetFilename()
         {
             IntPtr out_filename = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_File_getFilename(p, out out_filename);
             return DllTool.WSToStringAndRelease(out_filename);
         }
-        public string getExtension()
+        public string GetExtension()
         {
             IntPtr out_extension = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_File_getExtension(p, out out_extension);
@@ -368,13 +368,13 @@ namespace Love2d.Type
             DECODE_MAX_ENUM
         }; // Decoder
 
-        public string getFilename()
+        public string GetFilename()
         {
             IntPtr out_filename = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_FileData_getFilename(p, out out_filename);
             return DllTool.WSToStringAndRelease(out_filename);
         }
-        public string getExtension()
+        public string GetExtension()
         {
             IntPtr out_extension = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_FileData_getExtension(p, out out_extension);
@@ -391,45 +391,45 @@ namespace Love2d.Type
             FORMAT_MAX_ENUM
         };
 
-        public int getWidth()
+        public int GetWidth()
         {
             int out_width = 0;
             Love2dDll.wrap_love_dll_type_GlyphData_getWidth(p, out out_width);
             return out_width;
         }
-        public int getHeight()
+        public int GetHeight()
         {
             int out_height = 0;
             Love2dDll.wrap_love_dll_type_GlyphData_getHeight(p, out out_height);
             return out_height;
         }
-        public uint getGlyph()
+        public uint GetGlyph()
         {
             uint out_glyph = 0;
             Love2dDll.wrap_love_dll_type_GlyphData_getGlyph(p, out out_glyph);
             return out_glyph;
         }
-        public string getGlyphString()
+        public string GetGlyphString()
         {
             IntPtr out_str = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_GlyphData_getGlyphString(p, out out_str);
             return DllTool.WSToStringAndRelease(out_str);
         }
-        public int getAdvance()
+        public int GetAdvance()
         {
             int out_advance = 0;
             Love2dDll.wrap_love_dll_type_GlyphData_getAdvance(p, out out_advance);
             return out_advance;
         }
-        public void getBearing(out int out_bearingX, out int out_bearingY)
+        public void GetBearing(out int out_bearingX, out int out_bearingY)
         {
             Love2dDll.wrap_love_dll_type_GlyphData_getBearing(p, out out_bearingX, out out_bearingY);
         }
-        public void getBoundingBox(out int out_minX, out int out_minY, out int out_width, out int out_height)
+        public void GetBoundingBox(out int out_minX, out int out_minY, out int out_width, out int out_height)
         {
             Love2dDll.wrap_love_dll_type_GlyphData_getBoundingBox(p, out out_minX, out out_minY, out out_width, out out_height);
         }
-        public Format getFormat()
+        public Format GetFormat()
         {
             int out_format_type = 0;
             Love2dDll.wrap_love_dll_type_GlyphData_getFormat(p, out out_format_type);
@@ -439,61 +439,61 @@ namespace Love2d.Type
 
     public partial class Rasterizer : LoveObject
     {
-        public int getHeight()
+        public int GetHeight()
         {
             int out_heigth = 0;
             Love2dDll.wrap_love_dll_type_Rasterizer_getHeight(p, out out_heigth);
             return out_heigth;
         }
-        public int getAdvance()
+        public int GetAdvance()
         {
             int out_advance = 0;
             Love2dDll.wrap_love_dll_type_Rasterizer_getAdvance(p, out out_advance);
             return out_advance;
         }
-        public int getAscent()
+        public int GetAscent()
         {
             int out_ascent = 0;
             Love2dDll.wrap_love_dll_type_Rasterizer_getAscent(p, out out_ascent);
             return out_ascent;
         }
-        public int getDescent()
+        public int GetDescent()
         {
             int out_descent = 0;
             Love2dDll.wrap_love_dll_type_Rasterizer_getDescent(p, out out_descent);
             return out_descent;
         }
-        public int getLineHeight()
+        public int GetLineHeight()
         {
             int out_lineHeight = 0;
             Love2dDll.wrap_love_dll_type_Rasterizer_getLineHeight(p, out out_lineHeight);
             return out_lineHeight;
         }
-        public GlyphData getGlyphData(uint glyph)
+        public GlyphData GetGlyphData(uint glyph)
         {
             IntPtr out_glyphData = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_Rasterizer_getGlyphData_uint32(p, glyph, out out_glyphData);
-            return LoveObject.newObject<GlyphData>(out_glyphData);
+            return LoveObject.NewObject<GlyphData>(out_glyphData);
         }
-        public GlyphData getGlyphData(byte[] str)
+        public GlyphData GetGlyphData(byte[] str)
         {
             IntPtr out_glyphData = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_Rasterizer_getGlyphData_string(p, str, out out_glyphData);
-            return LoveObject.newObject<GlyphData>(out_glyphData);
+            return LoveObject.NewObject<GlyphData>(out_glyphData);
         }
-        public int getGlyphCount()
+        public int GetGlyphCount()
         {
             int out_count = 0;
             Love2dDll.wrap_love_dll_type_Rasterizer_getGlyphCount(p, out out_count);
             return out_count;
         }
-        public bool hasGlyphs(uint glyph)
+        public bool HasGlyphs(uint glyph)
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_Rasterizer_hasGlyphs_uint32(p, glyph, out out_result);
             return out_result;
         }
-        public bool hasGlyphs(byte[] str)
+        public bool HasGlyphs(byte[] str)
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_Rasterizer_hasGlyphs_string(p, str, out out_result);
@@ -525,25 +525,25 @@ namespace Love2d.Type
             FORMAT_MAX_ENUM
         };
 
-        public ImageData newImageData()
+        public ImageData NewImageData()
         {
             IntPtr out_imageData = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_Canvas_newImageData(p, out out_imageData);
-            return newObject<ImageData>(out_imageData);
+            return NewObject<ImageData>(out_imageData);
         }
-        public ImageData newImageData(int x, int y, int w, int h)
+        public ImageData NewImageData(int x, int y, int w, int h)
         {
             IntPtr out_imageData = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_Canvas_newImageData_xywh(p, x, y, w, h, out out_imageData);
-            return newObject<ImageData>(out_imageData);
+            return NewObject<ImageData>(out_imageData);
         }
-        public Format getFormat()
+        public Format GetFormat()
         {
             int out_format_type = 0;
             Love2dDll.wrap_love_dll_type_Canvas_getFormat(p, out out_format_type);
             return (Format)out_format_type;
         }
-        public int getMSAA()
+        public int GetMSAA()
         {
             int out_msaa = 0;
             Love2dDll.wrap_love_dll_type_Canvas_getMSAA(p, out out_msaa);
@@ -562,30 +562,30 @@ namespace Love2d.Type
             ALIGN_MAX_ENUM
         };
 
-        public int getHeight()
+        public int GetHeight()
         {
             int out_height = 0;
             Love2dDll.wrap_love_dll_type_Font_getHeight(p, out out_height);
             return out_height;
         }
-        public int getWidth(byte[] str)
+        public int GetWidth(byte[] str)
         {
             int out_width = 0;
             Love2dDll.wrap_love_dll_type_Font_getWidth(p, str, out out_width);
             return out_width;
         }
-        public void setLineHeight(float h)
+        public void SetLineHeight(float h)
         {
             Love2dDll.wrap_love_dll_type_Font_setLineHeight(p, h);
             return;
         }
-        public float getLineHeight()
+        public float GetLineHeight()
         {
             float out_h = 0;
             Love2dDll.wrap_love_dll_type_Font_getLineHeight(p, out out_h);
             return out_h;
         }
-        public void setFilter(Texture.FilterMode min_type, Texture.FilterMode mag_type, float anisotropy)
+        public void SetFilter(Texture.FilterMode min_type, Texture.FilterMode mag_type, float anisotropy)
         {
             Love2dDll.wrap_love_dll_type_Font_setFilter(p, (int)min_type, (int)mag_type, anisotropy);
             return;
@@ -596,37 +596,37 @@ namespace Love2d.Type
             Love2dDll.wrap_love_dll_type_Font_getFilter(p, out out_min_type, out out_mag_type, out out_anisotropy);
             return new Texture.Filter((Texture.FilterMode)out_min_type, (Texture.FilterMode)out_mag_type, out_anisotropy);
         }
-        public int getAscent()
+        public int GetAscent()
         {
             int out_ascent = 0;
             Love2dDll.wrap_love_dll_type_Font_getAscent(p, out out_ascent);
             return out_ascent;
         }
-        public int getDescent()
+        public int GetDescent()
         {
             int out_descent = 0;
             Love2dDll.wrap_love_dll_type_Font_getDescent(p, out out_descent);
             return out_descent;
         }
-        public float getBaseline()
+        public float GetBaseline()
         {
             float out_baseline = 0;
             Love2dDll.wrap_love_dll_type_Font_getBaseline(p, out out_baseline);
             return out_baseline;
         }
-        public bool hasGlyphs(uint chr)
+        public bool HasGlyphs(uint chr)
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_Font_hasGlyphs_uint32(p, chr, out out_result);
             return out_result;
         }
-        public bool hasGlyphs(byte[] str)
+        public bool HasGlyphs(byte[] str)
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_Font_hasGlyphs_string(p, str, out out_result);
             return out_result;
         }
-        public void setFallbacks(Font[] fallback)
+        public void SetFallbacks(Font[] fallback)
         {
             IntPtr[] fallbackarray = new IntPtr[fallback.Length];
             for (int i = 0; i < fallbackarray.Length; i++)
@@ -641,23 +641,23 @@ namespace Love2d.Type
 
     public partial class Image : Texture
     {
-        public void setMipmapFilter(FilterMode mipmap_type, float sharpness)
+        public void SetMipmapFilter(FilterMode mipmap_type, float sharpness)
         {
             Love2dDll.wrap_love_dll_type_Image_setMipmapFilter(p, (int)mipmap_type, sharpness);
         }
-        public void getMipmapFilter(out FilterMode out_mipmap_type, out float out_sharpness)
+        public void GetMipmapFilter(out FilterMode out_mipmap_type, out float out_sharpness)
         {
             int out_mipmap_type_int;
             Love2dDll.wrap_love_dll_type_Image_getMipmapFilter(p, out out_mipmap_type_int, out out_sharpness);
             out_mipmap_type = (FilterMode)out_mipmap_type_int;
         }
-        public bool isCompressed()
+        public bool IsCompressed()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_Image_isCompressed(p, out out_result);
             return out_result;
         }
-        public void refresh(int xoffset, int yoffset, int w, int h)
+        public void Refresh(int xoffset, int yoffset, int w, int h)
         {
             Love2dDll.wrap_love_dll_type_Image_refresh(p, xoffset, yoffset, w, h);
         }
@@ -671,12 +671,12 @@ namespace Love2d.Type
             Data[] buffer = new Data[list.Length];
             for (int i = 0; i < list.Length; i++)
             {
-                buffer[i] = newObject<Data>(list[i]);
+                buffer[i] = NewObject<Data>(list[i]);
             }
 
             return buffer;
         }
-        public bool getFlags(out bool out_mipmaps, out bool out_linear)
+        public bool GetFlags(out bool out_mipmaps, out bool out_linear)
         {
             Love2dDll.wrap_love_dll_type_Image_getFlags(p, out out_mipmaps, out out_linear);
             return out_mipmaps;
@@ -720,37 +720,37 @@ namespace Love2d.Type
             public int components;
         }
 
-        public void setVertices_data(Data data, uint vertoffset)
+        public void SetVertices_data(Data data, uint vertoffset)
         {
             Love2dDll.wrap_love_dll_type_Mesh_setVertices_data(p, data.p, vertoffset);
             return;
         }
-        public void setVertices(uint vertoffset, byte[] srcData, uint nvertices)
+        public void SetVertices(uint vertoffset, byte[] srcData, uint nvertices)
         {
             Love2dDll.wrap_love_dll_type_Mesh_setVertices(p, vertoffset, srcData, nvertices);
         }
-        public void setVertex(uint index, byte[] data)
+        public void SetVertex(uint index, byte[] data)
         {
             Love2dDll.wrap_love_dll_type_Mesh_setVertex(p, index, data, data.Length);
         }
-        public void getVertex(uint index, out byte[] out_datas, out int out_count)
+        public void GetVertex(uint index, out byte[] out_datas, out int out_count)
         {
             IntPtr out_data = IntPtr.Zero;
             int out_data_length = 0;
             Love2dDll.wrap_love_dll_type_Mesh_getVertex(p, index, out out_data, out out_data_length, out out_count);
             out_datas = DllTool.readBytesAndRelease(out_data, out_data_length);
         }
-        public void setVertexAttribute(uint vertindex, int attribindex, uint data0, uint data1, uint data2, uint data3)
+        public void SetVertexAttribute(uint vertindex, int attribindex, uint data0, uint data1, uint data2, uint data3)
         {
             Love2dDll.wrap_love_dll_type_Mesh_setVertexAttribute(p, vertindex, attribindex, data0, data1, data2, data3);
         }
-        public void getVertexAttribute(uint vertindex, int attribindex, out DataType out_datatype_type, out int out_components, out uint out_data0, out uint out_data1, out uint out_data2, out uint out_data3)
+        public void GetVertexAttribute(uint vertindex, int attribindex, out DataType out_datatype_type, out int out_components, out uint out_data0, out uint out_data1, out uint out_data2, out uint out_data3)
         {
             int out_datatype = 0;
             Love2dDll.wrap_love_dll_type_Mesh_getVertexAttribute(p, vertindex, attribindex, out out_datatype, out out_components, out out_data0, out out_data1, out out_data2, out out_data3);
             out_datatype_type = (DataType)out_datatype;
         }
-        public int getVertexCount()
+        public int GetVertexCount()
         {
             int out_result = 0;
             Love2dDll.wrap_love_dll_type_Mesh_getVertexCount(p, out out_result);
@@ -776,29 +776,29 @@ namespace Love2d.Type
 
             return buffer;
         }
-        public void setAttributeEnabled(byte[] name, bool enable)
+        public void SetAttributeEnabled(byte[] name, bool enable)
         {
             Love2dDll.wrap_love_dll_type_Mesh_setAttributeEnabled(p, name, enable);
         }
-        public bool isAttributeEnabled(byte[] name)
+        public bool IsAttributeEnabled(byte[] name)
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_Mesh_isAttributeEnabled(p, name, out out_result);
             return out_result;
         }
-        public void attachAttribute(byte[] name, Mesh otherMesh)
+        public void AttachAttribute(byte[] name, Mesh otherMesh)
         {
             Love2dDll.wrap_love_dll_type_Mesh_attachAttribute(p, name, otherMesh.p);
         }
-        public void flush()
+        public void Flush()
         {
             Love2dDll.wrap_love_dll_type_Mesh_flush(p);
         }
-        public void setVertexMap()
+        public void SetVertexMap()
         {
             Love2dDll.wrap_love_dll_type_Mesh_setVertexMap_nil(p);
         }
-        public void setVertexMap(uint[] vertexmaps)
+        public void SetVertexMap(uint[] vertexmaps)
         {
             Love2dDll.wrap_love_dll_type_Mesh_setVertexMap(p, vertexmaps, vertexmaps.Length);
         }
@@ -814,41 +814,41 @@ namespace Love2d.Type
 
             return DllTool.readUInt32sAndRelease(out_vertexmaps, out_vertexmaps_length);
         }
-        public void setTexture()
+        public void SetTexture()
         {
             Love2dDll.wrap_love_dll_type_Mesh_setTexture_nil(p);
             return;
         }
-        public void setTexture(Texture tex)
+        public void SetTexture(Texture tex)
         {
             Love2dDll.wrap_love_dll_type_Mesh_setTexture_Texture(p, tex.p);
             return;
         }
-        public Texture getTexture()
+        public Texture GetTexture()
         {
             IntPtr out_result = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_Mesh_getTexture(p, out out_result);
-            return newObject<Texture>(out_result);
+            return NewObject<Texture>(out_result);
         }
-        public void setDrawMode(DrawMode mode_type)
+        public void SetDrawMode(DrawMode mode_type)
         {
             Love2dDll.wrap_love_dll_type_Mesh_setDrawMode(p, (int)mode_type);
         }
-        public DrawMode getDrawMode()
+        public DrawMode GetDrawMode()
         {
             int out_mode_type = 0;
             Love2dDll.wrap_love_dll_type_Mesh_getDrawMode(p, out out_mode_type);
             return (DrawMode)out_mode_type;
         }
-        public void setDrawRange()
+        public void SetDrawRange()
         {
             Love2dDll.wrap_love_dll_type_Mesh_setDrawRange(p);
         }
-        public void setDrawRange_minmax(int rangemin, int rangemax)
+        public void SetDrawRange_minmax(int rangemin, int rangemax)
         {
             Love2dDll.wrap_love_dll_type_Mesh_setDrawRange_minmax(p, rangemin, rangemax);
         }
-        public void getDrawRange(out int out_rangemin, out int out_rangemax)
+        public void GetDrawRange(out int out_rangemin, out int out_rangemax)
         {
             Love2dDll.wrap_love_dll_type_Mesh_getDrawRange(p, out out_rangemin, out out_rangemax);
         }
@@ -875,160 +875,160 @@ namespace Love2d.Type
             INSERT_MODE_MAX_ENUM
         };
 
-        public ParticleSystem clone()
+        public ParticleSystem Clone()
         {
             IntPtr out_clone = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_ParticleSystem_clone(p, out out_clone);
-            return newObject<ParticleSystem>(out_clone);
+            return NewObject<ParticleSystem>(out_clone);
         }
-        public void setTexture(Texture tex)
+        public void SetTexture(Texture tex)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setTexture(p, tex.p);
         }
-        public Texture getTexture()
+        public Texture GetTexture()
         {
             IntPtr out_texture = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getTexture(p, out out_texture);
-            return newObject<Texture>(out_texture);
+            return NewObject<Texture>(out_texture);
         }
-        public void setBufferSize(uint buffersize)
+        public void SetBufferSize(uint buffersize)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setBufferSize(p, buffersize);
         }
-        public uint getBufferSize()
+        public uint GetBufferSize()
         {
             uint out_buffersize = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getBufferSize(p, out out_buffersize);
             return out_buffersize;
         }
-        public void setInsertMode(InsertMode mode_type)
+        public void SetInsertMode(InsertMode mode_type)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setInsertMode(p, (int)mode_type);
         }
-        public InsertMode getInsertMode()
+        public InsertMode GetInsertMode()
         {
             int out_mode_type = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getInsertMode(p, out out_mode_type);
             return (InsertMode)out_mode_type;
         }
-        public void setEmissionRate(float rate)
+        public void SetEmissionRate(float rate)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setEmissionRate(p, rate);
             return;
         }
-        public float getEmissionRate()
+        public float GetEmissionRate()
         {
             float out_rate = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getEmissionRate(p, out out_rate);
             return out_rate;
         }
-        public void setEmitterLifetime(float lifetime)
+        public void SetEmitterLifetime(float lifetime)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setEmitterLifetime(p, lifetime);
         }
-        public float getEmitterLifetime()
+        public float GetEmitterLifetime()
         {
             float out_lifetime = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getEmitterLifetime(p, out out_lifetime);
             return out_lifetime;
         }
-        public void setParticleLifetime(float min, float max)
+        public void SetParticleLifetime(float min, float max)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setParticleLifetime(p, min, max);
             return;
         }
-        public void getParticleLifetime(out int out_min, out int out_max)
+        public void GetParticleLifetime(out int out_min, out int out_max)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_getParticleLifetime(p, out out_min, out out_max);
         }
-        public void setPosition(float x, float y)
+        public void SetPosition(float x, float y)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setPosition(p, x, y);
         }
-        public Float2 getPosition()
+        public Float2 GetPosition()
         {
             float out_x = 0, out_y = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getPosition(p, out out_x, out out_y);
             return new Float2(out_x, out_y);
         }
-        public void moveTo(float x, float y)
+        public void MoveTo(float x, float y)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_moveTo(p, x, y);
         }
-        public void setAreaSpread(AreaSpreadDistribution distribution_type, float x, float y)
+        public void SetAreaSpread(AreaSpreadDistribution distribution_type, float x, float y)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setAreaSpread(p, (int)distribution_type, x, y);
         }
-        public void getAreaSpread(out AreaSpreadDistribution out_distribution_type, out float out_x, out float out_y)
+        public void GetAreaSpread(out AreaSpreadDistribution out_distribution_type, out float out_x, out float out_y)
         {
             int out_distribution = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getAreaSpread(p, out out_distribution, out out_x, out out_y);
             out_distribution_type = (AreaSpreadDistribution)out_distribution;
         }
-        public void setDirection(float direction)
+        public void SetDirection(float direction)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setDirection(p, direction);
             return;
         }
-        public float getDirection()
+        public float GetDirection()
         {
             float out_direction = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getDirection(p, out out_direction);
             return out_direction;
         }
-        public void setSpread(float spread)
+        public void SetSpread(float spread)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setSpread(p, spread);
             return;
         }
-        public float getSpread()
+        public float GetSpread()
         {
             float out_spread = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getSpread(p, out out_spread);
             return out_spread;
         }
-        public void setSpeed(float min, float max)
+        public void SetSpeed(float min, float max)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setSpeed(p, min, max);
             return;
         }
-        public void getSpeed(out float out_min, out float out_max)
+        public void GetSpeed(out float out_min, out float out_max)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_getSpeed(p, out out_min, out out_max);
         }
-        public void setLinearAcceleration(float xmin, float ymin, float xmax, float ymax)
+        public void SetLinearAcceleration(float xmin, float ymin, float xmax, float ymax)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setLinearAcceleration(p, xmin, ymin, xmax, ymax);
         }
-        public void getLinearAcceleration(out float out_xmin, out float out_ymin, out float out_xmax, out float out_ymax)
+        public void GetLinearAcceleration(out float out_xmin, out float out_ymin, out float out_xmax, out float out_ymax)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_getLinearAcceleration(p, out out_xmin, out out_ymin, out out_xmax, out out_ymax);
         }
-        public void setRadialAcceleration(float min, float max)
+        public void SetRadialAcceleration(float min, float max)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setRadialAcceleration(p, min, max);
         }
-        public void getRadialAcceleration(out int out_min, out int out_max)
+        public void GetRadialAcceleration(out int out_min, out int out_max)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_getRadialAcceleration(p, out out_min, out out_max);
         }
-        public void setTangentialAcceleration(float min, float max)
+        public void SetTangentialAcceleration(float min, float max)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setTangentialAcceleration(p, min, max);
         }
-        public void getTangentialAcceleration(out int out_min, out int out_max)
+        public void GetTangentialAcceleration(out int out_min, out int out_max)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_getTangentialAcceleration(p, out out_min, out out_max);
         }
-        public void setLinearDamping(float min, float max)
+        public void SetLinearDamping(float min, float max)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setLinearDamping(p, min, max);
         }
-        public void getLinearDamping(out int out_min, out int out_max)
+        public void GetLinearDamping(out int out_min, out int out_max)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_getLinearDamping(p, out out_min, out out_max);
         }
-        public void setSizes(float[] sizearray)
+        public void SetSizes(float[] sizearray)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setSizes(p, sizearray, sizearray.Length);
         }
@@ -1039,58 +1039,58 @@ namespace Love2d.Type
             Love2dDll.wrap_love_dll_type_ParticleSystem_getSizes(p, out out_sizearray, out out_sizearray_length);
             return DllTool.readFloatsAndRelease(out_sizearray, out_sizearray_length);
         }
-        public void setSizeVariation(float variation)
+        public void SetSizeVariation(float variation)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setSizeVariation(p, variation);
             return;
         }
-        public float getSizeVariation()
+        public float GetSizeVariation()
         {
             float out_variation = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getSizeVariation(p, out out_variation);
             return out_variation;
         }
-        public void setRotation(float min, float max)
+        public void SetRotation(float min, float max)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setRotation(p, min, max);
             return;
         }
-        public void getRotation(out int out_min, out int out_max)
+        public void GetRotation(out int out_min, out int out_max)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_getRotation(p, out out_min, out out_max);
         }
-        public void setSpin(float start, float end)
+        public void SetSpin(float start, float end)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setSpin(p, start, end);
             return;
         }
-        public void getSpin(out float out_start, out float out_end)
+        public void GetSpin(out float out_start, out float out_end)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_getSpin(p, out out_start, out out_end);
         }
-        public void setSpinVariation(float variation)
+        public void SetSpinVariation(float variation)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setSpinVariation(p, variation);
             return;
         }
-        public float getSpinVariation()
+        public float GetSpinVariation()
         {
             float out_variation = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getSpinVariation(p, out out_variation);
             return out_variation;
         }
-        public void setOffset(float x, float y)
+        public void SetOffset(float x, float y)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setOffset(p, x, y);
             return;
         }
-        public Float2 getOffset()
+        public Float2 GetOffset()
         {
             float out_x = 0, out_y = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getOffset(p, out out_x, out out_y);
             return new Float2(out_x, out_y);
         }
-        public void setColors(Int4[] colorarray)
+        public void SetColors(Int4[] colorarray)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setColors(p, colorarray, colorarray.Length);
         }
@@ -1101,7 +1101,7 @@ namespace Love2d.Type
             Love2dDll.wrap_love_dll_type_ParticleSystem_getColors(p, out out_colorarray, out out_colorarray_length);
             return DllTool.readInt4sAndRelease(out_colorarray, out_colorarray_length);
         }
-        public void setQuads(Quad[] quads)
+        public void SetQuads(Quad[] quads)
         {
             IntPtr[] quadsarray = new IntPtr[quads.Length];
             for (int i = 0; i < quads.Length; i++)
@@ -1118,61 +1118,61 @@ namespace Love2d.Type
             Love2dDll.wrap_love_dll_type_ParticleSystem_getQuads(p, out out_quadsarray, out out_quadsarray_length);
             return DllTool.readIntPtrsWithConvertAndRelease<Quad>(out_quadsarray, out_quadsarray_length);
         }
-        public void setRelativeRotation(bool enable)
+        public void SetRelativeRotation(bool enable)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setRelativeRotation(p, enable);
         }
-        public bool hasRelativeRotation()
+        public bool HasRelativeRotation()
         {
             bool out_enable = false;
             Love2dDll.wrap_love_dll_type_ParticleSystem_hasRelativeRotation(p, out out_enable);
             return out_enable;
         }
-        public uint getCount()
+        public uint GetCount()
         {
             uint out_count = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getCount(p, out out_count);
             return out_count;
         }
-        public void start()
+        public void Start()
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_start(p);
         }
-        public void stop()
+        public void Stop()
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_stop(p);
         }
-        public void pause()
+        public void Pause()
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_pause(p);
         }
-        public void reset()
+        public void Reset()
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_reset(p);
         }
-        public void emit(int num)
+        public void Emit(int num)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_emit(p, num);
         }
-        public bool isActive()
+        public bool IsActive()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_ParticleSystem_isActive(p, out out_result);
             return out_result;
         }
-        public bool isPaused()
+        public bool IsPaused()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_ParticleSystem_isPaused(p, out out_result);
             return out_result;
         }
-        public bool isStopped()
+        public bool IsStopped()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_ParticleSystem_isStopped(p, out out_result);
             return out_result;
         }
-        public void update(float dt)
+        public void Update(float dt)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_update(p, dt);
             return;
@@ -1181,17 +1181,17 @@ namespace Love2d.Type
 
     public partial class Quad : LoveObject
     {
-        public void setViewport(float x, float y, float w, float h)
+        public void SetViewport(float x, float y, float w, float h)
         {
             Love2dDll.wrap_love_dll_type_Quad_setViewport(p, x, y, w, h);
         }
-        public Float4 getViewport()
+        public Float4 GetViewport()
         {
             float out_x, out_y, out_w, out_h;
             Love2dDll.wrap_love_dll_type_Quad_getViewport(p, out out_x, out out_y, out out_w, out out_h);
             return new Float4(out_x, out_y, out_w, out_h);
         }
-        public Float2 getTextureDimensions()
+        public Float2 GetTextureDimensions()
         {
             double out_sw, out_sh;
             Love2dDll.wrap_love_dll_type_Quad_getTextureDimensions(p, out out_sw, out out_sh);
@@ -1213,45 +1213,45 @@ namespace Love2d.Type
             UNIFORM_MAX_ENUM
         };
 
-        public string getWarnings()
+        public string GetWarnings()
         {
             IntPtr out_str = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_Shader_getWarnings(p, out out_str);
             return DllTool.WSToStringAndRelease(out_str);
         }
-        public void sendColors(byte[] name, params Int4[] valuearray)
+        public void SendColors(byte[] name, params Int4[] valuearray)
         {
             Love2dDll.wrap_love_dll_type_Shader_sendColors(p, name, valuearray, valuearray.Length);
         }
-        public void sendFloats(byte[] name, params float[] valuearray)
+        public void SendFloats(byte[] name, params float[] valuearray)
         {
             Love2dDll.wrap_love_dll_type_Shader_sendFloats(p, name, valuearray, valuearray.Length);
         }
-        public void sendInts(byte[] name, params int[] valuearray)
+        public void SendInts(byte[] name, params int[] valuearray)
         {
             Love2dDll.wrap_love_dll_type_Shader_sendInts(p, name, valuearray, valuearray.Length);
         }
-        public void sendBooleans(byte[] name, params bool[] valuearray)
+        public void SendBooleans(byte[] name, params bool[] valuearray)
         {
             Love2dDll.wrap_love_dll_type_Shader_sendBooleans(p, name, valuearray, valuearray.Length);
         }
-        public void sendMatrix(byte[] name, float[] valuearray)
+        public void SendMatrix(byte[] name, float[] valuearray)
         {
             Love2dDll.wrap_love_dll_type_Shader_sendMatrices(p, name, valuearray, valuearray.Length);
         }
-        public void sendMatrix(byte[] name, Matrix22 valuearray)
+        public void SendMatrix(byte[] name, Matrix22 valuearray)
         {
             Love2dDll.wrap_love_dll_type_Shader_sendMatrices(p, name, valuearray.data, valuearray.data.Length);
         }
-        public void sendMatrix(byte[] name, Matrix33 valuearray)
+        public void SendMatrix(byte[] name, Matrix33 valuearray)
         {
             Love2dDll.wrap_love_dll_type_Shader_sendMatrices(p, name, valuearray.data, valuearray.data.Length);
         }
-        public void sendMatrix(byte[] name, Matrix44 valuearray)
+        public void SendMatrix(byte[] name, Matrix44 valuearray)
         {
             Love2dDll.wrap_love_dll_type_Shader_sendMatrices(p, name, valuearray.data, valuearray.data.Length);
         }
-        public void sendTexture(byte[] name, Texture texture)
+        public void SendTexture(byte[] name, Texture texture)
         {
             Love2dDll.wrap_love_dll_type_Shader_sendTexture(p, name, texture.p);
         }
@@ -1276,49 +1276,49 @@ namespace Love2d.Type
 
     public partial class SpriteBatch : Drawable
     {
-        public int add(float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public int Add(float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
             int out_index = 0;
             Love2dDll.wrap_love_dll_type_SpriteBatch_add(p, x, y, angle, sx, sy, ox, oy, kx, ky, out out_index);
             return out_index;
         }
-        public int add(Quad quad, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public int Add(Quad quad, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
             int out_index = 0;
             Love2dDll.wrap_love_dll_type_SpriteBatch_add_Quad(p, quad.p, x, y, angle, sx, sy, ox, oy, kx, ky, out out_index);
             return out_index;
         }
-        public void set(int index, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public void Set(int index, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
             Love2dDll.wrap_love_dll_type_SpriteBatch_set(p, index, x, y, angle, sx, sy, ox, oy, kx, ky);
         }
-        public void set(int index, Quad quad, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public void Set(int index, Quad quad, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
             Love2dDll.wrap_love_dll_type_SpriteBatch_set_Quad(p, index, quad.p, x, y, angle, sx, sy, ox, oy, kx, ky);
         }
-        public void clear()
+        public void Clear()
         {
             Love2dDll.wrap_love_dll_type_SpriteBatch_clear(p);
         }
-        public void flush()
+        public void Flush()
         {
             Love2dDll.wrap_love_dll_type_SpriteBatch_flush(p);
         }
-        public void setTexture(Text texture)
+        public void SetTexture(Text texture)
         {
             Love2dDll.wrap_love_dll_type_SpriteBatch_setTexture(p, texture.p);
         }
-        public Texture getTexture()
+        public Texture GetTexture()
         {
             IntPtr out_texture = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_SpriteBatch_getTexture(p, out out_texture);
-            return newObject<Texture>(out_texture);
+            return NewObject<Texture>(out_texture);
         }
-        public void setColor()
+        public void SetColor()
         {
             Love2dDll.wrap_love_dll_type_SpriteBatch_setColor_nil(p);
         }
-        public void setColor(int r, int g, int b, int a = 255)
+        public void SetColor(int r, int g, int b, int a = 255)
         {
             Love2dDll.wrap_love_dll_type_SpriteBatch_setColor(p, r, g, b, a);
         }
@@ -1331,23 +1331,23 @@ namespace Love2d.Type
             Love2dDll.wrap_love_dll_type_SpriteBatch_getColor(p, out out_exist, out out_r, out out_g, out out_b, out out_a);
             return new Tuple<bool, Int4>(out_exist, new Int4(out_r, out_g, out_b, out_a));
         }
-        public int getCount()
+        public int GetCount()
         {
             int out_count = 0;
             Love2dDll.wrap_love_dll_type_SpriteBatch_getCount(p, out out_count);
             return out_count;
         }
-        public void setBufferSize(int size)
+        public void SetBufferSize(int size)
         {
             Love2dDll.wrap_love_dll_type_SpriteBatch_setBufferSize(p, size);
         }
-        public int getBufferSize()
+        public int GetBufferSize()
         {
             int out_buffersize = 0;
             Love2dDll.wrap_love_dll_type_SpriteBatch_getBufferSize(p, out out_buffersize);
             return out_buffersize;
         }
-        public void attachAttribute(byte[] name, Mesh mesh)
+        public void AttachAttribute(byte[] name, Mesh mesh)
         {
             Love2dDll.wrap_love_dll_type_SpriteBatch_attachAttribute(p, name, mesh.p);
         }
@@ -1355,24 +1355,24 @@ namespace Love2d.Type
 
     public partial class Text : Drawable
     {
-        public void set()
+        public void Set()
         {
             Love2dDll.wrap_love_dll_type_Text_set_nil(p);
             return;
         }
-        public void set(ColoredString coloredStr)
+        public void Set(ColoredString coloredStr)
         {
             coloredStr.ExecResource((Tuple<BytePtr[], Int4[]> tmp) =>{
                 Love2dDll.wrap_love_dll_type_Text_set_coloredstring(p, tmp.Item1, tmp.Item2, coloredStr.Length);
             });
         }
-        public void setf(ColoredString coloredStr, float wraplimit, Font.AlignMode align_type)
+        public void Setf(ColoredString coloredStr, float wraplimit, Font.AlignMode align_type)
         {
             coloredStr.ExecResource((Tuple<BytePtr[], Int4[]> tmp) =>{
                 Love2dDll.wrap_love_dll_type_Text_setf(p, tmp.Item1, tmp.Item2, coloredStr.Length, wraplimit, (int)align_type);
             });
         }
-        public int add(ColoredString coloredStr, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public int Add(ColoredString coloredStr, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
             int out_index = 0;
             coloredStr.ExecResource((Tuple<BytePtr[], Int4[]> tmp) =>{
@@ -1380,7 +1380,7 @@ namespace Love2d.Type
             });
             return out_index;
         }
-        public int add(ColoredString coloredStr, float wraplimit, Font.AlignMode align_type, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public int Add(ColoredString coloredStr, float wraplimit, Font.AlignMode align_type, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
             int out_index = 0;
             coloredStr.ExecResource((Tuple<BytePtr[], Int4[]> tmp) => {
@@ -1388,29 +1388,29 @@ namespace Love2d.Type
             });
             return out_index;
         }
-        public void clear()
+        public void Clear()
         {
             Love2dDll.wrap_love_dll_type_Text_clear(p);
             return;
         }
-        public void setFont(Font f)
+        public void SetFont(Font f)
         {
             Love2dDll.wrap_love_dll_type_Text_setFont(p, f.p);
             return;
         }
-        public Font getFont()
+        public Font GetFont()
         {
             IntPtr font = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_Text_getFont(p, out font);
-            return newObject<Font>(font);
+            return NewObject<Font>(font);
         }
-        public int getWidth(int index)
+        public int GetWidth(int index)
         {
             int out_w = 0;
             Love2dDll.wrap_love_dll_type_Text_getWidth(p, index, out out_w);
             return out_w;
         }
-        public int getHeight(int index)
+        public int GetHeight(int index)
         {
             int out_h = 0;
             Love2dDll.wrap_love_dll_type_Text_getHeight(p, index, out out_h);
@@ -1450,23 +1450,23 @@ namespace Love2d.Type
             }
         };
 
-        public int getWidth()
+        public int GetWidth()
         {
             int out_w;
             Love2dDll.wrap_love_dll_type_Texture_getWidth(p, out out_w);
             return out_w;
         }
-        public int getHeight()
+        public int GetHeight()
         {
             int out_h;
             Love2dDll.wrap_love_dll_type_Texture_getHeight(p, out out_h);
             return out_h;
         }
-        public void setFilter(FilterMode filtermin_type, FilterMode filtermag_type, float anisotropy)
+        public void SetFilter(FilterMode filtermin_type, FilterMode filtermag_type, float anisotropy)
         {
             Love2dDll.wrap_love_dll_type_Texture_setFilter(p, (int)filtermin_type, (int)filtermag_type, anisotropy);
         }
-        public void getFilter(out FilterMode out_filtermin_type, out FilterMode out_filtermag_type, out float out_anisotropy)
+        public void GetFilter(out FilterMode out_filtermin_type, out FilterMode out_filtermag_type, out float out_anisotropy)
         {
             int out_filtermin = 0, out_filtermag = 0;
             Love2dDll.wrap_love_dll_type_Texture_getFilter(p, out out_filtermin, out out_filtermag, out out_anisotropy);
@@ -1474,11 +1474,11 @@ namespace Love2d.Type
             out_filtermag_type = (FilterMode)out_filtermag;
             out_filtermin_type = (FilterMode)out_filtermin;
         }
-        public void setWrap(WrapMode wraphoriz_type, WrapMode wrapvert_type)
+        public void SetWrap(WrapMode wraphoriz_type, WrapMode wrapvert_type)
         {
             Love2dDll.wrap_love_dll_type_Texture_setWrap(p, (int)wraphoriz_type, (int)wrapvert_type);
         }
-        public void getWrap(out WrapMode out_wraphoriz_type, out WrapMode out_wrapvert_type)
+        public void GetWrap(out WrapMode out_wraphoriz_type, out WrapMode out_wrapvert_type)
         {
             int out_wraphoriz = 0, out_wrapvert = 0;
             Love2dDll.wrap_love_dll_type_Texture_getWrap(p, out out_wraphoriz, out out_wrapvert);
@@ -1489,43 +1489,43 @@ namespace Love2d.Type
 
     public partial class Video : Drawable
     {
-        public VideoStream getStream()
+        public VideoStream GetStream()
         {
             IntPtr out_videsStream = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_Video_getStream(p, out out_videsStream);
-            return newObject<VideoStream>(out_videsStream);
+            return NewObject<VideoStream>(out_videsStream);
         }
-        public Source getSource()
+        public Source GetSource()
         {
             IntPtr out_source = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_Video_getSource(p, out out_source);
-            return newObject<Source>(out_source);
+            return NewObject<Source>(out_source);
         }
-        public void setSource()
+        public void SetSource()
         {
             Love2dDll.wrap_love_dll_type_Video_setSource_nil(p);
         }
-        public void setSource(Source source)
+        public void SetSource(Source source)
         {
             Love2dDll.wrap_love_dll_type_Video_setSource(p, source.p);
         }
-        public int getWidth()
+        public int GetWidth()
         {
             int out_w = 0;
             Love2dDll.wrap_love_dll_type_Video_getWidth(p, out out_w);
             return out_w;
         }
-        public int getHeight()
+        public int GetHeight()
         {
             int out_h = 0;
             Love2dDll.wrap_love_dll_type_Video_getHeight(p, out out_h);
             return out_h;
         }
-        public void setFilter(Texture.FilterMode filtermin_type, Texture.FilterMode filtermag_type, float anisotropy)
+        public void SetFilter(Texture.FilterMode filtermin_type, Texture.FilterMode filtermag_type, float anisotropy)
         {
             Love2dDll.wrap_love_dll_type_Video_setFilter(p, (int)filtermin_type, (int)filtermag_type, anisotropy);
         }
-        public void getFilter(out Texture.FilterMode out_filtermin_type, out Texture.FilterMode out_filtermag_type, out float out_anisotropy)
+        public void GetFilter(out Texture.FilterMode out_filtermin_type, out Texture.FilterMode out_filtermag_type, out float out_anisotropy)
         {
             int out_filtermin = 0, out_filtermag = 0;
             Love2dDll.wrap_love_dll_type_Video_getFilter(p, out out_filtermin, out out_filtermag, out out_anisotropy);
@@ -1579,25 +1579,25 @@ namespace Love2d.Type
             FORMAT_MAX_ENUM
         };
 
-        public int getWidth(int miplevel)
+        public int GetWidth(int miplevel)
         {
             int out_w = 0;
             Love2dDll.wrap_love_dll_type_CompressedImageData_getWidth(p, miplevel, out out_w);
             return out_w;
         }
-        public int getHeight(int miplevel)
+        public int GetHeight(int miplevel)
         {
             int out_h = 0;
             Love2dDll.wrap_love_dll_type_CompressedImageData_getHeight(p, miplevel, out out_h);
             return out_h;
         }
-        public int getMipmapCount()
+        public int GetMipmapCount()
         {
             int out_count = 0;
             Love2dDll.wrap_love_dll_type_CompressedImageData_getMipmapCount(p, out out_count);
             return out_count;
         }
-        public Format getFormat()
+        public Format GetFormat()
         {
             int out_format_type = 0;
             Love2dDll.wrap_love_dll_type_CompressedImageData_getFormat(p, out out_format_type);
@@ -1614,41 +1614,41 @@ namespace Love2d.Type
             ENCODED_MAX_ENUM
         };
 
-        public int getWidth()
+        public int GetWidth()
         {
             int out_w = 0;
             Love2dDll.wrap_love_dll_type_ImageData_getWidth(p, out out_w);
             return out_w;
         }
-        public int getHeight()
+        public int GetHeight()
         {
             int out_h = 0;
             Love2dDll.wrap_love_dll_type_ImageData_getHeight(p, out out_h);
             return out_h;
         }
-        public Int4 getPixel(int x, int y)
+        public Int4 GetPixel(int x, int y)
         {
             byte out_r, out_g, out_b, out_a;
             Love2dDll.wrap_love_dll_type_ImageData_getPixel(p, x, y, out out_r, out out_g, out out_b, out out_a);
             return new Int4(out_r, out_g, out_b, out_a);
         }
-        public void setPixel(int x, int y, byte r, byte g, byte b, byte a)
+        public void SetPixel(int x, int y, byte r, byte g, byte b, byte a)
         {
             Love2dDll.wrap_love_dll_type_ImageData_setPixel(p, x, y, r, g, b, a);
             return;
         }
-        public void paste(ImageData src_imageData, int dx, int dy, int sx, int sy, int sw, int sh)
+        public void Paste(ImageData src_imageData, int dx, int dy, int sx, int sy, int sw, int sh)
         {
             Love2dDll.wrap_love_dll_type_ImageData_paste(p, src_imageData.p, dx, dy, sx, sy, sw, sh);
             return;
         }
-        public void encode(EncodedFormat format_type, byte[] filename)
+        public void Encode(EncodedFormat format_type, byte[] filename)
         {
             Love2dDll.wrap_love_dll_type_ImageData_encode(p, (int)format_type, filename);
         }
 
         public delegate void MapPixelDelegate(byte r, byte g, byte b, byte a, out byte out_r, out byte out_g, out byte out_b, out byte out_a);
-        public void mapPixel(MapPixelDelegate mpd, int startX, int startY, int width, int height)
+        public void MapPixel(MapPixelDelegate mpd, int startX, int startY, int width, int height)
         {
             IntPtr ptrLock = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_ImageData_ext_mutexLock(p, out ptrLock);
@@ -1697,7 +1697,7 @@ namespace Love2d.Type
         };
 
         // What is the type of Curor is ? System type or Custom-Image type ?
-        public CursorType getType()
+        public CursorType GetType()
         {
             int out_cursortype_type = 0;
             Love2dDll.wrap_love_dll_type_Cursor_getType(p, out out_cursortype_type);
@@ -1705,7 +1705,7 @@ namespace Love2d.Type
         }
 
         // If type of Curor is System type, which System type of the cursor is ?
-        public SystemCursor getSystemType()
+        public SystemCursor GetSystemType()
         {
             int out_systype_type = 0;
             Love2dDll.wrap_love_dll_type_Cursor_getSystemType(p, out out_systype_type);
@@ -1728,25 +1728,25 @@ namespace Love2d.Type
         public const int DEFAULT_BIT_DEPTH = 16;
 
 
-        public int getChannels()
+        public int GetChannels()
         {
             int out_channels = 0;
             Love2dDll.wrap_love_dll_type_Decoder_getChannels(p, out out_channels);
             return out_channels;
         }
-        public int getBitDepth()
+        public int GetBitDepth()
         {
             int out_bitDepth = 0;
             Love2dDll.wrap_love_dll_type_Decoder_getBitDepth(p, out out_bitDepth);
             return out_bitDepth;
         }
-        public int getSampleRate()
+        public int GetSampleRate()
         {
             int out_sampleRate = 0;
             Love2dDll.wrap_love_dll_type_Decoder_getSampleRate(p, out out_sampleRate);
             return out_sampleRate;
         }
-        public double getDuration()
+        public double GetDuration()
         {
             double out_duration = 0;
             Love2dDll.wrap_love_dll_type_Decoder_getDuration(p, out out_duration);
@@ -1756,42 +1756,42 @@ namespace Love2d.Type
 
     public partial class SoundData : Data
     {
-        public int getChannels()
+        public int GetChannels()
         {
             int out_channels = 0;
             Love2dDll.wrap_love_dll_SoundData_getChannels(p, out out_channels);
             return out_channels;
         }
-        public int getBitDepth()
+        public int GetBitDepth()
         {
             int out_bitDepth = 0;
             Love2dDll.wrap_love_dll_SoundData_getBitDepth(p, out out_bitDepth);
             return out_bitDepth;
         }
-        public int getSampleRate()
+        public int GetSampleRate()
         {
             int out_sampleRate = 0;
             Love2dDll.wrap_love_dll_SoundData_getSampleRate(p, out out_sampleRate);
             return out_sampleRate;
         }
-        public int getSampleCount()
+        public int GetSampleCount()
         {
             int out_sampleCount = 0;
             Love2dDll.wrap_love_dll_SoundData_getSampleCount(p, out out_sampleCount);
             return out_sampleCount;
         }
-        public double getDuration()
+        public double GetDuration()
         {
             double out_duration = 0;
             Love2dDll.wrap_love_dll_SoundData_getDuration(p, out out_duration);
             return out_duration;
         }
-        public void setSample(int i, float sample)
+        public void SetSample(int i, float sample)
         {
             Love2dDll.wrap_love_dll_SoundData_setSample(p, i, sample);
             return;
         }
-        public float getSample(int i)
+        public float GetSample(int i)
         {
             float out_sample = 0;
             Love2dDll.wrap_love_dll_SoundData_getSample(p, i, out out_sample);
@@ -1801,35 +1801,35 @@ namespace Love2d.Type
 
     public partial class VideoStream : Stream
     {
-        public string getFilename()
+        public string GetFilename()
         {
             IntPtr out_filename = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_VideoStream_getFilename(p, out out_filename);
             return DllTool.WSToStringAndRelease(out_filename);
         }
-        public void play()
+        public void Play()
         {
             Love2dDll.wrap_love_dll_type_VideoStream_play(p);
         }
-        public void pause()
+        public void Pause()
         {
             Love2dDll.wrap_love_dll_type_VideoStream_pause(p);
         }
-        public void seek(double offset)
+        public void Seek(double offset)
         {
             Love2dDll.wrap_love_dll_type_VideoStream_seek(p, offset);
         }
-        public void rewind()
+        public void Rewind()
         {
             Love2dDll.wrap_love_dll_type_VideoStream_rewind(p);
         }
-        public double tell()
+        public double Tell()
         {
             double out_position = 0;
             Love2dDll.wrap_love_dll_type_VideoStream_tell(p, out out_position);
             return out_position;
         }
-        public bool isPlaying()
+        public bool IsPlaying()
         {
             bool out_isplaying = false;
             Love2dDll.wrap_love_dll_type_VideoStream_isPlaying(p, out out_isplaying);
@@ -1839,65 +1839,65 @@ namespace Love2d.Type
 
     public partial class BezierCurve : LoveObject
     {
-        public int getDegree()
+        public int GetDegree()
         {
             int out_degree = 0;
             Love2dDll.wrap_love_dll_type_BezierCurve_getDegree(p, out out_degree);
             return out_degree;
         }
-        public BezierCurve getDerivative()
+        public BezierCurve GetDerivative()
         {
             IntPtr out_deriv = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_BezierCurve_getDerivative(p, out out_deriv);
-            return newObject<BezierCurve>(out_deriv);
+            return NewObject<BezierCurve>(out_deriv);
         }
-        public Float2 getControlPoint(int idx)
+        public Float2 GetControlPoint(int idx)
         {
             float out_x, out_y;
             Love2dDll.wrap_love_dll_type_BezierCurve_getControlPoint(p, idx, out out_x, out out_y);
             return new Float2(out_x, out_y);
         }
-        public void setControlPoint(int idx, float x, float y)
+        public void SetControlPoint(int idx, float x, float y)
         {
             Love2dDll.wrap_love_dll_type_BezierCurve_setControlPoint(p, idx, x, y);
         }
-        public void insertControlPoint(int idx, float x, float y)
+        public void InsertControlPoint(int idx, float x, float y)
         {
             Love2dDll.wrap_love_dll_type_BezierCurve_insertControlPoint(p, idx, x, y);
         }
-        public void removeControlPoint(int idx)
+        public void RemoveControlPoint(int idx)
         {
             Love2dDll.wrap_love_dll_type_BezierCurve_removeControlPoint(p, idx);
         }
-        public int getControlPointCount()
+        public int GetControlPointCount()
         {
             int out_count = 0;
             Love2dDll.wrap_love_dll_type_BezierCurve_getControlPointCount(p, out out_count);
             return out_count;
         }
-        public void translate(float dx, float dy)
+        public void Translate(float dx, float dy)
         {
             Love2dDll.wrap_love_dll_type_BezierCurve_translate(p, dx, dy);
         }
-        public void rotate(double phi, float ox, float oy)
+        public void Rotate(double phi, float ox, float oy)
         {
             Love2dDll.wrap_love_dll_type_BezierCurve_rotate(p, phi, ox, oy);
         }
-        public void scale(double s, float ox, float oy)
+        public void Scale(double s, float ox, float oy)
         {
             Love2dDll.wrap_love_dll_type_BezierCurve_scale(p, s, ox, oy);
         }
-        public Float2 evaluate(double t)
+        public Float2 Evaluate(double t)
         {
             float out_x, out_y;
             Love2dDll.wrap_love_dll_type_BezierCurve_evaluate(p, t, out out_x, out out_y);
             return new Float2(out_x, out_y);
         }
-        public BezierCurve getSegment(double t1, double t2)
+        public BezierCurve GetSegment(double t1, double t2)
         {
             IntPtr out_segment = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_BezierCurve_getSegment(p, t1, t2, out out_segment);
-            return newObject<BezierCurve>(out_segment);
+            return NewObject<BezierCurve>(out_segment);
         }
         public Float2[] render(int accuracy)
         {
@@ -1917,31 +1917,31 @@ namespace Love2d.Type
 
     public partial class RandomGenerator : LoveObject
     {
-        public double random()
+        public double Random()
         {
             double out_result = 0;
             Love2dDll.wrap_love_dll_type_RandomGenerator_random(p, out out_result);
             return out_result;
         }
-        public double randomNormal(double stddev, double mean)
+        public double RandomNormal(double stddev, double mean)
         {
             double out_result = 0;
             Love2dDll.wrap_love_dll_type_RandomGenerator_randomNormal(p, stddev, mean, out out_result);
             return out_result;
         }
-        public void setSeed(uint low, uint high)
+        public void SetSeed(uint low, uint high)
         {
             Love2dDll.wrap_love_dll_type_RandomGenerator_setSeed(p, low, high);
         }
-        public void getSeed(out uint out_low, out uint out_high)
+        public void GetSeed(out uint out_low, out uint out_high)
         {
             Love2dDll.wrap_love_dll_type_RandomGenerator_getSeed(p, out out_low, out out_high);
         }
-        public void setState(byte[] state)
+        public void SetState(byte[] state)
         {
             Love2dDll.wrap_love_dll_type_RandomGenerator_setState(p, state);
         }
-        public string getState()
+        public string GetState()
         {
             IntPtr out_str;
             Love2dDll.wrap_love_dll_type_RandomGenerator_getState(p, out out_str);
@@ -2024,55 +2024,55 @@ namespace Love2d.Type
 
 
 
-        public bool isConnected()
+        public bool IsConnected()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_Joystick_isConnected(p, out out_result);
             return out_result;
         }
-        public string getName()
+        public string GetName()
         {
             IntPtr out_str = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_Joystick_getName(p, out out_str);
             return DllTool.WSToStringAndRelease(out_str);
         }
-        public int getID()
+        public int GetID()
         {
             int out_id = 0;
             Love2dDll.wrap_love_dll_type_Joystick_getID(p, out out_id);
             return out_id;
         }
-        public int getInstanceID()
+        public int GetInstanceID()
         {
             int out_instanceid = 0;
             Love2dDll.wrap_love_dll_type_Joystick_getInstanceID(p, out out_instanceid);
             return out_instanceid;
         }
-        public string getGUID()
+        public string GetGUID()
         {
             IntPtr out_str = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_Joystick_getGUID(p, out out_str);
             return DllTool.WSToStringAndRelease(out_str);
         }
-        public int getAxisCount()
+        public int GetAxisCount()
         {
             int out_count = 0;
             Love2dDll.wrap_love_dll_type_Joystick_getAxisCount(p, out out_count);
             return out_count;
         }
-        public int getButtonCount()
+        public int GetButtonCount()
         {
             int out_count = 0;
             Love2dDll.wrap_love_dll_type_Joystick_getButtonCount(p, out out_count);
             return out_count;
         }
-        public int getHatCount()
+        public int GetHatCount()
         {
             int out_count = 0;
             Love2dDll.wrap_love_dll_type_Joystick_getHatCount(p, out out_count);
             return out_count;
         }
-        public float getAxis(int axisindex)
+        public float GetAxis(int axisindex)
         {
             float out_axis = 0;
             Love2dDll.wrap_love_dll_type_Joystick_getAxis(p, axisindex, out out_axis);
@@ -2085,55 +2085,55 @@ namespace Love2d.Type
             Love2dDll.wrap_love_dll_type_Joystick_getAxes(p, out out_axes, out out_axes_length);
             return DllTool.readFloatsAndRelease(out_axes, out_axes_length);
         }
-        public Hat getHat(int hatindex)
+        public Hat GetHat(int hatindex)
         {
             int out_hat_type = 0;
             Love2dDll.wrap_love_dll_type_Joystick_getHat(p, hatindex, out out_hat_type);
             return (Hat)out_hat_type;
         }
-        public bool isDown(int button)
+        public bool IsDown(int button)
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_Joystick_isDown(p, button, out out_result);
             return out_result;
         }
-        public bool isGamepad()
+        public bool IsGamepad()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_Joystick_isGamepad(p, out out_result);
             return out_result;
         }
-        public float getGamepadAxis(GamepadAxis axis_type)
+        public float GetGamepadAxis(GamepadAxis axis_type)
         {
             float out_gamepadaxis = 0;
             Love2dDll.wrap_love_dll_type_Joystick_getGamepadAxis(p, (int)axis_type, out out_gamepadaxis);
             return out_gamepadaxis;
         }
-        public bool isGamepadDown(GamepadButton gamepadButton_type)
+        public bool IsGamepadDown(GamepadButton gamepadButton_type)
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_Joystick_isGamepadDown(p, (int)gamepadButton_type, out out_result);
             return out_result;
         }
-        public bool isVibrationSupported()
+        public bool IsVibrationSupported()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_Joystick_isVibrationSupported(p, out out_result);
             return out_result;
         }
-        public bool setVibration_nil()
+        public bool SetVibration_nil()
         {
             bool out_success = false;
             Love2dDll.wrap_love_dll_type_Joystick_setVibration_nil(p, out out_success);
             return out_success;
         }
-        public bool setVibration(float left, float right, float duration)
+        public bool SetVibration(float left, float right, float duration)
         {
             bool out_success = false;
             Love2dDll.wrap_love_dll_type_Joystick_setVibration(p, left, right, duration, out out_success);
             return out_success;
         }
-        public void getVibration(out float out_left, out float out_right)
+        public void GetVibration(out float out_left, out float out_right)
         {
             Love2dDll.wrap_love_dll_type_Joystick_getVibration(p, out out_left, out out_right);
         }
@@ -2142,7 +2142,7 @@ namespace Love2d.Type
 
     public partial class Data : LoveObject
     {
-        public uint getSize()
+        public uint GetSize()
         {
             uint datasize;
             Love2dDll.wrap_love_dll_type_Data_getSize(p, out datasize);

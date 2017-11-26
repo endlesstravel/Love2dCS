@@ -17,13 +17,13 @@ namespace Example
     {
         public override void Draw()
         {
-            throw new Exception("gaegaewfaew");
-            Graphics.print("Hello World!", 400, 300);
+            //throw new Exception("gaegaewfaew");
+            Graphics.Print("Hello World!", 400, 300);
         }
 
         static void Main(string[] args)
         {
-            //Love2d.Boot.Run();
+            Love2d.Boot.Run();
             Love2d.Boot.Run(new Program());
 
             //Console.ReadKey();

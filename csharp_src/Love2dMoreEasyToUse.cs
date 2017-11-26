@@ -4,92 +4,129 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 using Love2d.Module;
 using Love2d.Type;
 
 namespace Love2d.Module
 {
+    public partial class Window
+    {
+        public static bool SetFullscreen(bool fullscreen)
+        {
+            bool out_fullscreen; FullscreenType out_fstype;
+            GetFullscreen(out out_fullscreen, out out_fstype);
+            return SetFullscreen(fullscreen, out_fstype);
+        }
+        public static bool GetFullscreen()
+        {
+            bool out_fullscreen; FullscreenType out_fstype;
+            GetFullscreen(out out_fullscreen, out out_fstype);
+            return out_fullscreen;
+        }
+    }
+
     public partial class FileSystem
     {
         //// new plus
-        public static FileData newFileData(string filename)
+        public static FileData NewFileData(string filename)
         {
-            return newFileData(newFile(filename));
+            return NewFileData(NewFile(filename));
         }
         //// end new plus
     }
 
+    public partial class Sound
+    {
+
+        //// new plus
+        public static SoundData NewSoundData(File file)
+        {
+            var decoder = NewDecoder(file);
+            return NewSoundData(decoder);
+        }
+        public static Decoder NewDecoder(string filename, int bufferSize = Decoder.DEFAULT_BUFFER_SIZE)
+        {
+            var fdata = FileSystem.NewFileData(filename);
+            return NewDecoder(fdata, bufferSize);
+        }
+        public static SoundData NewSoundData(string filename)
+        {
+            var decoder = NewDecoder(filename);
+            return NewSoundData(decoder);
+        }
+        //// end new plus
+
+    }
 
     public partial class Audio
     {
         //// new plus
-        public static Source newSource(File file, Source.Type type = Source.Type.TYPE_STREAM)
+        public static Source NewSource(File file, Source.Type type = Source.Type.TYPE_STREAM)
         {
-            var sounddata = Sound.newSoundData(file);
-            return newSource(sounddata);
+            var sounddata = Sound.NewSoundData(file);
+            return NewSource(sounddata);
         }
-        public static Source newSource(FileData fdata, Source.Type type = Source.Type.TYPE_STREAM)
+        public static Source NewSource(FileData fdata, Source.Type type = Source.Type.TYPE_STREAM)
         {
-            return newSource(Sound.newDecoder(fdata));
+            return NewSource(Sound.NewDecoder(fdata));
         }
-        public static Source newSource(string filename, Source.Type type = Source.Type.TYPE_STREAM)
+        public static Source NewSource(string filename, Source.Type type = Source.Type.TYPE_STREAM)
         {
-            //return newSource(FileSystem.newFile(filename));
-            var file = FileSystem.newFile(filename);
-            var dec = Sound.newDecoder(file);
-            return newSource(dec);
+            //return NewSource(FileSystem.NewFile(filename));
+            var file = FileSystem.NewFile(filename);
+            var dec = Sound.NewDecoder(file);
+            return NewSource(dec);
         }
         //// end new plus
     }
 
     public partial class ImageModule
     {
-        public static ImageData newImageData(string filename)
+        public static ImageData NewImageData(string filename)
         {
-            var filedata = FileSystem.newFileData(filename);
-            return newImageData(filedata);
+            var filedata = FileSystem.NewFileData(filename);
+            return NewImageData(filedata);
         }
-        public static CompressedImageData newCompressedData(string filename)
+        public static CompressedImageData NewCompressedData(string filename)
         {
-            var filedata = FileSystem.newFileData(filename);
-            return newCompressedData(filedata);
+            var filedata = FileSystem.NewFileData(filename);
+            return NewCompressedData(filedata);
         }
     }
 
     public partial class FontModule
     {
-        public static Rasterizer newRasterizer(string filename)
+        public static Rasterizer NewRasterizer(string filename)
         {
-            var filedata = FileSystem.newFileData(filename);
-            return newRasterizer(filedata);
+            var filedata = FileSystem.NewFileData(filename);
+            return NewRasterizer(filedata);
         }
     }
 
     public partial class VideoModule
     {
-        public static VideoStream newVideoStream(string filename)
+        public static VideoStream NewVideoStream(string filename)
         {
-            var file = FileSystem.newFile(filename);
-            return newVideoStream(file);
+            var file = FileSystem.NewFile(filename);
+            return NewVideoStream(file);
         }
     }
 
     public partial class Graphics
     {
-        public static Image newImage(ImageData imageData, bool flagMipmaps = false, bool flagLinear = false)
+        public static Image NewImage(ImageData imageData, bool flagMipmaps = false, bool flagLinear = false)
         {
-            return newImage(new ImageData[] { imageData }, flagMipmaps, flagLinear);
+            return NewImage(new ImageData[] { imageData }, flagMipmaps, flagLinear);
         }
-        public static Image newImage(CompressedImageData compressedImageData, bool flagMipmaps = false, bool flagLinear = false)
+        public static Image NewImage(CompressedImageData compressedImageData, bool flagMipmaps = false, bool flagLinear = false)
         {
-            return newImage(new CompressedImageData[] { compressedImageData }, flagMipmaps, flagLinear);
+            return NewImage(new CompressedImageData[] { compressedImageData }, flagMipmaps, flagLinear);
         }
-        public static Image newImage(string filename)
+        public static Image NewImage(string filename)
         {
-            var filedata = ImageModule.newImageData(filename);
-            return newImage(filedata);
+            var filedata = ImageModule.NewImageData(filename);
+            return NewImage(filedata);
         }
 
         public struct Vertex
@@ -104,7 +141,7 @@ namespace Love2d.Module
                 this.color = color;
             }
         }
-        public static Mesh newMesh(Vertex[] vertices, Mesh.Usage drawMode, Mesh.Usage usage)
+        public static Mesh NewMesh(Vertex[] vertices, Mesh.Usage drawMode, Mesh.Usage usage)
         {
             var posArray = new Float2[vertices.Length];
             var uvArray = new Float2[vertices.Length];
@@ -115,11 +152,11 @@ namespace Love2d.Module
                 uvArray[i] = vertices[i].uv;
                 colorArray[i] = vertices[i].color;
             }
-            return newMesh(posArray, uvArray, colorArray, drawMode, usage);
+            return NewMesh(posArray, uvArray, colorArray, drawMode, usage);
         }
-        public static Text newText(Font font, string text)
+        public static Text NewText(Font font, string text)
         {
-            return newText(font, DllTool.ToColoredStrings(text));
+            return NewText(font, DllTool.ToColoredStrings(text));
         }
 
 
@@ -138,7 +175,7 @@ namespace Love2d.Module
         {
             Float2[] coords = new Float2[coloredPoints.Length];
             Int4[] colors = new Int4[coloredPoints.Length];
-            return points(coords, colors);
+            return Points(coords, colors);
         }
     }
 
@@ -148,25 +185,25 @@ namespace Love2d.Type
 {
     public partial class File
     {
-        public void write(byte[] data)
+        public void Write(byte[] data)
         {
-            write(data, data.Length);
+            Write(data, data.Length);
         }
-        public void write(Data data)
+        public void Write(Data data)
         {
-            write(data, data.getSize());
+            Write(data, data.GetSize());
         }
     }
 
     public partial class Text
     {
-        public int add(string text, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public int Add(string text, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
-            return add(DllTool.ToColoredStrings(text), x, y, angle, sx, sy, ox, oy, kx, ky);
+            return Add(DllTool.ToColoredStrings(text), x, y, angle, sx, sy, ox, oy, kx, ky);
         }
         public int add(string text, float wraplimit, Font.AlignMode align_type, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
-            return add(DllTool.ToColoredStrings(text), wraplimit, align_type, x, y, angle, sx, sy, ox, oy, kx, ky);
+            return Add(DllTool.ToColoredStrings(text), wraplimit, align_type, x, y, angle, sx, sy, ox, oy, kx, ky);
         }
     }
 

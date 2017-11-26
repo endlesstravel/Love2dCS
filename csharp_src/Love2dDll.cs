@@ -21,7 +21,7 @@ namespace Love2d
         {
             if (hasNoException == false)
             {
-                string errInfo = DllTool.getLoveLastError();
+                string errInfo = DllTool.GetLoveLastError();
                 throw new Exception(errInfo);
             }
 
@@ -998,7 +998,8 @@ namespace Love2d
 
 
         #endregion
-        #region  audio
+        #region  audio
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_audio_open_love_audio")]
         internal extern static bool _wrap_love_dll_audio_open_love_audio();
         internal static bool wrap_love_dll_audio_open_love_audio()
@@ -1117,7 +1118,8 @@ namespace Love2d
 
 
         #endregion
-        #region  image
+        #region  image
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_image_open_love_image")]
         internal extern static bool _wrap_love_dll_image_open_love_image();
         internal static bool wrap_love_dll_image_open_love_image()
@@ -1134,7 +1136,8 @@ namespace Love2d
 
 
         #endregion
-        #region  font
+        #region  font
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_font_open_love_font")]
         internal extern static bool _wrap_love_dll_font_open_love_font();
         internal static bool wrap_love_dll_font_open_love_font()
@@ -1145,7 +1148,8 @@ namespace Love2d
 
 
         #endregion
-        #region  video
+        #region  video
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_video_open_love_video")]
         internal extern static bool _wrap_love_dll_video_open_love_video();
         internal static bool wrap_love_dll_video_open_love_video()
@@ -1156,7 +1160,8 @@ namespace Love2d
 
 
         #endregion
-        #region  math
+        #region  math
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_open_love_math")]
         internal extern static void _wrap_love_dll_open_love_math();
         internal static void wrap_love_dll_open_love_math()
@@ -1239,7 +1244,8 @@ namespace Love2d
 
 
         #endregion
-        #region  graphics Object Creation
+        #region  graphics Object Creation
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_open_love_graphics")]
         internal extern static bool _wrap_love_dll_graphics_open_love_graphics();
         internal static bool wrap_love_dll_graphics_open_love_graphics()
@@ -1328,7 +1334,8 @@ namespace Love2d
 
 
         #endregion
-        #region  graphics State
+        #region  graphics State
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_reset")]
         internal extern static void _wrap_love_dll_graphics_reset();
         internal static void wrap_love_dll_graphics_reset()
@@ -1559,7 +1566,8 @@ namespace Love2d
 
 
         #endregion
-        #region  graphics Coordinate System
+        #region  graphics Coordinate System
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_push")]
         internal extern static void _wrap_love_dll_graphics_push(int stack_type);
         internal static void wrap_love_dll_graphics_push(int stack_type)
@@ -1606,7 +1614,8 @@ namespace Love2d
 
 
         #endregion
-        #region  graphics drawing
+        #region  graphics drawing
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_ext_stencil_clearStencil")]
         internal extern static void _wrap_love_dll_graphics_ext_stencil_clearStencil();
         internal static void wrap_love_dll_graphics_ext_stencil_clearStencil()
@@ -1737,7 +1746,8 @@ namespace Love2d
 
 
         #endregion
-        #region  graphics Window
+        #region  graphics Window
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_isCreated")]
         internal extern static void _wrap_love_dll_graphics_isCreated(out bool out_reslut);
         internal static void wrap_love_dll_graphics_isCreated(out bool out_reslut)
@@ -1760,7 +1770,8 @@ namespace Love2d
 
 
         #endregion
-        #region  graphics System Information
+        #region  graphics System Information
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_getSupported")]
         internal extern static void _wrap_love_dll_graphics_getSupported(int feature_type, out bool out_result);
         internal static void wrap_love_dll_graphics_getSupported(int feature_type, out bool out_result)
@@ -1801,7 +1812,8 @@ namespace Love2d
 
 
         #endregion
-        #region  type - Source
+        #region  type - Source
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Source_clone")]
         internal extern static bool _wrap_love_dll_type_Source_clone(IntPtr t, out IntPtr out_clone);
         internal static bool wrap_love_dll_type_Source_clone(IntPtr t, out IntPtr out_clone)
@@ -2022,7 +2034,8 @@ namespace Love2d
 
 
         #endregion
-        #region  type - File
+        #region  type - File
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_File_getSize")]
         internal extern static bool _wrap_love_dll_type_File_getSize(IntPtr file, out double out_size);
         internal static bool wrap_love_dll_type_File_getSize(IntPtr file, out double out_size)
@@ -2123,7 +2136,8 @@ namespace Love2d
 
 
         #endregion
-        #region  type - FileData
+        #region  type - FileData
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_FileData_getFilename")]
         internal extern static void _wrap_love_dll_type_FileData_getFilename(IntPtr t, out IntPtr out_filename);
         internal static void wrap_love_dll_type_FileData_getFilename(IntPtr t, out IntPtr out_filename)
@@ -2140,7 +2154,8 @@ namespace Love2d
 
 
         #endregion
-        #region  type - GlyphData
+        #region  type - GlyphData
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_GlyphData_getWidth")]
         internal extern static void _wrap_love_dll_type_GlyphData_getWidth(IntPtr t, out int out_width);
         internal static void wrap_love_dll_type_GlyphData_getWidth(IntPtr t, out int out_width)
@@ -2193,7 +2208,8 @@ namespace Love2d
 
 
         #endregion
-        #region  type - Rasterizer
+        #region  type - Rasterizer
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Rasterizer_getHeight")]
         internal extern static void _wrap_love_dll_type_Rasterizer_getHeight(IntPtr t, out int out_heigth);
         internal static void wrap_love_dll_type_Rasterizer_getHeight(IntPtr t, out int out_heigth)
@@ -2258,7 +2274,8 @@ namespace Love2d
 
 
         #endregion
-        #region  type - Canvas
+        #region  type - Canvas
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Canvas_getFormat")]
         internal extern static void _wrap_love_dll_type_Canvas_getFormat(IntPtr canvas, out int out_format_type);
         internal static void wrap_love_dll_type_Canvas_getFormat(IntPtr canvas, out int out_format_type)
@@ -2275,7 +2292,8 @@ namespace Love2d
 
 
         #endregion
-        #region  type - Font
+        #region  type - Font
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Font_getHeight")]
         internal extern static void _wrap_love_dll_type_Font_getHeight(IntPtr t, out int out_height);
         internal static void wrap_love_dll_type_Font_getHeight(IntPtr t, out int out_height)
@@ -2358,7 +2376,8 @@ namespace Love2d
 
 
         #endregion
-        #region  type - Image
+        #region  type - Image
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Image_setMipmapFilter")]
         internal extern static bool _wrap_love_dll_type_Image_setMipmapFilter(IntPtr image, int mipmap_type, float sharpness);
         internal static bool wrap_love_dll_type_Image_setMipmapFilter(IntPtr image, int mipmap_type, float sharpness)
@@ -2399,7 +2418,8 @@ namespace Love2d
 
 
         #endregion
-        #region  type - Mesh
+        #region  type - Mesh
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Mesh_setVertices_data")]
         internal extern static bool _wrap_love_dll_type_Mesh_setVertices_data(IntPtr p, IntPtr data, uint vertoffset);
         internal static bool wrap_love_dll_type_Mesh_setVertices_data(IntPtr p, IntPtr data, uint vertoffset)
@@ -2542,7 +2562,8 @@ namespace Love2d
 
 
         #endregion
-        #region  type - ParticleSystem
+        #region  type - ParticleSystem
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_ParticleSystem_clone")]
         internal extern static bool _wrap_love_dll_type_ParticleSystem_clone(IntPtr p, out IntPtr out_clone);
         internal static bool wrap_love_dll_type_ParticleSystem_clone(IntPtr p, out IntPtr out_clone)
@@ -2907,7 +2928,8 @@ namespace Love2d
 
 
         #endregion
-        #region  type - Quad
+        #region  type - Quad
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Quad_setViewport")]
         internal extern static void _wrap_love_dll_type_Quad_setViewport(IntPtr p, float x, float y, float w, float h);
         internal static void wrap_love_dll_type_Quad_setViewport(IntPtr p, float x, float y, float w, float h)
@@ -2930,7 +2952,8 @@ namespace Love2d
 
 
         #endregion
-        #region  type - Shader
+        #region  type - Shader
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Shader_getWarnings")]
         internal extern static void _wrap_love_dll_type_Shader_getWarnings(IntPtr p, out IntPtr out_str);
         internal static void wrap_love_dll_type_Shader_getWarnings(IntPtr p, out IntPtr out_str)
@@ -2983,7 +3006,8 @@ namespace Love2d
 
 
         #endregion
-        #region  type - SpriteBatch
+        #region  type - SpriteBatch
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_SpriteBatch_add")]
         internal extern static bool _wrap_love_dll_type_SpriteBatch_add(IntPtr p, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, out int out_index);
         internal static bool wrap_love_dll_type_SpriteBatch_add(IntPtr p, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, out int out_index)
@@ -3078,7 +3102,8 @@ namespace Love2d
 
 
         #endregion
-        #region  type - Text
+        #region  type - Text
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Text_set_nil")]
         internal extern static void _wrap_love_dll_type_Text_set_nil(IntPtr p);
         internal static void wrap_love_dll_type_Text_set_nil(IntPtr p)
@@ -3143,7 +3168,8 @@ namespace Love2d
 
 
         #endregion
-        #region  type - Texture
+        #region  type - Texture
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Texture_getWidth")]
         internal extern static void _wrap_love_dll_type_Texture_getWidth(IntPtr p, out int out_w);
         internal static void wrap_love_dll_type_Texture_getWidth(IntPtr p, out int out_w)
@@ -3184,7 +3210,8 @@ namespace Love2d
 
 
         #endregion
-        #region  type - Video
+        #region  type - Video
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Video_getStream")]
         internal extern static void _wrap_love_dll_type_Video_getStream(IntPtr p, out IntPtr out_videsStream);
         internal static void wrap_love_dll_type_Video_getStream(IntPtr p, out IntPtr out_videsStream)
@@ -3237,7 +3264,8 @@ namespace Love2d
 
 
         #endregion
-        #region  type - CompressedImageData
+        #region  type - CompressedImageData
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_CompressedImageData_getWidth")]
         internal extern static bool _wrap_love_dll_type_CompressedImageData_getWidth(IntPtr p, int miplevel, out int out_w);
         internal static bool wrap_love_dll_type_CompressedImageData_getWidth(IntPtr p, int miplevel, out int out_w)
@@ -3266,7 +3294,8 @@ namespace Love2d
 
 
         #endregion
-        #region  type - ImageData
+        #region  type - ImageData
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_ImageData_getWidth")]
         internal extern static void _wrap_love_dll_type_ImageData_getWidth(IntPtr p, out int out_w);
         internal static void wrap_love_dll_type_ImageData_getWidth(IntPtr p, out int out_w)
@@ -3331,7 +3360,8 @@ namespace Love2d
 
 
         #endregion
-        #region  type - Cursor
+        #region  type - Cursor
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Cursor_getType")]
         internal extern static void _wrap_love_dll_type_Cursor_getType(IntPtr p, out int out_cursortype_type);
         internal static void wrap_love_dll_type_Cursor_getType(IntPtr p, out int out_cursortype_type)
@@ -3348,7 +3378,8 @@ namespace Love2d
 
 
         #endregion
-        #region  type - Decoder
+        #region  type - Decoder
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Decoder_getChannels")]
         internal extern static void _wrap_love_dll_type_Decoder_getChannels(IntPtr p, out int out_channels);
         internal static void wrap_love_dll_type_Decoder_getChannels(IntPtr p, out int out_channels)
@@ -3377,7 +3408,8 @@ namespace Love2d
 
 
         #endregion
-        #region  type - SoundData
+        #region  type - SoundData
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_SoundData_getChannels")]
         internal extern static void _wrap_love_dll_SoundData_getChannels(IntPtr p, out int out_channels);
         internal static void wrap_love_dll_SoundData_getChannels(IntPtr p, out int out_channels)
@@ -3424,7 +3456,8 @@ namespace Love2d
 
 
         #endregion
-        #region  type - VideoStream
+        #region  type - VideoStream
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_VideoStream_getFilename")]
         internal extern static void _wrap_love_dll_type_VideoStream_getFilename(IntPtr p, out IntPtr out_filename);
         internal static void wrap_love_dll_type_VideoStream_getFilename(IntPtr p, out IntPtr out_filename)
@@ -3471,7 +3504,8 @@ namespace Love2d
 
 
         #endregion
-        #region  type - BezierCurve
+        #region  type - BezierCurve
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_BezierCurve_getDegree")]
         internal extern static void _wrap_love_dll_type_BezierCurve_getDegree(IntPtr p, out int out_degree);
         internal static void wrap_love_dll_type_BezierCurve_getDegree(IntPtr p, out int out_degree)
@@ -3560,7 +3594,8 @@ namespace Love2d
 
 
         #endregion
-        #region  type - RandomGenerator
+        #region  type - RandomGenerator
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_RandomGenerator_random")]
         internal extern static void _wrap_love_dll_type_RandomGenerator_random(IntPtr p, out double out_result);
         internal static void wrap_love_dll_type_RandomGenerator_random(IntPtr p, out double out_result)
@@ -3601,7 +3636,8 @@ namespace Love2d
 
 
         #endregion
-        #region  type - Joystick
+        #region  type - Joystick
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Joystick_isConnected")]
         internal extern static void _wrap_love_dll_type_Joystick_isConnected(IntPtr p, out bool out_result);
         internal static void wrap_love_dll_type_Joystick_isConnected(IntPtr p, out bool out_result)
@@ -3720,7 +3756,8 @@ namespace Love2d
 
 
         #endregion
-        #region  type - Other
+        #region  type - Other
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Data_getSize")]
         internal extern static void _wrap_love_dll_type_Data_getSize(IntPtr data, out uint out_datasize);
         internal static void wrap_love_dll_type_Data_getSize(IntPtr data, out uint out_datasize)

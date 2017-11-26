@@ -332,14 +332,14 @@ vec4 effect(mediump vec4 vcolor, Image tex, vec2 texcoord, vec2 pixcoord) {
 
             string lang = "glsl";
             string info0, info1, info2, info3;
-            Love2d.Module.Graphics.getRendererInfo(out info0, out info1, out info2, out info3);
+            Love2d.Module.Graphics.GetRendererInfo(out info0, out info1, out info2, out info3);
             if (info0 == "OpenGL ES")
             {
                 lang = "glsles";
 
             }
 
-            bool gammacorrect = Love2d.Module.Graphics.isGammaCorrect();
+            bool gammacorrect = Love2d.Module.Graphics.IsGammaCorrect();
             if (vertexcode != null)
             {
                 vertexcode = createShaderStageCode(Stage.Vertex, vertexcode, lang, gammacorrect, false);

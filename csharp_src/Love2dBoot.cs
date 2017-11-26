@@ -81,28 +81,28 @@ namespace Love2d
     {
         static void Init()
         {
-            MathModule.init();
-            lf.init("");
-            ls.init();
-            la.init();
-            fnt.init();
-            window.init();
-            mouse.init();
-            keyboard.init();
-            JoystickModule.init();
-            Touch.init();
-            Event.init();
-            li.init();
-            lg.init();
-            timer.init();
+            MathModule.Init();
+            lf.Init("");
+            ls.Init();
+            la.Init();
+            fnt.Init();
+            window.Init();
+            mouse.Init();
+            keyboard.Init();
+            JoystickModule.Init();
+            Touch.Init();
+            Event.Init();
+            li.Init();
+            lg.Init();
+            timer.Init();
 
-            window.setMode(800, 600);
+            window.SetMode(800, 600);
 
-            string str = lf.getExecutablePath();
+            string str = lf.GetExecutablePath();
             int index = str.LastIndexOf(@"\");
             string path = str.Substring(0, index);
             Console.WriteLine(path);
-            lf.setSource(path);
+            lf.SetSource(path);
         }
 
         static void Loop()
@@ -110,17 +110,17 @@ namespace Love2d
             sence.Load();
             while (true)
             {
-                Event.poll(eventHandler);
-                timer.step();
+                Event.Poll(eventHandler);
+                timer.Step();
 
-                sence.Update(timer.getDelta());
+                sence.Update(timer.GetDelta());
 
-                var c = lg.getBackgroundColor();
-                lg.clear(c.r, c.g, c.b, c.a);
-                lg.origin();
+                var c = lg.GetBackgroundColor();
+                lg.Clear(c.r, c.g, c.b, c.a);
+                lg.Origin();
                 sence.Draw();
-                lg.present();
-                timer.sleep(0.001f);
+                lg.Present();
+                timer.Sleep(0.001f);
             }
         }
 
@@ -149,7 +149,7 @@ namespace Love2d
             }
             catch (Exception e)
             {
-                window.showMessageBox("error", e.ToString(), Window.MessageBoxType.MESSAGEBOX_ERROR);
+                window.ShowMessageBox("error", e.ToString(), Window.MessageBoxType.MESSAGEBOX_ERROR);
             }
         }
     }

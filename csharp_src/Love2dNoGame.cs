@@ -75,7 +75,7 @@ namespace Love2d
 
             public void center()
             {
-                float ww = Graphics.getWidth(), wh = Graphics.getHeight();
+                float ww = Graphics.GetWidth(), wh = Graphics.GetHeight();
                 x = (float)math.Floor(ww / 2 / 32) * 32 + 16;
                 y = (float)math.Floor(wh / 2 / 32) * 32 + 16;
             }
@@ -113,10 +113,10 @@ namespace Love2d
             public void Draw()
             {
 		        var look = get_look_coordinates();
-                Graphics.draw(g_images_toast_back, x, y, r, 1, 1, 64, 64);
-                Graphics.draw(g_images_toast_front, x + offset_x, y + offset_y, r, 1, 1, 64, 64);
-                Graphics.draw(get_eyes_image(), x + offset_x * 2.5f, y + offset_y * 2.5f, r, 1, 1, 64, 64);
-                Graphics.draw(g_images_toast_mouth, x + offset_x * 2, y + offset_y * 2, r, 1, 1, 64, 64);
+                Graphics.Draw(g_images_toast_back, x, y, r, 1, 1, 64, 64);
+                Graphics.Draw(g_images_toast_front, x + offset_x, y + offset_y, r, 1, 1, 64, 64);
+                Graphics.Draw(get_eyes_image(), x + offset_x * 2.5f, y + offset_y * 2.5f, r, 1, 1, 64, 64);
+                Graphics.Draw(g_images_toast_mouth, x + offset_x * 2, y + offset_y * 2, r, 1, 1, 64, 64);
             }
 
             Image get_eyes_image()
@@ -138,7 +138,7 @@ namespace Love2d
 
             float next_blink()
             {
-                return 5 + mathf.random(0, 3);
+                return 5 + mathf.Random(0, 3);
             }
 
             public void look_at(float tx, float ty)
@@ -147,7 +147,7 @@ namespace Love2d
                 look_current.x = look.x;
                 look_current.y = look.y;
                 look_t = 0;
-                look_point_t = 3 + mathf.random(0, 1);
+                look_point_t = 3 + mathf.Random(0, 1);
                 look_target.x = tx;
                 look_target.y = ty;
             }
@@ -200,10 +200,10 @@ namespace Love2d
             public Mosaic()
             {
                 var mosaic_image = g_images_mosaic[0];
-                float sw = mosaic_image.getWidth(), sh = mosaic_image.getHeight();
-                float ww = (float)Window.fromPixels(Graphics.getWidth()), wh = (float)Window.fromPixels(Graphics.getHeight());
+                float sw = mosaic_image.GetWidth(), sh = mosaic_image.GetHeight();
+                float ww = (float)Window.FromPixels(Graphics.GetWidth()), wh = (float)Window.FromPixels(Graphics.GetHeight());
 
-                if (Window.getPixelScale() > 2)
+                if (Window.GetPixelScale() > 2)
                 {
                     mosaic_image = g_images_mosaic[1];
                 }
@@ -211,7 +211,7 @@ namespace Love2d
                 int SIZE_Y = (int)math.Floor(wh / 32f + 3f);
                 int SIZE = SIZE_X * SIZE_Y;
 
-                batch = Graphics.newSpriteBatch(mosaic_image, SIZE, Mesh.Usage.USAGE_STREAM);
+                batch = Graphics.NewSpriteBatch(mosaic_image, SIZE, Mesh.Usage.USAGE_STREAM);
                 COLORS = new Int4[] {
                     new Int4(240, 240, 240, 255), new Int4(232, 104, 162, 255), new Int4(69, 155, 168, 255), new Int4(67, 93, 119, 255),
                     new Int4(240, 240, 240, 255), new Int4(232, 104, 162, 255), new Int4(69, 155, 168, 255), new Int4(67, 93, 119, 255),
@@ -219,10 +219,10 @@ namespace Love2d
                 };
 
                 Quad[] QUADS = new Quad[] {
-                    Graphics.newQuad(0,  0,  32, 32, sw, sh),
-                    Graphics.newQuad(0,  32, 32, 32, sw, sh),
-                    Graphics.newQuad(32, 32, 32, 32, sw, sh),
-                    Graphics.newQuad(32, 0,  32, 32, sw, sh),
+                    Graphics.NewQuad(0,  0,  32, 32, sw, sh),
+                    Graphics.NewQuad(0,  32, 32, 32, sw, sh),
+                    Graphics.NewQuad(32, 32, 32, 32, sw, sh),
+                    Graphics.NewQuad(32, 0,  32, 32, sw, sh),
                 };
 
                 int exclude_left = (int)math.Floor(ww / 2f / 32f);
@@ -238,7 +238,7 @@ namespace Love2d
                 int COLORS_LENGHT = COLORS.Length;
                 generators = new RCIGDelegate[]
                 {
-                    (grid_x, grid_y) => (int)mathf.random(0, COLORS_LENGHT - 1),
+                    (grid_x, grid_y) => (int)mathf.Random(0, COLORS_LENGHT - 1),
                     (grid_x, grid_y) => math.Abs((generation + grid_x - grid_y)) % COLORS_LENGHT,
                     (grid_x, grid_y) => (grid_x + generation) % COLORS_LENGHT,
                     (grid_x, grid_y) => ((int)math.Abs(math.Floor(generation + math.Sqrt(grid_x * grid_x + grid_y * grid_y)))) % COLORS_LENGHT,
@@ -264,7 +264,7 @@ namespace Love2d
                         if (!(exclude_left <= x && x <= exclude_right && exclude_top <= y && y <= exclude_bottom))
                         {
                             var gen = COLORS[generator(x, y)];
-                            var p = new Piece(x, y, (x - 1) * 32, (y - 1) * 32,(float)(mathf.random(0, 100) / 100 * math.PI), 1, QUADS[(x+y)%4], gen, gen);
+                            var p = new Piece(x, y, (x - 1) * 32, (y - 1) * 32,(float)(mathf.Random(0, 100) / 100 * math.PI), 1, QUADS[(x+y)%4], gen, gen);
                             pices.Add(p);
                         }
                     }
@@ -272,19 +272,19 @@ namespace Love2d
 
                 var GLYPHS = new Dictionary<char, Quad>()
                 {
-                    {'N',Graphics.newQuad(0,  64, 32, 32, sw, sh)},
-                    {'O',Graphics.newQuad(32, 64, 32, 32, sw, sh)},
-                    {'G',Graphics.newQuad(0,  96, 32, 32, sw, sh)},
-                    {'A',Graphics.newQuad(32, 96, 32, 32, sw, sh)},
-                    {'M',Graphics.newQuad(64, 96, 32, 32, sw, sh)},
-                    {'E',Graphics.newQuad(96, 96, 32, 32, sw, sh)},
+                    {'N',Graphics.NewQuad(0,  64, 32, 32, sw, sh)},
+                    {'O',Graphics.NewQuad(32, 64, 32, 32, sw, sh)},
+                    {'G',Graphics.NewQuad(0,  96, 32, 32, sw, sh)},
+                    {'A',Graphics.NewQuad(32, 96, 32, 32, sw, sh)},
+                    {'M',Graphics.NewQuad(64, 96, 32, 32, sw, sh)},
+                    {'E',Graphics.NewQuad(96, 96, 32, 32, sw, sh)},
 
-                    {'U',Graphics.newQuad(64, 0,  32, 32, sw, sh)},
-                    {'P',Graphics.newQuad(96, 0,  32, 32, sw, sh)},
-                    {'o',Graphics.newQuad(64, 32, 32, 32, sw, sh)},
-                    {'S',Graphics.newQuad(96, 32, 32, 32, sw, sh)},
-                    {'T',Graphics.newQuad(64, 64, 32, 32, sw, sh)},
-                    {'R',Graphics.newQuad(96, 64, 32, 32, sw, sh)},
+                    {'U',Graphics.NewQuad(64, 0,  32, 32, sw, sh)},
+                    {'P',Graphics.NewQuad(96, 0,  32, 32, sw, sh)},
+                    {'o',Graphics.NewQuad(64, 32, 32, 32, sw, sh)},
+                    {'S',Graphics.NewQuad(96, 32, 32, 32, sw, sh)},
+                    {'T',Graphics.NewQuad(64, 64, 32, 32, sw, sh)},
+                    {'R',Graphics.NewQuad(96, 64, 32, 32, sw, sh)},
                 };
 
                 Int4 INITIAL_TEXT_COLOR = new Int4(240, 240, 240, 255);
@@ -324,9 +324,9 @@ namespace Love2d
                 generation++;
                 if (generation % 5 == 0)
                 {
-                    if (mathf.random(0, 100) < 60)
+                    if (mathf.Random(0, 100) < 60)
                     {
-                        generator = generators[(int)mathf.random(2, generators.Length - 1)];
+                        generator = generators[(int)mathf.Random(2, generators.Length - 1)];
                     }
                     else
                     {
@@ -357,8 +357,8 @@ namespace Love2d
 
             public void Draw()
             {
-                batch.clear();
-                Graphics.setColor(255, 255, 255, 64);
+                batch.Clear();
+                Graphics.SetColor(255, 255, 255, 64);
                 foreach (var piece in pices)
                 {
 			        float ct = 1 - color_t;
@@ -367,26 +367,26 @@ namespace Love2d
                     int r = (int)easeOut(ct, c0.r, c1.r - c0.r, 1);
                     int g = (int)easeOut(ct, c0.g, c1.g - c0.g, 1);
 			        int b = (int)easeOut(ct, c0.b, c1.b - c0.b, 1);
-                    batch.setColor(r, g, b);
-                    batch.add(piece.quad, piece.x, piece.y, piece.r, 1, 1, 16, 16);
+                    batch.SetColor(r, g, b);
+                    batch.Add(piece.quad, piece.x, piece.y, piece.r, 1, 1, 16, 16);
                 }
 
-                Graphics.setColor(255, 255, 255, 255);
-                Graphics.draw(batch, 0, 0);
+                Graphics.SetColor(255, 255, 255, 255);
+                Graphics.Draw(batch, 0, 0);
             }
         }
 
         Image load_image(string str_contents, string filename)
         {
-            var fdata = FileSystem.newFileData(str_contents, filename, FileData.Decoder.BASE64);
-            var imgData = ImageModule.newImageData(fdata);
-            return Graphics.newImage( imgData );
+            var fdata = FileSystem.NewFileData(str_contents, filename, FileData.Decoder.BASE64);
+            var imgData = ImageModule.NewImageData(fdata);
+            return Graphics.NewImage( imgData );
         }
         public override void Load()
         {
-            Window.setTitle("LÖVE " + Common.getVersion() + " (" + Common.getVersionCodeName() + ")");
+            Window.SetTitle("LÖVE " + Common.GetVersion() + " (" + Common.GetVersionCodeName() + ")");
 
-            Graphics.setBackgroundColor(136, 193, 206);
+            Graphics.SetBackgroundColor(136, 193, 206);
             g_images_toast_back = load_image(toast_back_png, "toast_back.png");
 		    g_images_toast_front = load_image(toast_front_png, "toast_front.png");
             g_images_toast_eyes_open = load_image(toast_eyes_open_png, "toast_eyes_open.png");
@@ -407,13 +407,13 @@ namespace Love2d
 
         public override void Draw()
         {
-            Graphics.setColor(255, 255, 255);
-            Graphics.push();
-            float scale = (float)Window.getPixelScale();
-            Graphics.scale(scale, scale);
+            Graphics.SetColor(255, 255, 255);
+            Graphics.Push();
+            float scale = (float)Window.GetPixelScale();
+            Graphics.Scale(scale, scale);
             g_toast.Draw();
             g_mosaic.Draw();
-            Graphics.pop();
+            Graphics.Pop();
         }
 
         public class NoGameEventHandler : EventHandler
@@ -427,30 +427,30 @@ namespace Love2d
             public override void KeyReleased(Keyboard.Key key, Keyboard.Scancode scancode)
             {
                 if (key == Keyboard.Key.KEY_ESCAPE)
-                    Event.quit();
+                    Event.Quit();
             }
 
             public override void KeyPressed(Keyboard.Key key, Keyboard.Scancode scancode, bool isRepeat)
             {
                 if (key ==  Keyboard.Key.KEY_F)
                 {
-                    Window.setFullscreen(!Window.getFullscreen());
+                    Window.SetFullscreen(!Window.GetFullscreen());
                 }
             }
 
             public override void MousePressed(float x, float y, int button, bool isTouch)
             {
-                float tx = x / Graphics.getWidth();
-                float ty = y / Graphics.getHeight();
+                float tx = x / Graphics.GetWidth();
+                float ty = y / Graphics.GetHeight();
                 g_toast.look_at(tx, ty);
             }
 
             public override void MouseMoved(float x, float y, float dx, float dy, bool isTouch)
             {
-                if (Mouse.isDown(1))
+                if (Mouse.IsDown(1))
                 {
-                    float tx = x / Graphics.getWidth();
-                    float ty = y / Graphics.getHeight();
+                    float tx = x / Graphics.GetWidth();
+                    float ty = y / Graphics.GetHeight();
                     g_toast.look_at(tx, ty);
                 }
             }
@@ -459,15 +459,15 @@ namespace Love2d
 
             public override void TouchPressed(long id, float x, float y, float dx, float dy, float pressure)
             {
-                if (Touch.getTouches().Length == 1)
+                if (Touch.GetTouches().Length == 1)
                 {
                     float dist = (float)math.Sqrt((x - last_touch_x)* (x - last_touch_x) + (y - last_touch_y)* (y - last_touch_y));
-                    float difftime = Timer.getTime() - last_touch_time;
+                    float difftime = Timer.GetTime() - last_touch_time;
                     if (difftime < 0.3f && dist < 0.5f)
                     {
-                        if (Window.showMessageBox("Exit No-Game Screen", "", Window.MessageBoxType.MESSAGEBOX_WARNING))
+                        if (Window.ShowMessageBox("Exit No-Game Screen", "", Window.MessageBoxType.MESSAGEBOX_WARNING))
                         {
-                            Event.quit();
+                            Event.Quit();
                         }
                     }
                 }
