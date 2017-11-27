@@ -7,13 +7,16 @@ Love2dCS is a C# Wrapper for [LÖVE game engine](https://love2d.org/), it can be
 
 Love2dCS was designed to be as close as possible to the original LÖVE API, as such the documentation provided from LÖVE largely covers usage of Love2dCS. There is a slight difference between Love2dCS and LÖVE where is :
 
-* The `love.math` module in Love2dCS is `Love2D.mathf`
+* The `love.math` module in love is replaced by `Love.Mathf` in Love2dCS
+* The `love.thread` module in love is not ready to supply, you can use threads in C # instead.
 * Most index begin from 1 at LÖVE. However, index will begin from 0 at Love2dCS
 * *More in development ... *
 
+Love2dCS currently based on LÖVE 0.10.1 (https://love2d.org/wiki/0.10.1)
+
 Love2dCS currently supports Windows x86. The next step will be to support windows x64. Linux and OSX temporarily was not supported.
 
-Physical module temporary not support.
+Physics module temporary not support.
 
 Feature
 ---
@@ -32,10 +35,11 @@ Setup
 
 3. More detail please reference [Setup-Detail](README-Install.md)
 
-Usage
+
+Examples
 ---
 
-1. Emptye projcet - No game Sence will automatically run
+1. Emptye projcet - `no-game` Sence will automatically run
 ``` C#
 class Program
 {
@@ -140,7 +144,7 @@ namespace Example
 }
 ```
 
-Doucment
+Documentation
 ---
 *In development ...*
 
