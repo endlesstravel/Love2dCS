@@ -169,7 +169,7 @@ Develpoment
 * Follow the instructions at the [megasource](https://bitbucket.org/rude/megasource) repository page to build LÖVE 0.10.1+.
 * Add files `c_api_src/wrap_love_dll.cpp ` and `c_api_src/wrap_love_dll.h` to your LÖVE project in `liblove`.
 
-!(liblove-src)[https://github.com/endlesstravel/Love2dCS/raw/master/img/006-liblove-src.png "liblove-src"]
+![liblove-src](https://github.com/endlesstravel/Love2dCS/raw/master/img/006-liblove-src.png "liblove-src")
 
 3. Build C# part :
 
