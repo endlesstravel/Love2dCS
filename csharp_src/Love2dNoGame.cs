@@ -25,9 +25,9 @@ using System.Linq;
 using System.Text;
 
 using math = System.Math;
-using mathf = Love2d.Mathf;
+using mathf = Love.Mathf;
 
-namespace Love2d
+namespace Love
 {
     internal partial class Love2dNoGame : Scene
     {
@@ -209,7 +209,7 @@ namespace Love2d
                 int SIZE_Y = (int)math.Floor(wh / 32f + 3f);
                 int SIZE = SIZE_X * SIZE_Y;
 
-                batch = Graphics.NewSpriteBatch(mosaic_image, SIZE, Mesh.Usage.USAGE_STREAM);
+                batch = Graphics.NewSpriteBatch(mosaic_image, SIZE, Mesh.Usage.Stream);
                 COLORS = new Int4[] {
                     new Int4(240, 240, 240, 255), new Int4(232, 104, 162, 255), new Int4(69, 155, 168, 255), new Int4(67, 93, 119, 255),
                     new Int4(240, 240, 240, 255), new Int4(232, 104, 162, 255), new Int4(69, 155, 168, 255), new Int4(67, 93, 119, 255),
@@ -376,7 +376,7 @@ namespace Love2d
 
         Image load_image(string str_contents, string filename)
         {
-            var fdata = FileSystem.NewFileData(str_contents, filename, FileData.Decoder.BASE64);
+            var fdata = FileSystem.NewFileData(str_contents, filename, FileData.Decoder.Base64);
             var imgData = Image.NewImageData(fdata);
             return Graphics.NewImage( imgData );
         }
@@ -424,13 +424,13 @@ namespace Love2d
 
             public override void KeyReleased(Keyboard.Key key, Keyboard.Scancode scancode)
             {
-                if (key == Keyboard.Key.KEY_ESCAPE)
+                if (key == Keyboard.Key.Escape)
                     Event.Quit();
             }
 
             public override void KeyPressed(Keyboard.Key key, Keyboard.Scancode scancode, bool isRepeat)
             {
-                if (key ==  Keyboard.Key.KEY_F)
+                if (key ==  Keyboard.Key.F)
                 {
                     Window.SetFullscreen(!Window.GetFullscreen());
                 }
@@ -463,7 +463,7 @@ namespace Love2d
                     float difftime = Timer.GetTime() - last_touch_time;
                     if (difftime < 0.3f && dist < 0.5f)
                     {
-                        if (Window.ShowMessageBox("Exit No-Game Screen", "", Window.MessageBoxType.MESSAGEBOX_WARNING))
+                        if (Window.ShowMessageBox("Exit No-Game Screen", "", Window.MessageBoxType.Warning))
                         {
                             Event.Quit();
                         }

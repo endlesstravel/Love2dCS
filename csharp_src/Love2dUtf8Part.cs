@@ -3,13 +3,13 @@
 
 using System;
 
-namespace Love2d
+namespace Love
 {
     #region Love Module
 
     public partial class FileSystem
     {
-        public static File NewFile(string filename, File.Mode fmode_type = File.Mode.MODE_READ)
+        public static File NewFile(string filename, File.Mode fmode_type = File.Mode.Read)
         {
             return NewFile(DllTool.ToUTF8Bytes(filename), fmode_type);
         }

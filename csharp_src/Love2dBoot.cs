@@ -7,18 +7,18 @@ using System.Linq;
 using System.Text;
 
 
-using lf = Love2d.FileSystem;
-using ls = Love2d.Sound;
-using la = Love2d.Audio;
-using li = Love2d.Image;
-using lg = Love2d.Graphics;
-using fnt = Love2d.Font;
-using timer = Love2d.Timer;
-using mouse = Love2d.Mouse;
-using keyboard = Love2d.Keyboard;
-using window = Love2d.Window;
+using lf = Love.FileSystem;
+using ls = Love.Sound;
+using la = Love.Audio;
+using li = Love.Image;
+using lg = Love.Graphics;
+using fnt = Love.Font;
+using timer = Love.Timer;
+using mouse = Love.Mouse;
+using keyboard = Love.Keyboard;
+using window = Love.Window;
 
-namespace Love2d
+namespace Love
 {
     public class EventHandler
     {
@@ -131,22 +131,27 @@ namespace Love2d
             {
                 Init();
 
-                if (sence == null)
+                if (sence == null && eventHandler == null)
                 {
                     Boot.sence = new Love2dNoGame();
                     Boot.eventHandler = new Love2dNoGame.NoGameEventHandler();
+                }
+                else if (sence == null)
+                {
+                    Boot.sence = new Scene();
+                    Boot.eventHandler = eventHandler;
                 }
                 else
                 {
                     Boot.sence = sence;
                     Boot.eventHandler = eventHandler;
-                    Boot.args = args;
                 }
+                Boot.args = args;
                 Loop();
             }
             catch (Exception e)
             {
-                window.ShowMessageBox("error", e.ToString(), Window.MessageBoxType.MESSAGEBOX_ERROR);
+                window.ShowMessageBox("error", e.ToString(), Window.MessageBoxType.Error);
             }
         }
     }

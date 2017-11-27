@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Love2d
+namespace Love
 {
     public partial class LoveObject : IDisposable
     {
@@ -55,16 +55,14 @@ namespace Love2d
     {
         public enum Type : int
         {
-            TYPE_STATIC = 0,
-            TYPE_STREAM,
-            TYPE_MAX_ENUM
+            Static = 0,
+            Stream,
         };
 
         public enum TimeUnit : int
         {
-            UNIT_SECONDS = 0,
-            UNIT_SAMPLES,
-            UNIT_MAX_ENUM
+            Seconds = 0,
+            Samples,
         };
 
         public Source Clone()
@@ -242,7 +240,7 @@ namespace Love2d
             Love2dDll.wrap_love_dll_type_Source_getChannels(p, out out_chanels);
             return out_chanels;
         }
-        public Type GetType()
+        public Type GetSourceType()
         {
             int out_type = 0;
             Love2dDll.wrap_love_dll_type_Source_getType(p, out out_type);
@@ -254,19 +252,17 @@ namespace Love2d
     {
         public enum Mode : int
         {
-            MODE_CLOSED,
-            MODE_READ,
-            MODE_WRITE,
-            MODE_APPEND,
-            MODE_MAX_ENUM
+            Closed,
+            Read,
+            Write,
+            Append,
         };
 
         public enum BufferMode : int
         {
-            BUFFER_NONE,
-            BUFFER_LINE,
-            BUFFER_FULL,
-            BUFFER_MAX_ENUM
+            None,
+            Line,
+            Full,
         };
 
         public double GetSize()
@@ -362,9 +358,8 @@ namespace Love2d
     {
         public enum Decoder
         {
-            FILE,
-            BASE64,
-            DECODE_MAX_ENUM
+            File,
+            Base64,
         }; // Decoder
 
         public string GetFilename()
@@ -385,9 +380,8 @@ namespace Love2d
     {
         public enum Format : int
         {
-            FORMAT_LUMINANCE_ALPHA,
-            FORMAT_RGBA,
-            FORMAT_MAX_ENUM
+            LuminanceAlpha,
+            RGBA,
         };
 
         public int GetWidth()
@@ -504,24 +498,23 @@ namespace Love2d
     {
         public enum Format : int
         {
-            FORMAT_NORMAL,   // Usually SRGB, RGBA8 or a similar fallback. Always supported.
-            FORMAT_HDR,      // Usually RGBA16F. Not always supported.
-            FORMAT_RGBA4,    // RGBA with 4 bits per channel.
-            FORMAT_RGB5A1,   // RGB with 5 bits per channel, and A with 1 bit.
-            FORMAT_RGB565,   // RGB with 5, 6, and 5 bits each, respectively.
-            FORMAT_R8,       // Single (red) 8-bit channel.
-            FORMAT_RG8,      // Two-channel (red and green) with 8 bits per channel.
-            FORMAT_RGBA8,    // RGBA with 8 bits per channel.
-            FORMAT_RGB10A2,  // RGB with 10 bits each, and A with 2 bits.
-            FORMAT_RG11B10F, // Floating point [0, +65024]. RG with 11 FP bits each, and B with 10 FP bits.
-            FORMAT_R16F,     // Floating point [-65504, +65504]. R with 16 FP bits.
-            FORMAT_RG16F,    // Floating point [-65504, +65504]. RG with 16 FP bits per channel.
-            FORMAT_RGBA16F,  // Floating point [-65504, +65504]. RGBA with 16 FP bits per channel.
-            FORMAT_R32F,     // Floating point [-65504, +65504]. R with 32 FP bits.
-            FORMAT_RG32F,    // Floating point [-65504, +65504]. RG with 32 FP bits per channel.
-            FORMAT_RGBA32F,  // Floating point [-65504, +65504]. RGBA with 32 FP bits per channel.
-            FORMAT_SRGB,     // sRGB with 8 bits per channel, plus 8 bit linear A.
-            FORMAT_MAX_ENUM
+            NORMAL,   // Usually SRGB, RGBA8 or a similar fallback. Always supported.
+            HDR,      // Usually RGBA16F. Not always supported.
+            RGBA4,    // RGBA with 4 bits per channel.
+            RGB5A1,   // RGB with 5 bits per channel, and A with 1 bit.
+            RGB565,   // RGB with 5, 6, and 5 bits each, respectively.
+            R8,       // Single (red) 8-bit channel.
+            RG8,      // Two-channel (red and green) with 8 bits per channel.
+            RGBA8,    // RGBA with 8 bits per channel.
+            RGB10A2,  // RGB with 10 bits each, and A with 2 bits.
+            RG11B10F, // Floating point [0, +65024]. RG with 11 FP bits each, and B with 10 FP bits.
+            R16F,     // Floating point [-65504, +65504]. R with 16 FP bits.
+            RG16F,    // Floating point [-65504, +65504]. RG with 16 FP bits per channel.
+            RGBA16F,  // Floating point [-65504, +65504]. RGBA with 16 FP bits per channel.
+            R32F,     // Floating point [-65504, +65504]. R with 32 FP bits.
+            RG32F,    // Floating point [-65504, +65504]. RG with 32 FP bits per channel.
+            RGBA32F,  // Floating point [-65504, +65504]. RGBA with 32 FP bits per channel.
+            SRGB,     // sRGB with 8 bits per channel, plus 8 bit linear A.
         };
 
         public ImageData NewImageData()
@@ -554,11 +547,10 @@ namespace Love2d
     {
         public enum AlignMode
         {
-            ALIGN_LEFT,
-            ALIGN_CENTER,
-            ALIGN_RIGHT,
-            ALIGN_JUSTIFY,
-            ALIGN_MAX_ENUM
+            Left,
+            Center,
+            Right,
+            Justify,
         };
 
         public int GetHeight()
@@ -687,29 +679,26 @@ namespace Love2d
         // The expected usage pattern of the Mesh's vertex data.
         public enum Usage : int
         {
-            USAGE_STREAM,
-            USAGE_DYNAMIC,
-            USAGE_STATIC,
-            USAGE_MAX_ENUM
+            Stream,
+            Dynamic,
+            Static,
         };
 
         // How the Mesh's vertices are used when drawing.
         // http://escience.anu.edu.au/lecture/cg/surfaceModeling/image/surfaceModeling015.png
         public enum DrawMode : int
         {
-            DRAWMODE_FAN,
-            DRAWMODE_STRIP,
-            DRAWMODE_TRIANGLES,
-            DRAWMODE_POINTS,
-            DRAWMODE_MAX_ENUM
+            Fan,
+            Strip,
+            Triangles,
+            Points,
         };
 
         // The type of data a vertex attribute can store.
         public enum DataType
         {
-            DATA_BYTE,
-            DATA_FLOAT,
-            DATA_MAX_ENUM
+            Byte,
+            Float,
         };
 
         public struct AttribFormat
@@ -858,20 +847,18 @@ namespace Love2d
         // Type of distribution new particles are drawn from: None, uniform, normal, ellipse.
         public enum AreaSpreadDistribution
         {
-            DISTRIBUTION_NONE,
-            DISTRIBUTION_UNIFORM,
-            DISTRIBUTION_NORMAL,
-            DISTRIBUTION_ELLIPSE,
-            DISTRIBUTION_MAX_ENUM
+            None,
+            Uniform,
+            Normal,
+            Ellipse,
         };
 
         // Insertion modes of new particles in the list: top, bottom, random.
         public enum InsertMode
         {
-            INSERT_MODE_TOP,
-            INSERT_MODE_BOTTOM,
-            INSERT_MODE_RANDOM,
-            INSERT_MODE_MAX_ENUM
+            Top,
+            Bottom,
+            Random,
         };
 
         public ParticleSystem Clone()
@@ -1203,13 +1190,12 @@ namespace Love2d
         // Types of potential uniform (extern) variables used in love's shaders.
         public enum UniformType
         {
-            UNIFORM_FLOAT,
-            UNIFORM_MATRIX,
-            UNIFORM_INT,
-            UNIFORM_BOOL,
-            UNIFORM_SAMPLER,
-            UNIFORM_UNKNOWN,
-            UNIFORM_MAX_ENUM
+            Float,
+            Matrix,
+            Int,
+            Bool,
+            Sampler,
+            Unknown,
         };
 
         public string GetWarnings()
@@ -1421,25 +1407,23 @@ namespace Love2d
     {
         public enum WrapMode
         {
-            WRAP_CLAMP,
-            WRAP_CLAMP_ZERO,
-            WRAP_REPEAT,
-            WRAP_MIRRORED_REPEAT,
-            WRAP_MAX_ENUM
+            Clamp,
+            ClampZero,
+            Repeat,
+            MirroredRepeat,
         };
 
         public enum FilterMode
         {
-            FILTER_NONE,
-            FILTER_LINEAR,
-            FILTER_NEAREST,
-            FILTER_MAX_ENUM
+            None,
+            Linear,
+            Nearest,
         };
 
         public class Filter
         {
-            public readonly FilterMode min = FilterMode.FILTER_LINEAR;
-            public readonly FilterMode mag = FilterMode.FILTER_LINEAR;
+            public readonly FilterMode min = FilterMode.Linear;
+            public readonly FilterMode mag = FilterMode.Linear;
             public readonly float anisotropy = 1.0f;
             public Filter(FilterMode min, FilterMode mag, float anisotropy)
             {
@@ -1538,44 +1522,43 @@ namespace Love2d
         // Recognized compressed image data formats.
         public enum Format
         {
-            FORMAT_UNKNOWN,
-            FORMAT_DXT1,
-            FORMAT_DXT3,
-            FORMAT_DXT5,
-            FORMAT_BC4,
-            FORMAT_BC4s,
-            FORMAT_BC5,
-            FORMAT_BC5s,
-            FORMAT_BC6H,
-            FORMAT_BC6Hs,
-            FORMAT_BC7,
-            FORMAT_PVR1_RGB2,
-            FORMAT_PVR1_RGB4,
-            FORMAT_PVR1_RGBA2,
-            FORMAT_PVR1_RGBA4,
-            FORMAT_ETC1,
-            FORMAT_ETC2_RGB,
-            FORMAT_ETC2_RGBA,
-            FORMAT_ETC2_RGBA1,
-            FORMAT_EAC_R,
-            FORMAT_EAC_Rs,
-            FORMAT_EAC_RG,
-            FORMAT_EAC_RGs,
-            FORMAT_ASTC_4x4,
-            FORMAT_ASTC_5x4,
-            FORMAT_ASTC_5x5,
-            FORMAT_ASTC_6x5,
-            FORMAT_ASTC_6x6,
-            FORMAT_ASTC_8x5,
-            FORMAT_ASTC_8x6,
-            FORMAT_ASTC_8x8,
-            FORMAT_ASTC_10x5,
-            FORMAT_ASTC_10x6,
-            FORMAT_ASTC_10x8,
-            FORMAT_ASTC_10x10,
-            FORMAT_ASTC_12x10,
-            FORMAT_ASTC_12x12,
-            FORMAT_MAX_ENUM
+            UNKNOWN,
+            DXT1,
+            DXT3,
+            DXT5,
+            BC4,
+            BC4s,
+            BC5,
+            BC5s,
+            BC6H,
+            BC6Hs,
+            BC7,
+            PVR1_RGB2,
+            PVR1_RGB4,
+            PVR1_RGBA2,
+            PVR1_RGBA4,
+            ETC1,
+            ETC2_RGB,
+            ETC2_RGBA,
+            ETC2_RGBA1,
+            EAC_R,
+            EAC_Rs,
+            EAC_RG,
+            EAC_RGs,
+            ASTC_4x4,
+            ASTC_5x4,
+            ASTC_5x5,
+            ASTC_6x5,
+            ASTC_6x6,
+            ASTC_8x5,
+            ASTC_8x6,
+            ASTC_8x8,
+            ASTC_10x5,
+            ASTC_10x6,
+            ASTC_10x8,
+            ASTC_10x10,
+            ASTC_12x10,
+            ASTC_12x12,
         };
 
         public int GetWidth(int miplevel)
@@ -1608,9 +1591,8 @@ namespace Love2d
     {
         public enum EncodedFormat
         {
-            ENCODED_TGA,
-            ENCODED_PNG,
-            ENCODED_MAX_ENUM
+            TGA,
+            PNG,
         };
 
         public int GetWidth()
@@ -1673,30 +1655,28 @@ namespace Love2d
         // Types of system cursors.
         public enum SystemCursor
         {
-            CURSOR_ARROW,
-            CURSOR_IBEAM,
-            CURSOR_WAIT,
-            CURSOR_CROSSHAIR,
-            CURSOR_WAITARROW,
-            CURSOR_SIZENWSE,
-            CURSOR_SIZENESW,
-            CURSOR_SIZEWE,
-            CURSOR_SIZENS,
-            CURSOR_SIZEALL,
-            CURSOR_NO,
-            CURSOR_HAND,
-            CURSOR_MAX_ENUM
+            Arrow,
+            Ibeam,
+            Wait,
+            Crosshair,
+            WaitArrow,
+            SizeNWSE,
+            SizeNESW,
+            SizeWE,
+            SizeNS,
+            SizeAll,
+            No,
+            Hand,
         };
 
         public enum CursorType
         {
-            CURSORTYPE_SYSTEM,
-            CURSORTYPE_IMAGE,
-            CURSORTYPE_MAX_ENUM
+            System,
+            Image,
         };
 
         // What is the type of Curor is ? System type or Custom-Image type ?
-        public CursorType GetType()
+        public CursorType GetCursorType()
         {
             int out_cursortype_type = 0;
             Love2dDll.wrap_love_dll_type_Cursor_getType(p, out out_cursortype_type);
@@ -1952,10 +1932,9 @@ namespace Love2d
     {
         public enum Format
         {
-            FORMAT_LZ4,
-            FORMAT_ZLIB,
-            FORMAT_GZIP,
-            FORMAT_MAX_ENUM
+            LZ4,
+            ZLIB,
+            GZIP,
         };
     }
 
@@ -1964,61 +1943,57 @@ namespace Love2d
 	    // Joystick hat values.
 	    public enum Hat
         {
-            HAT_INVALID,
-            HAT_CENTERED,
-            HAT_UP,
-            HAT_RIGHT,
-            HAT_DOWN,
-            HAT_LEFT,
-            HAT_RIGHTUP,
-            HAT_RIGHTDOWN,
-            HAT_LEFTUP,
-            HAT_LEFTDOWN,
-            HAT_MAX_ENUM = 16
+            Invalid,
+            Centered,
+            Up,
+            Right,
+            Down,
+            Left,
+            RightUp,
+            RightDown,
+            LeftUp,
+            LeftDown,
         };
 
         // Valid Gamepad axes.
         public enum GamepadAxis
         {
-            GAMEPAD_AXIS_INVALID,
-            GAMEPAD_AXIS_LEFTX,
-            GAMEPAD_AXIS_LEFTY,
-            GAMEPAD_AXIS_RIGHTX,
-            GAMEPAD_AXIS_RIGHTY,
-            GAMEPAD_AXIS_TRIGGERLEFT,
-            GAMEPAD_AXIS_TRIGGERRIGHT,
-            GAMEPAD_AXIS_MAX_ENUM
+            Invalid,
+            LeftX,
+            LeftY,
+            RightX,
+            RightY,
+            TriggerLeft,
+            TriggerRight,
         };
 
         // Valid Gamepad buttons.
         public enum GamepadButton
         {
-            GAMEPAD_BUTTON_INVALID,
-            GAMEPAD_BUTTON_A,
-            GAMEPAD_BUTTON_B,
-            GAMEPAD_BUTTON_X,
-            GAMEPAD_BUTTON_Y,
-            GAMEPAD_BUTTON_BACK,
-            GAMEPAD_BUTTON_GUIDE,
-            GAMEPAD_BUTTON_START,
-            GAMEPAD_BUTTON_LEFTSTICK,
-            GAMEPAD_BUTTON_RIGHTSTICK,
-            GAMEPAD_BUTTON_LEFTSHOULDER,
-            GAMEPAD_BUTTON_RIGHTSHOULDER,
-            GAMEPAD_BUTTON_DPAD_UP,
-            GAMEPAD_BUTTON_DPAD_DOWN,
-            GAMEPAD_BUTTON_DPAD_LEFT,
-            GAMEPAD_BUTTON_DPAD_RIGHT,
-            GAMEPAD_BUTTON_MAX_ENUM
+            Invalid,
+            A,
+            B,
+            X,
+            Y,
+            Back,
+            Guide,
+            Start,
+            LeftStick,
+            RightStick,
+            LeftShoulder,
+            RightShoulder,
+            DPadUp,
+            DPadDown,
+            DPadLeft,
+            DPadRight,
         };
 
         // Different types of inputs for a joystick.
         public enum InputType
         {
-            INPUT_TYPE_AXIS,
-            INPUT_TYPE_BUTTON,
-            INPUT_TYPE_HAT,
-            INPUT_TYPE_MAX_ENUM
+            Axis,
+            Button,
+            Hat,
         };
 
 
@@ -2154,11 +2129,10 @@ namespace Love2d
 	    // Types of hinting for TrueType font glyphs.
 	    public enum Hinting
         {
-            HINTING_NORMAL,
-            HINTING_LIGHT,
-            HINTING_MONO,
-            HINTING_NONE,
-            HINTING_MAX_ENUM
+            Normal,
+            Light,
+            Mono,
+            None,
         };
     }
     public partial class Drawable : LoveObject
@@ -2175,7 +2149,7 @@ namespace Love2d
 }
 
 
-namespace Love2d
+namespace Love
 {
     public struct Triangle
     {

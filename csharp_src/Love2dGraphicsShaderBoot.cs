@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Love2d
+namespace Love
 {
     class Love2dGraphicsShaderBoot
     {
@@ -259,7 +259,7 @@ vec4 effect(mediump vec4 vcolor, Image tex, vec2 texcoord, vec2 pixcoord) {
                 }
             }
 
-            Love2d.Love2dDll.wrap_love_dll_graphics_setDefaultShaderCode(
+            Love.Love2dDll.wrap_love_dll_graphics_setDefaultShaderCode(
                 DllTool.ToUTF8Bytes(codeStr[00]), DllTool.ToUTF8Bytes(codeStr[01]), DllTool.ToUTF8Bytes(codeStr[02]),
                 DllTool.ToUTF8Bytes(codeStr[03]), DllTool.ToUTF8Bytes(codeStr[04]), DllTool.ToUTF8Bytes(codeStr[05]),
                 DllTool.ToUTF8Bytes(codeStr[06]), DllTool.ToUTF8Bytes(codeStr[07]), DllTool.ToUTF8Bytes(codeStr[08]),
@@ -331,14 +331,14 @@ vec4 effect(mediump vec4 vcolor, Image tex, vec2 texcoord, vec2 pixcoord) {
 
             string lang = "glsl";
             string info0, info1, info2, info3;
-            Love2d.Graphics.GetRendererInfo(out info0, out info1, out info2, out info3);
+            Love.Graphics.GetRendererInfo(out info0, out info1, out info2, out info3);
             if (info0 == "OpenGL ES")
             {
                 lang = "glsles";
 
             }
 
-            bool gammacorrect = Love2d.Graphics.IsGammaCorrect();
+            bool gammacorrect = Love.Graphics.IsGammaCorrect();
             if (vertexcode != null)
             {
                 vertexcode = createShaderStageCode(Stage.Vertex, vertexcode, lang, gammacorrect, false);

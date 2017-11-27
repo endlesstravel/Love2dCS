@@ -11,7 +11,7 @@ using Int64 = System.Int64;
 using UInt8 = System.Byte;
 
 
-namespace Love2d
+namespace Love
 {
     class Love2dDll
     {

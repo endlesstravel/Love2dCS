@@ -118,7 +118,7 @@ namespace Example
 
 5. Key event handle - Press `Escape` to exit
 ``` C#
-using Love2d;
+using Love;
 namespace Example
 {
     class Program : Scene
@@ -127,7 +127,7 @@ namespace Example
         {
             public override void KeyPressed(Keyboard.Key key, Keyboard.Scancode scancode, bool isRepeat)
             {
-                if (Keyboard.Key.KEY_ESCAPE == key)
+                if (Keyboard.Key.Escape == key)
                     Event.Quit();
             }
         }

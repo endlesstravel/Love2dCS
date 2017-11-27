@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Love2d
+namespace Love
 {
 
     #region Love Module
@@ -62,16 +62,16 @@ namespace Love2d
     public partial class Audio
     {
         //// new plus
-        public static Source NewSource(File file, Source.Type type = Source.Type.TYPE_STREAM)
+        public static Source NewSource(File file, Source.Type type = Source.Type.Stream)
         {
             var sounddata = Sound.NewSoundData(file);
             return NewSource(sounddata);
         }
-        public static Source NewSource(FileData fdata, Source.Type type = Source.Type.TYPE_STREAM)
+        public static Source NewSource(FileData fdata, Source.Type type = Source.Type.Stream)
         {
             return NewSource(Sound.NewDecoder(fdata));
         }
-        public static Source NewSource(string filename, Source.Type type = Source.Type.TYPE_STREAM)
+        public static Source NewSource(string filename, Source.Type type = Source.Type.Stream)
         {
             //return NewSource(FileSystem.NewFile(filename));
             var file = FileSystem.NewFile(filename);

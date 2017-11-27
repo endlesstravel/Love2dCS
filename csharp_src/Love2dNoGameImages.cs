@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Love2d
+namespace Love
 {
     internal partial class Love2dNoGame
     {

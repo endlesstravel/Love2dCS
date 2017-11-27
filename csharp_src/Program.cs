@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
-using fs = Love2d.FileSystem;
-using au = Love2d.Audio;
-using sd = Love2d.Sound;
+using fs = Love.FileSystem;
+using au = Love.Audio;
+using sd = Love.Sound;
 
-using Love2d;
+using Love;
 
 namespace Example
 {
-    class Program : Love2d.Scene
+    class Program : Love.Scene
     {
         public override void Draw()
         {
@@ -21,8 +21,8 @@ namespace Example
 
         static void Main(string[] args)
         {
-            Love2d.Boot.Run();
-            Love2d.Boot.Run(new Program());
+            Love.Boot.Run();
+            Love.Boot.Run(new Program());
 
             //Console.ReadKey();
         }
