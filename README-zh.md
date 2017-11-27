@@ -5,7 +5,7 @@ Love2dCS - C# Wrapper for LÖVE
 ---
 赋予 C# 使用 [LÖVE 引擎](https://love2d.org/)的能力，一切方法都可以直接按照love2d含义使用 https://love2d.org/wiki/love。
 
-Love2dCS 与 LÖVE 的不同点
+请注意 Love2dCS 与 LÖVE 的不同点 ：
 
 * 当前 Love2dCS 还不支持 LÖVE 中的物理模块。
 * Love2dCS 不打算提供线程模块，请使用 C# 中的线程。
@@ -23,6 +23,7 @@ windows x86
 * 项目已经发布到 NuGet [https://www.nuget.org/packages/Love2dCS/]( https://www.nuget.org/packages/Love2dCS/)
 
 * 请打开 `项目/属性/调试/启用本机代码调试`的选项
+
 ![启用本机代码调试](https://github.com/endlesstravel/Love2dCS/raw/master/img/zh-enable-native-debuging.png "zh-enable-native-debuging")
 
 # 下一步的开发计划

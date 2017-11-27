@@ -162,4 +162,28 @@ Distribute
 Develpoment
 ---
 
+1. clone git repository `git clone https://github.com/endlesstravel/Love2dCS`
+
+2. Build C part :
+
+* Follow the instructions at the [megasource](https://bitbucket.org/rude/megasource) repository page to build LÖVE 0.10.1+.
+* modify file at megasource/libs/love/CmakeList.txt
+* at line 1427 modif to :
+``` cmake
+<... other code ... >
+src/wrap_love_dll.cpp
+src/wrap_love_dll.h)
+
+source_group("src" FILES src/wrap_love_dll.cpp src/wrap_love_dll.h)
+
+<... other code ....>
+```
+* Remake project `cmake -G "Visual Studio 12" -H. -Bbuild`
+
+3. Build C# part :
+
+* Create a C# library project
+* Add all cshapr_src/*.cs to your C# library project.
+* **REMEBER** enable native code debugging in VS : `Configuration Properties/Debugging/Enable native code debugging`
+
 *In development ...*
