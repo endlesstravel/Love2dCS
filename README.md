@@ -16,7 +16,7 @@ Love2dCS currently based on [LÖVE 0.10.1](https://love2d.org/wiki/0.10.1)
 
 Love2dCS currently supports Windows x86. The next step will be to support windows x64. Linux and OSX temporarily was not supported.
 
-Physics module temporary not support.
+Physics module temporarily not support.
 
 Feature
 ---
@@ -24,16 +24,14 @@ Feature
 * Easy to install
 * Easy to use
 
-*In development ...*
-
 Setup & Getting Started
 ---
-
-* Please read [README-getting-started.md](README-getting-started.md) for more detail.
 
 1. Available on NuGet: https://www.nuget.org/packages/Love2dCS/
 
 2. And **REMEBER** enable native code debugging in VS : `Configuration Properties/Debugging/Enable native code debugging`
+
+Please read [README-getting-started.md](README-getting-started.md) for more detail.
 
 Next to development
 ---
@@ -78,7 +76,7 @@ Distribute
 Develpoment
 ---
 
-1. clone git repository `git clone https://github.com/endlesstravel/Love2dCS`
+1. clone repository `git clone https://github.com/endlesstravel/Love2dCS`
 
 2. Build C part :
 
