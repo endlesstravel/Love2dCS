@@ -167,18 +167,7 @@ Develpoment
 2. Build C part :
 
 * Follow the instructions at the [megasource](https://bitbucket.org/rude/megasource) repository page to build LÖVE 0.10.1+.
-* modify file at megasource/libs/love/CmakeList.txt
-* at line 1427 modif to :
-``` cmake
-<... other code ... >
-src/wrap_love_dll.cpp
-src/wrap_love_dll.h)
-
-source_group("src" FILES src/wrap_love_dll.cpp src/wrap_love_dll.h)
-
-<... other code ....>
-```
-* Remake project `cmake -G "Visual Studio 12" -H. -Bbuild`
+* Add files `c_api_src/wrap_love_dll.cpp ` and `c_api_src/wrap_love_dll.h` to your LÖVE project.
 
 3. Build C# part :
 
