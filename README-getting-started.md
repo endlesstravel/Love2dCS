@@ -29,3 +29,91 @@ namespace Example
 ```
 
 5. Run game : `Debug/Start Debugging` or press `F5`
+
+More examples
+---
+
+* Drawing an image
+``` C#
+using Love;
+namespace Example
+{
+    class Program : Love.Scene
+    {
+        Image img = null;
+
+        public override void Load()
+        {
+            img = Graphics.NewImage("logo.png");
+        }
+
+        public override void Draw()
+        {
+            Graphics.Draw(img, 300, 200);
+        }
+
+        static void Main(string[] args)
+        {
+            Boot.Run(new Program());
+        }
+    }
+}
+```
+
+* Playing a sound
+``` C#
+using Love;
+namespace Example
+{
+    class Program : Love.Scene
+    {
+        Source source = null;
+
+        public override void Load()
+        {
+            source = Audio.NewSource("music.mp3");
+            source.play();
+        }
+
+        static void Main(string[] args)
+        {
+            Boot.Run(new Program());
+        }
+    }
+}
+```
+
+* Key event handle - Press `Escape` to exit
+``` C#
+using Love;
+namespace Example
+{
+    class Program : Scene
+    {
+        class ExitEventHandler : EventHandler
+        {
+            public override void KeyPressed(Keyboard.Key key, Keyboard.Scancode scancode, bool isRepeat)
+            {
+                if (Keyboard.Key.Escape == key)
+                    Event.Quit();
+            }
+        }
+
+        static void Main(string[] args)
+        {
+            Boot.Run(new Program(), new ExitEventHandler());
+        }
+    }
+}
+```
+
+* Emptye projcet - `no-game` Sence will automatically run
+``` C#
+class Program
+{
+    static void Main(string[] args)
+    {
+        Love.Boot.Run();
+    }
+}
+```
