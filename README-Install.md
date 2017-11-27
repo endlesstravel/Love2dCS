@@ -1,6 +1,9 @@
 
-
+Setup Love2dCS
+---
 NuGet has both a GUI and command-line interface to work with packages in your projects. 
+
+If you have no NuGet on your Vistul Studio you can reference [Using Nuget in Visual Studio 2010 & 2012](https://github.com/paypal/sdk-core-dotnet/wiki/Using-Nuget-in-Visual-Studio-2010-&-2012) and [Using Nuget in Visual Studio 2005 & 2008](https://github.com/paypal/sdk-core-dotnet/wiki/Using-Nuget-in-Visual-Studio-2005-&-2008)
 
 ### 1. Using GUI
 
@@ -21,7 +24,7 @@ And **REMEBER** enable native code debugging in VS : `Configuration Properties/D
 ![005-enable-native-code-dubuging](https://github.com/endlesstravel/Love2dCS/raw/master/img/005-enable-native-code-dubuging.png "005-enable-native-code-dubuging")
 
 
-### 2. Install from NuGet using: `Install-Package Love2dCS`
+### 2. Install from NuGet using command-line
 
 After installing the NuGet or if you are using the Visual Studio 2015, to open the `Package Manager Console`, click on Tools Menu and choose `NuGet Package Manager` and then choose Package Manager Console.
 

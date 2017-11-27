@@ -26,16 +26,16 @@ Feature
 
 *In development ...*
 
-Setup
+Setup & Getting Started
 ---
+
+* Please read [README-getting-started.md](README-getting-started.md) for more detail.
 
 1. Available on NuGet: https://www.nuget.org/packages/Love2dCS/
 
 2. And **REMEBER** enable native code debugging in VS : `Configuration Properties/Debugging/Enable native code debugging`
 
-3. More detail please reference [Setup-Detail](README-Install.md)
-
-Next Steps
+Next to development
 ---
  - [ ] Add support for Physics 
  - [ ] Improve the document
@@ -50,17 +50,17 @@ class Program
 {
     static void Main(string[] args)
     {
-        Love2d.Boot.Run();
+        Love.Boot.Run();
     }
 }
 ```
 
 2. Drawing text
 ``` C#
-using Love2d;
+using Love;
 namespace Example
 {
-    class Program : Love2d.Scene
+    class Program : Love.Scene
     {
         public override void Draw()
         {
@@ -77,10 +77,10 @@ namespace Example
 
 3. Drawing an image
 ``` C#
-using Love2d;
+using Love;
 namespace Example
 {
-    class Program : Love2d.Scene
+    class Program : Love.Scene
     {
         Image img = null;
 
@@ -104,10 +104,10 @@ namespace Example
 
 4. Playing a sound
 ``` C#
-using Love2d;
+using Love;
 namespace Example
 {
-    class Program : Love2d.Scene
+    class Program : Love.Scene
     {
         Source source = null;
 
