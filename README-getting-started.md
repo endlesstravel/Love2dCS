@@ -13,7 +13,7 @@ Getting Started
 using Love;
 namespace Example
 {
-    class Program : Love.Scene
+    class Program : Scene
     {
         public override void Draw()
         {
@@ -38,7 +38,7 @@ More examples
 using Love;
 namespace Example
 {
-    class Program : Love.Scene
+    class Program : Scene
     {
         Image img = null;
 
@@ -65,7 +65,7 @@ namespace Example
 using Love;
 namespace Example
 {
-    class Program : Love.Scene
+    class Program : Scene
     {
         Source source = null;
 
@@ -90,18 +90,15 @@ namespace Example
 {
     class Program : Scene
     {
-        class ExitEventHandler : EventHandler
+        public override void KeyPressed(Keyboard.Key key, Keyboard.Scancode scancode, bool isRepeat)
         {
-            public override void KeyPressed(Keyboard.Key key, Keyboard.Scancode scancode, bool isRepeat)
-            {
-                if (Keyboard.Key.Escape == key)
-                    Event.Quit();
-            }
+            if (Keyboard.Key.Escape == key)
+                Event.Quit();
         }
 
         static void Main(string[] args)
         {
-            Boot.Run(new Program(), new ExitEventHandler());
+            Boot.Run(new Program());
         }
     }
 }

@@ -1318,115 +1318,115 @@ namespace Love
             out_joystick = LoveObject.NewObject<Joystick>(out_joystick_ptr);
         }
 
-        private static void DoHandleEvent(EventHandler handler, int out_event_type, bool out_down_or_up, bool out_bool, int out_idx, int out_enum1_type, int out_enum2_type, string out_string, Int4 out_int4, Float4 out_float4, float out_float_value, Joystick out_joystick)
+        private static void DoHandleEvent(Scene scene, int out_event_type, bool out_down_or_up, bool out_bool, int out_idx, int out_enum1_type, int out_enum2_type, string out_string, Int4 out_int4, Float4 out_float4, float out_float_value, Joystick out_joystick)
         {
             switch ((WrapEventType)out_event_type)
             {
                 case WrapEventType.WRAP_EVENT_TYPE_UNKNOW: { } break;
                 case WrapEventType.WRAP_EVENT_TYPE_KEY:
                     {
-                        if (out_down_or_up) handler.KeyPressed((Keyboard.Key)out_enum1_type, (Keyboard.Scancode)out_enum2_type, out_bool);
-                        else handler.KeyReleased((Keyboard.Key)out_enum1_type, (Keyboard.Scancode)out_enum2_type);
+                        if (out_down_or_up) scene.KeyPressed((Keyboard.Key)out_enum1_type, (Keyboard.Scancode)out_enum2_type, out_bool);
+                        else scene.KeyReleased((Keyboard.Key)out_enum1_type, (Keyboard.Scancode)out_enum2_type);
                     }
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_MOUSE_BUTTON:
                     {
-                        if (out_down_or_up) handler.MousePressed(out_float4.x, out_float4.y, out_idx, out_bool);
-                        else handler.MouseReleased(out_float4.x, out_float4.y, out_idx, out_bool);
+                        if (out_down_or_up) scene.MousePressed(out_float4.x, out_float4.y, out_idx, out_bool);
+                        else scene.MouseReleased(out_float4.x, out_float4.y, out_idx, out_bool);
                     }
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_MOUSE_MOTION:
                     {
-                        handler.MouseMoved(out_float4.x, out_float4.y, out_float4.w, out_float4.z, out_bool);
+                        scene.MouseMoved(out_float4.x, out_float4.y, out_float4.w, out_float4.z, out_bool);
                     }
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_MOUSE_WHEEL:
                     {
-                        handler.WheelMoved(out_int4.x, out_int4.y);
+                        scene.WheelMoved(out_int4.x, out_int4.y);
                     }
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_TOUCH_MOVED:
                     {
-                        handler.TouchMoved(out_idx, out_float4.x, out_float4.y, out_float4.w, out_float4.z, out_float_value);
+                        scene.TouchMoved(out_idx, out_float4.x, out_float4.y, out_float4.w, out_float4.z, out_float_value);
                     }
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_TOUCH_PRESSED:
                     {
-                        handler.TouchPressed(out_idx, out_float4.x, out_float4.y, out_float4.w, out_float4.z, out_float_value);
+                        scene.TouchPressed(out_idx, out_float4.x, out_float4.y, out_float4.w, out_float4.z, out_float_value);
                     }
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_TOUCH_RELEASED:
                     {
-                        handler.TouchReleased(out_idx, out_float4.x, out_float4.y, out_float4.w, out_float4.z, out_float_value);
+                        scene.TouchReleased(out_idx, out_float4.x, out_float4.y, out_float4.w, out_float4.z, out_float_value);
                     }
                     break;
 
                 case WrapEventType.WRAP_EVENT_TYPE_JOYSTICK_BUTTON:
                     {
-                        if (out_down_or_up) handler.JoystickPressed(out_joystick, out_idx);
-                        else handler.JoystickReleased(out_joystick, out_idx);
+                        if (out_down_or_up) scene.JoystickPressed(out_joystick, out_idx);
+                        else scene.JoystickReleased(out_joystick, out_idx);
                     }
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_JOYSTICK_AXIS_MOTION:
                     {
-                        handler.JoystickAxis(out_joystick, out_idx, out_float_value);
+                        scene.JoystickAxis(out_joystick, out_idx, out_float_value);
                     }
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_JOYSTICK_HAT_MOTION:
                     {
-                        handler.JoystickHat(out_joystick, out_idx, (Joystick.Hat)out_enum1_type);
+                        scene.JoystickHat(out_joystick, out_idx, (Joystick.Hat)out_enum1_type);
                     }
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_JOYSTICK_CONTROLLER_BUTTON:
                     {
-                        if (out_down_or_up) handler.JoystickGamepadPressed(out_joystick, (Joystick.GamepadButton)out_enum1_type);
-                        else handler.JoystickGamepadReleased(out_joystick, (Joystick.GamepadButton)out_enum1_type);
+                        if (out_down_or_up) scene.JoystickGamepadPressed(out_joystick, (Joystick.GamepadButton)out_enum1_type);
+                        else scene.JoystickGamepadReleased(out_joystick, (Joystick.GamepadButton)out_enum1_type);
                     }
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_JOYSTICK_CONTROLLER_AXIS_MOTION:
                     {
-                        handler.JoystickGamepadAxis(out_joystick, (Joystick.GamepadAxis)out_enum1_type, out_float_value);
+                        scene.JoystickGamepadAxis(out_joystick, (Joystick.GamepadAxis)out_enum1_type, out_float_value);
                     }
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_JOYSTICK_DEVICE_ADDED_OR_REMOVED:
                     {
-                        if (out_bool) handler.JoystickAdded(out_joystick);
-                        else handler.JoystickRemoved(out_joystick);
+                        if (out_bool) scene.JoystickAdded(out_joystick);
+                        else scene.JoystickRemoved(out_joystick);
                     }
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_TEXTINPUT: {
-                        handler.TextInput(out_string);
+                        scene.TextInput(out_string);
                     } break;
                 case WrapEventType.WRAP_EVENT_TYPE_TEXTEDITING: {
-                        handler.TextEditing(out_string, out_int4.x, out_int4.y);
+                        scene.TextEditing(out_string, out_int4.x, out_int4.y);
                     } break;
                 case WrapEventType.WRAP_EVENT_TYPE_WINDOW_VISIBLE: {
-                        handler.WindowFocus(out_bool);
+                        scene.WindowFocus(out_bool);
                     } break;
                 case WrapEventType.WRAP_EVENT_TYPE_WINDOW_ENTER_OR_LEAVE: {
-                        handler.MouseFocus(out_bool);
+                        scene.MouseFocus(out_bool);
                     } break;
                 case WrapEventType.WRAP_EVENT_TYPE_WINDOW_SHOWN_OR_HIDDEN: {
-                        handler.WindowVisible(out_bool);
+                        scene.WindowVisible(out_bool);
                     } break;
                 case WrapEventType.WRAP_EVENT_TYPE_WINDOW_RESIZED: {
-                        handler.WindowResize(out_int4.x, out_int4.y);
+                        scene.WindowResize(out_int4.x, out_int4.y);
                     } break;
                 case WrapEventType.WRAP_EVENT_TYPE_DROPPED: {
-                        if (FileSystem.IsDirectory(out_string)) handler.DirectoryDropped(out_string);
-                        else handler.FileDropped(FileSystem.NewFile(out_string));
+                        if (FileSystem.IsDirectory(out_string)) scene.DirectoryDropped(out_string);
+                        else scene.FileDropped(FileSystem.NewFile(out_string));
                     } break;
                 case WrapEventType.WRAP_EVENT_TYPE_LOWMEMORY: {
-                        handler.LowMemory();
+                        scene.LowMemory();
                     } break;
                 case WrapEventType.WRAP_EVENT_TYPE_QUIT: {
-                        if (handler.Quit()) Quit();
+                        if (scene.Quit()) Quit();
                     } break;
                 default: break;
             }
         }
 
-        public static bool Poll(EventHandler handler)
+        public static bool Poll(Scene scene)
         {
             bool out_hasEvent;int out_event_type;bool out_down_or_up;bool out_bool;int out_idx;int out_enum1_type;int out_enum2_type;string out_string;Int4 out_int4;Float4 out_float4;float out_float_value;Joystick out_joystick;
             PollOrWait(true, out out_hasEvent, out out_event_type, out out_down_or_up, out out_bool, out out_idx, out out_enum1_type, out out_enum2_type, out out_string, out out_int4, out out_float4, out out_float_value, out out_joystick);
@@ -1434,11 +1434,7 @@ namespace Love
             if (out_hasEvent == false)
                 return false;
 
-            if (handler == null)
-            {
-                handler = new EventHandler();
-            }
-            DoHandleEvent(handler, out_event_type, out_down_or_up, out_bool, out_idx, out_enum1_type, out_enum2_type, out_string, out_int4, out_float4, out_float_value, out_joystick);
+            DoHandleEvent(scene, out_event_type, out_down_or_up, out_bool, out_idx, out_enum1_type, out_enum2_type, out_string, out_int4, out_float4, out_float_value, out_joystick);
             return true;
         }
     }

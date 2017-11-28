@@ -1,5 +1,5 @@
 
-// author : Yang Xiao, yx33355555@163.com
+// author : endlesstravel
 // sumary : give we power call love2d with dynamic link library
 // modify libs/love/CmakeList.txt
 // in line 1427 add 

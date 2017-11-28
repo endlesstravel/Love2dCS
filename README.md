@@ -33,12 +33,6 @@ Setup & Getting Started
 
 Please read [README-getting-started.md](README-getting-started.md) for more detail.
 
-Next to development
----
- - [ ] Add support for Physics 
- - [ ] Improve the document
- - [ ] Add support for win-x64 platform
-
 Examples
 ---
 
@@ -47,7 +41,7 @@ Drawing text
 using Love;
 namespace Example
 {
-    class Program : Love.Scene
+    class Program : Scene
     {
         public override void Draw()
         {
@@ -62,6 +56,12 @@ namespace Example
 }
 ```
 [More examples](README-getting-started.md#more-examples)
+
+Next to development
+---
+ - [ ] Add support for Physics 
+ - [ ] Improve the document
+ - [ ] Add support for win-x64 platform
 
 Documentation
 ---

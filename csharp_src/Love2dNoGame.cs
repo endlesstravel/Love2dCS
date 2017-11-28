@@ -413,60 +413,56 @@ namespace Love
             g_mosaic.Draw();
             Graphics.Pop();
         }
-
-        public class NoGameEventHandler : EventHandler
+        public override void WindowResize(int w, int h)
         {
-            public override void WindowResize(int w, int h)
-            {
-                g_mosaic = new Mosaic();
-                g_toast.center();
-            }
+            g_mosaic = new Mosaic();
+            g_toast.center();
+        }
 
-            public override void KeyReleased(Keyboard.Key key, Keyboard.Scancode scancode)
-            {
-                if (key == Keyboard.Key.Escape)
-                    Event.Quit();
-            }
+        public override void KeyReleased(Keyboard.Key key, Keyboard.Scancode scancode)
+        {
+            if (key == Keyboard.Key.Escape)
+                Event.Quit();
+        }
 
-            public override void KeyPressed(Keyboard.Key key, Keyboard.Scancode scancode, bool isRepeat)
+        public override void KeyPressed(Keyboard.Key key, Keyboard.Scancode scancode, bool isRepeat)
+        {
+            if (key == Keyboard.Key.F)
             {
-                if (key ==  Keyboard.Key.F)
-                {
-                    Window.SetFullscreen(!Window.GetFullscreen());
-                }
+                Window.SetFullscreen(!Window.GetFullscreen());
             }
+        }
 
-            public override void MousePressed(float x, float y, int button, bool isTouch)
+        public override void MousePressed(float x, float y, int button, bool isTouch)
+        {
+            float tx = x / Graphics.GetWidth();
+            float ty = y / Graphics.GetHeight();
+            g_toast.look_at(tx, ty);
+        }
+
+        public override void MouseMoved(float x, float y, float dx, float dy, bool isTouch)
+        {
+            if (Mouse.IsDown(1))
             {
                 float tx = x / Graphics.GetWidth();
                 float ty = y / Graphics.GetHeight();
                 g_toast.look_at(tx, ty);
             }
+        }
 
-            public override void MouseMoved(float x, float y, float dx, float dy, bool isTouch)
+        float last_touch_time = 0, last_touch_x = 0, last_touch_y = 0;
+
+        public override void TouchPressed(long id, float x, float y, float dx, float dy, float pressure)
+        {
+            if (Touch.GetTouches().Length == 1)
             {
-                if (Mouse.IsDown(1))
+                float dist = (float)math.Sqrt((x - last_touch_x) * (x - last_touch_x) + (y - last_touch_y) * (y - last_touch_y));
+                float difftime = Timer.GetTime() - last_touch_time;
+                if (difftime < 0.3f && dist < 0.5f)
                 {
-                    float tx = x / Graphics.GetWidth();
-                    float ty = y / Graphics.GetHeight();
-                    g_toast.look_at(tx, ty);
-                }
-            }
-
-            float last_touch_time = 0, last_touch_x = 0 , last_touch_y = 0;
-
-            public override void TouchPressed(long id, float x, float y, float dx, float dy, float pressure)
-            {
-                if (Touch.GetTouches().Length == 1)
-                {
-                    float dist = (float)math.Sqrt((x - last_touch_x)* (x - last_touch_x) + (y - last_touch_y)* (y - last_touch_y));
-                    float difftime = Timer.GetTime() - last_touch_time;
-                    if (difftime < 0.3f && dist < 0.5f)
+                    if (Window.ShowMessageBox("Exit No-Game Screen", "", Window.MessageBoxType.Warning))
                     {
-                        if (Window.ShowMessageBox("Exit No-Game Screen", "", Window.MessageBoxType.Warning))
-                        {
-                            Event.Quit();
-                        }
+                        Event.Quit();
                     }
                 }
             }

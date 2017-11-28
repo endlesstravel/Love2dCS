@@ -20,7 +20,7 @@ using window = Love.Window;
 
 namespace Love
 {
-    public class EventHandler
+    public class Scene
     {
         public virtual void KeyPressed(Keyboard.Key key, Keyboard.Scancode scancode, bool isRepeat) { }
         public virtual void KeyReleased(Keyboard.Key key, Keyboard.Scancode scancode) { }
@@ -56,22 +56,10 @@ namespace Love
 
         public virtual bool Quit() { return true; }
         public virtual void LowMemory() { }
-    }
 
-    public class Scene
-    {
-        public virtual void Load()
-        {
-
-        }
-        public virtual void Update(float dt)
-        {
-
-        }
-        public virtual void Draw()
-        {
-
-        }
+        public virtual void Load() {}
+        public virtual void Update(float dt) {}
+        public virtual void Draw() {}
     }
 
     static public class Boot
@@ -104,49 +92,39 @@ namespace Love
 
         static void Loop()
         {
-            sence.Load();
+            scene.Load();
             while (true)
             {
-                Event.Poll(eventHandler);
+                Event.Poll(scene);
                 timer.Step();
 
-                sence.Update(timer.GetDelta());
+                scene.Update(timer.GetDelta());
 
                 var c = lg.GetBackgroundColor();
                 lg.Clear(c.r, c.g, c.b, c.a);
                 lg.Origin();
-                sence.Draw();
+                scene.Draw();
                 lg.Present();
                 timer.Sleep(0.001f);
             }
         }
 
-        static Scene sence;
-        static EventHandler eventHandler;
-        static string[] args;
+        static Scene scene;
 
-        static public void Run(Scene sence = null, EventHandler eventHandler = null, string[] args = null)
+        static public void Run(Scene sence = null)
         {
             try
             {
                 Init();
 
-                if (sence == null && eventHandler == null)
+                if (sence == null)
                 {
-                    Boot.sence = new Love2dNoGame();
-                    Boot.eventHandler = new Love2dNoGame.NoGameEventHandler();
-                }
-                else if (sence == null)
-                {
-                    Boot.sence = new Scene();
-                    Boot.eventHandler = eventHandler;
+                    scene = new Love2dNoGame();
                 }
                 else
                 {
-                    Boot.sence = sence;
-                    Boot.eventHandler = eventHandler;
+                    scene = sence;
                 }
-                Boot.args = args;
                 Loop();
             }
             catch (Exception e)
