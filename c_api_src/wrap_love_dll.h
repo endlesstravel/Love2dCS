@@ -151,6 +151,7 @@ namespace wrap
 	//typedef WrapSequence* pWrapSequence;
 
 #pragma region Runtime
+	int wrap_ee(const char *fmt, ...);
 	template <typename T>
 	bool4 wrap_catchexcept(const T& func)
 	{

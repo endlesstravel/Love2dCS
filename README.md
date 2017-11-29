@@ -12,7 +12,7 @@ Love2dCS was designed to be as close as possible to the original LÖVE API, as s
 * Most index begin from 1 at LÖVE. However, index will begin from 0 at Love2dCS
 * *More in development ... *
 
-Love2dCS currently based on [LÖVE 0.10.1](https://love2d.org/wiki/0.10.1)
+Love2dCS currently based on [LÖVE 0.10.2](https://love2d.org/wiki/0.10.2)
 
 Love2dCS currently supports Windows x86. The next step will be to support windows x64. Linux and OSX temporarily was not supported.
 
