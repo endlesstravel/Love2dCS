@@ -4,7 +4,7 @@ Getting Started
 
 1. Create a C# console application
 
-2. Please [install](README-Install.md) Love2dCS form NuGet to your Visual Studio first.
+2. Please [install](README-Install.md) Love2dCS from NuGet to your Visual Studio first.
 
 3. Config project : And **REMEBER** enable native code debugging on your Visual Studio project : `Configuration Properties/Debugging/Enable native code debugging`
 

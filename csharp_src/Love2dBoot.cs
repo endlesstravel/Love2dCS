@@ -113,19 +113,19 @@ namespace Love
 
         static Scene scene;
 
-        static public void Run(Scene sence = null)
+        static public void Run(Scene scene = null)
         {
             try
             {
                 Init();
 
-                if (sence == null)
+                if (scene == null)
                 {
-                    scene = new Love2dNoGame();
+                    Boot.scene = new Love2dNoGame();
                 }
                 else
                 {
-                    scene = sence;
+                    Boot.scene = scene;
                 }
                 Loop();
             }
