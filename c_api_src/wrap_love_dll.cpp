@@ -47,6 +47,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <sstream>
+#include <typeinfo>
 
 using namespace love::timer;
 using namespace love::window;
@@ -95,7 +96,7 @@ namespace wrap
 		va_list va;
 		va_start(va, fmt);
 		ret = vprintf(fmt, va);
-		vsprintf_s(errStrBuffer, MaxBuffer, fmt, va);
+		vsnprintf(errStrBuffer, MaxBuffer, fmt, va);
 		va_end(va);
 
 		printf("\n");
@@ -1841,8 +1842,8 @@ namespace wrap
             if (touchNormalizationBug || fabs(touchinfo.x) >= 1.5 || fabs(touchinfo.y) >= 1.5 || fabs(touchinfo.dx) >= 1.5 || fabs(touchinfo.dy) >= 1.5)
             {
                 touchNormalizationBug = true;
-                windowToPixelCoords(&touchinfo.x, &touchinfo.y);
-                windowToPixelCoords(&touchinfo.dx, &touchinfo.dy);
+                if (windowInstance) windowInstance->windowToPixelCoords(&touchinfo.x, &touchinfo.y);
+                if (windowInstance) windowInstance->windowToPixelCoords(&touchinfo.dx, &touchinfo.dy);
             }
             else
 #endif

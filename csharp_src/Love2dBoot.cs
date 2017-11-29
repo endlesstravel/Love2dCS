@@ -85,6 +85,8 @@ namespace Love
 
             string str = lf.GetExecutablePath();
             int index = str.LastIndexOf(@"\");
+            if (index == -1)
+                index = str.LastIndexOf(@"/");
             string path = str.Substring(0, index);
             Console.WriteLine(path);
             lf.SetSource(path);
