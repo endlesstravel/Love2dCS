@@ -20,12 +20,53 @@ namespace Example
             Graphics.Print("Hello World!", 400, 300);
         }
 
+        public override void Update(float dt)
+        {
+            // update every frame here ..
+        }
+
         static void Main(string[] args)
         {
             Boot.Run(new Program());
         }
     }
 }
+```
+
+the method of `Scene` will  be called just as it is named :
+
+``` C#
+KeyPressed(Keyboard.Key key, Keyboard.Scancode scancode, bool isRepeat)
+KeyReleased(Keyboard.Key key, Keyboard.Scancode scancode)
+MouseMoved(float x, float y, float dx, float dy, bool isTouch)
+MousePressed(float x, float y, int button, bool isTouch)
+MouseReleased(float x, float y, int button, bool isTouch)
+MouseFocus(bool focus)
+WheelMoved(int x, int y)
+JoystickPressed(Joystick joystick, int button)
+JoystickReleased(Joystick joystick, int button)
+JoystickAxis(Joystick joystick, float axis, float value)
+JoystickHat(Joystick joystick, int hat, Joystick.Hat direction)
+JoystickGamepadPressed(Joystick joystick, Joystick.GamepadButton button)
+JoystickGamepadReleased(Joystick joystick, Joystick.GamepadButton button)
+JoystickGamepadAxis(Joystick joystick, Joystick.GamepadAxis axis, float value)
+JoystickAdded(Joystick joystick)
+JoystickRemoved(Joystick joystick)
+TouchMoved(long id, float x, float y, float dx, float dy, float pressure)
+TouchPressed(long id, float x, float y, float dx, float dy, float pressure)
+TouchReleased(long id, float x, float y, float dx, float dy, float pressure)
+TextEditing(string text, int start, int end)
+TextInput(string text)
+WindowFocus(bool focus)
+WindowVisible(bool visible)
+WindowResize(int w, int h)
+DirectoryDropped(string path)
+FileDropped(File file)
+Quit()
+LowMemory()
+Load()
+Update(float dt)
+Draw()
 ```
 
 5. Run game : `Debug/Start Debugging` or press `F5`
@@ -45,6 +86,11 @@ namespace Example
         public override void Load()
         {
             img = Graphics.NewImage("logo.png");
+        }
+
+        public override void Update(float dt)
+        {
+            // update every frame here ..
         }
 
         public override void Draw()
@@ -75,6 +121,11 @@ namespace Example
             source.play();
         }
 
+        public override void Update(float dt)
+        {
+            // update every frame here ..
+        }
+
         static void Main(string[] args)
         {
             Boot.Run(new Program());
@@ -94,6 +145,11 @@ namespace Example
         {
             if (Keyboard.Key.Escape == key)
                 Event.Quit();
+        }
+
+        public override void Update(float dt)
+        {
+            // update every frame here ..
         }
 
         static void Main(string[] args)
