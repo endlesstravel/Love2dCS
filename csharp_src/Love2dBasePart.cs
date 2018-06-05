@@ -28,8 +28,8 @@ namespace Love
 
         public static string GetLoveLastError()
         {
-            // 这里不能直接调用 WSToString(Love2dDll.wrap_love_dll_last_error());
-            // 否则可能导致无限递归
+            // ???????????? WSToString(Love2dDll.wrap_love_dll_last_error());
+            // ????????????????
             IntPtr out_errormsg = IntPtr.Zero;
             Love2dDll.wrap_love_dll_last_error(out out_errormsg);
             WrapString ws = (WrapString)Marshal.PtrToStructure(out_errormsg, typeof(WrapString));

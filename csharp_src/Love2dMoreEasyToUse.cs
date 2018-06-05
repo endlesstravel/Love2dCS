@@ -102,6 +102,21 @@ namespace Love
             var filedata = FileSystem.NewFileData(filename);
             return NewRasterizer(filedata);
         }
+
+        public static Font NewFont(String filename)
+        {
+            var fileData = FileSystem.NewFileData(filename);
+            var rasterizer = Font.NewRasterizer(fileData);
+            return Graphics.NewFont(rasterizer);
+        }
+
+        public static Font NewImageFont(String filename, String glyphs, int extraspacing = 0)
+        {
+            var imageData = Image.NewImageData(filename);
+            var glyphsBytes = DllTool.ToUTF8Bytes(glyphs);
+            var rasterizerImage = Font.NewImageRasterizer(imageData, glyphsBytes, extraspacing);
+            return Graphics.NewFont(rasterizerImage);
+        }
     }
 
     public partial class Video
