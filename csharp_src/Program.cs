@@ -3,29 +3,167 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
-using fs = Love.FileSystem;
-using au = Love.Audio;
-using sd = Love.Sound;
-
 using Love;
 
 namespace Example
 {
+    //class Program : Love.Scene
+    //{
+    //    Font font;
+
+    //    public override void Load()
+    //    {
+
+    //        //var filedata = FileSystem.NewFileData("NotoSansHans-Regular.otf");
+    //        //var rasterizer = Font.NewRasterizer(filedata);
+    //        //font = Graphics.NewFont(rasterizer);
+
+    //        font = Graphics.NewFont("NotoSansHans-Regular.otf", 22);
+
+    //        Graphics.SetFont(font); // set font
+    //    }
+
+    //    float rectX = 0;
+    //    float rectY = 0;
+
+    //    public override void Update(float dt)
+    //    {
+    //        rectX = 400 * (float)(1 + Math.Sin(Timer.GetTime() / 10 * Math.PI));
+    //        rectY = 300;// * (float)(1 + Math.Cos(Timer.GetTime() * Math.PI));
+
+    //        Graphics.getCanvas();
+
+    //        if (Keyboard.IsDown(Keyboard.Key.Escape))
+    //        {
+    //            Event.Quit();
+    //        }
+
+    //        if (Keyboard.IsDown(Keyboard.Key.Return))
+    //        {
+    //            Window.SetFullscreen(!Window.GetFullscreen());
+    //        }
+    //    }
+
+    //    void DrawStencil()
+    //    {
+    //        // draw a rectangle as a stencil. Each pixel touched by the rectangle will have its stencil value set to 1. The rest will be 0.
+    //        Graphics.Stencil(() =>
+    //        {
+    //            Graphics.Rectangle(Graphics.DrawMode.Fill,
+    //                rectX - 150,
+    //                rectY - 155,
+    //                350, 310);
+    //        }, Graphics.StencilAction.Replace, 1);
+    //        Graphics.SetStencilTest(Graphics.CompareMode.Greater, 0);
+
+    //        float r = 30;
+    //        for (float x = 0; x < 800f; x += r * 2)
+    //        {
+    //            for (float y = 0; y < 600f; y += r * 2)
+    //            {
+    //                Graphics.SetColor((int)x, (int)y, (int)((x + y) % 255));
+    //                Graphics.Circle(Graphics.DrawMode.Fill, x, y, r);
+    //            }
+    //        }
+
+    //        Graphics.SetStencilTest();
+    //    }
+
+    //    public override void Draw()
+    //    {
+    //        Graphics.Print("Hello World!", 400, 300);
+    //        Shader shader = Graphics.GetShader();
+
+    //        Graphics.Print(shader == null ? "null" : "not null", 100, 100);
+    //        return;
+
+    //        DrawStencil();
+    //        return;
+
+    //        //Graphics.Print("你好", 0, 0);
+
+    //        Graphics.Rectangle(Graphics.DrawMode.Fill, 20, 50, 60, 120);
+
+    //        var color = new ColoredString.ColoredStringItem[] {
+    //            ColoredString.Item("你", 255, 255, 0, 255),
+    //            ColoredString.Item("好", 255, 0, 0, 255),
+    //        };
+
+    //        Graphics.Print(color, 0, 0);
+
+    //        Graphics.Line(
+    //            new Float2(200, 50), new Float2(400, 50), new Float2(500, 300),
+    //            new Float2(100, 300), new Float2(200, 50)
+    //        );
+    //    }
+
+    //    static void Main(string[] args)
+    //    {
+    //        var config = new BootConfig();
+    //        config.WindowFullscreen = Window.FullscreenType.Exclusive;
+
+    //        Boot.Run(new Program(), config);
+    //        Console.WriteLine("........" + new CB() + "..............");
+
+    //        Console.ReadKey();
+    //    }
+    //}
+
+
     class Program : Love.Scene
     {
+        float x, y, w, h;
+        public override void Load()
+        {
+            x = 20;
+            y = 20;
+            w = 60;
+            h = 20;
+        }
+
+        public override void Update(float dt)
+        {
+            w = w + 1;
+            h = h + 1;
+        }
+
         public override void Draw()
         {
-            //throw new Exception("gaegaewfaew");
-            Graphics.Print("Hello World!", 400, 300);
+            Graphics.SetColor(0, 100 / 255f, 100 / 255f);
+            Graphics.Rectangle(DrawMode.Fill, x, y, w, h);
         }
 
         static void Main(string[] args)
         {
-            Love.Boot.Run();
-            Love.Boot.Run(new Program());
-
-            //Console.ReadKey();
+            Boot.Run();
         }
+    }
+}
+
+class Desc
+{
+    public Desc(string str)
+    {
+        Console.WriteLine(str);
+    }
+}
+
+class CA
+{
+    Desc descA = new Desc("member of CA is init");
+
+    public CA()
+    {
+        Console.WriteLine("CA init");
+    }
+}
+class CB : CA
+{
+    Desc descB = new Desc("member of CB is init");
+
+    public CB()
+    {
+        Console.WriteLine("CB init");
     }
 }
 

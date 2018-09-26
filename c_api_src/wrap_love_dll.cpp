@@ -15,7 +15,7 @@
 // part of C# response for release
 
 #include "common/Module.h"
-#include "modules/timer/sdl/Timer.h"
+#include "modules/timer/Timer.h"
 #include "modules/window/sdl/Window.h"
 #include "modules/mouse/sdl/Mouse.h"
 #include "modules/keyboard/sdl/Keyboard.h"
@@ -29,17 +29,21 @@
 #include "modules/audio/null/Audio.h"
 #include "modules/audio/openal/Source.h"
 #include "modules/audio/null/Source.h"
-#include "modules/image/magpie/Image.h"
+#include "modules/image/Image.h"
 #include "modules/font/freetype/Font.h"
 #include "modules/video/theora/Video.h"
 #include "modules/graphics/opengl/Graphics.h"
+#include "modules/graphics/ParticleSystem.h"
+#include "modules/graphics/SpriteBatch.h"
+#include "modules/graphics/Text.h"
+#include "modules/graphics/Video.h"
+
 #include "modules/math/MathModule.h"
 #include "modules/math/BezierCurve.h"
 #include "modules/touch/sdl/Touch.h"
 #include "modules/joystick/sdl/Joystick.h"
 #include "modules/joystick/sdl/JoystickModule.h"
 
-//#include "common/runtime.h"
 #include "common/config.h"
 #include "common/version.h"
 #include "wrap_love_dll.h"
@@ -65,11 +69,12 @@ using namespace love::video;
 using namespace love::joystick;
 
 using namespace love::graphics;
-using love::graphics::opengl::Shader;
-using love::graphics::opengl::SpriteBatch;
-using love::graphics::opengl::Text;
+using love::graphics::Shader;
+using love::graphics::SpriteBatch;
+using love::graphics::Text;
 using love::graphics::opengl::Canvas;
-using love::graphics::opengl::Mesh;
+using love::graphics::Mesh;
+using love::graphics::Image;
 
 using love::math::BezierCurve;
 
@@ -173,16 +178,16 @@ namespace wrap
     Window *windowInstance = nullptr;
     Mouse *mouseInstance = nullptr;
     Keyboard *keyboardInstance = nullptr;
-    love::touch::sdl::Touch *touchInstance = nullptr;
-    love::joystick::sdl::JoystickModule *joystickInstance = nullptr;
+    touch::sdl::Touch *touchInstance = nullptr;
+    joystick::sdl::JoystickModule *joystickInstance = nullptr;
     Event *eventInstance = nullptr;
     Filesystem *fsInstance = nullptr;
     Sound* soundInstance = nullptr;
     Audio *audioInstance = nullptr;
-    Image *imageInstance = nullptr;
-    Font *fontInstance = nullptr;
-    Video *videoInstance = nullptr;
-    love::graphics::opengl::Graphics *graphicsInstance = nullptr;
+    image::Image *imageInstance = nullptr;
+    font::Font *fontInstance = nullptr;
+    video::Video *videoInstance = nullptr;
+    graphics::Graphics *graphicsInstance = nullptr;
 
     bool4 wrap_love_dll_filesystem_newFile(const char *filename, int fmode, File** out_file)
     {
@@ -200,21 +205,10 @@ namespace wrap
             *out_file = t;
         });
     }
-    bool4 wrap_love_dll_filesystem_newFileData_content(const char *contents, int contents_length, const char *filename, int decoder, FileData** out_filedata)
+    bool4 wrap_love_dll_filesystem_newFileData_content(const void *contents, int contents_length, const char *filename, FileData** out_filedata)
     {
         return wrap_catchexcept([&]() {
-            size_t length = strlen(contents);
-            FileData *t = nullptr;
-
-            switch ((FileData::Decoder)decoder)
-            {
-            case FileData::FILE:
-                t = fsInstance->newFileData((void *)contents, (int)length, filename);
-                break;
-            case FileData::BASE64:
-                t = fsInstance->newFileData(contents, filename);
-                break;
-            }
+            FileData *t = fsInstance->newFileData(contents, contents_length, filename);
             *out_filedata = t;
         });
     }
@@ -295,7 +289,6 @@ namespace wrap
             {
                 throw love::Exception("Invalid image size.");
             }
-
             ImageData *t = imageInstance->newImageData(w, h);
 
             if (data)
@@ -327,10 +320,17 @@ namespace wrap
     {
         return wrap_catchexcept([&]() { *out_Rasterizer = fontInstance->newRasterizer(fileData); });
     }
+    bool4 wrap_love_dll_font_newTrueTypeRasterizer_data(Data* data, int size, int hinting_type, Rasterizer** out_Rasterizer)
+    {
+        TrueTypeRasterizer::Hinting hinting = (TrueTypeRasterizer::Hinting)hinting_type; //TrueTypeRasterizer::HINTING_NORMAL;
+        return wrap_catchexcept([&]() { *out_Rasterizer = fontInstance->newTrueTypeRasterizer(data, size, hinting); });
+    }
     bool4 wrap_love_dll_font_newTrueTypeRasterizer(int size, int hinting_type, Rasterizer** out_Rasterizer)
     {
         TrueTypeRasterizer::Hinting hinting = (TrueTypeRasterizer::Hinting)hinting_type; //TrueTypeRasterizer::HINTING_NORMAL;
-        return wrap_catchexcept([&]() { *out_Rasterizer = fontInstance->newTrueTypeRasterizer(size, hinting); });
+        return wrap_catchexcept([&]() { 
+            *out_Rasterizer = fontInstance->newTrueTypeRasterizer(size, hinting); 
+        });
     }
     bool4 wrap_love_dll_font_newBMFontRasterizer(FileData *fileData, pImageData datas[], int dataLength, Rasterizer** out_Rasterizer)
     {
@@ -338,12 +338,14 @@ namespace wrap
         for (int i = 0; i < dataLength; i++)
             images.push_back(datas[i]);
 
-        return wrap_catchexcept([&]() { *out_Rasterizer = fontInstance->newBMFontRasterizer(fileData, images); });
+        return wrap_catchexcept([&]() { *out_Rasterizer = fontInstance->newBMFontRasterizer(fileData, images, 1); });
     }
     bool4 wrap_love_dll_font_newImageRasterizer(ImageData *imageData, const char* glyphsStr, int extraspacing, Rasterizer** out_Rasterizer)
     {
         std::string glyphs(glyphsStr);
-        return wrap_catchexcept([&]() { *out_Rasterizer = fontInstance->newImageRasterizer(imageData, glyphs, extraspacing); });
+        return wrap_catchexcept([&]() { 
+            *out_Rasterizer = fontInstance->newImageRasterizer(imageData, glyphs, extraspacing, 1);
+        });
     }
     bool4 wrap_love_dll_font_newGlyphData_rasterizer_str(Rasterizer* r, const char* glyphStr, GlyphData** out_GlyphData)
     {
@@ -374,11 +376,11 @@ namespace wrap
 
     void wrap_love_dll_math_newBezierCurve(Float2* pointsList, int pointsList_lenght, BezierCurve** out_BezierCurve)
     {
-        std::vector<Vector> points;
+        std::vector<Vector2> points;
         points.reserve(pointsList_lenght);
         for (int i = 0; i < pointsList_lenght; i += 2)
         {
-            Vector v;
+            Vector2 v;
             v.x = pointsList[i].x;
             v.y = pointsList[i].y;
             points.push_back(v);
@@ -386,22 +388,11 @@ namespace wrap
         *out_BezierCurve = Math::instance.newBezierCurve(points);
     }
 
-    bool4 wrap_love_dll_type_Canvas_newImageData(Canvas *canvas, love::image::ImageData **out_img)
-    {
-        int x = 0;
-        int y = 0;
-        int w = canvas->getWidth();
-        int h = canvas->getHeight();
-
-        return wrap_catchexcept([&]() {
-            *out_img = canvas->newImageData(imageInstance, x, y, w, h);
-        });
-    }
-
-    bool4 wrap_love_dll_type_Canvas_newImageData_xywh(Canvas *canvas, int x, int y, int w, int h, love::image::ImageData **out_img)
+    bool4 wrap_love_dll_type_Canvas_newImageData_xywh(graphics::Canvas *canvas, int slice, int mipmap, int x, int y, int w, int h, love::image::ImageData **out_img)
     {
         return wrap_catchexcept([&]() {
-            *out_img = canvas->newImageData(imageInstance, x, y, w, h);
+            Rect rect = { x, y, w, h };
+            *out_img = canvas->newImageData(imageInstance, slice, mipmap, rect);
         });
     }
 #pragma endregion
@@ -414,7 +405,7 @@ namespace wrap
         if (timerInstance == nullptr)
         {
             return wrap_catchexcept([&]() {
-                timerInstance = new love::timer::sdl::Timer(); 
+                timerInstance = new love::timer::Timer(); 
                 Module::registerInstance(timerInstance);
             });
         }
@@ -639,9 +630,9 @@ namespace wrap
         *out_result = windowInstance->isVisible();
     }
 
-    void wrap_love_dll_windows_getPixelScale(double *out_result)
+    void wrap_love_dll_windows_getDPIScale(double *out_result)
     {
-        *out_result = windowInstance->getPixelScale();
+        *out_result = windowInstance->getDPIScale();
     }
 
     void wrap_love_dll_windows_toPixels(double value, double *out_result)
@@ -689,11 +680,6 @@ namespace wrap
         windowInstance->pixelToWindowCoords(x, y);
     }
 
-    void wrap_love_dll_windows_getPixelDimensions(int *out_w, int *out_h)
-    {
-        windowInstance->getPixelDimensions(*out_w, *out_h);
-    }
-
 #pragma endregion
 
 #pragma region mouse
@@ -738,9 +724,9 @@ namespace wrap
         (*out_cursor)->retain();
     }
 
-    void wrap_love_dll_mouse_hasCursor(bool4 *out_result)
+    void wrap_love_dll_mouse_isCursorSupported(bool4 *out_result)
     {
-        *out_result = mouseInstance->hasCursor();
+        *out_result = mouseInstance->isCursorSupported();
     }
 
     void wrap_love_dll_mouse_getX(double *out_x)
@@ -1055,7 +1041,9 @@ namespace wrap
         WRAP_EVENT_TYPE_WINDOW_ENTER_OR_LEAVE,
         WRAP_EVENT_TYPE_WINDOW_SHOWN_OR_HIDDEN,
         WRAP_EVENT_TYPE_WINDOW_RESIZED,
-        WRAP_EVENT_TYPE_DROPPED,
+
+		WRAP_EVENT_TYPE_FILE_DROPPED,
+		WRAP_EVENT_TYPE_DIRECTORY_DROPPED,
 
         WRAP_EVENT_TYPE_LOWMEMORY,
         WRAP_EVENT_TYPE_QUIT,
@@ -1649,15 +1637,20 @@ namespace wrap
 
     void wrap_love_dll_event_inner_normalizedToPixelCoords(double *x, double *y)
     {
-        int w = 1, h = 1;
+        double w = 1.0, h = 1.0;
 
         if (windowInstance)
-            windowInstance->getPixelDimensions(w, h);
+        {
+
+            w = windowInstance->getWidth();
+            h = windowInstance->getHeight();
+            windowInstance->windowToDPICoords(&w, &h);
+        }
 
         if (x)
-            *x = ((*x) * (double)w);
+            *x = ((*x) * w);
         if (y)
-            *y = ((*y) * (double)h);
+            *y = ((*y) * h);
     }
 
     void wrap_love_dll_event_inner_convert_WindowEvent(const SDL_Event &e, int *out_event_type, bool4 *out_down_or_up, bool4 *out_bool, int *out_idx, int *out_enum1_type, int *out_enum2_type, WrapString** out_str, Int4* out_int4, Float4 *out_float4, float *out_float_value, Joystick **out_joystick)
@@ -1896,8 +1889,16 @@ namespace wrap
             {
                 // Allow mounting any dropped path, so zips or dirs can be mounted.
                 fsInstance->allowMountingForPath(e.drop.file);
+
+				if (fsInstance->isRealDirectory(e.drop.file))
+				{
+					*out_event_type = WRAP_EVENT_TYPE_DIRECTORY_DROPPED;
+				}
+				else
+				{
+					*out_event_type = WRAP_EVENT_TYPE_FILE_DROPPED;
+				}
                 *out_str = new_WrapString(e.drop.file);
-                *out_event_type = WRAP_EVENT_TYPE_DROPPED;
             }
             SDL_free(e.drop.file);
             break;
@@ -2074,25 +2075,16 @@ namespace wrap
         *out_str = new_WrapString(fsInstance->getExecutablePath());
 	}
 
-    void wrap_love_dll_filesystem_exists(const char *arg, bool4 *out_result)
-	{
-        *out_result = fsInstance->exists(arg);
-	}
-
-    void wrap_love_dll_filesystem_isDirectory(const char *arg, bool4 *out_result)
-	{
-        *out_result = fsInstance->isDirectory(arg);
-	}
-
-    void wrap_love_dll_filesystem_isFile(const char *arg, bool4 *out_result)
-	{
-        *out_result = fsInstance->isFile(arg);
-	}
-
-    void wrap_love_dll_filesystem_isSymlink(const char *filename, bool4 *out_result)
-	{
-        *out_result = fsInstance->isSymlink(filename);
-	}
+    void wrap_love_dll_filesystem_getInfo(const char *arg, int* out_filetype, int64* out_size, int64 *out_modtime, bool4 *out_result)
+    {
+        Filesystem::Info info = {};
+        if (*out_result = fsInstance->getInfo(arg, info))
+        {
+            *out_size = info.size;
+            *out_modtime = info.modtime;
+            *out_filetype = info.type;
+        }
+    }
 
 	bool4 wrap_love_dll_filesystem_createDirectory(const char *arg)
 	{
@@ -2140,20 +2132,6 @@ namespace wrap
 		std::vector<std::string> items;
 		fsInstance->getDirectoryItems(dir, items);
         *out_wss = new_WrapSequenceString(items);
-	}
-
-	bool4 wrap_love_dll_filesystem_getLastModified(const char *filename, int64 *out_time)
-	{
-        return wrap_catchexcept([&]() {
-            *out_time = fsInstance->getLastModified(filename);
-        });
-	}
-
-	bool4 wrap_love_dll_filesystem_getSize(const char *filename, int64 *out_size)
-	{
-        return wrap_catchexcept([&]() {
-		    *out_size = fsInstance->getSize(filename);
-        });
 	}
 
 	void wrap_love_dll_filesystem_setSymlinksEnabled(bool4 enable)
@@ -2233,8 +2211,6 @@ namespace wrap
 	bool4 wrap_love_dll_audio_open_love_audio()
 	{
 		audioInstance = Module::getInstance<love::audio::Audio>(Module::M_AUDIO);
-
-#ifdef LOVE_ENABLE_AUDIO_OPENAL
 		if (audioInstance == nullptr)
 		{
 			// Try OpenAL first.
@@ -2244,12 +2220,12 @@ namespace wrap
 			}
 			catch (love::Exception &e)
 			{
-				std::cout << e.what() << std::endl;
+				wrap_ee("audio init error : %d", e.what());
 			}
 		}
-#endif
+		else
+			audioInstance->retain();
 
-#ifdef LOVE_ENABLE_AUDIO_NULL
 		if (audioInstance == nullptr)
 		{
 			// Fall back to nullaudio.
@@ -2259,15 +2235,13 @@ namespace wrap
 			}
 			catch (love::Exception &e)
 			{
-				std::cout << e.what() << std::endl;
+				wrap_ee("audio init error : %d", e.what());
 			}
 		}
-#endif
 
 		if (audioInstance == nullptr)
 		{
 			return false;
-			return wrap_ee("Could not open any audio module.");
 		}
         else
         {
@@ -2277,9 +2251,9 @@ namespace wrap
 		return true;
 	}
 
-	void wrap_love_dll_audio_getSourceCount(int *out_reslut)
+	void wrap_love_dll_audio_getActiveSourceCount(int *out_reslut)
 	{
-		*out_reslut = audioInstance->getSourceCount();
+        *out_reslut = audioInstance->getActiveSourceCount();
 	}
 	void wrap_love_dll_audio_stop()
 	{
@@ -2289,13 +2263,13 @@ namespace wrap
 	{
 		audioInstance->pause();
 	}
-	void wrap_love_dll_audio_resume()
+	void wrap_love_dll_audio_play(Source** source_array, int source_array_length)
 	{
-		audioInstance->resume();
-	}
-	void wrap_love_dll_audio_rewind()
-	{
-		audioInstance->rewind();
+        std::vector<Source*> vec(source_array_length);
+        for (int i = 0; i < source_array_length; i++)
+            vec.push_back(source_array[i]);
+
+        audioInstance->play(vec);
 	}
 	void wrap_love_dll_audio_setVolume(float v)
 	{
@@ -2364,11 +2338,6 @@ namespace wrap
         *out_scale = audioInstance->getDopplerScale();
 	}
 
-	void wrap_love_dll_audio_canRecord(bool4 *out_result)
-	{
-        *out_result = audioInstance->canRecord();
-	}
-
 	void wrap_love_dll_audio_setDistanceModel(int distancemodel_type)
 	{
 		Audio::DistanceModel distanceModel = (Audio::DistanceModel)distancemodel_type;
@@ -2386,11 +2355,11 @@ namespace wrap
 
     bool4 wrap_love_dll_image_open_love_image()
     {
-        imageInstance = Module::getInstance<Image>(Module::M_IMAGE);
+        imageInstance = Module::getInstance<love::image::Image>(Module::M_IMAGE);
         if (imageInstance == nullptr)
         {
             wrap_catchexcept([&]() { 
-                imageInstance = new love::image::magpie::Image(); 
+                imageInstance = new love::image::Image(); 
                 Module::registerInstance(imageInstance);
             });
         }
@@ -2409,7 +2378,7 @@ namespace wrap
 
     bool4 wrap_love_dll_font_open_love_font()
     {
-        fontInstance = Module::getInstance<Font>(Module::M_FONT);
+        fontInstance = Module::getInstance<font::Font>(Module::M_FONT);
         if (fontInstance == nullptr)
         {
             return wrap_catchexcept([&]() { 
@@ -2427,7 +2396,7 @@ namespace wrap
 
     bool4 wrap_love_dll_video_open_love_video()
     {
-        videoInstance = Module::getInstance<Video>(Module::M_VIDEO);
+        videoInstance = Module::getInstance<video::Video>(Module::M_VIDEO);
         if (videoInstance == nullptr)
         {
             return wrap_catchexcept([&]() {
@@ -2451,16 +2420,16 @@ namespace wrap
     bool4 wrap_love_dll_math_triangulate(Float2* pointsList, int pointsList_lenght, float **out_triArray, int *out_triCount)
     {
         return wrap_catchexcept([&]() {
-            std::vector<Vector> points;
+            std::vector<Vector2> points;
             points.reserve(pointsList_lenght);
             for (int i = 0; i < pointsList_lenght; i += 2)
             {
-                Vector v;
+                Vector2 v;
                 v.x = pointsList[i].x;
                 v.y = pointsList[i].y;
                 points.push_back(v);
             }
-            std::vector<love::Vector> &vertices = points;
+            std::vector<love::Vector2> &vertices = points;
 
             if (vertices.size() < 3)
                 throw love::Exception("Need at least 3 vertices to triangulate");
@@ -2470,7 +2439,7 @@ namespace wrap
             if (vertices.size() == 3)
                 triangles.push_back(Triangle(vertices[0], vertices[1], vertices[2]));
             else
-                triangles = Math::instance.triangulate(vertices);
+                triangles = math::triangulate(vertices);
 
             *out_triCount = triangles.size();
             *out_triArray = new float[(*out_triCount) * 6];
@@ -2490,89 +2459,89 @@ namespace wrap
 
     void wrap_love_dll_math_isConvex(Float2* pointsList, int pointsList_lenght, bool4 *out_result)
     {
-        std::vector<Vector> points;
+        std::vector<Vector2> points;
         points.reserve(pointsList_lenght);
         for (int i = 0; i < pointsList_lenght; i += 2)
         {
-            Vector v;
+            Vector2 v;
             v.x = pointsList[i].x;
             v.y = pointsList[i].y;
             points.push_back(v);
         }
-        *out_result = Math::instance.isConvex(points);
+        *out_result = math::isConvex(points);
     }
 
     void wrap_love_dll_math_gammaToLinear(float gama, float *out_liner)
     {
-        *out_liner = Math::instance.gammaToLinear(gama);
+        *out_liner = math::gammaToLinear(gama);
     }
 
     void wrap_love_dll_math_linearToGamma(float liner, float *out_gama)
     {
-        *out_gama = Math::instance.linearToGamma(liner);
+        *out_gama = math::linearToGamma(liner);
     }
 
     void wrap_love_dll_math_noise_1(float x, float *out_result)
     {
-        *out_result = Math::instance.noise(x);
+        *out_result = SimplexNoise1234::noise(x) * 0.5f + 0.5f;
     }
     void wrap_love_dll_math_noise_2(float x, float y, float *out_result)
     {
-        *out_result = Math::instance.noise(x, y);
+        *out_result = SimplexNoise1234::noise(x, y) * 0.5f + 0.5f;
     }
     void wrap_love_dll_math_noise_3(float x, float y, float z, float *out_result)
     {
-        *out_result = Math::instance.noise(x, y, z);
+        *out_result = Noise1234::noise(x, y, z) * 0.5f + 0.5f;
     }
     void wrap_love_dll_math_noise_4(float x, float y, float z, float w, float *out_result)
     {
-        *out_result = Math::instance.noise(x, y, z, w);
+        *out_result = Noise1234::noise(x, y, z, w) * 0.5f + 0.5f;
     }
 
-    bool4 wrap_love_dll_math_compress_str(const char* str, int str_size, int format_type, int level, CompressedData **out_compressedData)
-    {
-        // default is Compressor::FORMAT_LZ4;
-        Compressor::Format format = (Compressor::Format)format_type; 
-        // level default is -1
+    //bool4 wrap_love_dll_math_compress_str(const char* str, int str_size, int format_type, int level, CompressedData **out_compressedData)
+    //{
+    //    // default is Compressor::FORMAT_LZ4;
+    //    Compressor::Format format = (Compressor::Format)format_type; 
+    //    // level default is -1
 
-        return wrap_catchexcept([&]() {
-            *out_compressedData = Math::instance.compress(format, str, str_size, level);
-            // no need for xxxx->retain()
-        });
-    }
+    //    return wrap_catchexcept([&]() {
+    //        *out_compressedData = Math::instance.compress(format, str, str_size, level);
+    //        // no need for xxxx->retain()
+    //    });
+    //}
 
-    bool4 wrap_love_dll_math_compress_data(Data *data, int format_type, int level, CompressedData **out_compressedData)
-    {
-        Compressor::Format format = (Compressor::Format)format_type; // default is Compressor::FORMAT_LZ4;
-                                                                     // level default is -1
-        return wrap_catchexcept([&]() { 
-            *out_compressedData = Math::instance.compress(format, data, level);
-            // no need for xxxx->retain()
-        });
-    }
+    //bool4 wrap_love_dll_math_compress_data(Data *data, int format_type, int level, CompressedData **out_compressedData)
+    //{
+    //    Compressor::Format format = (Compressor::Format)format_type; // default is Compressor::FORMAT_LZ4;
+    //                                                                 // level default is -1
+    //    return wrap_catchexcept([&]() { 
+    //        *out_compressedData = Math::instance.compress(format, data, level);
+    //        // no need for xxxx->retain()
+    //    });
+    //}
 
-    bool4 wrap_love_dll_math_decompress_data(CompressedData *data, char **out_datas, int *out_datas_length)
-    {
-        return wrap_catchexcept([&]() {
-            size_t rawsize = data->getDecompressedSize();
-            *out_datas = Math::instance.decompress(data, rawsize);
-            *out_datas_length = rawsize;
-        });
-    }
+    //bool4 wrap_love_dll_math_decompress_data(CompressedData *data, char **out_datas, int *out_datas_length)
+    //{
+    //    return wrap_catchexcept([&]() {
+    //        size_t rawsize = data->getDecompressedSize();
+    //        *out_datas = Math::instance.decompress(data, rawsize);
+    //        *out_datas_length = rawsize;
+    //    });
+    //}
 
-    bool4 wrap_love_dll_math_decompress_bytes(int format_type, const char *cbytes, int cbytes_length, char **out_datas, int *out_datas_length)
-    {
-        char *rawbytes = nullptr;
-        size_t rawsize = 0;
+    //bool4 wrap_love_dll_math_decompress_bytes(int format_type, const char *cbytes, int cbytes_length, char **out_datas, int *out_datas_length)
+    //{
+    //    char *rawbytes = nullptr;
+    //    size_t rawsize = 0;
 
-        Compressor::Format format = (Compressor::Format)format_type; // default is Compressor::FORMAT_LZ4;
-        size_t compressedsize = cbytes_length;
+    //    Compressor::Format format = (Compressor::Format)format_type; // default is Compressor::FORMAT_LZ4;
+    //    size_t compressedsize = cbytes_length;
 
-        return wrap_catchexcept([&]() { 
-            *out_datas = Math::instance.decompress(format, cbytes, compressedsize, rawsize);
-            *out_datas_length = rawsize;
-        });
-    }
+    //    return wrap_catchexcept([&]() { 
+    //        *out_datas = Math::instance.decompress(format, cbytes, compressedsize, rawsize);
+    //        *out_datas_length = rawsize;
+    //    });
+    //}
 
 #pragma endregion
 
@@ -2598,29 +2567,38 @@ namespace wrap
         return true;
     }
 
-    bool4 wrap_love_dll_graphics_newImage_file(ImageData **imageDataList, int imageDataListLength, bool4 flagMipmaps, bool4 flagLinear, love::graphics::opengl::Image** out_image)
+    bool4 wrap_love_dll_graphics_newImage_data(
+        ImageDataBase **imageDataList,
+		bool4* compressedTypeList,
+        int imageDataListLength, 
+        bool4 flagMipmaps, 
+        bool4 flagLinear,
+        love::graphics::Image** out_image)
     {
-        std::vector<love::image::ImageData *> data;
-        for (int i = 0; i < imageDataListLength; i++)
-            data.push_back(imageDataList[i]);
+        graphics::Image::Slices slices(TEXTURE_2D);
+        bool dpiscaleset = false;
+        graphics::Image::Settings settings;
+        settings.mipmaps = flagMipmaps;
+        settings.linear = flagLinear;
+        float *autodpiscale = dpiscaleset ? nullptr : &settings.dpiScale;
 
-        love::graphics::opengl::Image::Flags flags;
-        flags.mipmaps = flagMipmaps;
-        flags.linear = flagLinear;
+        for (int i = 0; i < imageDataListLength; i++) 
+        {
+            if (compressedTypeList[i] == false) {
+                slices.set(0, 0, imageDataList[i]);
+            }
+            else if (compressedTypeList[i] == true) {
+                slices.add((image::CompressedImageData*)(imageDataList[i]), 0, 0, false, settings.mipmaps);
+            }
+        }
 
-        return wrap_catchexcept([&]() { *out_image = graphicsInstance->newImage(data, flags);});
-    }
-    bool4 wrap_love_dll_graphics_newImage(CompressedImageData **compressedImageDataList, int compressedImageDataListLength, bool4 flagMipmaps, bool4 flagLinear, love::graphics::opengl::Image** out_image)
-    {
-        std::vector<love::image::CompressedImageData *> cdata;
-        for (int i = 0; i < compressedImageDataListLength; i++)
-            cdata.push_back(compressedImageDataList[i]);
+        bool success = wrap_catchexcept([&]() {
+            *out_image = graphicsInstance->newImage(slices, settings);
+        });
 
-        love::graphics::opengl::Image::Flags flags;
-        flags.mipmaps = flagMipmaps;
-        flags.linear = flagLinear;
+        slices.clear();
 
-        return wrap_catchexcept([&]() { *out_image = graphicsInstance->newImage(cdata, flags);});
+        return success;
     }
     void wrap_love_dll_graphics_newQuad(double x, double y, double w, double h, double sw , double sh, Quad** out_quad)
     {
@@ -2631,15 +2609,15 @@ namespace wrap
         v.h = h;
         *out_quad = graphicsInstance->newQuad(v, sw, sh);
     }
-    bool4 wrap_love_dll_graphics_newFont(Rasterizer *rasterizer, love::graphics::opengl::Font** out_font)
+    bool4 wrap_love_dll_graphics_newFont(Rasterizer *rasterizer, love::graphics::Font** out_font)
     {
         return wrap_catchexcept( [&]() {
             *out_font = graphicsInstance->newFont(rasterizer, graphicsInstance->getDefaultFilter()); 
         });
     }
-    bool4 wrap_love_dll_graphics_newSpriteBatch(Texture *texture, int maxSprites, int usage_type, love::graphics::opengl::SpriteBatch** out_spriteBatch)
+    bool4 wrap_love_dll_graphics_newSpriteBatch(Texture *texture, int maxSprites, int usage_type, love::graphics::SpriteBatch** out_spriteBatch)
     {
-        love::graphics::opengl::Mesh::Usage usage = (love::graphics::opengl::Mesh::Usage)usage_type;//love::graphics::opengl::Mesh::USAGE_DYNAMIC;
+        vertex::Usage usage = (vertex::Usage)usage_type;//love::graphics::opengl::Mesh::USAGE_DYNAMIC;
         return wrap_catchexcept([&]() {
             *out_spriteBatch = graphicsInstance->newSpriteBatch(texture, maxSprites, usage); 
         });
@@ -2650,11 +2628,35 @@ namespace wrap
             *out_particleSystem = graphicsInstance->newParticleSystem(texture, buffer); 
         });
     }
-    bool4 wrap_love_dll_graphics_newCanvas(int width, int height, int format_type, int msaa, Canvas** out_canvas)
+    bool4 wrap_love_dll_graphics_newCanvas(
+        int width, int height,
+		int texture_type,
+        int format_type,
+		bool4 readable,
+        int msaa, 
+		float dpiscale,
+		int mipmaps,
+        graphics::Canvas** out_canvas)
     {
-        Canvas::Format format = (love::graphics::opengl::Canvas::Format)format_type;
+        graphics::Canvas::Settings settings;
+
+
+        // check if width and height are given. else default to screen dimensions.
+        settings.width = width;
+        settings.height = height;
+
+        // Default to the screen's current pixel density scale.
+		settings.dpiScale = dpiscale;// graphicsInstance->getScreenDPIScale();
+
+        // default setting
+		settings.type = (TextureType)texture_type;// TEXTURE_2D_ARRAY;
+		settings.format = (PixelFormat)format_type;//PixelFormat::PIXELFORMAT_NORMAL;
+		settings.readable = readable;//true;
+        settings.msaa = msaa;
+		settings.mipmaps = (graphics::Canvas::MipmapMode)mipmaps;//graphics::Canvas::MipmapMode::MIPMAPS_NONE;
+
         return wrap_catchexcept( [&]() {
-            *out_canvas = graphicsInstance->newCanvas(width, height, format, msaa);
+            *out_canvas = graphicsInstance->newCanvas(settings);
             if (*out_canvas == nullptr)
             {
                 throw love::Exception("Canvas not created, but no error thrown. I don't even...");
@@ -2663,16 +2665,12 @@ namespace wrap
     }
     bool4 wrap_love_dll_graphics_newShader(const char* vertexCodeStr, const char* pixelCodeStr, Shader** out_shader)
     {
-        Shader::ShaderSource source;
-        source.pixel = pixelCodeStr;
-        source.pixel = vertexCodeStr;
-
-        return wrap_catchexcept([&]() { *out_shader = graphicsInstance->newShader(source);});
+        return wrap_catchexcept([&]() { *out_shader = graphicsInstance->newShader(pixelCodeStr, pixelCodeStr);});
     }
-    bool4 wrap_love_dll_graphics_newMesh_specifiedVertices(Float2 pos[], Float2 uv[], Int4 color[], int vertexCount, int drawMode_type, int usage_type, Mesh** out_mesh)
+    bool4 wrap_love_dll_graphics_newMesh_specifiedVertices(Float2 pos[], Float2 uv[], Float4 color[], int vertexCount, int drawMode_type, int usage_type, Mesh** out_mesh)
     {
-        love::graphics::opengl::Mesh::DrawMode drawMode = (love::graphics::opengl::Mesh::DrawMode)drawMode_type;
-        love::graphics::opengl::Mesh::Usage usage = (love::graphics::opengl::Mesh::Usage)usage_type;
+        auto drawMode = (graphics::PrimitiveType)drawMode_type;
+        auto usage = (vertex::Usage)usage_type;
 
         std::vector<Vertex> vertices;
         vertices.reserve(vertexCount);
@@ -2688,10 +2686,10 @@ namespace wrap
             v.s = uv[i].x;
             v.t = uv[i].y;
                 
-            v.r = color[i].r;
-            v.g = color[i].g;
-            v.b = color[i].b;
-            v.a = color[i].a;
+            v.color.r = color[i].r * 255;
+            v.color.g = color[i].g * 255;
+            v.color.b = color[i].b * 255;
+            v.color.a = color[i].a * 255;
 
             vertices.push_back(v);
         }
@@ -2700,18 +2698,18 @@ namespace wrap
     }
     bool4 wrap_love_dll_graphics_newMesh_count(int count, int drawMode_type, int usage_type, Mesh** out_mesh)
     {
-        love::graphics::opengl::Mesh::DrawMode drawMode = (love::graphics::opengl::Mesh::DrawMode)drawMode_type;
-        love::graphics::opengl::Mesh::Usage usage = (love::graphics::opengl::Mesh::Usage)usage_type;
+        auto drawMode = (graphics::PrimitiveType)drawMode_type;
+        auto usage = (vertex::Usage)usage_type;
         return wrap_catchexcept([&]() { *out_mesh = graphicsInstance->newMesh(count, drawMode, usage); });
     }
-    bool4 wrap_love_dll_graphics_newText(love::graphics::opengl::Font *font, BytePtr coloredStringText[], Int4 coloredStringColor[],  int coloredStringLength, Text** out_text)
+    bool4 wrap_love_dll_graphics_newText(love::graphics::Font *font, BytePtr coloredStringText[], Int4 coloredStringColor[],  int coloredStringLength, Text** out_text)
     {
-        std::vector<love::graphics::opengl::Font::ColoredString> strings;
+        std::vector<love::graphics::Font::ColoredString> strings;
         strings.reserve(coloredStringLength);
 
         for (int i = 0; i < coloredStringLength; i++)
         {
-            love::graphics::opengl::Font::ColoredString coloredstr;
+            love::graphics::Font::ColoredString coloredstr;
             coloredstr.color.r = coloredStringColor[i].r;
             coloredstr.color.g = coloredStringColor[i].g;
             coloredstr.color.b = coloredStringColor[i].b;
@@ -2721,13 +2719,9 @@ namespace wrap
 
         return wrap_catchexcept( [&]() { *out_text = graphicsInstance->newText(font, strings); });
     }
-    bool4 wrap_love_dll_graphics_newVideo(VideoStream *videoStream, love::graphics::opengl::Video** out_video)
+    bool4 wrap_love_dll_graphics_newVideo(VideoStream *videoStream, love::graphics::Video** out_video)
     {
-        return wrap_catchexcept( [&]() { *out_video = graphicsInstance->newVideo(videoStream); });
-    }
-    bool4 wrap_love_dll_graphics_newScreenshot(bool4 copyAlpha, ImageData** out_imageData)
-    {
-        return wrap_catchexcept([&]() { *out_imageData = graphicsInstance->newScreenshot(imageInstance, copyAlpha); });
+        return wrap_catchexcept( [&]() { *out_video = graphicsInstance->newVideo(videoStream, 1.0f); });
     }
 
 #pragma endregion
@@ -2744,7 +2738,7 @@ namespace wrap
     }
     void wrap_love_dll_graphics_isGammaCorrect(bool4 *out_result)
     {
-        *out_result = graphicsInstance->isGammaCorrect();
+        *out_result = graphics::isGammaCorrect();
     }
     void wrap_love_dll_graphics_setScissor()
     {
@@ -2757,7 +2751,9 @@ namespace wrap
             {
                 throw love::Exception("Can't set scissor with negative width and/or height.");
             }
-            graphicsInstance->setScissor(x, y, w, h);
+
+            Rect rect = { x, y, w, h };
+            graphicsInstance->setScissor(rect);
         });
     }
     bool4 wrap_love_dll_graphics_intersectScissor(int x, int y, int w, int h)
@@ -2767,31 +2763,38 @@ namespace wrap
             {
                 throw love::Exception("Can't set scissor with negative width and/or height.");
             }
-            graphicsInstance->intersectScissor(x, y, w, h);
+            Rect rect = { x, y, w, h };
+            graphicsInstance->intersectScissor(rect);
         });
     }
     void wrap_love_dll_graphics_getScissor(int *out_x, int *out_y, int *out_w, int *out_h)
     {
-        graphicsInstance->getScissor(*out_x, *out_y, *out_w, *out_h);
+        Rect rect;
+        graphicsInstance->getScissor(rect);
+        *out_x = rect.x;
+        *out_y = rect.y;
+        *out_w = rect.w;
+        *out_h = rect.h;
+
     }
     void wrap_love_dll_graphics_setStencilTest(int compare_type, int compareValue)
     {
         // COMPARE_ALWAYS effectively disables stencil testing.
-        Graphics::CompareMode compare = (Graphics::CompareMode)compare_type;// default is Graphics::COMPARE_ALWAYS;
+        auto compare = (graphics::CompareMode)compare_type;// default is Graphics::COMPARE_ALWAYS;
         graphicsInstance->setStencilTest(compare, compareValue);
     }
     void wrap_love_dll_graphics_getStencilTest(int *out_compare_type, int *out_compareValue)
     {
-        Graphics::CompareMode compare = Graphics::COMPARE_ALWAYS;
+        auto compare = graphics::COMPARE_ALWAYS;
         graphicsInstance->getStencilTest(compare, *out_compareValue);
         *out_compare_type = compare;
     }
-    void wrap_love_dll_graphics_setColor(int r, int g, int b, int a)
+    void wrap_love_dll_graphics_setColor(float r, float g, float b, float a)
     {
         Colorf c(r, g, b, a);
         graphicsInstance->setColor(c);
     }
-    void wrap_love_dll_graphics_getColor(int *out_r, int *out_g, int *out_b, int *out_a)
+    void wrap_love_dll_graphics_getColor(float *out_r, float *out_g, float *out_b, float *out_a)
     {
         Colorf c = graphicsInstance->getColor();
         *out_r = c.r;
@@ -2812,11 +2815,11 @@ namespace wrap
         *out_b = c.b;
         *out_a = c.a;
     }
-    void wrap_love_dll_graphics_setFont(love::graphics::opengl::Font *font)
+    void wrap_love_dll_graphics_setFont(love::graphics::Font *font)
     {
         graphicsInstance->setFont(font);
     }
-    bool4 wrap_love_dll_graphics_getFont(love::graphics::opengl::Font** out_font)
+    bool4 wrap_love_dll_graphics_getFont(love::graphics::Font** out_font)
     {
         return wrap_catchexcept([&]() { *out_font = graphicsInstance->getFont(); });
     }
@@ -2909,81 +2912,115 @@ namespace wrap
     {
         *out_isWireFrame = graphicsInstance->isWireframe();
     }
-    bool4 wrap_love_dll_graphics_setCanvas(Canvas** canvaList, int canvaListLength)
+    bool4 wrap_love_dll_graphics_setCanvas(graphics::Canvas** canvaList, int canvaListLength)
     {
-        // Disable stencil writes.
-        graphicsInstance->stopDrawToStencilBuffer();
+        if (canvaListLength == 0)
+        {
+            return wrap_catchexcept([&]() {
+                    graphicsInstance->setCanvas();
+            });
+        }
 
-        std::vector<Canvas*> canvases;
-        canvases.reserve(canvaListLength);
-
+        Graphics::RenderTargets targets;
+        targets.colors.reserve(canvaListLength);
         for (int i = 0; i < canvaListLength; i++)
         {
-            canvases.push_back(canvaList[i]);
+            targets.colors.push_back(canvaList[i]);
         }
 
         return wrap_catchexcept([&]() {
-            if (canvases.size() > 0)
-                graphicsInstance->setCanvas(canvases);
-            else
-                graphicsInstance->setCanvas();
+                graphicsInstance->setCanvas(targets);
         });
     }
-    void wrap_love_dll_graphics_getCanvas(Canvas*** out_canvas, int *out_canvas_length)
+    void wrap_love_dll_graphics_getCanvas(graphics::Canvas*** out_canvas, int *out_canvas_length)
     {
-        const std::vector<Canvas *> canvases = graphicsInstance->getCanvas();
-        Canvas** canvaList = new Canvas*[canvases.size()];
-
-        int n = 0;
-        for (love::graphics::opengl::Canvas *c : canvases)
+        Graphics::RenderTargets targets = graphicsInstance->getCanvas();
+        int ntargets = (int)targets.colors.size();
+        if (ntargets == 0)
         {
-            canvaList[n] = c;
-            c->retain();
-            n++;
+            *out_canvas = new graphics::Canvas*[0];
+            *out_canvas_length = 0;
+            return;
         }
-        *out_canvas = canvaList;
-        *out_canvas_length = canvases.size();
+
+        bool shouldUseTablesVariant = targets.depthStencil.canvas != nullptr;
+
+        if (!shouldUseTablesVariant)
+        {
+            for (const auto &rt : targets.colors)
+            {
+                if (rt.mipmap != 0 || rt.canvas->getTextureType() != TEXTURE_2D)
+                {
+                    shouldUseTablesVariant = true;
+                    break;
+                }
+            }
+        }
+
+        if (shouldUseTablesVariant)
+        {
+            *out_canvas = new graphics::Canvas*[0];
+            *out_canvas_length = 0;
+            return;
+        }
+        else
+        {
+            auto canvaList = new graphics::Canvas*[targets.colors.size()];
+
+            int n = 0;
+            for (const auto &rt : targets.colors)
+            {
+                canvaList[n] = rt.canvas;
+                rt.canvas->retain();
+                n++;
+            }
+            *out_canvas = canvaList;
+            *out_canvas_length = targets.colors.size();
+        }
+
     }
-    void wrap_love_dll_graphics_setShader(Shader *shader)
+    void wrap_love_dll_graphics_setShader(graphics::Shader *shader)
     {
         graphicsInstance->setShader(shader);
     }
-    void wrap_love_dll_graphics_getShader(Shader** out_shader)
+    void wrap_love_dll_graphics_getShader(graphics::Shader** out_shader)
     {
         *out_shader = graphicsInstance->getShader();
-        (*out_shader)->retain();
-    }
-    void wrap_love_dll_graphics_setDefaultShaderCode(
-        const char* glsl_codeVertexStr, const char* glsl_codePixelxStr, const char* glsl_videoPixelCodeStr,
-        const char* glsl_codeVertexStr_gammacorrect, const char* glsl_codePixelxStr_gammacorrect, const char* glsl_videoPixelCodeStr_gammacorrect,
-        const char* glsles_codeVertexStr, const char* glsles_codePixelxStr, const char* glsles_videoPixelCodeStr,
-        const char* glsles_codeVertexStr_gammacorrect, const char* glsles_codePixelxStr_gammacorrect, const char* glsles_videoPixelCodeStr_gammacorrect
-    )
-    {
-        const char* codesStr[4][3] = {
-            {glsl_codeVertexStr, glsl_codePixelxStr, glsl_videoPixelCodeStr},
-            {glsl_codeVertexStr_gammacorrect, glsl_codePixelxStr_gammacorrect, glsl_videoPixelCodeStr_gammacorrect },
-            {glsles_codeVertexStr, glsles_codePixelxStr, glsles_videoPixelCodeStr},
-            {glsles_codeVertexStr_gammacorrect, glsles_codePixelxStr_gammacorrect, glsles_videoPixelCodeStr_gammacorrect }
-        };
 
+        if (*out_shader != nullptr)
+        {
+            (*out_shader)->retain();
+        }
+    }
+
+    void wrap_love_dll_graphics_setDefaultShaderCode(const char **strPtr)
+    {
+		// Graphics::defaultShaderCode 
+		// 2 -> [0(defaults) | 1(defaults_gammacorrect)]
+		// 4 -> [LANGUAGE_GLSL1 | LANGUAGE_ESSL1 | LANGUAGE_GLSL3| LANGUAGE_ESSL3]
+		// 4 -> [vertex | pixel | videopixel | arraypixel]
+		// 2 * 4 * 4 = 16
+
+		int index = 0;
+		// gamma correct ?
         for (int i = 0; i < 2; i++)
         {
-            for (int renderer = 0; renderer < Graphics::RENDERER_MAX_ENUM; renderer++)
+			// lanage 
+            for (int lang = 0; lang < Shader::LANGUAGE_MAX_ENUM; lang++)
             {
-                int glsl_base = (renderer == Graphics::RENDERER_OPENGLES ? 2 : 0);
-                int base = glsl_base + i;
+                std::string vertex = strPtr[index++];
+                std::string pixel = strPtr[index++];
+                std::string videopixel = strPtr[index++];
+                std::string arraypixel = strPtr[index++];
 
-                love::graphics::opengl::Shader::ShaderSource code;
-                code.vertex = codesStr[base][0];
-                code.pixel = codesStr[base][1];
+                Graphics::defaultShaderCode[Shader::STANDARD_DEFAULT][lang][i].source[ShaderStage::STAGE_VERTEX] = vertex;
+                Graphics::defaultShaderCode[Shader::STANDARD_DEFAULT][lang][i].source[ShaderStage::STAGE_PIXEL] = pixel;
 
-                love::graphics::opengl::Shader::ShaderSource videocode;
-                videocode.vertex = codesStr[base][0];
-                videocode.pixel = codesStr[base][2];
+                Graphics::defaultShaderCode[Shader::STANDARD_VIDEO][lang][i].source[ShaderStage::STAGE_VERTEX] = vertex;
+                Graphics::defaultShaderCode[Shader::STANDARD_VIDEO][lang][i].source[ShaderStage::STAGE_PIXEL] = videopixel;
 
-                love::graphics::opengl::Shader::defaultCode[renderer][i] = code;
-                love::graphics::opengl::Shader::defaultVideoCode[renderer][i] = videocode;
+                Graphics::defaultShaderCode[Shader::STANDARD_ARRAY][lang][i].source[ShaderStage::STAGE_VERTEX] = vertex;
+                Graphics::defaultShaderCode[Shader::STANDARD_ARRAY][lang][i].source[ShaderStage::STAGE_PIXEL] = arraypixel;
             }
         }
     }
@@ -3026,15 +3063,10 @@ namespace wrap
 
 #pragma region graphics Drwing
 
-    // graphics.stencil part 1
-    void wrap_love_dll_graphics_ext_stencil_clearStencil()
-    {
-        graphicsInstance->clearStencil();
-    }
     // graphics.stencil part 2
     void wrap_love_dll_graphics_ext_stencil_drawToStencilBuffer(int action_type, int stencilValue)
     {
-        Graphics::StencilAction action = (Graphics::StencilAction)action_type;//Graphics::STENCIL_REPLACE;
+        auto action = (StencilAction)action_type;//Graphics::STENCIL_REPLACE;
         graphicsInstance->drawToStencilBuffer(action, stencilValue);
 
         // Call func here ...
@@ -3047,29 +3079,38 @@ namespace wrap
         graphicsInstance->stopDrawToStencilBuffer();
     }
 
-    bool4 wrap_love_dll_graphics_clear_rgba(float r, float g, float b, float a)
+    bool4 wrap_love_dll_graphics_clear_rgba(float r, float g, float b, float a, float stencil, bool4 enable_stencil,  float depth, bool4 enable_depth)
     {
-        Colorf color(r, g, b, a);
-        return wrap_catchexcept([&]() { graphicsInstance->clear(color); });
+        OptionalColorf color(Colorf(r, g, b, a));
+        OptionalInt optStencil(stencil);
+        optStencil.hasValue = enable_stencil;
+        OptionalDouble optDepth(depth);
+        optDepth.hasValue = enable_depth;
+
+        return wrap_catchexcept([&]() { graphicsInstance->clear(color, optStencil, optDepth); });
     }
-    bool4 wrap_love_dll_graphics_clear_rgbalist(Float4 colorList[], bool4 enableList[], int listLength)
+    bool4 wrap_love_dll_graphics_clear_rgbalist(Float4 colorList[], bool4 enableList[], int listLength, float stencil, bool4 enable_stencil, float depth, bool4 enable_depth)
     {
         return wrap_catchexcept([&]() {
 
-            std::vector<love::graphics::opengl::Graphics::OptionalColorf> colors;
+            std::vector<OptionalColorf> colors;
             colors.reserve(listLength);
 
             for (int i = 0; i < listLength; i++)
             {
                 Float4 &c = colorList[i];
-                colors[i].enabled = enableList[i];
-                colors[i].r = c.r;
-                colors[i].g = c.g;
-                colors[i].b = c.b;
-                colors[i].a = c.a;
+                colors[i].hasValue = enableList[i];
+                colors[i].value.r = c.r;
+                colors[i].value.g = c.g;
+                colors[i].value.b = c.b;
+                colors[i].value.a = c.a;
             }
 
-            graphicsInstance->clear(colors);
+            OptionalInt optStencil(stencil);
+            optStencil.hasValue = enable_stencil;
+            OptionalDouble optDepth(depth);
+            optDepth.hasValue = enable_depth;
+            graphicsInstance->clear(colors, optStencil, optDepth);
         });
     }
     void wrap_love_dll_graphics_discard(bool4 discardColors[], int discardColorsLength, bool4 discardStencil)
@@ -3085,7 +3126,7 @@ namespace wrap
     }
     void wrap_love_dll_graphics_present()
     {
-        graphicsInstance->present();
+        graphicsInstance->present(nullptr);
     }
 
     bool4 wrap_love_dll_graphics_draw_drawable(Drawable *drawable, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky)
@@ -3093,23 +3134,23 @@ namespace wrap
         Quad *quad = nullptr;
 
         return wrap_catchexcept([&]() {
-            drawable->draw(x, y, a, sx, sy, ox, oy, kx, ky);
+            graphicsInstance->draw(drawable, Matrix4(x, y, a, sx, sy, ox, oy, kx, ky));
         });
     }
     bool4 wrap_love_dll_graphics_draw_texture_quad(Quad *quad, Texture *texture, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky)
     {
         return wrap_catchexcept([&]() {
-            texture->drawq(quad, x, y, a, sx, sy, ox, oy, kx, ky);
+            graphicsInstance->draw(texture, quad, Matrix4(x, y, a, sx, sy, ox, oy, kx, ky));
         });
     }
     bool4 wrap_love_dll_graphics_print(BytePtr coloredStringListStr[], Int4 coloredStringListColor[], int coloredStringListLength, float x, float y, float angle, float sx, float sy, float ox, float oy, float kx, float ky)
     {
-        std::vector<love::graphics::opengl::Font::ColoredString> coloredStrings;
+        std::vector<love::graphics::Font::ColoredString> coloredStrings;
         coloredStrings.reserve(coloredStringListLength);
 
         for (int i = 0; i < coloredStringListLength; i++)
         {
-            love::graphics::opengl::Font::ColoredString cs;
+            love::graphics::Font::ColoredString cs;
             cs.str = coloredStringListStr[i].data;
             cs.color.r = coloredStringListColor[i].r;
             cs.color.g = coloredStringListColor[i].g;
@@ -3119,16 +3160,16 @@ namespace wrap
             coloredStrings.push_back(cs);
         }
 
-        return wrap_catchexcept([&]() { graphicsInstance->print(coloredStrings, x, y, angle, sx, sy, ox, oy, kx, ky); });
+        return wrap_catchexcept([&]() { graphicsInstance->print(coloredStrings, Matrix4(x, y, angle, sx, sy, ox, oy, kx, ky)); });
     }
     bool4 wrap_love_dll_graphics_printf(BytePtr coloredStringListStr[], Int4 coloredStringListColor[], int coloredStringListLength, float x, float y, float wrap, int align_type, float angle, float sx, float sy, float ox, float oy, float kx, float ky)
     {
-        std::vector<love::graphics::opengl::Font::ColoredString> coloredStrings;
+        std::vector<love::graphics::Font::ColoredString> coloredStrings;
         coloredStrings.reserve(coloredStringListLength);
 
         for (int i = 0; i < coloredStringListLength; i++)
         {
-            love::graphics::opengl::Font::ColoredString cs;
+            love::graphics::Font::ColoredString cs;
             cs.str = coloredStringListStr[i].data;
             cs.color.r = coloredStringListColor[i].r;
             cs.color.g = coloredStringListColor[i].g;
@@ -3138,9 +3179,9 @@ namespace wrap
             coloredStrings.push_back(cs);
         }
 
-        auto align = (love::graphics::opengl::Font::AlignMode) align_type;//Font::ALIGN_LEFT;
+        auto align = (love::graphics::Font::AlignMode) align_type;//Font::ALIGN_LEFT;
 
-        return wrap_catchexcept([&]() { graphicsInstance->printf(coloredStrings, x, y, wrap, align, angle, sx, sy, ox, oy, kx, ky); });
+        return wrap_catchexcept([&]() { graphicsInstance->printf(coloredStrings, wrap, align, Matrix4(x, y, angle, sx, sy, ox, oy, kx, ky)); });
     }
     bool4 wrap_love_dll_graphics_rectangle(int mode_type, float x, float y, float w, float h)
     {
@@ -3192,39 +3233,39 @@ namespace wrap
     bool4 wrap_love_dll_graphics_points(Float2 coords[], int coordsLength)
     {
         int numpoints = coordsLength;
-        float *coords_buffer = new float[numpoints * 2];
+        std::vector<Vector2> points(coordsLength);
 
         for (int i = 0; i < coordsLength; i++)
         {
-            coords_buffer[i * 2] = coords[i].x;
-            coords_buffer[i * 2 + 1] = coords[i].y;
+            points[i].x = coords[i].x;
+            points[i].y = coords[i].y;
         }
+        
 
-        bool res = wrap_catchexcept([&]() {graphicsInstance->points(coords_buffer, nullptr, numpoints);});
-        delete[] coords_buffer;
+        bool res = wrap_catchexcept([&]() {graphicsInstance->points(points.data(), nullptr, numpoints);});
         return res;
     }
     bool4 wrap_love_dll_graphics_points_colors(Float2 coords[], Int4 colors[], int coordsLength)
     {
         int numpoints = coordsLength;
-        float *coords_buffer = new float[numpoints * 2];
-        uint8 *colors_buffer = new uint8[numpoints * 4];
+        std::vector<Vector2> points(coordsLength);
+        std::vector<Colorf> colorsVector(coordsLength);
 
         for (int i = 0; i < coordsLength; i++)
         {
-            coords_buffer[i * 2] = coords[i].x;
-            coords_buffer[i * 2 + 1] = coords[i].y;
+            points[i].x = coords[i].x;
+            points[i].y = coords[i].y;
             
-            colors_buffer[i * 4 + 0] = colors[i].r;
-            colors_buffer[i * 4 + 1] = colors[i].g;
-            colors_buffer[i * 4 + 2] = colors[i].b;
-            colors_buffer[i * 4 + 3] = colors[i].a;
+            colorsVector[i].r = colors[i].r;
+            colorsVector[i].g = colors[i].g;
+            colorsVector[i].b = colors[i].b;
+            colorsVector[i].a = colors[i].a;
         }
 
-        bool res = wrap_catchexcept([&]() {graphicsInstance->points(coords_buffer, colors_buffer, numpoints);});
+        bool res = wrap_catchexcept([&]() {
+            graphicsInstance->points(points.data(), colorsVector.data(), points.size());
+        });
 
-        delete[] coords_buffer;
-        delete[] colors_buffer;
         return res;
     }
     bool4 wrap_love_dll_graphics_line(Float2 coords[], int coordsLength)
@@ -3235,18 +3276,18 @@ namespace wrap
             return false;
         }
 
-        int numpoints = coordsLength;
-        float *coords_buffer = new float[numpoints * 2];
+        std::vector<Vector2> points(coordsLength);
 
         for (int i = 0; i < coordsLength; i++)
         {
-            coords_buffer[i * 2] = coords[i].x;
-            coords_buffer[i * 2 + 1] = coords[i].y;
+            points[i].x = coords[i].x;
+            points[i].y = coords[i].y;
         }
 
-        bool res = wrap_catchexcept([&]() {graphicsInstance->polyline(coords_buffer, numpoints * 2);});
+        bool res = wrap_catchexcept([&]() {
+            graphicsInstance->polyline(points.data(), points.size());
+        });
 
-        delete[] coords_buffer;
         return res;
     }
     bool4 wrap_love_dll_graphics_polygon(int mode_type, Float2 coords[], int coordsLength)
@@ -3260,18 +3301,18 @@ namespace wrap
         auto mode = (Graphics::DrawMode)mode_type;
 
         // fetch coords
-        float *coords_buffer = new float[coordsLength * 2 + 2];
-        for (int i = 0; i < coordsLength; ++i)
+        std::vector<Vector2> points(coordsLength + 1);
+        for (int i = 0; i < coordsLength; i++)
         {
-            coords_buffer[i * 2 + 0] = coords[i].x;
-            coords_buffer[i * 2 + 1] = coords[i].y;
+            points[i].x = coords[i].x;
+            points[i].y = coords[i].y;
         }
         // make a closed loop
-        coords_buffer[coordsLength * 2] = coords[0].x;
-        coords_buffer[coordsLength * 2 + 1] = coords[0].y;
+        points.push_back(Vector2(coords[0].x, coords[0].y));
 
-        bool res = wrap_catchexcept([&]() {graphicsInstance->polygon(mode, coords_buffer, coordsLength * 2 + 2);});
-        delete[] coords_buffer;
+        bool res = wrap_catchexcept([&]() {
+            graphicsInstance->polygon(mode, points.data(), points.size());
+        });
 
         return res;
     }
@@ -3284,6 +3325,10 @@ namespace wrap
     {
         *out_reslut = graphicsInstance->isCreated();
     }
+	void wrap_love_dll_graphics_getDPIScale(double *out_dpiscale)
+	{
+		*out_dpiscale = graphicsInstance->getScreenDPIScale();
+	}
     void wrap_love_dll_graphics_getWidth(int *out_width)
     {
         *out_width = graphicsInstance->getWidth();
@@ -3300,17 +3345,31 @@ namespace wrap
     void wrap_love_dll_graphics_getSupported(int feature_type, bool4 *out_result)
     {
         auto feature = (Graphics::Feature) feature_type;
-        *out_result = graphicsInstance->isSupported(feature);
+        const Graphics::Capabilities &caps = graphicsInstance->getCapabilities();
+        if (feature_type < (int)Graphics::FEATURE_MAX_ENUM)
+        {
+            *out_result = caps.features[feature_type];
+        } else {
+            *out_result = false;
+        }
     }
     void wrap_love_dll_graphics_getCanvasFormats(int format_type, bool4 *out_result)
     {
-        auto format = (love::graphics::opengl::Canvas::Format)format_type;
-        *out_result = love::graphics::opengl::Canvas::isFormatSupported(format);
+        auto format = (PixelFormat)format_type;
+        *out_result = graphicsInstance->isCanvasFormatSupported(format);
     }
-    void wrap_love_dll_graphics_getCompressedImageFormats(int format_type, bool4 *out_result)
+    void wrap_love_dll_graphics_getImageFormats(int format_type, bool4 *out_result)
     {
-        auto format = (image::CompressedImageData::Format) format_type;
-        *out_result = love::graphics::opengl::Image::hasCompressedTextureSupport(format, false);
+        auto format = (PixelFormat)format_type;
+        bool ignore = !(image::ImageData::validPixelFormat(format) || isPixelFormatCompressed(format));
+        if (format == PIXELFORMAT_UNKNOWN || ignore)
+        {
+            *out_result = false;
+        }
+        else
+        {
+            *out_result = graphicsInstance->isImageFormatSupported(format);
+        }
     }
     void wrap_love_dll_graphics_getRendererInfo(WrapSequenceString** out_wss)
     {
@@ -3328,8 +3387,16 @@ namespace wrap
     }
     void wrap_love_dll_graphics_getSystemLimits(int limit_type, double *out_result)
     {
-        Graphics::SystemLimit limit = (Graphics::SystemLimit)limit_type;
-        *out_result = graphicsInstance->getSystemLimit(limit);
+        const Graphics::Capabilities &caps = graphicsInstance->getCapabilities();
+
+        if (limit_type < (int)Graphics::LIMIT_MAX_ENUM)
+        {
+            *out_result = caps.limits[limit_type];
+        }
+        else
+        {
+            *out_result = false;
+        }
     }
     void wrap_love_dll_graphics_getStats(int *out_drawCalls, int *out_canvasSwitches, int *out_shaderSwitches, int *out_canvases, int *out_images, int *out_fonts, int *out_textureMemory)
     {
@@ -3371,12 +3438,7 @@ namespace wrap
 
     void wrap_love_dll_type_Source_resume(Source *t)
     {
-        t->resume();
-    }
-
-    void wrap_love_dll_type_Source_rewind(Source *t)
-    {
-        t->rewind();
+        t->play();
     }
 
     bool4 wrap_love_dll_type_Source_setPitch(Source *t, float pitch)
@@ -3486,12 +3548,15 @@ namespace wrap
 
     bool4 wrap_love_dll_type_Source_setCone(Source *t, float innerAngle, float outerAngle, float outerVolume)
     {
-        return wrap_catchexcept( [&]() { t->setCone(innerAngle, outerAngle, outerVolume); });
+        return wrap_catchexcept( [&]() { t->setCone(innerAngle, outerAngle, outerVolume, 1); });
     }
 
     bool4 wrap_love_dll_type_Source_getCone(Source *t, float *out_innerAngle, float *out_outerAngle, float *out_outerVolume)
     {
-        return wrap_catchexcept( [&]() { t->getCone(*out_innerAngle, *out_outerAngle, *out_outerVolume); });
+        return wrap_catchexcept( [&]() {
+            float outerHighGain = 1;
+            t->getCone(*out_innerAngle, *out_outerAngle, *out_outerVolume, outerHighGain);
+        });
     }
 
     bool4 wrap_love_dll_type_Source_setRelative(Source *t, bool4 relative)
@@ -3514,19 +3579,9 @@ namespace wrap
         *out_result = t->isLooping();
     }
 
-    void wrap_love_dll_type_Source_isStopped(Source *t, bool4 *out_result)
-    {
-        *out_result = t->isStopped();
-    }
-
-    void wrap_love_dll_type_Source_isPaused(Source *t, bool4 *out_result)
-    {
-        *out_result = t->isPaused();
-    }
-
     void wrap_love_dll_type_Source_isPlaying(Source *t, bool4 *out_result)
     {
-        *out_result = !t->isStopped() && !t->isPaused();
+        *out_result = t->isPlaying();
     }
 
     bool4 wrap_love_dll_type_Source_setVolumeLimits(Source *t, float vmin, float vmax)
@@ -3583,9 +3638,9 @@ namespace wrap
         return wrap_catchexcept( [&]() { *out_rolloff = t->getRolloffFactor(); });
     }
 
-    void wrap_love_dll_type_Source_getChannels(Source *t, int *out_chanels)
+    void wrap_love_dll_type_Source_getChannelCount(Source *t, int *out_chanels)
     {
-        *out_chanels = t->getChannels();
+        *out_chanels = t->getChannelCount();
     }
 
     void wrap_love_dll_type_Source_getType(Source *t, int *out_type)
@@ -3869,13 +3924,12 @@ namespace wrap
 #pragma region type - Canvas
     
 
-    void wrap_love_dll_type_Canvas_getFormat(Canvas *canvas, int *out_format_type)
+    void wrap_love_dll_type_Canvas_getFormat(graphics::Canvas *canvas, int *out_format_type)
     {
-        Canvas::Format format = canvas->getTextureFormat();
-        *out_format_type = format;
+        *out_format_type = canvas->getPixelFormat();
     }
 
-    void wrap_love_dll_type_Canvas_getMSAA(Canvas *canvas, int *out_msaa)
+    void wrap_love_dll_type_Canvas_getMSAA(graphics::Canvas *canvas, int *out_msaa)
     {
         *out_msaa = canvas->getMSAA();
     }
@@ -3884,26 +3938,26 @@ namespace wrap
 
 #pragma region type - Font
 
-    void wrap_love_dll_type_Font_getHeight(love::graphics::opengl::Font *t, int *out_height)
+    void wrap_love_dll_type_Font_getHeight(love::graphics::Font *t, int *out_height)
     {
         *out_height = t->getHeight();
     }
 
-    bool4 wrap_love_dll_type_Font_getWidth(love::graphics::opengl::Font *t, const char *str, int *out_width)
+    bool4 wrap_love_dll_type_Font_getWidth(love::graphics::Font *t, const char *str, int *out_width)
     {
         return wrap_catchexcept([&]() { *out_width = t->getWidth(str); });
     }
 
-    bool4 wrap_love_dll_type_Font_getWrap(love::graphics::opengl::Font *t, 
+    bool4 wrap_love_dll_type_Font_getWrap(love::graphics::Font *t, 
         BytePtr coloredStringText[], Int4 coloredStringColor[], int coloredStringLength, float wrap,
         int *out_maxWidth, WrapSequenceString **out_pws)
     {
-        std::vector<love::graphics::opengl::Font::ColoredString> strings;
+        std::vector<love::graphics::Font::ColoredString> strings;
         strings.reserve(coloredStringLength);
 
         for (int i = 0; i < coloredStringLength; i++)
         {
-            love::graphics::opengl::Font::ColoredString coloredstr;
+            love::graphics::Font::ColoredString coloredstr;
             coloredstr.color.r = coloredStringColor[i].r;
             coloredstr.color.g = coloredStringColor[i].g;
             coloredstr.color.b = coloredStringColor[i].b;
@@ -3928,17 +3982,17 @@ namespace wrap
         });
     }
 
-    void wrap_love_dll_type_Font_setLineHeight(love::graphics::opengl::Font *t, float h)
+    void wrap_love_dll_type_Font_setLineHeight(love::graphics::Font *t, float h)
     {
         t->setLineHeight(h);
     }
 
-    void wrap_love_dll_type_Font_getLineHeight(love::graphics::opengl::Font *t, float *out_h)
+    void wrap_love_dll_type_Font_getLineHeight(love::graphics::Font *t, float *out_h)
     {
         *out_h = t->getLineHeight();
     }
 
-    bool4 wrap_love_dll_type_Font_setFilter(love::graphics::opengl::Font *t, int min_type, int mag_type, float anisotropy)
+    bool4 wrap_love_dll_type_Font_setFilter(love::graphics::Font *t, int min_type, int mag_type, float anisotropy)
     {
         Texture::Filter f = t->getFilter();
 
@@ -3949,7 +4003,7 @@ namespace wrap
         return wrap_catchexcept([&]() { t->setFilter(f); });
     }
 
-    void wrap_love_dll_type_Font_getFilter(love::graphics::opengl::Font *t, int *out_min_type, int *out_mag_type, float *out_anisotropy)
+    void wrap_love_dll_type_Font_getFilter(love::graphics::Font *t, int *out_min_type, int *out_mag_type, float *out_anisotropy)
     {
         const Texture::Filter f = t->getFilter();
         *out_min_type = f.min;
@@ -3957,29 +4011,29 @@ namespace wrap
         *out_anisotropy = f.anisotropy;
     }
 
-    void wrap_love_dll_type_Font_getAscent(love::graphics::opengl::Font *t, int *out_ascent)
+    void wrap_love_dll_type_Font_getAscent(love::graphics::Font *t, int *out_ascent)
     {
         *out_ascent = t->getAscent();
     }
 
-    void wrap_love_dll_type_Font_getDescent(love::graphics::opengl::Font *t, int *out_descent)
+    void wrap_love_dll_type_Font_getDescent(love::graphics::Font *t, int *out_descent)
     {
         *out_descent = t->getDescent();
     }
 
-    void wrap_love_dll_type_Font_getBaseline(love::graphics::opengl::Font *t, float*out_baseline)
+    void wrap_love_dll_type_Font_getBaseline(love::graphics::Font *t, float*out_baseline)
     {
         *out_baseline = t->getBaseline();
     }
 
-    bool4 wrap_love_dll_type_Font_hasGlyphs_uint32(love::graphics::opengl::Font *t, uint32 chr, bool4 *out_result)
+    bool4 wrap_love_dll_type_Font_hasGlyphs_uint32(love::graphics::Font *t, uint32 chr, bool4 *out_result)
     {
         return wrap_catchexcept([&]() {
             *out_result = t->hasGlyph(chr);
         });
     }
 
-    bool4 wrap_love_dll_type_Font_hasGlyphs_string(love::graphics::opengl::Font *t, const char *str, bool4 *out_result)
+    bool4 wrap_love_dll_type_Font_hasGlyphs_string(love::graphics::Font *t, const char *str, bool4 *out_result)
     {
         return wrap_catchexcept([&]() {
             std::string text(str);
@@ -3987,9 +4041,9 @@ namespace wrap
         });
     }
 
-    bool4 wrap_love_dll_type_Font_setFallbacks(love::graphics::opengl::Font *t, love::graphics::opengl::Font **fallback, int length)
+    bool4 wrap_love_dll_type_Font_setFallbacks(love::graphics::Font *t, love::graphics::Font **fallback, int length)
     {
-        std::vector<love::graphics::opengl::Font *> fallbacks;
+        std::vector<love::graphics::Font *> fallbacks;
 
         for (int i = 0; i < length; i++)
         {
@@ -4025,84 +4079,40 @@ namespace wrap
         *out_result = i->isCompressed();
     }
 
-    bool4 wrap_love_dll_type_Image_refresh(love::graphics::opengl::Image *i, int xoffset, int yoffset, int w, int h)
+    bool4 wrap_love_dll_type_Image_replacePixels(love::graphics::opengl::Image *i, ImageData *imgData, int slice, int mipmap, int x, int y, bool4 reloadmipmaps)
     {
-        return wrap_catchexcept([&]() { i->refresh(xoffset, yoffset, w, h); });
-    }
-
-    void wrap_love_dll_type_Image_getData(love::graphics::opengl::Image *i, Data ***out_datas, int *out_datas_lenght)
-    {
-        int n = 0;
-        if (i->isCompressed())
-        {
-            *out_datas = new Data*[i->getCompressedData().size()];
-            for (const auto &cdata : i->getCompressedData())
-            {
-                (*out_datas)[n] = cdata.get();
-                (*out_datas)[n]->retain();
-                n++;
-            }
-        }
-        else
-        {
-            *out_datas = new Data*[i->getImageData().size()];
-            for (const auto &data : i->getImageData())
-            {
-                (*out_datas)[n] = data.get();
-                (*out_datas)[n]->retain();
-                n++;
-            }
-        }
-
-        *out_datas_lenght = n;
-    }
-
-    void wrap_love_dll_type_Image_getFlags(love::graphics::opengl::Image* i, bool4 *out_mipmaps, bool4 *out_linear)
-    {
-        love::graphics::opengl::Image::Flags flags = i->getFlags();
-        *out_mipmaps = flags.mipmaps;
-        *out_linear = flags.linear;
+        return wrap_catchexcept([&]() { 
+            i->replacePixels(imgData, slice, mipmap, x, y, reloadmipmaps);
+        });
     }
 
 #pragma endregion
 
 #pragma region type - Mesh
 
+	char* floatWrite(char *c_dataPtr, float data) {
+		float* dataPtr = (float*)c_dataPtr;
+		*dataPtr = data;
+		return (char*)(dataPtr + 1);
+	};
 
-    static inline size_t inline_type_Mesh_writeByteData(char *destData, char *srcData, int components)
-    {
-        uint8 *componentdata = (uint8 *)destData;
+	char* charWrite(char *c_dataPtr, char data) {
+		*c_dataPtr = data;
+		return (c_dataPtr + 1);
+	};
 
-        for (int i = 0; i < components; i++)
-            componentdata[i] = ((uint8*)srcData)[i];
+	char* floatRead(char *c_dataPtr, float& data) {
+		float* dataPtr = (float*)c_dataPtr;
+		data = *dataPtr;
+		return (char*)(dataPtr + 1);
+	};
 
-        return sizeof(uint8) * components;
-    }
+	char* charRead(char *c_dataPtr, char& data) {
+		data = *c_dataPtr;
+		return (c_dataPtr + 1);
+	};
 
-    static inline size_t inline_type_Mesh_writeFloatData(char *destData, char *srcData, int components)
-    {
-        float *componentdata = (float *)destData;
-
-        for (int i = 0; i < components; i++)
-            componentdata[i] = ((float*)srcData)[i];
-
-        return sizeof(float) * components;
-    }
-
-    int inline_type_Mesh_writeAttributeData(char *destData, char *srcData, Mesh::DataType type, int components)
-    {
-        switch (type)
-        {
-        case Mesh::DATA_BYTE:
-            return inline_type_Mesh_writeByteData(destData, srcData, components );
-        case Mesh::DATA_FLOAT:
-            return inline_type_Mesh_writeFloatData(destData, srcData, components);
-        default:
-            return 0;
-        }
-    }
-
-    bool4 wrap_love_dll_type_Mesh_setVertices_data(Mesh *t, Data *d, uint32 vertoffset)
+    bool4 wrap_love_dll_type_Mesh_setVertices(Mesh *t, int vertoffset, Float2 pos[], Float2 uv[], Float4 color[], int vertexCount)
     {
         if (vertoffset >= t->getVertexCount())
         {
@@ -4113,190 +4123,77 @@ namespace wrap
         size_t stride = t->getVertexStride();
         size_t byteoffset = vertoffset * stride;
 
-        size_t datasize = std::min(d->getSize(), (t->getVertexCount() - vertoffset) * stride);
-        char *bytedata = (char *)t->mapVertexData() + byteoffset;
-
-        memcpy(bytedata, d->getData(), datasize);
-
-        t->unmapVertexData(byteoffset, datasize);
-        return true;
-    }
-
-    bool4 wrap_love_dll_type_Mesh_setVertices(Mesh *t, uint32 vertoffset, char *srcData, uint32 nvertices)
-    {
-        if (vertoffset >= t->getVertexCount())
+        if (vertoffset + vertexCount > t->getVertexCount())
         {
-            wrap_ee("Invalid vertex start index (must be between 1 and %d)", (int)t->getVertexCount());
-            return false;
-        }
-
-        size_t stride = t->getVertexStride();
-        size_t byteoffset = vertoffset * stride;
-
-        if (vertoffset + nvertices > t->getVertexCount())
-        {
-            wrap_ee("Too many vertices (expected at most %d, got %d)", (int)t->getVertexCount() - (int)vertoffset, (int)nvertices);
+            wrap_ee("Too many vertices (expected at most %d, got %d)", (int)t->getVertexCount() - (int)vertoffset, (int)vertexCount);
             return false;
         }
 
         const std::vector<Mesh::AttribFormat> &vertexformat = t->getVertexFormat();
         char *data = (char *)t->mapVertexData() + byteoffset;
 
-        for (size_t i = 0; i < nvertices; i++)
+		int sizeNeedToCopy = 0;
+        for (size_t i = 0; i < vertexCount; i++)
         {
-            const Mesh::AttribFormat &format = vertexformat[i];
-            int offset = inline_type_Mesh_writeAttributeData(data, srcData, format.type, format.components);
-            data += offset;
-            srcData += offset;
+			data = floatWrite(data, pos[i].x);
+			data = floatWrite(data, pos[i].y);
+			data = floatWrite(data, uv[i].x);
+			data = floatWrite(data, uv[i].y);
+			data = charWrite(data, color[i].r * 255);
+			data = charWrite(data, color[i].g * 255);
+			data = charWrite(data, color[i].b * 255);
+			data = charWrite(data, color[i].a * 255);
         }
 
-        t->unmapVertexData(byteoffset, nvertices * stride);
+        t->unmapVertexData(byteoffset, vertexCount * stride);
         return true;
     }
 
-    bool4 wrap_love_dll_type_Mesh_setVertex(Mesh *t, uint32 index, const char* data, int data_length)
-    {
-        return wrap_catchexcept([&]() { 
-            t->setVertex(index, data, data_length);
-        });
-    }
-
-    bool4 wrap_love_dll_type_Mesh_getVertex(Mesh *t, uint32 index, char **out_data, int *out_data_length, int *out_count)
-    {
-        const std::vector<Mesh::AttribFormat> &vertexformat = t->getVertexFormat();
-
-        char *data = (char *)t->getVertexScratchBuffer();
-
-        return wrap_catchexcept([&]() { 
-            t->getVertex(index, data, t->getVertexStride());
-
-            uint32 size = 0;
-            for (int i = index; i < t->getVertexCount(); i++)
-            {
-                auto& format = vertexformat[i];
-                if (format.type == Mesh::DATA_BYTE)
-                {
-                    size += sizeof(uint8) * format.components;
-                }
-                else if (format.type == Mesh::DATA_FLOAT)
-                {
-                    size += sizeof(float) * format.components;
-                }
-            }
-            char *buffer = new char[size];
-
-            uint32 srcOffset = 0;
-            for (int i = 0; i < index; i++)
-            {
-                auto& format = vertexformat[i];
-                if (format.type == Mesh::DATA_BYTE)
-                {
-                    srcOffset += sizeof(uint8) * format.components;
-                }
-                else if (format.type == Mesh::DATA_FLOAT)
-                {
-                    srcOffset += sizeof(float) * format.components;
-                }
-            }
-
-            uint32 destOffset = 0;
-            for (int i = index; i < t->getVertexCount(); i++)
-            {
-                auto& format = vertexformat[i];
-                int offset = inline_type_Mesh_writeAttributeData(buffer + destOffset, data + srcOffset, format.type, format.components);
-                srcOffset += offset;
-                destOffset += offset;
-            }
-
-            *out_data = buffer;
-            *out_data_length = size;
-            *out_count = t->getVertexCount() - index;
-        });
-    }
-
-    bool4 wrap_love_dll_type_Mesh_setVertexAttribute(Mesh *t, uint32 vertindex, int attribindex, uint32 data0, uint32 data1, uint32 data2, uint32 data3)
+    bool4 wrap_love_dll_type_Mesh_setVertex(Mesh *t, int index, Float2 pos, Float2 uv, Float4 color)
     {
         return wrap_catchexcept([&]() {
-
-            int components;
-            Mesh::DataType type = t->getAttributeInfo(attribindex, components);
-
-            // Maximum possible size for a single vertex attribute.
-            char data[sizeof(float) * 4];
-            ((uint32*)data)[0] = data0;
-            ((uint32*)data)[1] = data1;
-            ((uint32*)data)[2] = data2;
-            ((uint32*)data)[3] = data3;
-
-             t->setVertexAttribute(vertindex, attribindex, data, sizeof(float) * 4); 
+			size_t stride = t->getVertexStride();
+			int data_length = sizeof(float) * 4 + sizeof(char) * 4;
+			char* const rawData = new char[data_length];
+			char* data = rawData;
+			data = floatWrite(data, pos.x);
+			data = floatWrite(data, pos.y);
+			data = floatWrite(data, uv.x);
+			data = floatWrite(data, uv.y);
+			data = charWrite(data, color.r * 255);
+			data = charWrite(data, color.g * 255);
+			data = charWrite(data, color.b * 255);
+			data = charWrite(data, color.a * 255);
+            t->setVertex(index, data, data_length);
+			delete[] rawData;
         });
     }
 
-    bool4 wrap_love_dll_type_Mesh_getVertexAttribute(Mesh *t, uint32 vertindex, int attribindex, int *out_type, int *out_components,
-        uint32 *out_data0, uint32 *out_data1, uint32 *out_data2, uint32 *out_data3)
+    bool4 wrap_love_dll_type_Mesh_getVertex(Mesh *t, int index, Float2* out_pos, Float2* out_uv, Float4* out_color)
     {
-        return wrap_catchexcept([&]() { 
+        return wrap_catchexcept([&]() {
+			char *data = (char *)t->getVertexScratchBuffer();
+			t->getVertex(index, data, t->getVertexStride());
+			data = floatWrite(data, out_pos->x);
+			data = floatWrite(data, out_pos->y);
+			data = floatWrite(data, out_uv->x);
+			data = floatWrite(data, out_uv->y);
 
-            Mesh::DataType type;
-            int components;
-            type = t->getAttributeInfo(attribindex, components);
-
-            *out_type = type;
-            *out_components = components;
-
-            // Maximum possible size for a single vertex attribute.
-            char data[sizeof(float) * 4];
-
-            t->getVertexAttribute(vertindex, attribindex, data, sizeof(float) * 4);
-
-            *out_data0 = ((uint32*)data)[0];
-            *out_data1 = ((uint32*)data)[1];
-            *out_data2 = ((uint32*)data)[2];
-            *out_data3 = ((uint32*)data)[3];
+			char r, g, b, a;
+			data = charWrite(data, r);
+			data = charWrite(data, g);
+			data = charWrite(data, b);
+			data = charWrite(data, a);
+			out_color->r = r / 255;
+			out_color->g = g / 255;
+			out_color->b = b / 255;
+			out_color->a = a / 255;
         });
     }
 
     void wrap_love_dll_type_Mesh_getVertexCount(Mesh *t, int *out_result)
     {
         *out_result = t->getVertexCount();
-    }
-
-    void wrap_love_dll_type_Mesh_getVertexFormat(Mesh *t, WrapSequenceString **out_names, int **out_datatype, int **out_components, int *out_length)
-    {
-        const std::vector<Mesh::AttribFormat> &vertexformat = t->getVertexFormat();
-        const char *tname = nullptr;
-        auto wss = new WrapSequenceString();
-        *out_length = vertexformat.size();
-
-        *out_names = new WrapSequenceString();
-        (*out_names)->len = vertexformat.size();
-        (*out_names)->sequence = new pchar[vertexformat.size()];
-        *out_datatype = new int[vertexformat.size()];
-        *out_components = new int[vertexformat.size()];
-
-        for (size_t i = 0; i < vertexformat.size(); i++)
-        {
-            (*out_names)->sequence[i] = new char[vertexformat[i].name.size() + 1];
-            strcpy((*out_names)->sequence[i], vertexformat[i].name.c_str());
-
-            (*out_datatype)[i] = vertexformat[i].type;
-            (*out_components)[i] = vertexformat[i].components;
-        }
-    }
-
-    bool4 wrap_love_dll_type_Mesh_setAttributeEnabled(Mesh *t, const char *name, bool4 enable)
-    {
-        return wrap_catchexcept([&]() { t->setAttributeEnabled(name, enable); });
-    }
-
-    bool4 wrap_love_dll_type_Mesh_isAttributeEnabled(Mesh *t, const char *name, bool4 *out_result)
-    {
-        return wrap_catchexcept([&]() { *out_result = t->isAttributeEnabled(name); });
-    }
-
-    bool4 wrap_love_dll_type_Mesh_attachAttribute(Mesh *t, const char *name, Mesh *otherMesh)
-    {
-        return wrap_catchexcept([&]() { t->attachAttribute(name, otherMesh); });
     }
 
     void wrap_love_dll_type_Mesh_flush(Mesh *t)
@@ -4365,7 +4262,7 @@ namespace wrap
 
         // FIXME: big hack right here.
         if (typeid(*tex) == typeid(love::graphics::opengl::Image)) {}
-        else if (typeid(*tex) == typeid(Canvas)) {}
+        else if (typeid(*tex) == typeid(love::graphics::opengl::Canvas)) {}
         else
         {
             wrap_ee("Unable to determine texture type.");
@@ -4379,13 +4276,13 @@ namespace wrap
 
     void wrap_love_dll_type_Mesh_setDrawMode(Mesh *t, int mode_type)
     {
-        Mesh::DrawMode mode = (Mesh::DrawMode)mode_type;
+        auto mode = (PrimitiveType)mode_type;
         t->setDrawMode(mode);
     }
 
     void wrap_love_dll_type_Mesh_getDrawMode(Mesh *t, int *out_mode_type)
     {
-        Mesh::DrawMode mode = t->getDrawMode();
+        PrimitiveType mode = t->getDrawMode();
         *out_mode_type = mode;
     }
 
@@ -4418,7 +4315,9 @@ namespace wrap
 
 #pragma region type - ParticleSystem
 
-    bool4 wrap_love_dll_type_ParticleSystem_clone(ParticleSystem *t, ParticleSystem **out_clone)
+    using love::graphics::ParticleSystem;
+
+    bool4 wrap_love_dll_type_ParticleSystem_clone(love::graphics::ParticleSystem *t, ParticleSystem **out_clone)
     {
         return wrap_catchexcept([&]() { *out_clone = t->clone(); }); // no need for retain
     }
@@ -4434,7 +4333,7 @@ namespace wrap
 
         // FIXME: big hack right here.
         if (typeid(*tex) == typeid(love::graphics::opengl::Image)) {}
-        else if (typeid(*tex) == typeid(Canvas)) {}
+        else if (typeid(*tex) == typeid(graphics::opengl::Canvas)) {}
         else
         {
             wrap_ee("Unable to determine texture type.");
@@ -4464,7 +4363,7 @@ namespace wrap
 
     void wrap_love_dll_type_ParticleSystem_setInsertMode(ParticleSystem *t, int mode_type)
     {
-        ParticleSystem::InsertMode mode = (ParticleSystem::InsertMode)mode_type;
+        auto mode = (ParticleSystem::InsertMode)mode_type;
         t->setInsertMode(mode);
     }
 
@@ -4515,9 +4414,9 @@ namespace wrap
 
     void wrap_love_dll_type_ParticleSystem_getPosition(ParticleSystem *t, float *out_x, float *out_y)
     {
-        love::Vector pos = t->getPosition();
-        *out_x =  pos.getX();
-        *out_y =  pos.getY();
+        love::Vector2 pos = t->getPosition();
+		*out_x = pos.x;
+		*out_y = pos.y;
     }
 
     void wrap_love_dll_type_ParticleSystem_moveTo(ParticleSystem *t, float x, float y)
@@ -4525,7 +4424,7 @@ namespace wrap
         t->moveTo(x, y);
     }
 
-    bool4 wrap_love_dll_type_ParticleSystem_setAreaSpread(ParticleSystem *t, int distribution_type, float x, float y)
+    bool4 wrap_love_dll_type_ParticleSystem_setEmissionArea(ParticleSystem *t, int distribution_type, float x, float y, float angle, bool4 directionRelativeToCenter)
     {
         ParticleSystem::AreaSpreadDistribution distribution = ParticleSystem::DISTRIBUTION_NONE;
         distribution = (ParticleSystem::AreaSpreadDistribution)distribution_type;
@@ -4539,18 +4438,19 @@ namespace wrap
             }
         }
 
-        t->setAreaSpread(distribution, x, y);
+        t->setEmissionArea(distribution, x, y, angle, directionRelativeToCenter);
         return true;
     }
 
     void wrap_love_dll_type_ParticleSystem_getAreaSpread(ParticleSystem *t, int *out_distribution_type, float *out_x, float *out_y)
     {
-        ParticleSystem::AreaSpreadDistribution distribution = t->getAreaSpreadDistribution();
-        const love::Vector &p = t->getAreaSpreadParameters();
-
-        *out_distribution_type = distribution;
-        *out_x = p.getX();
-        *out_y = p.getY();
+        love::Vector2 p;
+		bool unused;
+		float angle;
+		ParticleSystem::AreaSpreadDistribution distribution = t->getEmissionArea(p, angle, unused);
+		*out_distribution_type = (int)distribution;
+		*out_x = p.x;
+		*out_y = p.y;
     }
 
     void wrap_love_dll_type_ParticleSystem_setDirection(ParticleSystem *t, float direction)
@@ -4593,7 +4493,7 @@ namespace wrap
 
     void wrap_love_dll_type_ParticleSystem_getLinearAcceleration(ParticleSystem *t, float *out_xmin, float *out_ymin, float *out_xmax, float *out_ymax)
     {
-        love::Vector min, max;
+        love::Vector2 min, max;
         t->getLinearAcceleration(min, max);
         *out_xmin = min.x;
         *out_ymin = min.y;
@@ -4735,9 +4635,9 @@ namespace wrap
 
     void wrap_love_dll_type_ParticleSystem_getOffset(ParticleSystem *t, float *out_x, float *out_y)
     {
-        love::Vector offset = t->getOffset();
-        *out_x = offset.getX();
-        *out_y = offset.getY();
+        love::Vector2 offset = t->getOffset();
+		*out_x = offset.x;
+		*out_y = offset.y;
     }
 
     bool4 wrap_love_dll_type_ParticleSystem_setColors(ParticleSystem *t, Int4 *colorarray, int colorarray_length)
@@ -4907,15 +4807,24 @@ namespace wrap
         *out_str = new_WrapString(warnings);
     }
 
-    bool4 wrap_love_dll_type_Shader_sendColors(Shader *shader, const char *name, Int4 *valuearray, int value_lenght)
+    bool4 wrap_love_dll_type_Shader_sendColors(Shader *shader, const char *name, Float4 *valuearray, int value_lenght)
     {
         const Shader::UniformInfo *info = shader->getUniformInfo(name);
+
+		if (info == nullptr)
+		{
+			wrap_ee("con't find shader uniform variable %s", name);
+			return false;
+		}
+		if (info->baseType != Shader::UniformType::UNIFORM_FLOAT)
+		{
+			wrap_ee("uniform variable %s send type error", name);
+			return false;
+		}
+
         int count = inline_type_Shader_getCount(info, value_lenght);
         int components = info->components;
-        bool gammacorrect = love::graphics::isGammaCorrect();
-        const auto &m = love::math::Math::instance;
-
-        float *values = shader->getScratchBuffer<float>(count * components);
+		float *values = info->floats;
 
         for (int i = 0; i < count; i++)
         {
@@ -4927,64 +4836,170 @@ namespace wrap
                 else if (j == 2) rawvalue = valuearray[i].b;
                 else if (j == 3) rawvalue = valuearray[i].a;
 
-                // the fourth component (alpha) is always already linear, if it exists.
-                if (gammacorrect && j < 3)
-                    values[i * components + j] = m.gammaToLinear(rawvalue / 255.0f);
-                else
-                    values[i * components + j] = rawvalue / 255.0f;
+				values[i * components + j] = rawvalue;
             }
         }
 
-        return wrap_catchexcept([&]() { shader->sendFloats(info, values, count); });
+		if (graphics::isGammaCorrect())
+		{
+			// alpha is always linear (when present).
+			int gammacomponents = std::min(components, 3);
+
+			for (int i = 0; i < count; i++)
+			{
+				for (int j = 0; j < gammacomponents; j++)
+					values[i * components + j] = math::gammaToLinear(values[i * components + j]);
+			}
+		}
+
+        return wrap_catchexcept([&]() { shader->updateUniform(info, count); });
     }
 
     bool4 wrap_love_dll_type_Shader_sendFloats(Shader *shader, const char *name, float *valuearray, int valuearray_lenght)
     {
-        const Shader::UniformInfo *info = shader->getUniformInfo(name);
-        int count = inline_type_Shader_getCount(info, valuearray_lenght);
-        return wrap_catchexcept([&]() { shader->sendFloats(info, valuearray, count); });
+		const Shader::UniformInfo *info = shader->getUniformInfo(name);
+		if (info == nullptr)
+		{
+			wrap_ee("con't find shader uniform variable %s", name);
+			return false;
+		}
+		if (info->baseType != Shader::UniformType::UNIFORM_FLOAT)
+		{
+			wrap_ee("uniform variable %s send type error", name);
+			return false;
+		}
+
+
+		int count = inline_type_Shader_getCount(info, valuearray_lenght);
+		int components = info->components;
+		float *values = info->floats;
+
+		for (int i = 0; i < count; i++)
+		{
+			for (int j = 0; j < components; j++)
+			{
+				values[i * components + j] = valuearray[i * components + j];
+			}
+		}
+
+		return wrap_catchexcept([&]() { shader->updateUniform(info, count); });
     }
+
+
+	bool4 wrap_love_dll_type_Shader_sendUints(Shader *shader, const char *name, uint32 *valuearray, int valuearray_lenght)
+	{
+		const Shader::UniformInfo *info = shader->getUniformInfo(name);
+		if (info == nullptr)
+		{
+			wrap_ee("con't find shader uniform variable %s", name);
+			return false;
+		}
+		if (info->baseType != Shader::UniformType::UNIFORM_UINT)
+		{
+			wrap_ee("uniform variable %s send type error", name);
+			return false;
+		}
+
+		int count = inline_type_Shader_getCount(info, valuearray_lenght);
+		int components = info->components;
+		unsigned int *values = info->uints;
+
+		for (int i = 0; i < count; i++)
+		{
+			for (int j = 0; j < components; j++)
+			{
+				values[i * components + j] = valuearray[i * components + j];
+			}
+		}
+
+		return wrap_catchexcept([&]() { shader->updateUniform(info, count); });
+	}
 
     bool4 wrap_love_dll_type_Shader_sendInts(Shader *shader, const char *name, int *valuearray, int valuearray_lenght)
     {
-        const Shader::UniformInfo *info = shader->getUniformInfo(name);
-        int count = inline_type_Shader_getCount(info, valuearray_lenght);
-        return wrap_catchexcept([&]() { shader->sendInts(info, valuearray, count); });
+		const Shader::UniformInfo *info = shader->getUniformInfo(name);
+		if (info == nullptr)
+		{
+			wrap_ee("con't find shader uniform variable %s", name);
+			return false;
+		}
+		if (info->baseType != Shader::UniformType::UNIFORM_INT || info->baseType != Shader::UniformType::UNIFORM_BOOL)
+		{
+			wrap_ee("uniform variable %s send type error", name);
+			return false;
+		}
+
+		int count = inline_type_Shader_getCount(info, valuearray_lenght);
+		int components = info->components;
+		int *values = info->ints;
+
+		for (int i = 0; i < count; i++)
+		{
+			for (int j = 0; j < components; j++)
+			{
+				values[i * components + j] = valuearray[i * components + j];
+			}
+		}
+
+		return wrap_catchexcept([&]() { shader->updateUniform(info, count); });
     }
 
     bool4 wrap_love_dll_type_Shader_sendBooleans(Shader *shader, const char *name, bool4 *valuearray, int valuearray_lenght)
     {
-        const Shader::UniformInfo *info = shader->getUniformInfo(name);
-        int count = inline_type_Shader_getCount(info, valuearray_lenght);
-        float *values = shader->getScratchBuffer<float>(valuearray_lenght);
-        for (int i = 0; i < valuearray_lenght; i++) { values[i] = valuearray[i]; }
-        return wrap_catchexcept([&]() { shader->sendFloats(info, values, count); });
+		return wrap_love_dll_type_Shader_sendInts(shader, name, valuearray, valuearray_lenght);
     }
 
-    bool4 wrap_love_dll_type_Shader_sendMatrices(Shader *shader, const char *name, float *valuearray, int valuearray_lenght)
+    bool4 wrap_love_dll_type_Shader_sendMatrices(Shader *shader, const char *name, float *valueArray, int columns_lenght, int rows_length, int matrix_count)
     {
-        const Shader::UniformInfo *info = shader->getUniformInfo(name);
-        int count = inline_type_Shader_getCount(info, valuearray_lenght);
-        return wrap_catchexcept([&]() { shader->sendMatrices(info, valuearray, count); });
+		const Shader::UniformInfo *info = shader->getUniformInfo(name);
+		if (info == nullptr)
+		{
+			wrap_ee("con't find shader uniform variable %s", name);
+			return false;
+		}
+		if (info->baseType != Shader::UniformType::UNIFORM_MATRIX)
+		{
+			wrap_ee("uniform variable %s send type error", name);
+			return false;
+		}
+
+		int columns = info->matrix.columns;
+		int rows = info->matrix.rows;
+		if (columns_lenght != columns || rows_length != rows_length)
+		{
+			wrap_ee("matrix columns or rows error, uniform variable %s send type error", name);
+			return false;
+		}
+
+		int count = inline_type_Shader_getCount(info, matrix_count);
+		return wrap_catchexcept([&]() { shader->updateUniform(info, count); });
     }
 
-    bool4 wrap_love_dll_type_Shader_sendTexture(Shader *shader, const char *name, Texture *texture)
+    bool4 wrap_love_dll_type_Shader_sendTexture(Shader *shader, const char *name, Texture **texture, int texture_lenght)
     {
-        const Shader::UniformInfo *info = shader->getUniformInfo(name);
-        return wrap_catchexcept([&]() { shader->sendTexture(info, texture); });
-    }
+		const Shader::UniformInfo *info = shader->getUniformInfo(name);
+		if (info == nullptr)
+		{
+			wrap_ee("con't find shader uniform variable %s", name);
+			return false;
+		}
+		if (info->baseType != Shader::UniformType::UNIFORM_SAMPLER)
+		{
+			wrap_ee("uniform variable %s send type error", name);
+			return false;
+		}
 
-    void wrap_love_dll_type_Shader_getExternVariable(Shader *shader, const char *name, bool4 *out_variableExists, int *out_uniform_type, int *out_components, int *out_arrayelements)
-    {
-        int components = 0;
-        int arrayelements = 0;
-        Shader::UniformType type = Shader::UNIFORM_UNKNOWN;
-        type = shader->getExternVariable(name, components, arrayelements);
+		int count = inline_type_Shader_getCount(info, texture_lenght);
+		std::vector<Texture *> textures;
+		textures.reserve(count);
 
-        *out_variableExists = (components > 0);
-        *out_uniform_type = type;
-        *out_components = components;
-        *out_arrayelements = arrayelements;
+		for (int i = 0; i < count; i++)
+		{
+			textures.push_back(texture[i]);
+		}
+
+
+        return wrap_catchexcept([&]() { shader->sendTextures(info, textures.data(), count); });
     }
 
 
@@ -4995,28 +5010,28 @@ namespace wrap
     bool4 wrap_love_dll_type_SpriteBatch_add(SpriteBatch *t, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, int *out_index)
     {
         return wrap_catchexcept([&]() {
-            *out_index = t->add(x, y, a, sx, sy, ox, oy, kx, ky, -1);
+            *out_index = t->add(Matrix4(x, y, a, sx, sy, ox, oy, kx, ky), -1);
         });
     }
 
     bool4 wrap_love_dll_type_SpriteBatch_add_Quad(SpriteBatch *t, Quad *quad, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, int *out_index)
     {
         return wrap_catchexcept([&]() {
-            *out_index = t->addq(quad, x, y, a, sx, sy, ox, oy, kx, ky, -1);
+            *out_index = t->add(quad, Matrix4(x, y, a, sx, sy, ox, oy, kx, ky), -1);
         });
     }
 
     bool4 wrap_love_dll_type_SpriteBatch_set(SpriteBatch *t, int index, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky)
     {
         return wrap_catchexcept([&]() {
-            t->add(x, y, a, sx, sy, ox, oy, kx, ky, index);
+            t->add(Matrix4(x, y, a, sx, sy, ox, oy, kx, ky), index);
         });
     }
 
     bool4 wrap_love_dll_type_SpriteBatch_set_Quad(SpriteBatch *t, int index, Quad *quad, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky)
     {
         return wrap_catchexcept([&]() {
-            t->addq(quad, x, y, a, sx, sy, ox, oy, kx, ky, index);
+            t->add(quad, Matrix4(x, y, a, sx, sy, ox, oy, kx, ky), index);
         });
     }
 
@@ -5041,7 +5056,7 @@ namespace wrap
 
         // FIXME: big hack right here.
         if (typeid(*tex) == typeid(love::graphics::opengl::Image)) {}
-        else if (typeid(*tex) == typeid(Canvas)) {}
+        else if (typeid(*tex) == typeid(love::graphics::opengl::Canvas)) {}
         else
         {
             wrap_ee("Unable to determine texture type.");
@@ -5057,9 +5072,9 @@ namespace wrap
         t->setColor();
     }
 
-    void wrap_love_dll_type_SpriteBatch_setColor(SpriteBatch *t, int r, int g, int b, int a)
+    void wrap_love_dll_type_SpriteBatch_setColor(SpriteBatch *t, float r, float g, float b, float a)
     {
-        Color c;
+        Colorf c;
         c.r = r;
         c.g = g;
         c.b = b;
@@ -5067,31 +5082,27 @@ namespace wrap
         t->setColor(c);
     }
 
-    void wrap_love_dll_type_SpriteBatch_getColor(SpriteBatch *t, bool4 *out_exist, int *out_r, int *out_g, int *out_b, int *out_a)
+    void wrap_love_dll_type_SpriteBatch_getColor(SpriteBatch *t, bool4 *out_exist, float *out_r, float *out_g, float *out_b, float *out_a)
     {
-        const Color *color = t->getColor();
+		bool active = false;
+		Colorf color = t->getColor(active);
 
         // getColor returns null if no color is set.
-        if (!color)
+        if (!active)
         {
             *out_exist = false;
             return;
         }
         *out_exist = true;
-        *out_r = color->r;
-        *out_g = color->g;
-        *out_b = color->b;
-        *out_a = color->a;
+        *out_r = color.r;
+        *out_g = color.g;
+        *out_b = color.b;
+        *out_a = color.a;
     }
 
     void wrap_love_dll_type_SpriteBatch_getCount(SpriteBatch *t, int *out_count)
     {
         *out_count = t->getCount();
-    }
-
-    bool4 wrap_love_dll_type_SpriteBatch_setBufferSize(SpriteBatch *t, int size)
-    {
-        return wrap_catchexcept([&]() {t->setBufferSize(size); });
     }
 
     void wrap_love_dll_type_SpriteBatch_getBufferSize(SpriteBatch *t, int *out_buffersize)
@@ -5108,21 +5119,15 @@ namespace wrap
 
 #pragma region type - Text
 
-    void wrap_love_dll_type_Text_set_nil(Text *t)
-    {
-        // No argument: clear all current text.
-        wrap_catchexcept([&]() { t->set(); });
-    }
-
     bool4 wrap_love_dll_type_Text_set_coloredstring(Text *t, BytePtr coloredStringText[], Int4 coloredStringColor[], int coloredStringLength)
     {
         // Single argument: unformatted text.
-        std::vector<love::graphics::opengl::Font::ColoredString> strings;
+        std::vector<love::graphics::Font::ColoredString> strings;
         strings.reserve(coloredStringLength);
 
         for (int i = 0; i < coloredStringLength; i++)
         {
-            love::graphics::opengl::Font::ColoredString coloredstr;
+            love::graphics::Font::ColoredString coloredstr;
             coloredstr.color.r = coloredStringColor[i].r;
             coloredstr.color.g = coloredStringColor[i].g;
             coloredstr.color.b = coloredStringColor[i].b;
@@ -5135,12 +5140,12 @@ namespace wrap
 
     bool4 wrap_love_dll_type_Text_setf(Text *t, BytePtr coloredStringText[], Int4 coloredStringColor[], int coloredStringLength, float wraplimit, int align_type)
     {
-        std::vector<love::graphics::opengl::Font::ColoredString> strings;
+        std::vector<love::graphics::Font::ColoredString> strings;
         strings.reserve(coloredStringLength);
 
         for (int i = 0; i < coloredStringLength; i++)
         {
-            love::graphics::opengl::Font::ColoredString coloredstr;
+            love::graphics::Font::ColoredString coloredstr;
             coloredstr.color.r = coloredStringColor[i].r;
             coloredstr.color.g = coloredStringColor[i].g;
             coloredstr.color.b = coloredStringColor[i].b;
@@ -5148,46 +5153,47 @@ namespace wrap
             coloredstr.str = coloredStringText[i].data;
         }
 
-        auto align = (love::graphics::opengl::Font::AlignMode)align_type;
+        auto align = (love::graphics::Font::AlignMode)align_type;
         return wrap_catchexcept([&]() { t->set(strings, wraplimit, align); });
     }
 
     bool4 wrap_love_dll_type_Text_add(Text *t, BytePtr coloredStringText[], Int4 coloredStringColor[], int coloredStringLength,
         float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, int *out_index)
     {
-        std::vector<love::graphics::opengl::Font::ColoredString> strings;
+        std::vector<love::graphics::Font::ColoredString> strings;
         strings.reserve(coloredStringLength);
 
         for (int i = 0; i < coloredStringLength; i++)
         {
-            love::graphics::opengl::Font::ColoredString coloredstr;
+            love::graphics::Font::ColoredString coloredstr;
             coloredstr.color.r = coloredStringColor[i].r;
             coloredstr.color.g = coloredStringColor[i].g;
             coloredstr.color.b = coloredStringColor[i].b;
             coloredstr.color.a = coloredStringColor[i].a;
             coloredstr.str = coloredStringText[i].data;
         }
-
-        return wrap_catchexcept([&]() { *out_index = t->add(strings, x, y, a, sx, sy, ox, oy, kx, ky); });
+		Matrix4 m(x, y, a, sx, sy, ox, oy, kx, ky);
+        return wrap_catchexcept([&]() { *out_index = t->add(strings, m); });
     }
 
     bool4 wrap_love_dll_type_Text_addf(Text *t, BytePtr coloredStringText[], Int4 coloredStringColor[], int coloredStringLength,
         float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, float wraplimit, int align_type, int *out_index)
     {
-        std::vector<love::graphics::opengl::Font::ColoredString> strings;
+        std::vector<love::graphics::Font::ColoredString> strings;
         strings.reserve(coloredStringLength);
 
         for (int i = 0; i < coloredStringLength; i++)
         {
-            love::graphics::opengl::Font::ColoredString coloredstr;
+            love::graphics::Font::ColoredString coloredstr;
             coloredstr.color.r = coloredStringColor[i].r;
             coloredstr.color.g = coloredStringColor[i].g;
             coloredstr.color.b = coloredStringColor[i].b;
             coloredstr.color.a = coloredStringColor[i].a;
             coloredstr.str = coloredStringText[i].data;
         }
-        auto align = (love::graphics::opengl::Font::AlignMode)align_type;
-        return wrap_catchexcept([&]() { *out_index = t->addf(strings, wraplimit, align, x, y, a, sx, sy, ox, oy, kx, ky); });
+        auto align = (love::graphics::Font::AlignMode)align_type;
+		Matrix4 m(x, y, a, sx, sy, ox, oy, kx, ky);
+        return wrap_catchexcept([&]() { *out_index = t->addf(strings, wraplimit, align, m); });
     }
 
     void wrap_love_dll_type_Text_clear(Text *t)
@@ -5195,12 +5201,12 @@ namespace wrap
         wrap_catchexcept([&]() { t->clear(); });
     }
 
-    bool4 wrap_love_dll_type_Text_setFont(Text *t, love::graphics::opengl::Font *f)
+    bool4 wrap_love_dll_type_Text_setFont(Text *t, love::graphics::Font *f)
     {
          return wrap_catchexcept([&]() { t->setFont(f); });
     }
 
-    void wrap_love_dll_type_Text_getFont(Text *t, love::graphics::opengl::Font **font)
+    void wrap_love_dll_type_Text_getFont(Text *t, love::graphics::Font **font)
     {
         *font = t->getFont();
         (*font)->retain();
@@ -5267,39 +5273,39 @@ namespace wrap
 
 #pragma region type - Video
 
-    void wrap_love_dll_type_Video_getStream(love::graphics::opengl::Video *video, VideoStream **out_videsStream)
+    void wrap_love_dll_type_Video_getStream(love::graphics::Video *video, VideoStream **out_videsStream)
     {
         *out_videsStream = video->getStream();
         (*out_videsStream)->retain();
     }
 
-    void wrap_love_dll_type_Video_getSource(love::graphics::opengl::Video *video, Source **out_source)
+    void wrap_love_dll_type_Video_getSource(love::graphics::Video *video, Source **out_source)
     {
         *out_source = video->getSource();
         (*out_source)->retain();
     }
 
-    void wrap_love_dll_type_Video_setSource_nil(love::graphics::opengl::Video *video)
+    void wrap_love_dll_type_Video_setSource_nil(love::graphics::Video *video)
     {
         video->setSource(nullptr);
     }
 
-    void wrap_love_dll_type_Video_setSource(love::graphics::opengl::Video *video, Source *source)
+    void wrap_love_dll_type_Video_setSource(love::graphics::Video *video, Source *source)
     {
         video->setSource(source);
     }
 
-    void wrap_love_dll_type_Video_getWidth(love::graphics::opengl::Video *video, int *out_w)
+    void wrap_love_dll_type_Video_getWidth(love::graphics::Video *video, int *out_w)
     {
         *out_w = video->getWidth();
     }
 
-    void wrap_love_dll_type_Video_getHeight(love::graphics::opengl::Video *video, int *out_h)
+    void wrap_love_dll_type_Video_getHeight(love::graphics::Video *video, int *out_h)
     {
         *out_h = video->getHeight();
     }
 
-    bool4 wrap_love_dll_type_Video_setFilter(love::graphics::opengl::Video *video, int filtermin_type, int filtermag_type, float anisotropy)
+    bool4 wrap_love_dll_type_Video_setFilter(love::graphics::Video *video, int filtermin_type, int filtermag_type, float anisotropy)
     {
         Texture::Filter f = video->getFilter();
         f.min = (Texture::FilterMode)filtermin_type;
@@ -5309,7 +5315,7 @@ namespace wrap
         return wrap_catchexcept([&]() { video->setFilter(f); });
     }
 
-    void wrap_love_dll_type_Video_getFilter(love::graphics::opengl::Video *video, int *out_filtermin_type, int *out_filtermag_type, float *out_anisotropy)
+    void wrap_love_dll_type_Video_getFilter(love::graphics::Video *video, int *out_filtermin_type, int *out_filtermag_type, float *out_anisotropy)
     {
         const Texture::Filter f = video->getFilter();
         *out_filtermin_type = f.min;
@@ -5339,7 +5345,7 @@ namespace wrap
 
     void wrap_love_dll_type_CompressedImageData_getFormat(CompressedImageData *t, int *out_format_type)
     {
-        image::CompressedImageData::Format format = t->getFormat();
+	    PixelFormat format = t->getFormat();
         *out_format_type = format;
     }
 
@@ -5358,28 +5364,28 @@ namespace wrap
         *out_h = t->getHeight();
     }
 
-    bool4 wrap_love_dll_type_ImageData_getPixel(ImageData *t, int x, int y, uint8 *out_r, uint8 *out_g, uint8 *out_b, uint8 *out_a)
+    bool4 wrap_love_dll_type_ImageData_getPixel(ImageData *t, int x, int y, Pixel *out_pixel)
     {
-        pixel c;
-        return wrap_catchexcept([&]() { 
-            c = t->getPixel(x, y);
-            *out_r = c.r;
-            *out_g = c.g;
-            *out_b = c.b;
-            *out_a = c.a;
+        return wrap_catchexcept([&]() {
+			t->getMutex()->lock();
+            t->getPixel(x, y, *out_pixel);
+			t->getMutex()->unlock();
         });
     }
 
-    bool4 wrap_love_dll_type_ImageData_setPixel(ImageData *t, int x, int y, uint8 r, uint8 g, uint8 b, uint8 a)
+    bool4 wrap_love_dll_type_ImageData_setPixel(ImageData *t, int x, int y, Pixel pixel)
     {
-        pixel c;
-        c.r = r;
-        c.g = g;
-        c.b = b;
-        c.a = a;
-
-        return wrap_catchexcept([&]() { t->setPixel(x, y, c); });
+        return wrap_catchexcept([&]() {
+			t->getMutex()->lock();
+			t->setPixel(x, y, pixel);
+			t->getMutex()->unlock();
+		});
     }
+
+	void wrap_love_dll_type_ImageData_GetFormat(ImageData *t, int *out_pixelFormat)
+	{
+		*out_pixelFormat = (PixelFormat)t->getFormat(); 
+	}
 
     void wrap_love_dll_type_ImageData_paste(ImageData *t, ImageData* src,int dx, int dy, int sx, int sy, int sw, int sh)
     {
@@ -5388,41 +5394,38 @@ namespace wrap
 
     void wrap_love_dll_type_ImageData_encode(ImageData *t, int format_type, const char* filename)
     {
-        ImageData::EncodedFormat format = (ImageData::EncodedFormat)format_type;
+        auto format = (FormatHandler::EncodedFormat)format_type;
         wrap_catchexcept([&]() { 
-            love::filesystem::FileData *filedata = t->encode(format, filename);
+            love::filesystem::FileData *filedata = t->encode(format, filename, false);
             
             wrap_love_dll_filesystem_write(filename, filedata->getData(), filedata->getSize());
         });
     }
+
+	bool4 wrap_love_dll_type_ImageData_mapPixel(ImageData *t, int sx, int sy, int w, int h, ImageData_mapPixel_func func)
+	{
+		return wrap_catchexcept([&]() {
+			if (!(t->inside(sx, sy) && t->inside(sx + w - 1, sy + h - 1)))
+			{
+				wrap_ee("Invalid rectangle dimensions.");
+				return false;
+			}
+
+			int iw = t->getWidth();
+			uint8 *data = (uint8 *)t->getData();
+			size_t pixelsize = t->getPixelSize();
+
+			for (int y = sy; y < sy + h; y++)
+			{
+				for (int x = sx; x < sx + w; x++)
+				{
+					Pixel *pixeldata = (Pixel *)(data + (y * iw + x) * pixelsize);
+					*pixeldata = func(x, y, *pixeldata);
+				}
+			}
+		});
+	}
     
-    void wrap_love_dll_type_ImageData_ext_mutexLock(ImageData *t, love::thread::Lock **out_lock)
-    {
-         *out_lock = new love::thread::Lock(t->getMutex());
-    }
-    void wrap_love_dll_type_ImageData_ext_mutexUnlock(ImageData *t, love::thread::Lock *ptrlock)
-    {
-        delete ptrlock;
-    }
-    void wrap_love_dll_type_ImageData_ext_getPixelUnsafe(ImageData *t, int x, int y, uint8 *out_r, uint8 *out_g, uint8 *out_b, uint8 *out_a)
-    {
-        pixel c = t->getPixelUnsafe(x, y);
-        *out_r = c.r;
-        *out_g = c.g;
-        *out_b = c.b;
-        *out_a = c.a;
-    }
-
-    void wrap_love_dll_type_ImageData_ext_setPixelUnsafe(ImageData *t, int x, int y, uint8 r, uint8 g, uint8 b, uint8 a)
-    {
-        pixel c;
-        c.r = r;
-        c.g = g;
-        c.b = b;
-        c.a = a;
-        t->setPixelUnsafe(x, y, c);
-    }
-
 
 #pragma endregion
 
@@ -5444,9 +5447,9 @@ namespace wrap
 
 #pragma region type - Decoder
 
-    void wrap_love_dll_type_Decoder_getChannels(Decoder *t, int *out_channels)
+    void wrap_love_dll_type_Decoder_getChannelCount(Decoder *t, int *out_channels)
     {
-        *out_channels = t->getChannels();
+        *out_channels = t->getChannelCount();
     }
 
     void wrap_love_dll_type_Decoder_getBitDepth(Decoder *t, int *out_bitDepth)
@@ -5469,9 +5472,9 @@ namespace wrap
 
 #pragma region type - SoundData
 
-    void wrap_love_dll_SoundData_getChannels(SoundData *t, int *out_channels)
+    void wrap_love_dll_SoundData_getChannelCount(SoundData *t, int *out_channels)
     {
-        *out_channels = t->getChannels();
+        *out_channels = t->getChannelCount();
     }
 
     void wrap_love_dll_SoundData_getBitDepth(SoundData *t, int *out_bitDepth)
@@ -5562,7 +5565,7 @@ namespace wrap
     bool4 wrap_love_dll_type_BezierCurve_getControlPoint(BezierCurve *curve, int idx, float *out_x, float *out_y)
     {
         return wrap_catchexcept([&]() {
-            Vector v = curve->getControlPoint(idx);
+            Vector2 v = curve->getControlPoint(idx);
             *out_x = v.x;
             *out_y = v.y;
         });
@@ -5570,12 +5573,12 @@ namespace wrap
 
     bool4 wrap_love_dll_type_BezierCurve_setControlPoint(BezierCurve *curve, int idx, float x, float y)
     {
-        return wrap_catchexcept([&]() { curve->setControlPoint(idx, Vector(x, y)); });
+        return wrap_catchexcept([&]() { curve->setControlPoint(idx, Vector2(x, y)); });
     }
 
     bool4 wrap_love_dll_type_BezierCurve_insertControlPoint(BezierCurve *curve, int idx, float x, float y)
     {
-        return wrap_catchexcept([&]() { curve->insertControlPoint(Vector(x, y), idx); });
+        return wrap_catchexcept([&]() { curve->insertControlPoint(Vector2(x, y), idx); });
     }
 
     bool4 wrap_love_dll_type_BezierCurve_removeControlPoint(BezierCurve *curve, int idx)
@@ -5590,23 +5593,23 @@ namespace wrap
 
     void wrap_love_dll_type_BezierCurve_translate(BezierCurve *curve, float dx, float dy)
     {
-        curve->translate(Vector(dx, dy));
+        curve->translate(Vector2(dx, dy));
     }
 
     void wrap_love_dll_type_BezierCurve_rotate(BezierCurve *curve, double phi, float ox, float oy)
     {
-        curve->rotate(phi, Vector(ox, oy));
+        curve->rotate(phi, Vector2(ox, oy));
     }
 
     void wrap_love_dll_type_BezierCurve_scale(BezierCurve *curve, double s, float ox, float oy)
     {
-        curve->scale(s, Vector(ox, oy));
+        curve->scale(s, Vector2(ox, oy));
     }
 
     bool4 wrap_love_dll_type_BezierCurve_evaluate(BezierCurve *curve, double t, float *out_x, float *out_y)
     {
         return wrap_catchexcept([&]() {
-            Vector v = curve->evaluate(t);
+            Vector2 v = curve->evaluate(t);
             *out_x = v.x;
             *out_y = v.y;
         });
@@ -5621,7 +5624,7 @@ namespace wrap
     {
         
         return wrap_catchexcept([&]() { 
-            std::vector<Vector> points = curve->render(accuracy);
+            std::vector<Vector2> points = curve->render(accuracy);
             *out_points_lenght = (int)points.size();
             *out_points = new Float2[(int)points.size()];
             for (int i = 0; i < (int)points.size(); ++i)
@@ -5636,7 +5639,7 @@ namespace wrap
     {
 
         return wrap_catchexcept([&]() {
-            std::vector<Vector> points = curve->renderSegment(start, end, accuracy);
+            std::vector<Vector2> points = curve->renderSegment(start, end, accuracy);
             *out_points_lenght = (int)points.size();
             *out_points = new Float2[(int)points.size()];
             for (int i = 0; i < (int)points.size(); ++i)
@@ -5812,6 +5815,1034 @@ namespace wrap
 
 #pragma endregion
 
+#pragma region type - Body
+
+
+    void wrap_love_dll_type_Body_getX(Body *t, float *out_x)
+    {
+        *out_x = t->getX();
+    }
+
+    void wrap_love_dll_type_Body_getY(Body *t, float *out_y)
+    {
+        *out_y = t->getY();
+    }
+
+    void wrap_love_dll_type_Body_getAngle(Body *t, float *out_angle)
+    {
+        *out_angle = t->getAngle();
+    }
+
+    void wrap_love_dll_type_Body_getPosition(Body *t, Float2 *out_pos)
+    {
+        float x_o, y_o;
+        t->getPosition(x_o, y_o);
+        out_pos->x = x_o;
+        out_pos->y = y_o;
+    }
+
+    void wrap_love_dll_type_Body_getLinearVelocity(Body *t, Float2 *out_result)
+    {
+        float x_o, y_o;
+        t->getLinearVelocity(x_o, y_o);
+        out_result->x = x_o;
+        out_result->y = y_o;
+    }
+
+    void wrap_love_dll_type_Body_getWorldCenter(Body *t, Float2 *out_result)
+    {
+        float x_o, y_o;
+        t->getWorldCenter(x_o, y_o);
+        out_result->x = x_o;
+        out_result->y = y_o;
+    }
+
+    void wrap_love_dll_type_Body_getLocalCenter(Body *t, Float2 *out_result)
+    {
+        float x_o, y_o;
+        t->getLocalCenter(x_o, y_o);
+        out_result->x = x_o;
+        out_result->y = y_o;
+    }
+
+    void wrap_love_dll_type_Body_getAngularVelocity(Body *t, float *out_result)
+    {
+        *out_result = t->getAngularVelocity();
+    }
+
+    void wrap_love_dll_type_Body_getMass(Body *t, float *out_result)
+    {
+        *out_result = t->getMass();
+    }
+
+    void wrap_love_dll_type_Body_getInertia(Body *t, float *out_result)
+    {
+        *out_result = t->getInertia();
+    }
+
+    void wrap_love_dll_type_Body_getAngularDamping(Body *t, float *out_result)
+    {
+        *out_result = t->getAngularDamping();
+    }
+
+    void wrap_love_dll_type_Body_getLinearDamping(Body *t, float *out_result)
+    {
+        *out_result = t->getLinearDamping();
+    }
+
+    void wrap_love_dll_type_Body_getGravityScale(Body *t, float *out_result)
+    {
+        *out_result = t->getGravityScale();
+    }
+
+    void wrap_love_dll_type_Body_getType(Body *t, int *out_body_type)
+    {
+        *out_body_type = t->getType();
+    }
+
+    void wrap_love_dll_type_Body_applyLinearImpulse_xy(Body *t, float jx, float jy)
+    {
+        t->applyLinearImpulse(jx, jy, true);
+    }
+
+    void wrap_love_dll_type_Body_applyLinearImpulse_xy_offset(Body *t, float jx, float jy, float rx, float ry)
+    {
+        t->applyLinearImpulse(jx, jy, rx, ry, true);
+    }
+
+    void wrap_love_dll_type_Body_applyAngularImpulse(Body *t, float i)
+    {
+        t->applyAngularImpulse(i, true);
+    }
+
+    void wrap_love_dll_type_Body_applyTorque(Body *t, float torque)
+    {
+        t->applyTorque(torque, true);
+    }
+
+    void wrap_love_dll_type_Body_applyForce_xy(Body *t, float fx, float fy)
+    {
+        t->applyForce(fx, fy, true);
+    }
+    void wrap_love_dll_type_Body_applyForce_xy_offset(Body *t, float fx, float fy, float rx, float ry)
+    {
+        t->applyForce(fx, fy, rx, ry, true);
+    }
+
+    bool4 wrap_love_dll_type_Body_setX(Body *t, float x)
+    {
+        return wrap_catchexcept([&]() { t->setX(x); });
+    }
+
+    bool4 wrap_love_dll_type_Body_setY(Body *t, float y)
+    {
+        return wrap_catchexcept([&]() { t->setY(y); });
+    }
+
+    void wrap_love_dll_type_Body_setLinearVelocity(Body *t, float x, float y)
+    {
+        t->setLinearVelocity(x, y);
+    }
+
+    bool4 wrap_love_dll_type_Body_setAngle(Body *t, float angle)
+    {
+        return wrap_catchexcept([&]() { t->setAngle(angle); });
+    }
+
+    void wrap_love_dll_type_Body_setAngularVelocity(Body *t, float angleVelocity)
+    {
+        t->setAngularVelocity(angleVelocity);
+    }
+
+    bool4 wrap_love_dll_type_Body_setPosition(Body *t, float x, float y)
+    {
+        return wrap_catchexcept([&]() { t->setPosition(x, y); });
+    }
+
+    bool4 wrap_love_dll_type_Body_resetMassData(Body *t)
+    {
+        return wrap_catchexcept([&]() { t->resetMassData(); });
+    }
+
+    bool4 wrap_love_dll_type_Body_setMass(Body *t, float m)
+    {
+        return wrap_catchexcept([&]() { t->setMass(m); });
+    }
+
+    bool4 wrap_love_dll_type_Body_setInertia(Body *t, float inertia)
+    {
+        return wrap_catchexcept([&]() { t->setInertia(inertia); });
+    }
+
+    void wrap_love_dll_type_Body_setAngularDamping(Body *t, float angularDamping)
+    {
+        t->setAngularDamping(angularDamping);
+    }
+
+    void wrap_love_dll_type_Body_setLinearDamping(Body *t, float linerDamping)
+    {
+        t->setLinearDamping(linerDamping);
+    }
+
+    void wrap_love_dll_type_Body_setGravityScale(Body *t, float scale)
+    {
+        t->setGravityScale(scale);
+    }
+
+    bool4 wrap_love_dll_type_Body_setType(Body *t, int body_type)
+    {
+        Body::Type type = (Body::Type)body_type;
+        return wrap_catchexcept([&]() { t->setType(type); });
+    }
+
+    void wrap_love_dll_type_Body_getWorldPoint(Body *t, float x, float y, Float2 *out_result)
+    {
+        float x_o, y_o;
+        t->getWorldPoint(x, y, x_o, y_o);
+        out_result->x = x_o;
+        out_result->y = y_o;
+    }
+
+    void wrap_love_dll_type_Body_getWorldVector(Body *t, float x, float y, Float2 *out_result)
+    {
+        float x_o, y_o;
+        t->getWorldVector(x, y, x_o, y_o);
+        out_result->x = x_o;
+        out_result->y = y_o;
+    }
+
+    void wrap_love_dll_type_Body_getLocalPoint(Body *t, float x, float y, Float2 *out_result)
+    {
+        float x_o, y_o;
+        t->getLocalPoint(x, y, x_o, y_o);
+        out_result->x = x_o;
+        out_result->y = y_o;
+    }
+
+    void wrap_love_dll_type_Body_getLocalVector(Body *t, float x, float y, Float2 *out_result)
+    {
+        float x_o, y_o;
+        t->getLocalVector(x, y, x_o, y_o);
+        out_result->x = x_o;
+        out_result->y = y_o;
+    }
+
+    void wrap_love_dll_type_Body_getLinearVelocityFromWorldPoint(Body *t, float x, float y, Float2 *out_result)
+    {
+        float x_o, y_o;
+        t->getLinearVelocityFromWorldPoint(x, y, x_o, y_o);
+        out_result->x = x_o;
+        out_result->y = y_o;
+    }
+
+    void wrap_love_dll_type_Body_getLinearVelocityFromLocalPoint(Body *t, float x, float y, Float2 *out_result)
+    {
+        float x_o, y_o;
+        t->getLinearVelocityFromLocalPoint(x, y, x_o, y_o);
+        out_result->x = x_o;
+        out_result->y = y_o;
+    }
+
+    void wrap_love_dll_type_Body_isBullet(Body *t, bool4 *out_result)
+    {
+        *out_result = t->isBullet();
+    }
+
+    void wrap_love_dll_type_Body_setBullet(Body *t, bool4 b)
+    {
+        t->setBullet(b);
+    }
+
+    void wrap_love_dll_type_Body_isActive(Body *t, bool4 *out_result)
+    {
+        *out_result = t->isActive();
+    }
+
+    void wrap_love_dll_type_Body_isAwake(Body *t, bool4 *out_result)
+    {
+        *out_result = t->isAwake();
+    }
+
+    void wrap_love_dll_type_Body_setSleepingAllowed(Body *t, bool4 b)
+    {
+        t->setSleepingAllowed(b);
+    }
+
+    void wrap_love_dll_type_Body_isSleepingAllowed(Body *t, bool4 *out_result)
+    {
+        *out_result = t->isSleepingAllowed();
+    }
+
+    bool4 wrap_love_dll_type_Body_setActive(Body *t, bool4 b)
+    {
+        return wrap_catchexcept([&]() { t->setActive(b); });
+    }
+
+    void wrap_love_dll_type_Body_setAwake(Body *t, bool4 b)
+    {
+        t->setAwake(b);
+    }
+
+    bool4 wrap_love_dll_type_Body_setFixedRotation(Body *t, bool4 b)
+    {
+        return wrap_catchexcept([&]() { t->setFixedRotation(b); });
+    }
+
+    void wrap_love_dll_type_Body_isFixedRotation(Body *t, bool4 *out_result)
+    {
+        *out_result = t->isFixedRotation();
+    }
+
+    void wrap_love_dll_type_Body_getWorld(Body *t, World** out_world)
+    {
+        *out_world = t->getWorld();
+        (*out_world)->retain();
+    }
+
+    bool4 wrap_love_dll_type_Body_getFixtureList(Body *t, Fixture ***out_fixtures, int *out_fixtures_length)
+    {
+        return wrap_catchexcept([&]() {
+            b2Fixture *f = t->body->GetFixtureList();
+            std::vector<Fixture*> list;
+            do
+            {
+                if (!f)
+                    break;
+                Fixture *fixture = (Fixture *)Memoizer::find(f);
+                if (!fixture)
+                    throw love::Exception("A fixture has escaped Memoizer!");
+
+                list.push_back(fixture);
+
+            } while ((f = f->GetNext()));
+
+            *out_fixtures_length = list.size();
+            *out_fixtures = new Fixture*[list.size()];
+            for (int i = 0; i < list.size(); i++)
+            {
+                (*out_fixtures)[i] = list[i];
+                list[i]->retain();
+            }
+        });
+    }
+
+    bool4 wrap_love_dll_type_Body_getJointList(Body *t, Joint ***out_joints, int *out_joints_length)
+    {
+        return wrap_catchexcept([&]() { 
+            const b2JointEdge *je = t->body->GetJointList();
+            std::vector<Joint*> list;
+            do
+            {
+                if (!je)
+                    break;
+
+                Joint *joint = (Joint *)Memoizer::find(je->joint);
+                if (!joint)
+                    throw love::Exception("A joint has escaped Memoizer!");
+
+                list.push_back(joint);
+            } while ((je = je->next));
+
+            *out_joints_length = list.size();
+            *out_joints = new Joint*[list.size()];
+            for (int i = 0; i < list.size(); i++)
+            {
+                (*out_joints)[i] = list[i];
+                list[i]->retain();
+            }
+        });
+    }
+
+    bool4 wrap_love_dll_type_Body_getContactList(Body *t, Contact*** out_contacts, int *out_contacts_length)
+    {
+        return wrap_catchexcept([&]() {
+            const b2ContactEdge *ce = t->body->GetContactList();
+            std::vector<Contact*> list;
+            do
+            {
+                if (!ce)
+                    break;
+
+                Contact *contact = (Contact *)Memoizer::find(ce->contact);
+                if (!contact)
+                    contact = new Contact(ce->contact);
+                else
+                    contact->retain();
+
+                list.push_back(contact);
+            } while ((ce = ce->next));
+
+            *out_contacts_length = list.size();
+            *out_contacts = new Contact*[list.size()];
+            for (int i = 0; i < list.size(); i++)
+            {
+                (*out_contacts)[i] = list[i];
+                list[i]->retain();
+            }
+        });
+    }
+
+    bool4 wrap_love_dll_type_Body_destroy(Body *t)
+    {
+        return wrap_catchexcept([&]() { t->destroy(); });
+    }
+
+    void wrap_love_dll_type_Body_isDestroyed(Body *b, bool4 *out_result)
+    {
+        *out_result = (b->body == nullptr);
+    }
+
+#pragma endregion
+
+#pragma region type - ChainShape
+
+    void wrap_love_dll_type_ChainShape_setNextVertex_nil(ChainShape *c)
+    {
+        c->setNextVertex();
+    }
+
+    bool4 wrap_love_dll_type_ChainShape_setNextVertex(ChainShape *c, float x, float y)
+    {
+        return wrap_catchexcept([&]() { c->setNextVertex(x, y); });
+    }
+
+    void wrap_love_dll_type_ChainShape_setPreviousVertex_nil(ChainShape *c)
+    {
+        c->setPreviousVertex();
+    }
+
+    bool4 wrap_love_dll_type_ChainShape_setPreviousVertex(ChainShape *c, float x, float y)
+    {
+        return wrap_catchexcept([&]() { c->setPreviousVertex(x, y); });
+    }
+
+    bool4 wrap_love_dll_type_ChainShape_getChildEdge(ChainShape *c, int index, EdgeShape **out_edgeShape)
+    {
+        return wrap_catchexcept([&](){ *out_edgeShape = c->getChildEdge(index); });
+    }
+
+    void wrap_love_dll_type_ChainShape_getVertexCount(ChainShape *c, int *out_count)
+    {
+        *out_count = c->getVertexCount();
+    }
+
+    bool4 wrap_love_dll_type_ChainShape_getPoint(ChainShape *c, int index, Float2 *out_point)
+    {
+        return wrap_catchexcept([&]() {
+            b2Vec2 v;
+            v = c->getPoint(index);
+            out_point->x = v.x;
+            out_point->y = v.y;
+        });
+    }
+
+    void wrap_love_dll_type_ChainShape_getNextVertex(ChainShape *c, bool4 *out_hasNextVertex, Float2 *out_result)
+    {
+        float x, y;
+        if (*out_hasNextVertex = c->getNextVertex(x, y))
+        {
+            out_result->x = x;
+            out_result->y = y;
+        }
+    }
+
+    void wrap_love_dll_type_ChainShape_getPreviousVertex(ChainShape *c, bool4 *out_hasPrevVertex, Float2 *out_result)
+    {
+        float x, y;
+        if (*out_hasPrevVertex = c->getPreviousVertex(x, y))
+        {
+            out_result->x = x;
+            out_result->y = y;
+        }
+    }
+
+    void wrap_love_dll_type_ChainShape_getPoints(ChainShape *c, Float2 **out_points, int *out_points_length)
+    {
+        const b2Vec2 *verts = c->getPoints();
+        int count = c->getVertexCount();
+
+        *out_points_length = count;
+        *out_points = new Float2[count];
+
+        for (int i = 0; i < count; i++)
+        {
+            b2Vec2 v = Physics::scaleUp(verts[i]);
+            out_points[i]->x = v.x;
+            out_points[i]->y = v.y;
+        }
+    }
+
+
+#pragma endregion
+
+#pragma region type - CircleShape
+
+
+    void wrap_love_dll_type_CircleShape_getRadius(CircleShape *c, float *out_radius)
+    {
+        *out_radius = c->getRadius();
+    }
+
+    void wrap_love_dll_type_CircleShape_setRadius(CircleShape *c, float r)
+    {
+        c->setRadius(r);
+    }
+
+    void wrap_love_dll_type_CircleShape_getPoint(CircleShape *c, Float2 *out_point)
+    {
+        float x, y;
+        c->getPoint(x, y);
+        out_point->x = x;
+        out_point->y = y;
+    }
+
+    void wrap_love_dll_type_CircleShape_setPoint(CircleShape *c, float x, float y)
+    {
+        c->setPoint(x, y);
+    }
+
+#pragma endregion
+
+#pragma region type - Contact
+
+    // TODO:
+    // { "getPositions", w_Contact_getPositions },
+    // { "getNormal", w_Contact_getNormal },
+
+    void wrap_love_dll_type_Contact_getFriction(Contact *t, float *out_friction)
+    {
+        *out_friction = t->getFriction();
+    }
+
+    void wrap_love_dll_type_Contact_getRestitution(Contact *t, float *out_restitution)
+    {
+        *out_restitution = t->getRestitution();
+    }
+
+    void wrap_love_dll_type_Contact_isEnabled(Contact *t, bool4 *out_result)
+    {
+        *out_result = t->isEnabled();
+    }
+
+    void wrap_love_dll_type_Contact_isTouching(Contact *t, bool4 *out_result)
+    {
+        *out_result = t->isTouching();
+    }
+
+    void wrap_love_dll_type_Contact_setFriction(Contact *t, float friction)
+    {
+        t->setFriction(friction);
+    }
+
+    void wrap_love_dll_type_Contact_setRestitution(Contact *t, float restitution)
+    {
+        t->setRestitution(restitution);
+    }
+
+    void wrap_love_dll_type_Contact_setEnabled(Contact *t, bool4 enabled)
+    {
+        t->setEnabled(enabled);
+    }
+
+    void wrap_love_dll_type_Contact_resetFriction(Contact *t)
+    {
+        t->resetFriction();
+    }
+
+    void wrap_love_dll_type_Contact_resetRestitution(Contact *t)
+    {
+        t->resetRestitution();
+    }
+
+    void wrap_love_dll_type_Contact_setTangentSpeed(Contact *t, float speed)
+    {
+        t->setTangentSpeed(speed);
+    }
+
+    void wrap_love_dll_type_Contact_getTangentSpeed(Contact *t, float *out_speed)
+    {
+        *out_speed = t->getTangentSpeed();
+    }
+
+    void wrap_love_dll_type_Contact_getChildren(Contact *t, float *out_childA, float *out_childB)
+    {
+        int a, b;
+        t->getChildren(a, b);
+        *out_childA = a;
+        *out_childB = b;
+    }
+
+    bool4 wrap_love_dll_type_Contact_getFixtures(Contact *t, Fixture **out_a, Fixture **out_b)
+    {
+        return wrap_catchexcept([&]() {
+            Fixture *a = nullptr;
+            Fixture *b = nullptr;
+            t->getFixtures(a, b);
+            *out_a = a;
+            *out_b = b;
+        });
+    }
+
+    void wrap_love_dll_type_Contact_isDestroyed(Contact *t, bool4 *out_result)
+    {
+        *out_result = !t->isValid();
+    }
+
+
+#pragma endregion
+
+#pragma region type - DistanceJoint 
+
+    void wrap_love_dll_type_DistanceJoint_setLength(DistanceJoint *t, float length)
+    {
+        t->setLength(length);
+    }
+
+    void wrap_love_dll_type_DistanceJoint_getLength(DistanceJoint *t, float *out_length)
+    {
+        *out_length = t->getLength();
+    }
+
+    void wrap_love_dll_type_DistanceJoint_setFrequency(DistanceJoint *t, float frequency)
+    {
+        t->setFrequency(frequency);
+    }
+
+    void wrap_love_dll_type_DistanceJoint_getFrequency(DistanceJoint *t, float *out_frequency)
+    {
+        *out_frequency = t->getFrequency();
+    }
+
+    void wrap_love_dll_type_DistanceJoint_setDampingRatio(DistanceJoint *t, float dampingRatio)
+    {
+        t->setDampingRatio(dampingRatio);
+    }
+
+    void wrap_love_dll_type_DistanceJoint_getDampingRatio(DistanceJoint *t, float *out_dampingRatio)
+    {
+        *out_dampingRatio = t->getDampingRatio();
+    }
+
+#pragma endregion
+
+
+#pragma region type - EdgeShape
+
+    void w_EdgeShape_setNextVertex_nil(EdgeShape *t)
+    {
+        t->setNextVertex();
+    }
+
+    void w_EdgeShape_setNextVertex(EdgeShape *t, float x, float y)
+    {
+        t->setNextVertex(x, y);
+    }
+
+    void w_EdgeShape_setPreviousVertex_nil(EdgeShape *t)
+    {
+        t->setPreviousVertex();
+    }
+    void w_EdgeShape_setPreviousVertex(EdgeShape *t, float x, float y)
+    {
+        t->setPreviousVertex(x, y);
+    }
+
+    void w_EdgeShape_getNextVertex(EdgeShape *t, bool4 *out_hasNextVertex, Float2 *out_result)
+    {
+        float x, y;
+        if (*out_hasNextVertex = t->getNextVertex(x, y))
+        {
+            out_result->x = x;
+            out_result->y = y;
+        }
+    }
+
+    void w_EdgeShape_getPreviousVertex(EdgeShape *t, bool4 *out_hasPrevVertex, Float2 *out_result)
+    {
+        float x, y;
+        if (*out_hasPrevVertex = t->getPreviousVertex(x, y))
+        {
+            out_result->x = x;
+            out_result->y = y;
+        }
+    }
+
+    // TODO:
+    // { "getPoints", w_EdgeShape_getPoints },
+
+#pragma endregion
+
+#pragma region type - Fixture
+
+
+    void wrap_love_dll_type_Fixture_getType(Fixture *t, int *out_fixture_type)
+    {
+        *out_fixture_type = t->getType();
+    }
+
+    void wrap_love_dll_type_Fixture_setFriction(Fixture *t, float friction)
+    {
+        t->setFriction(friction);
+    }
+
+    void wrap_love_dll_type_Fixture_setRestitution(Fixture *t, float restitution)
+    {
+        t->setRestitution(restitution);
+    }
+
+    bool4 wrap_love_dll_type_Fixture_setDensity(Fixture *t, float density)
+    {
+        return wrap_catchexcept([&]() { t->setDensity(density); });
+    }
+
+    void wrap_love_dll_type_Fixture_setSensor(Fixture *t, bool4 sensor)
+    {
+        t->setSensor(sensor);
+    }
+
+    void wrap_love_dll_type_Fixture_getFriction(Fixture *t, float *out_result)
+    {
+        *out_result = t->getFriction();
+    }
+
+    void wrap_love_dll_type_Fixture_getRestitution(Fixture *t, float *out_result)
+    {
+        *out_result = t->getRestitution();
+    }
+
+    void wrap_love_dll_type_Fixture_getDensity(Fixture *t, float *out_result)
+    {
+        *out_result = t->getDensity();
+    }
+
+    void wrap_love_dll_type_Fixture_isSensor(Fixture *t, bool4 *out_result)
+    {
+        *out_result = t->isSensor();
+    }
+
+    void wrap_love_dll_type_Fixture_getBody(Fixture *t, Body **out_body)
+    {
+        *out_body = t->getBody();
+    }
+
+    void wrap_love_dll_type_Fixture_getShape(Fixture *t, Shape **out_shape)
+    {
+        *out_shape = t->getShape();
+    }
+
+    void wrap_love_dll_type_Fixture_testPoint(Fixture *t, float x, float y, bool4 *out_result)
+    {
+        *out_result = t->testPoint(x, y);
+    }
+
+    // FIX: 
+    // hack to access private member :
+    class WrapFixture : public Fixture
+    {
+    public:
+        bool4 RayCast(b2RayCastOutput* output, const b2RayCastInput& input, int32 childIndex)
+        {
+            fixture->RayCast(output, input, childIndex);
+            return true;
+        }
+
+        void setCategory(uint16 categories)
+        {
+            b2Filter f = fixture->GetFilterData();
+            f.categoryBits = categories;
+            fixture->SetFilterData(f);
+        }
+
+        uint16 getCategory()
+        {
+            b2Filter f = fixture->GetFilterData();
+            return f.categoryBits;
+        }
+
+        void setMask(uint16 masks)
+        {
+            b2Filter f = fixture->GetFilterData();
+            f.maskBits = ~masks;
+            fixture->SetFilterData(f);
+        }
+
+        uint16 getMask()
+        {
+            b2Filter f = fixture->GetFilterData();
+            return ~f.maskBits;
+        }
+
+        void getBoundingBox(int childIndex, float *out_topLeftX, float *out_topLeftY, float *out_bottomRightX, float *out_bottomRightY)
+        {
+            b2AABB box = fixture->GetAABB(childIndex);
+            box = Physics::scaleUp(box);
+            *out_topLeftX = box.lowerBound.x;
+            *out_topLeftY = box.lowerBound.y;
+            *out_bottomRightX = box.upperBound.x;
+            *out_bottomRightY = box.upperBound.y;
+        }
+
+        void getMassData(Float2 *out_center, float *out_mass, float *out_rotationalInertia)
+        {
+            b2MassData data;
+            fixture->GetMassData(&data);
+            b2Vec2 center = Physics::scaleUp(data.center);
+            out_center->x = center.x;
+            out_center->y = center.y;
+            *out_mass =  data.mass;
+            *out_rotationalInertia =  data.I;
+        }
+    };
+
+    bool4 wrap_love_dll_type_Fixture_rayCast(Fixture *t, bool4 *hasHit, float x1, float y1, float x2, float y2, float maxFraction, int childIndex, Float2 *out_pos, float *out_fraction)
+    {
+        return wrap_catchexcept([&]() { 
+
+            WrapFixture* tt = (WrapFixture*)t;
+
+            float p1x = Physics::scaleDown(x1);
+            float p1y = Physics::scaleDown(y1);
+            float p2x = Physics::scaleDown(x2);
+            float p2y = Physics::scaleDown(y2);
+            b2RayCastInput input;
+            input.p1.Set(p1x, p1y);
+            input.p2.Set(p2x, p2y);
+            input.maxFraction = maxFraction;
+            b2RayCastOutput output;
+            if (!(*hasHit = tt->RayCast(&output, input, childIndex)))
+                return 0; // Nothing hit.
+
+            out_pos->x = output.normal.x;
+            out_pos->y = output.normal.y;
+            *out_fraction = output.fraction;
+        }); 
+    }
+
+    void wrap_love_dll_type_Fixture_setFilterData(Fixture *t, float categories, float mask, float group)
+    {
+        int v[3];
+        v[0] = categories;
+        v[1] = mask;
+        v[2] = group;
+        t->setFilterData(v);
+    }
+
+    void wrap_love_dll_type_Fixture_getFilterData(Fixture *t, float *out_categories, float *out_mask, float *out_group)
+    {
+        int v[3];
+        t->getFilterData(v);
+        *out_categories = v[0];
+        *out_mask = v[1];
+        *out_group = v[2];
+    }
+
+    bool4 wrap_love_dll_type_Fixture_setCategory(Fixture *t, uint16 categories)
+    {
+        return wrap_catchexcept([&]() {
+            WrapFixture* tt = (WrapFixture*)t;
+            tt->setCategory(categories);
+        });
+    }
+
+    bool4 wrap_love_dll_type_Fixture_getCategory(Fixture *t, uint16 *out_categories)
+    {
+        return wrap_catchexcept([&]() {
+            WrapFixture* tt = (WrapFixture*)t;
+            *out_categories = tt->getCategory();
+        });
+    }
+
+    bool4 wrap_love_dll_type_Fixture_setMask(Fixture *t, uint16 mask)
+    {
+        return wrap_catchexcept([&]() {
+            WrapFixture* tt = (WrapFixture*)t;
+            tt->setMask(mask);
+        });
+    }
+
+    bool4 wrap_love_dll_type_Fixture_getMask(Fixture *t, uint16 *out_mask)
+    {
+        return wrap_catchexcept([&]() {
+            WrapFixture* tt = (WrapFixture*)t;
+            *out_mask = tt->getMask();
+        });
+    }
+
+    //`setUserData, getUserData` Implement by C# port
+
+    bool4 wrap_love_dll_type_Fixture_getBoundingBox(Fixture *t, int childIndex, float *out_topLeftX, float *out_topLeftY, float *out_bottomRightX, float *out_bottomRightY)
+    {
+        return wrap_catchexcept([&]() {
+            WrapFixture* tt = (WrapFixture*)t;
+            tt->getBoundingBox(childIndex, out_topLeftX, out_topLeftY, out_bottomRightX, out_bottomRightY);
+        });
+    }
+
+    bool4 wrap_love_dll_type_Fixture_getMassData(Fixture *t, Float2 *out_center, float *out_mass, float *out_rotationalInertia)
+    {
+        return wrap_catchexcept([&]() {
+            WrapFixture* tt = (WrapFixture*)t;
+            tt->getMassData(out_center, out_mass, out_rotationalInertia);
+        });
+    }
+
+    void wrap_love_dll_type_Fixture_getGroupIndex(Fixture *t, int *out_index)
+    {
+        *out_index = t->getGroupIndex();
+    }
+
+    void wrap_love_dll_type_Fixture_setGroupIndex(Fixture *t, int index)
+    {
+        t->setGroupIndex(index);
+    }
+
+    bool4 wrap_love_dll_type_Fixture_destroy(Fixture *t)
+    {
+        return wrap_catchexcept([&]() { t->destroy(); });
+    }
+
+    void wrap_love_dll_type_Fixture_isDestroyed(Fixture *t, bool4 *out_result)
+    {
+        *out_result = !t->isValid();
+    }
+
+
+#pragma endregion
+
+
+#pragma region type - FrictionJoint
+
+    bool4 w_FrictionJoint_setMaxForce(FrictionJoint *t, float maxForce)
+    {
+        return wrap_catchexcept([&]() { t->setMaxForce(maxForce); });
+    }
+
+    void w_FrictionJoint_getMaxForce(FrictionJoint *t, float *out_maxForce)
+    {
+        *out_maxForce = t->getMaxForce();
+    }
+
+    bool4 w_FrictionJoint_setMaxTorque(FrictionJoint *t, float maxTorque)
+    {
+        return wrap_catchexcept([&]() { t->setMaxTorque(maxTorque); });
+    }
+
+    void w_FrictionJoint_getMaxTorque(FrictionJoint *t, float *out_maxTorque)
+    {
+        *out_maxTorque = t->getMaxTorque();
+    }
+
+#pragma endregion
+
+#pragma region type - GearJoint
+
+    bool4 w_GearJoint_setRatio(GearJoint *t, float ration)
+    {
+        return wrap_catchexcept([&]() { t->setRatio(ration); });
+    }
+
+    void w_GearJoint_getRatio(GearJoint *t, float *out_ration)
+    {
+        *out_ration = t->getRatio();
+    }
+
+    bool4 w_GearJoint_getJoints(GearJoint *t, Joint** out_j1, Joint **out_j2)
+    {
+        return wrap_catchexcept([&]() {
+            *out_j1 = t->getJointA();
+            *out_j2 = t->getJointB();
+        });
+    }
+
+
+#pragma endregion
+//
+//#pragma region type - Joint
+//
+//    class WrapJoint : public Joint
+//    {
+//    public:
+//        void getAnchors()
+//        {
+//            Physics::scaleUp(joint->GetAnchorA().x);
+//            Physics::scaleUp(joint->GetAnchorA().y);
+//            Physics::scaleUp(joint->GetAnchorB().x);
+//            Physics::scaleUp(joint->GetAnchorB().y);
+//        }
+//    };
+//
+//
+//    void w_Joint_getType(Joint *t, int *out_type)
+//    {
+//        *out_type = t->getType();
+//    }
+//
+//    bool4 w_Joint_getBodies(Joint *t, Body **out_b1, Body **out_b2)
+//    {
+//        return wrap_catchexcept([&]() {
+//            *out_b1 = t->getBodyA();
+//            *out_b2 = t->getBodyB();
+//        });
+//    }
+//
+//    int w_Joint_getAnchors(Joint *t)
+//    {
+//        t->joint->GetAnchorA().x;
+//        lua_remove(L, 1);
+//        return t->getAnchors(L);
+//    }
+//
+//    int w_Joint_getReactionForce(Joint *t)
+//    {
+//        Joint *t = luax_checkjoint(L, 1);
+//        lua_remove(L, 1);
+//        return t->getReactionForce(L);
+//    }
+//
+//    int w_Joint_getReactionTorque(Joint *t)
+//    {
+//        Joint *t = luax_checkjoint(L, 1);
+//        float inv_dt = (float)luaL_checknumber(L, 2);
+//        lua_pushnumber(L, t->getReactionTorque(inv_dt));
+//        return 1;
+//    }
+//
+//    int w_Joint_getCollideConnected(Joint *t)
+//    {
+//        Joint *t = luax_checkjoint(L, 1);
+//        luax_pushboolean(L, t->getCollideConnected());
+//        return 1;
+//    }
+//
+//    int w_Joint_setUserData(Joint *t)
+//    {
+//        Joint *t = luax_checkjoint(L, 1);
+//        lua_remove(L, 1);
+//        return t->setUserData(L);
+//    }
+//
+//    int w_Joint_getUserData(Joint *t)
+//    {
+//        Joint *t = luax_checkjoint(L, 1);
+//        lua_remove(L, 1);
+//        return t->getUserData(L);
+//    }
+//
+//    int w_Joint_destroy(Joint *t)
+//    {
+//        Joint *t = luax_checkjoint(L, 1);
+//        wrap_catchexcept([&]() { t->destroyJoint(); });
+//        return 0;
+//    }
+//
+//    int w_Joint_isDestroyed(Joint *t)
+//    {
+//        Joint *t = luax_checktype<Joint>(L, 1, PHYSICS_JOINT_ID);
+//        luax_pushboolean(L, !t->isValid());
+//        return 1;
+//    }
+//
+//#pragma endregion
 }
 }
 

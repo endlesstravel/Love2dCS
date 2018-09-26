@@ -15,6 +15,38 @@ namespace Love
     {
         const int intSize = 4;
 
+        /// <summary>
+        /// <para>from C# string[] pass as char** to c language</para>
+        /// </summary>
+        public static void ExecuteStringArray(string[] arrayToPass, Action<BytePtr[]> func)
+        {
+            GCHandle[] hObjects = new GCHandle[arrayToPass.Length];
+            var texts = new BytePtr[arrayToPass.Length];
+            for (int i = 0; i < arrayToPass.Length; i++)
+            {
+                hObjects[i] = GCHandle.Alloc(ToUTF8Bytes(arrayToPass[i]), GCHandleType.Pinned);
+                texts[i] = new BytePtr(hObjects[i].AddrOfPinnedObject());
+            }
+
+            func(texts);
+
+            foreach (var h in hObjects)
+            {
+                if (h.IsAllocated)
+                    h.Free();
+            }
+        }
+
+        public static IntPtr[] GenIntPtrArray<T>(T[] loveObjArray) where T : LoveObject
+        {
+            IntPtr[] t = new IntPtr[loveObjArray.Length];
+            for (int i = 0; i < loveObjArray.Length; i++)
+            {
+                t[i] = loveObjArray[i].p;
+            }
+            return t;
+        }
+
         public static byte[] ToUTF8Bytes(this string str)
         {
             return utf8.GetBytes(str);
@@ -28,8 +60,8 @@ namespace Love
 
         public static string GetLoveLastError()
         {
-            // ???????????? WSToString(Love2dDll.wrap_love_dll_last_error());
-            // ????????????????
+            // 这里不能直接调用 WSToString(Love2dDll.wrap_love_dll_last_error());
+            // 否则可能导致无限递归
             IntPtr out_errormsg = IntPtr.Zero;
             Love2dDll.wrap_love_dll_last_error(out out_errormsg);
             WrapString ws = (WrapString)Marshal.PtrToStructure(out_errormsg, typeof(WrapString));
@@ -258,12 +290,17 @@ namespace Love
 
     public partial class Common
     {
+        /// <summary>
+        /// Gets the current running version of LÖVE.
+        /// </summary>
+        /// <returns></returns>
         public static string GetVersion()
         {
             IntPtr out_str = IntPtr.Zero;
             Love2dDll.wrap_love_dll_common_getVersion(out out_str);
             return DllTool.WSToStringAndRelease(out_str);
         }
+
         public static string GetVersionCodeName()
         {
             IntPtr out_str = IntPtr.Zero;
@@ -279,32 +316,61 @@ namespace Love
         {
             return Love2dDll.wrap_love_dll_timer_open_timer();
         }
+
+        /// <summary>
+        /// Measures the time between two frames.
+        /// </summary>
         public static void Step()
         {
             Love2dDll.wrap_love_dll_timer_step();
         }
+
+        /// <summary>
+        /// Returns the time between the last two frames.
+        /// </summary>
+        /// <returns></returns>
         public static float GetDelta()
         {
             float out_delta = 0;
             Love2dDll.wrap_love_dll_timer_getDelta(out out_delta);
             return out_delta;
         }
+
+        /// <summary>
+        /// Returns the current frames per second.
+        /// </summary>
+        /// <returns></returns>
         public static float GetFPS()
         {
             float out_fps = 0;
             Love2dDll.wrap_love_dll_timer_getFPS(out out_fps);
             return out_fps;
         }
+
+        /// <summary>
+        /// Returns the average delta time over the last second.
+        /// </summary>
+        /// <returns></returns>
         public static float GetAverageDelta()
         {
             float out_averageDelta = 0;
             Love2dDll.wrap_love_dll_timer_getAverageDelta(out out_averageDelta);
             return out_averageDelta;
         }
+
+        /// <summary>
+        /// Pauses the current thread for the specified amount of time.	
+        /// </summary>
+        /// <param name="t"></param>
         public static void Sleep(float t)
         {
             Love2dDll.wrap_love_dll_timer_sleep(t);
         }
+
+        /// <summary>
+        /// Returns the amount of time since some time in the past.		
+        /// </summary>
+        /// <returns></returns>
         public static float GetTime()
         {
             float out_time = 0;
@@ -317,7 +383,14 @@ namespace Love
     {
         public enum FullscreenType
         {
+            /// <summary>
+            /// Standard exclusive-fullscreen mode. Changes the display mode (actual resolution) of the monitor.
+            /// </summary>
             Exclusive,
+
+            /// <summary>
+            /// Sometimes known as borderless fullscreen windowed mode. A borderless screen-sized window is created which sits on top of all desktop UI elements. The window is automatically resized to match the dimensions of the desktop, and its size cannot be changed.
+            /// </summary>
             DeskTop,
         };
 
@@ -454,7 +527,7 @@ namespace Love
         public static double GetPixelScale()
         {
             double out_result = 0;
-            Love2dDll.wrap_love_dll_windows_getPixelScale(out out_result);
+            Love2dDll.wrap_love_dll_windows_getDPIScale(out out_result);
             return out_result;
         }
         public static double ToPixels(double value)
@@ -501,10 +574,6 @@ namespace Love
         {
             Love2dDll.wrap_love_dll_windows_pixelToWindowCoords(out x, out y);
         }
-        public static void GetPixelDimensions(out int out_w, out int out_h)
-        {
-            Love2dDll.wrap_love_dll_windows_getPixelDimensions(out out_w, out out_h);
-        }
     }
 
     public partial class Mouse
@@ -539,23 +608,31 @@ namespace Love
             Love2dDll.wrap_love_dll_mouse_getCursor(out out_cursor);
             return LoveObject.NewObject<Cursor>(out_cursor);
         }
-        public static bool HasCursor()
+        public static bool IsCursorSupported()
         {
             bool out_result = false;
-            Love2dDll.wrap_love_dll_mouse_hasCursor(out out_result);
+            Love2dDll.wrap_love_dll_mouse_isCursorSupported(out out_result);
             return out_result;
         }
-        public static double GetX()
+        public static double GetXDouble()
         {
             double out_x = 0;
             Love2dDll.wrap_love_dll_mouse_getX(out out_x);
             return out_x;
         }
-        public static double GetY()
+        public static double GetYDouble()
         {
             double out_y = 0;
             Love2dDll.wrap_love_dll_mouse_getY(out out_y);
             return out_y;
+        }
+        public static float GetX()
+        {
+            return (float)GetXDouble();
+        }
+        public static float GetY()
+        {
+            return (float)GetYDouble();
         }
         public static void GetPosition(out double out_x, out double out_y)
         {
@@ -1286,7 +1363,9 @@ namespace Love
             WRAP_EVENT_TYPE_WINDOW_ENTER_OR_LEAVE,
             WRAP_EVENT_TYPE_WINDOW_SHOWN_OR_HIDDEN,
             WRAP_EVENT_TYPE_WINDOW_RESIZED,
-            WRAP_EVENT_TYPE_DROPPED,
+
+            WRAP_EVENT_TYPE_FILE_DROPPED,
+            WRAP_EVENT_TYPE_DIRECTORY_DROPPED,
 
             WRAP_EVENT_TYPE_LOWMEMORY,
             WRAP_EVENT_TYPE_QUIT,
@@ -1412,9 +1491,12 @@ namespace Love
                 case WrapEventType.WRAP_EVENT_TYPE_WINDOW_RESIZED: {
                         scene.WindowResize(out_int4.x, out_int4.y);
                     } break;
-                case WrapEventType.WRAP_EVENT_TYPE_DROPPED: {
-                        if (FileSystem.IsDirectory(out_string)) scene.DirectoryDropped(out_string);
-                        else scene.FileDropped(FileSystem.NewFile(out_string));
+                case WrapEventType.WRAP_EVENT_TYPE_FILE_DROPPED: {
+                        scene.FileDropped(FileSystem.NewFile(out_string));
+                    } break;
+                case WrapEventType.WRAP_EVENT_TYPE_DIRECTORY_DROPPED:
+                    {
+                        scene.DirectoryDropped(out_string);
                     } break;
                 case WrapEventType.WRAP_EVENT_TYPE_LOWMEMORY: {
                         scene.LowMemory();
@@ -1441,6 +1523,23 @@ namespace Love
 
     public partial class FileSystem
     {
+        public enum FileType : int 
+        {
+            FILETYPE_FILE,
+            FILETYPE_DIRECTORY,
+            FILETYPE_SYMLINK,
+            FILETYPE_OTHER,
+            FILETYPE_MAX_ENUM
+        };
+
+        public class Info
+        {
+            // Numbers will be -1 if they cannot be determined.
+            public int64 size;
+            public int64 modifyTime;
+            public FileType type;
+        };
+
         //// raw *new*
         public static File NewFile(byte[] filename, File.Mode fmode_type = File.Mode.Read)
         {
@@ -1448,10 +1547,10 @@ namespace Love
             Love2dDll.wrap_love_dll_filesystem_newFile(filename, (int)fmode_type, out out_file);
             return LoveObject.NewObject<File>(out_file);
         }
-        public static FileData NewFileData(byte[] contents, byte[] filename, FileData.Decoder decoder_type)
+        public static FileData NewFileData(byte[] contents, byte[] filename)
         {
             IntPtr out_file;
-            Love2dDll.wrap_love_dll_filesystem_newFileData_content(contents, contents.Length, filename, (int)decoder_type, out out_file);
+            Love2dDll.wrap_love_dll_filesystem_newFileData_content(contents, contents.Length, filename, out out_file);
             return LoveObject.NewObject<FileData>(out_file);
         }
         public static FileData NewFileData(File file)
@@ -1556,29 +1655,14 @@ namespace Love
             Love2dDll.wrap_love_dll_filesystem_getExecutablePath(out out_str);
             return DllTool.WSToStringAndRelease(out_str);
         }
-        public static bool Exists(byte[] arg)
+        public static Info GetInfo(byte[] arg)
         {
-            bool out_result = false;
-            Love2dDll.wrap_love_dll_filesystem_exists(arg, out out_result);
-            return out_result;
-        }
-        public static bool IsDirectory(byte[] arg)
-        {
-            bool out_result = false;
-            Love2dDll.wrap_love_dll_filesystem_isDirectory(arg, out out_result);
-            return out_result;
-        }
-        public static bool IsFile(byte[] arg)
-        {
-            bool out_result = false;
-            Love2dDll.wrap_love_dll_filesystem_isFile(arg, out out_result);
-            return out_result;
-        }
-        public static bool IsSymlink(byte[] filename)
-        {
-            bool out_result = false;
-            Love2dDll.wrap_love_dll_filesystem_isSymlink(filename, out out_result);
-            return out_result;
+            int fileType_int = 0;
+            Info info = new Info();
+            bool success;
+            Love2dDll.wrap_love_dll_filesystem_getInfo(arg, out fileType_int, out info.size, out info.modifyTime, out success);
+            info.type = (FileType)fileType_int;
+            return success ? info : null;
         }
         public static void CreateDirectory(byte[] arg)
         {
@@ -1614,16 +1698,6 @@ namespace Love
             long out_time;
             Love2dDll.wrap_love_dll_filesystem_getLastModified(filename, out out_time);
             return out_time;
-        }
-        public static long GetSize(byte[] filename)
-        {
-            long out_size = 0;
-            Love2dDll.wrap_love_dll_filesystem_getSize(filename, out out_size);
-            return out_size;
-        }
-        public static void SetSymlinksEnabled(bool enable)
-        {
-            Love2dDll.wrap_love_dll_filesystem_setSymlinksEnabled(enable);
         }
         public static bool AreSymlinksEnabled()
         {
@@ -1696,13 +1770,13 @@ namespace Love
         //// raw *new*
         // filename -> file -> filedata -> decoder -> source 
         //             file -> sounddata -> 
-        public static Source NewSource(Decoder decoder, Source.Type type = Source.Type.Stream)
+        public static Source NewSource(Decoder decoder, Source.Type type)
         {
             IntPtr out_decoder_ptr;
             Love2dDll.wrap_love_dll_audio_newSource_decoder(decoder.p, (int)type, out out_decoder_ptr);
             return LoveObject.NewObject<Source>(out_decoder_ptr);
         }
-        public static Source NewSource(SoundData sd, Source.Type type = Source.Type.Stream)
+        public static Source NewSource(SoundData sd, Source.Type type)
         {
             IntPtr out_decoder_ptr;
             Love2dDll.wrap_love_dll_audio_newSource_sounddata(sd.p, (int)type, out out_decoder_ptr);
@@ -1717,10 +1791,10 @@ namespace Love
             return Love2dDll.wrap_love_dll_audio_open_love_audio();
         }
 
-        public static int GetSourceCount()
+        public static int GetActiveSourceCount()
         {
             int out_reslut = 0;
-            Love2dDll.wrap_love_dll_audio_getSourceCount(out out_reslut);
+            Love2dDll.wrap_love_dll_audio_getActiveSourceCount(out out_reslut);
             return out_reslut;
         }
         public static void Stop()
@@ -1731,13 +1805,15 @@ namespace Love
         {
             Love2dDll.wrap_love_dll_audio_pause();
         }
-        public static void Resume()
+        public static void Play(Source[] sources)
         {
-            Love2dDll.wrap_love_dll_audio_resume();
-        }
-        public static void Rewind()
-        {
-            Love2dDll.wrap_love_dll_audio_rewind();
+            IntPtr[] ptrs = new IntPtr[sources.Length];
+            for (int i = 0; i < sources.Length; i++)
+            {
+                ptrs[i] = sources[i].p;
+            }
+
+            Love2dDll.wrap_love_dll_audio_play(ptrs, ptrs.Length);
         }
         public static void SetVolume(float v)
         {
@@ -1789,12 +1865,6 @@ namespace Love
             float out_scale = 0;
             Love2dDll.wrap_love_dll_audio_getDopplerScale(out out_scale);
             return out_scale;
-        }
-        public static bool CanRecord()
-        {
-            bool out_result = false;
-            Love2dDll.wrap_love_dll_audio_canRecord(out out_result);
-            return out_result;
         }
         public static void SetDistanceModel(int distancemodel_type)
         {
@@ -1858,6 +1928,12 @@ namespace Love
         {
             IntPtr out_reasterizer;
             Love2dDll.wrap_love_dll_font_newRasterizer(fileData.p, out out_reasterizer);
+            return LoveObject.NewObject<Rasterizer>(out_reasterizer);
+        }
+        public static Rasterizer NewTrueTypeRasterizer(Data data, int size, TrueTypeRasterizer.Hinting hinting = TrueTypeRasterizer.Hinting.Normal)
+        {
+            IntPtr out_reasterizer;
+            Love2dDll.wrap_love_dll_font_newTrueTypeRasterizer_data(data.p, size, (int)hinting, out out_reasterizer);
             return LoveObject.NewObject<Rasterizer>(out_reasterizer);
         }
         public static Rasterizer NewTrueTypeRasterizer(int size, TrueTypeRasterizer.Hinting hinting = TrueTypeRasterizer.Hinting.Normal)
@@ -1930,7 +2006,7 @@ namespace Love
         public static float Random(int l, int u)
         {
             double random = rg.Random();
-            return (float)(System.Math.Floor(random * (u - l + 1) + l));
+            return (float)(Math.Floor(random * (u - l + 1) + l));
         }
         public static RandomGenerator Ext_getRandomGenerator()
         {
@@ -1948,7 +2024,7 @@ namespace Love
             Love2dDll.wrap_love_dll_math_newBezierCurve(points, points.Length, out out_BezierCurve);
             return LoveObject.NewObject<BezierCurve>(out_BezierCurve);
         }
-        public static Triangle[] triangulate(Float2[] points)
+        public static Triangle[] Triangulate(Float2[] points)
         {
             IntPtr out_triArray;
             int out_triCount;
@@ -2008,103 +2084,11 @@ namespace Love
             Love2dDll.wrap_love_dll_math_noise_4(x, y, z, w, out out_result);
             return out_result;
         }
-        public static CompressedImageData Compress(byte[] datas, Compressor.Format format_type = Compressor.Format.LZ4, int level = -1)
-        {
-            IntPtr out_compressedData = IntPtr.Zero;
-            Love2dDll.wrap_love_dll_math_compress_str(datas, datas.Length, (int)format_type, level, out out_compressedData);
-            return LoveObject.NewObject<CompressedImageData>(out_compressedData);
-        }
-        public static CompressedImageData Compress(Data data, Compressor.Format format_type = Compressor.Format.LZ4, int level = -1)
-        {
-            IntPtr out_compressedData = IntPtr.Zero;
-            Love2dDll.wrap_love_dll_math_compress_data(data.p, (int)format_type, level, out out_compressedData);
-            return LoveObject.NewObject<CompressedImageData>(out_compressedData);
-        }
-        public static byte[] decompress(Data data)
-        {
-            IntPtr out_datas;
-            int out_datas_length;
-            Love2dDll.wrap_love_dll_math_decompress_data(data.p, out out_datas, out out_datas_length);
-
-            return DllTool.readBytesAndRelease(out_datas, out_datas_length);
-        }
-        public static byte[] decompress_bytes(byte[] data, Compressor.Format format_type = Compressor.Format.LZ4, int level = -1)
-        {
-            IntPtr out_datas;
-            int out_datas_length;
-            Love2dDll.wrap_love_dll_math_decompress_bytes((int)format_type, data,data.Length, out out_datas, out out_datas_length);
-
-            return DllTool.readBytesAndRelease(out_datas, out_datas_length);
-        }
 
     }
 
     public partial class Graphics
     {
-        public enum DrawMode : int
-        {
-            Line,
-            Fill,
-        };
-        public enum ArcMode : int
-        {
-            Open,
-            Closed,
-            Pie,
-            ARC_MAX_ENUM
-        };
-        public enum BlendMode : int
-        {
-            Alpha,
-            Add,
-            Subtract,
-            Multiply,
-            Lighten,
-            Darken,
-            Screen,
-            Replace,
-        };
-        public enum BlendAlpha : int
-        {
-            Multiply,
-            PreMultiplied,
-        };
-        public enum LineStyle : int
-        {
-            Rough,
-            Smooth,
-        };
-        public enum LineJoin : int
-        {
-            None,
-            Miter,
-            Bevel,
-        };
-        public enum StencilAction : int
-        {
-            Replace,
-            Increment,
-            Decrement,
-            IncrementWrap,
-            DecrementWrap,
-            Invert,
-        };
-        public enum CompareMode : int
-        {
-            Less,
-            LEqual,
-            Equal,
-            GEqual,
-            Greater,
-            NotEqual,
-            Always,
-        };
-        public enum Feature : int
-        {
-            MultiCanvasFormats,
-            ClampZero,
-            Lighten,
-        };
         public enum Renderer : int
         {
             OpenGL= 0,
@@ -2112,14 +2096,36 @@ namespace Love
         };
         public enum SystemLimit : int
         {
+            /// <summary>
+            /// The maximum size of points.
+            /// </summary>
             PointSize,
+
+            /// <summary>
+            /// The maximum width or height of Images and Canvases.
+            /// </summary>
             TextureSize,
+
+            /// <summary>
+            /// The maximum number of simultaneously active canvases (via <see cref="Graphics.SetCanvas"/>.)
+            /// </summary>
             MultiCanvas,
+
+            /// <summary>
+            /// The maximum number of antialiasing samples for a Canvas.
+            /// </summary>
             CanvasMSAA,
         };
         public enum StackType : int
         {
+            /// <summary>
+            /// All Love.Graphics state, including transform state.
+            /// </summary>
             All,
+
+            /// <summary>
+            /// The transformation stack (Love.Graphics.translate, Love.Graphics.rotate, etc.)
+            /// </summary>
             Transform,
         };
 
@@ -2132,30 +2138,21 @@ namespace Love
             return true;
         }
 
-        public static Image NewImage(ImageData[] imageData, bool flagMipmaps = false, bool flagLinear = false)
+        public static Image NewImage(ImageDataBase[] imageData, bool flagMipmaps = false, bool flagLinear = false)
         {
-            IntPtr[] imageDataList = new IntPtr[imageData.Length];
+            bool[] isCompressed = new bool[imageData.Length];
             for (int i = 0; i < imageData.Length; i++)
             {
-                imageDataList[i] = imageData[i].p;
+                isCompressed[i] = imageData[i] is CompressedImageData;
             }
 
-            IntPtr out_image = IntPtr.Zero;
-            Love2dDll.wrap_love_dll_graphics_newImage_file(imageDataList, imageDataList.Length, flagMipmaps, flagLinear, out out_image);
-            return LoveObject.NewObject<Image>(out_image);
-        }
-        public static Image NewImage(CompressedImageData[] compressedImageData, bool flagMipmaps = false, bool flagLinear = false)
-        {
-            IntPtr[] compressedImageDataList = new IntPtr[compressedImageData.Length];
-            for (int i = 0; i < compressedImageData.Length; i++)
-            {
-                compressedImageDataList[i] = compressedImageData[i].p;
-            }
+            var imageDataList = DllTool.GenIntPtrArray(imageData);
 
             IntPtr out_image = IntPtr.Zero;
-            Love2dDll.wrap_love_dll_graphics_newImage(compressedImageDataList, compressedImageDataList.Length, flagMipmaps, flagLinear, out out_image);
+            Love2dDll.wrap_love_dll_graphics_newImage_data(imageDataList, isCompressed, imageDataList.Length, flagMipmaps, flagLinear, out out_image);
             return LoveObject.NewObject<Image>(out_image);
         }
+
         public static Quad NewQuad(double x, double y, double w, double h, double sw, double sh)
         {
             IntPtr out_quad = IntPtr.Zero;
@@ -2168,31 +2165,76 @@ namespace Love
             Love2dDll.wrap_love_dll_graphics_newFont(rasterizer.p, out out_font);
             return LoveObject.NewObject<Font>(out_font);
         }
-        public static SpriteBatch NewSpriteBatch(Texture texture, int maxSprites, Mesh.Usage usage_type)
+        public static SpriteBatch NewSpriteBatch(Texture texture, int maxSprites, SpriteBatchUsage usage_type)
         {
             IntPtr out_spriteBatch = IntPtr.Zero;
             Love2dDll.wrap_love_dll_graphics_newSpriteBatch(texture.p, maxSprites, (int)usage_type, out out_spriteBatch);
             return LoveObject.NewObject<SpriteBatch>(out_spriteBatch);
         }
-        public static ParticleSystem NewParticleSystem(Texture texture, int buffer)
+        public static ParticleSystem NewParticleSystem(Texture texture, int buffer = 1000)
         {
             IntPtr out_particleSystem = IntPtr.Zero;
             Love2dDll.wrap_love_dll_graphics_newParticleSystem(texture.p, buffer, out out_particleSystem);
             return LoveObject.NewObject<ParticleSystem>(out_particleSystem);
         }
-        public static Canvas NewCanvas(int width, int height, Canvas.Format format_type, int msaa)
+
+        public class Settings
         {
+            public CanvasMipmapMode mipmaps = CanvasMipmapMode.MIPMAPS_NONE;
+            public PixelFormat format = PixelFormat.PIXELFORMAT_NORMAL;
+            public TextureType type = TextureType.TEXTURE_2D;
+            public float? dpiScale = null;
+            public int msaa = 0;
+            public bool readable = true;
+        }
+
+        /// <summary>
+        /// Creates a new Canvas.
+        /// <para>This function can be slow if it is called repeatedly, such as from love.update or love.draw. If you need to use a specific resource often, create it once and store it somewhere it can be reused!</para>
+        /// </summary>
+        /// <param name="width">The desired width of the Canvas.</param>
+        /// <param name="height">The desired height of the Canvas.</param>
+        /// <param name="format_type"></param>
+        /// <param name="msaa"></param>
+        /// <returns>A new Canvas with dimensions equal to the window's size in pixels.</returns>
+        public static Canvas NewCanvas(int width, int height, Settings settings = null)
+        {
+            if (settings == null)
+            {
+                settings = new Settings();
+            }
+
+            if (settings.dpiScale != null)
+            {
+                settings.dpiScale = GetDPIScale();
+            }
+
             IntPtr out_canvas = IntPtr.Zero;
-            Love2dDll.wrap_love_dll_graphics_newCanvas(width, height, (int)format_type, msaa, out out_canvas);
+            Love2dDll.wrap_love_dll_graphics_newCanvas(width, height,
+                (int)settings.type,
+                (int)settings.format,
+                settings.readable,
+                settings.msaa,
+                (int)settings.dpiScale,
+                (int)settings.mipmaps,
+                out out_canvas);
             return LoveObject.NewObject<Canvas>(out_canvas);
         }
-        public static Mesh NewMesh(Float2[] pos, Float2[] uv, Int4[] color, Mesh.Usage drawMode, Mesh.Usage usage)
+        public static Mesh NewMesh(Float2[] pos, Float2[] uv, Float4[] color, MeshDrawMode drawMode, SpriteBatchUsage usage)
         {
             IntPtr out_mesh = IntPtr.Zero;
             Love2dDll.wrap_love_dll_graphics_newMesh_specifiedVertices(pos, uv, color, pos.Length, (int)drawMode, (int)usage, out out_mesh);
             return LoveObject.NewObject<Mesh>(out_mesh);
         }
-        public static Mesh NewMesh(int count, Mesh.Usage drawMode, Mesh.Usage usage)
+
+        /// <summary>
+        /// Creates a standard Mesh with the specified number of vertices.
+        /// </summary>
+        /// <param name="count">The total number of vertices the Mesh will use. Each vertex is initialized to position of (0,0), uv of (0,0), color of (1,1,1,1).</param>
+        /// <param name="drawMode">How the vertices are used when drawing. The default mode "fan" is sufficient for simple convex polygons.</param>
+        /// <param name="usage">The expected usage of the Mesh. The specified usage mode affects the Mesh's memory usage and performance.</param>
+        /// <returns></returns>
+        public static Mesh NewMesh(int count, MeshDrawMode drawMode, SpriteBatchUsage usage)
         {
             IntPtr out_mesh = IntPtr.Zero;
             Love2dDll.wrap_love_dll_graphics_newMesh_count(count, (int)drawMode, (int)usage, out out_mesh);
@@ -2212,71 +2254,160 @@ namespace Love
             Love2dDll.wrap_love_dll_graphics_newVideo(videoStream.p, out out_video);
             return LoveObject.NewObject<Video>(out_video);
         }
-        public static ImageData NewScreenshot(bool copyAlpha)
-        {
-            IntPtr out_imageData = IntPtr.Zero;
-            Love2dDll.wrap_love_dll_graphics_newScreenshot(copyAlpha, out out_imageData);
-            return LoveObject.NewObject<ImageData>(out_imageData);
-        }
 
         #endregion
 
         #region graphics State
 
+        /// <summary>
+        /// Resets the current graphics settings.
+        /// <para>Calling reset makes the current drawing color white, the current background color black, disables any active Canvas or Shader, and removes any scissor settings. It sets the BlendMode to alpha, enables all color component masks, disables wireframe mode and resets the current graphics transformation to the origin. It also sets both the point and line drawing modes to smooth and their sizes to 1.0.</para>
+        /// </summary>
+        void Reset()
+        {
+            Love2dDll.wrap_love_dll_graphics_reset();
+        }
+
+        /// <summary>
+        /// Gets whether the graphics module is able to be used.
+        /// </summary>
+        /// <returns></returns>
         public static bool IsActive()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_graphics_isActive(out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// Gets whether gamma-correct rendering is enabled.
+        /// <para></para>
+        /// <para>Not all devices support gamma-correct rendering, in which case it will be automatically disabled and this function will return false. It is supported on desktop systems which have graphics cards that are capable of using OpenGL 3 / DirectX 10, and iOS devices that can use OpenGL ES 3.</para>
+        /// </summary>
+        /// <returns></returns>
         public static bool IsGammaCorrect()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_graphics_isGammaCorrect(out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// Disables scissor.
+        /// </summary>
         public static void SetScissor()
         {
             Love2dDll.wrap_love_dll_graphics_setScissor();
         }
+
+        /// <summary>
+        /// Sets scissor.
+        /// <para>The scissor limits the drawing area to a specified rectangle. This affects all graphics calls, including love.graphics.clear.</para>
+        /// <para>The dimensions of the scissor is unaffected by graphical transformations(translate, scale, ...).</para>
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="w"></param>
+        /// <param name="h"></param>
         public static void SetScissor(int x, int y, int w, int h)
         {
             Love2dDll.wrap_love_dll_graphics_setScissor_xywh(x, y, w, h);
         }
+
+        /// <summary>
+        /// 设置 scissor 为所给矩形和现有 scissor 的交集（交集肯定还是个矩形）。如果之前没有设置 scissor，则相当于调用 <see cref="Graphics.SetScissor"/> 
+        /// <para>Sets the scissor to the rectangle created by the intersection of the specified rectangle with the existing scissor.</para>
+        /// <para>The scissor limits the drawing area to a specified rectangle. This affects all graphics calls, including love.graphics.clear.</para>
+        /// <para>The dimensions of the scissor is unaffected by graphical transformations(translate, scale, ...).</para>
+        /// </summary>
+        /// <param name="x">x coordinate of upper left corner.</param>
+        /// <param name="y">y coordinate of upper left corner.</param>
+        /// <param name="w">width of clipping rectangle.</param>
+        /// <param name="h">height of clipping rectangle.</param>
         public static void IntersectScissor(int x, int y, int w, int h)
         {
             Love2dDll.wrap_love_dll_graphics_intersectScissor(x, y, w, h);
         }
+
+        /// <summary>
+        /// Gets the current scissor box.
+        /// <para> Int4:x The x-component of the top-left point of the box. </para>
+        /// <para> Int4:y The y-component of the top-left point of the box. </para>
+        /// <para> The width of the box. </para>
+        /// <para> The height of the box. </para>
+        /// </summary>
+        /// <returns>
+        /// </returns>
         public static Int4 GetScissor()
         {
             int out_x, out_y, out_w, out_h;
             Love2dDll.wrap_love_dll_graphics_getScissor(out out_x, out out_y, out out_w, out out_h);
             return new Int4(out_x, out_y, out_w, out_h);
         }
+
+        /// <summary>
+        /// Configures or disables stencil testing.
+        /// <para>When stencil testing is enabled, the geometry of everything that is drawn afterward will be clipped / stencilled out based on a comparison between the arguments of this function and the stencil value of each pixel that the geometry touches. The stencil values of pixels are affected via Graphics.Stencil.</para>
+        /// </summary>
+        /// <param name="compare_type">The type of comparison to make for each pixel.</param>
+        /// <param name="compareValue">The value to use when comparing with the stencil value of each pixel. </param>
         public static void SetStencilTest(CompareMode compare_type, int compareValue)
         {
             Love2dDll.wrap_love_dll_graphics_setStencilTest((int)compare_type, compareValue);
         }
+
+        /// <summary>
+        /// Gets the current stencil test configuration.
+        /// <para>When stencil testing is enabled, the geometry of everything that is drawn afterward will be clipped / stencilled out based on a comparison between the arguments of this function and the stencil value of each pixel that the geometry touches. The stencil values of pixels are affected via Graphics.Stencil.</para>
+        /// <para>Each Canvas has its own per-pixel stencil values.</para>
+        /// </summary>
+        /// <param name="out_compare_type">The type of comparison that is made for each pixel. Will be "always" if stencil testing is disabled.</param>
+        /// <param name="out_compareValue">The value used when comparing with the stencil value of each pixel.</param>
         public static void GetStencilTest(out CompareMode out_compare_type, out int out_compareValue)
         {
             int compare_type = 0;
             Love2dDll.wrap_love_dll_graphics_getStencilTest(out compare_type, out out_compareValue);
             out_compare_type = (CompareMode)compare_type;
         }
-        public static void SetColor(int r, int g, int b, int a = 255)
+
+        /// <summary>
+        /// Sets the color used for drawing.
+        /// </summary>
+        /// <param name="r"></param>
+        /// <param name="g"></param>
+        /// <param name="b"></param>
+        /// <param name="a"></param>
+        public static void SetColor(float r, float g, float b, float a = 1)
         {
             Love2dDll.wrap_love_dll_graphics_setColor(r, g, b, a);
         }
-        public static Int4 GetColor()
+
+        /// <summary>
+        /// Gets the current color.
+        /// </summary>
+        /// <returns></returns>
+        public static Float4 GetColor()
         {
-            int out_r, out_g, out_b, out_a;
+            float out_r, out_g, out_b, out_a;
             Love2dDll.wrap_love_dll_graphics_getColor(out out_r, out out_g, out out_b, out out_a);
-            return new Int4(out_r, out_g, out_b, out_a);
+            return new Float4(out_r, out_g, out_b, out_a);
         }
+
+        /// <summary>
+        /// Sets the background color.
+        /// </summary>
+        /// <param name="r"></param>
+        /// <param name="g"></param>
+        /// <param name="b"></param>
+        /// <param name="a"></param>
         public static void SetBackgroundColor(int r, int g, int b, int a = 255)
         {
             Love2dDll.wrap_love_dll_graphics_setBackgroundColor(r, g, b, a);
         }
+
+        /// <summary>
+        /// Gets the current background color.
+        /// </summary>
         public static Int4 GetBackgroundColor()
         {
             int out_r, out_g, out_b, out_a;
@@ -2287,36 +2418,84 @@ namespace Love
         {
             Love2dDll.wrap_love_dll_graphics_setFont(font.p);
         }
+
+        /// <summary>
+        /// Gets the current Font object.
+        /// </summary>
+        /// <returns></returns>
         public static Font GetFont()
         {
             IntPtr out_font = IntPtr.Zero;
             Love2dDll.wrap_love_dll_graphics_getFont(out out_font);
             return LoveObject.NewObject<Font>(out_font);
         }
+
+        /// <summary>
+        /// Sets the color mask. Enables or disables specific color components when rendering.
+        /// </summary>
+        /// <param name="r"></param>
+        /// <param name="g"></param>
+        /// <param name="b"></param>
+        /// <param name="a"></param>
         public static void SetColorMask(bool r, bool g, bool b, bool a)
         {
             Love2dDll.wrap_love_dll_graphics_setColorMask(r, g, b, a);
         }
+
+        /// <summary>
+        /// Gets the active color components used when drawing. Normally all 4 components are active unless <see cref="Graphics.SetColorMask"/> has been used.
+        /// <para>The color mask determines whether individual components of the colors of drawn objects will affect the color of the screen. They affect <see cref="Graphics.Clear"/> as well.</para>
+        /// </summary>
+        /// <param name="out_r">Whether the red color component is active when rendering.</param>
+        /// <param name="out_g">Whether the red green component is active when rendering.</param>
+        /// <param name="out_b">Whether the red blue component is active when rendering.</param>
+        /// <param name="out_a">Whether the red alpha component is active when rendering.</param>
         public static void GetColorMask(out bool out_r, out bool out_g, out bool out_b, out bool out_a)
         {
             Love2dDll.wrap_love_dll_graphics_getColorMask(out out_r, out out_g, out out_b, out out_a);
         }
-        public static void SetBlendMode(BlendMode blendMode_type, BlendAlpha blendAlphaMode_type)
+
+        /// <summary>
+        /// Sets the blending mode.
+        /// </summary>
+        /// <param name="blendMode_type">The blend mode to use.</param>
+        /// <param name="blendAlphaMode_type">What to do with the alpha of drawn objects when blending.</param>
+        public static void SetBlendMode(BlendMode blendMode_type, BlendAlphaMode blendAlphaMode_type = BlendAlphaMode.Multiply)
         {
             Love2dDll.wrap_love_dll_graphics_setBlendMode((int)blendMode_type, (int)blendAlphaMode_type);
         }
-        public static void GetBlendMode(out BlendMode out_blendMode_type, out BlendAlpha out_blendAlphaMode_type)
+
+        /// <summary>
+        /// Gets the blending mode.
+        /// </summary>
+        /// <param name="out_blendMode_type">The current blend mode.</param>
+        /// <param name="out_blendAlphaMode_type">The current blend alpha mode – it determines how the alpha of drawn objects affects blending.</param>
+        public static void GetBlendMode(out BlendMode out_blendMode_type, out BlendAlphaMode out_blendAlphaMode_type)
         {
             int blendMode_type = 0;
             int blendAlphaMode_type = 0;
             Love2dDll.wrap_love_dll_graphics_getBlendMode(out blendMode_type, out blendAlphaMode_type);
             out_blendMode_type = (BlendMode)blendMode_type;
-            out_blendAlphaMode_type = (BlendAlpha)blendAlphaMode_type;
+            out_blendAlphaMode_type = (BlendAlphaMode)blendAlphaMode_type;
         }
-        public static void SetDefaultFilter(Texture.FilterMode filterModeMagMin_type, Texture.FilterMode filterModeMag_type, int anisotropy)
+
+        /// <summary>
+        /// Sets the default scaling filters used with Images, Canvases, and Fonts.
+        /// </summary>
+        /// <param name="filterModeMagMin_type">Filter mode used when scaling the image down.</param>
+        /// <param name="filterModeMag_type">Filter mode used when scaling the image up.</param>
+        /// <param name="anisotropy">Maximum amount of Anisotropic Filtering used.</param>
+        public static void SetDefaultFilter(Texture.FilterMode filterModeMagMin_type, Texture.FilterMode filterModeMag_type, int anisotropy = 1)
         {
             Love2dDll.wrap_love_dll_graphics_setDefaultFilter((int)filterModeMagMin_type, (int)filterModeMag_type, anisotropy);
         }
+
+        /// <summary>
+        /// Returns the default scaling filters used with Images, Canvases, and Fonts.
+        /// </summary>
+        /// <param name="out_filterModeMagMin_type">Filter mode used when scaling the image down.</param>
+        /// <param name="out_filterModeMag_type">Filter mode used when scaling the image up.</param>
+        /// <param name="out_anisotropy">Maximum amount of Anisotropic Filtering used.</param>
         public static void GetDefaultFilter(out Texture.FilterMode out_filterModeMagMin_type, out Texture.FilterMode out_filterModeMag_type, out int out_anisotropy)
         {
             int filterModeMagMin_type = 0;
@@ -2325,40 +2504,80 @@ namespace Love
             out_filterModeMagMin_type = (Texture.FilterMode)filterModeMagMin_type;
             out_filterModeMag_type = (Texture.FilterMode)filterModeMag_type;
         }
+
+        /// <summary>
+        /// Sets the line width.
+        /// </summary>
+        /// <param name="width"></param>
         public static void SetLineWidth(float width)
         {
             Love2dDll.wrap_love_dll_graphics_setLineWidth(width);
         }
+
+        /// <summary>
+        /// Sets the line style.
+        /// </summary>
+        /// <param name="style_type"></param>
         public static void SetLineStyle(LineStyle style_type)
         {
             Love2dDll.wrap_love_dll_graphics_setLineStyle((int)style_type);
         }
+
+        /// <summary>
+        /// Sets the line join style.
+        /// </summary>
+        /// <param name="join_type"></param>
         public static void SetLineJoin(LineJoin join_type)
         {
             Love2dDll.wrap_love_dll_graphics_setLineJoin((int)join_type);
         }
+
+        /// <summary>
+        /// Gets the current line width.
+        /// </summary>
+        /// <returns></returns>
         public static float GetLineWidth()
         {
             float out_result = 0;
             Love2dDll.wrap_love_dll_graphics_getLineWidth(out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// Gets the line style.
+        /// </summary>
+        /// <returns></returns>
         public static LineStyle GetLineStyle()
         {
             int out_lineStyle_type = 0;
             Love2dDll.wrap_love_dll_graphics_getLineStyle(out out_lineStyle_type);
             return (LineStyle)out_lineStyle_type;
         }
+
+        /// <summary>
+        /// Gets the line join style.
+        /// </summary>
+        /// <returns></returns>
         public static LineJoin GetLineJoin()
         {
             int out_lineJoinStyle_type = 0;
             Love2dDll.wrap_love_dll_graphics_getLineJoin(out out_lineJoinStyle_type);
             return (LineJoin)out_lineJoinStyle_type;
         }
+
+        /// <summary>
+        /// Sets the point size.
+        /// </summary>
+        /// <param name="size"></param>
         public static void SetPointSize(float size)
         {
             Love2dDll.wrap_love_dll_graphics_setPointSize(size);
         }
+
+        /// <summary>
+        /// Gets the point size.
+        /// </summary>
+        /// <returns></returns>
         public static float GetPointSize()
         {
             float out_size = 0;
@@ -2369,14 +2588,32 @@ namespace Love
         {
             Love2dDll.wrap_love_dll_graphics_setWireframe(enable);
         }
+
+        /// <summary>
+        /// 是否使用线框模式绘图
+        /// Gets whether wireframe mode is used when drawing.
+        /// </summary>
+        /// <returns></returns>
         public static bool IsWireframe()
         {
             bool out_isWireFrame = false;
             Love2dDll.wrap_love_dll_graphics_isWireframe(out out_isWireFrame);
             return out_isWireFrame;
         }
-        public static void SetCanvas(Canvas[] canvas)
+
+        /// <summary>
+        /// Captures drawing operations to a Canvas
+        /// <para>Sets the render target to a specified Canvas. All drawing operations until the next love.graphics.setCanvas call will be redirected to the Canvas and not shown on the screen.</para>
+        /// <para>if Length of canvas is zero, then resets the render target to the screen, i.e. re-enables drawing to the screen.</para>
+        /// </summary>
+        /// <param name="canvas"></param>
+        public static void SetCanvas(params Canvas[] canvas)
         {
+            if (canvas == null)
+            {
+                canvas = new Canvas[0];
+            }
+
             IntPtr[] canvaList = new IntPtr[canvas.Length];
             for (int i = 0; i < canvas.Length; i++)
             {
@@ -2385,7 +2622,11 @@ namespace Love
 
             Love2dDll.wrap_love_dll_graphics_setCanvas(canvaList, canvaList.Length);
         }
-        public Canvas[] getCanvas()
+
+        /// <summary>
+        /// Returns the current target Canvas. Returns zero length array if drawing to the real screen.
+        /// </summary>
+        public static Canvas[] getCanvas()
         {
             IntPtr out_canvaList = IntPtr.Zero;
             int out_canvaList_length = 0;
@@ -2400,10 +2641,28 @@ namespace Love
 
             return canvas;
         }
+
+        /// <summary>
+        /// Routes drawing operations through a shader.
+        /// </summary>
+        /// <param name="shader"></param>
         public static void SetShader(Shader shader)
         {
             Love2dDll.wrap_love_dll_graphics_setShader(shader.p);
         }
+
+        /// <summary>
+        /// Disables shaders, allowing unfiltered drawing operations.
+        /// </summary>
+        public static void SetShader()
+        {
+            Love2dDll.wrap_love_dll_graphics_setShader(IntPtr.Zero);
+        }
+
+        /// <summary>
+        /// Gets the current Shader. Returns null if none is set.
+        /// </summary>
+        /// <returns></returns>
         public static Shader GetShader()
         {
             IntPtr out_shader = IntPtr.Zero;
@@ -2415,30 +2674,81 @@ namespace Love
 
         #region graphics Coordinate System
 
+        /// <summary>
+        /// Copies and pushes the current coordinate transformation to the transformation stack.
+        /// </summary>
+        /// <param name="stack"></param>
         public static void Push(StackType stack = StackType.Transform)
         {
             Love2dDll.wrap_love_dll_graphics_push((int)stack);
         }
+
+        /// <summary>
+        /// Pops the current coordinate transformation from the transformation stack.
+        /// This function is always used to reverse a previous <see cref="Push"/> operation. It returns the current transformation state to what it was before the last preceding push.
+        /// </summary>
         public static void Pop()
         {
             Love2dDll.wrap_love_dll_graphics_pop();
         }
+
+        /// <summary>
+        /// Rotates the coordinate system in two dimensions.
+        /// <para>Calling this function affects all future drawing operations by rotating the coordinate system around the origin by the given amount of radians. This change lasts until Scene.Draw exits.</para>
+        /// </summary>
+        /// <param name="angle">The amount to rotate the coordinate system in radians.</param>
         public static void Rotate(float angle)
         {
             Love2dDll.wrap_love_dll_graphics_rotate(angle);
         }
+
+        /// <summary>
+        /// <para>以二维方式缩放坐标系。</para>
+        /// <para>默认情况下，LÖVE中的坐标系在水平和垂直方向上一对一显示像素，x轴向右增加，y轴向下增加。 缩放坐标系会改变这种关系。</para>
+        /// <para>在通过sx和sy进行缩放之后，所有坐标都被视为与sx和sy相乘。 绘图操作的每个结果也相应地缩放，例如按（2,2）缩放将意味着在x和y方向上使所有内容都变为两倍。 按负值缩放会使坐标系在相应的方向上翻转，所有内容都会被翻转或颠倒（或两者兼而有之）。 按零缩放没有意义。</para>
+        /// <para>缩放(Scale)操作和平移(Translate)操作不是可交换操作，以不同的顺序调用它们会产生不同的结果。</para>
+        /// <para>效果持续到 Scene.Draw 调用结束（每一帧画面绘制结束都会自动重置为1倍。）</para>
+        /// 
+        /// <para>Scales the coordinate system in two dimensions.</para> 
+        /// <para>By default the coordinate system in LÖVE corresponds to the display pixels in horizontal and vertical directions one-to-one, and the x-axis increases towards the right while the y-axis increases downwards. Scaling the coordinate system changes this relation.</para>
+        /// <para>After scaling by sx and sy, all coordinates are treated as if they were multiplied by sx and sy. Every result of a drawing operation is also correspondingly scaled, so scaling by (2, 2) for example would mean making everything twice as large in both x- and y-directions. Scaling by a negative value flips the coordinate system in the corresponding direction, which also means everything will be drawn flipped or upside down, or both. Scaling by zero is not a useful operation.</para>
+        /// <para>Scale and translate are not commutative operations, therefore, calling them in different orders will change the outcome.</para>
+        /// <para>Scaling lasts until Scene.Draw exits.</para>
+        /// </summary>
+        /// <param name="sx">The scaling in the direction of the x-axis.</param>
+        /// <param name="sy">The scaling in the direction of the y-axis.</param>
         public static void Scale(float sx, float sy)
         {
             Love2dDll.wrap_love_dll_graphics_scale(sx, sy);
         }
+
+        /// <summary>
+        /// Translates the coordinate system in two dimensions.
+        /// <para>When this function is called with two numbers, dx, and dy, all the following drawing operations take effect as if their x and y coordinates were x+dx and y+dy.</para>
+        /// <para>Scale and translate are not commutative operations, therefore, calling them in different orders will change the outcome.</para>
+        /// <para>This change lasts until Scene.Draw exits or else a <see cref="Graphics.Pop reverts"/> to a previous <see cref="Graphics.Push"/> .</para>
+        /// <para>Translating using whole numbers will prevent tearing/blurring of images and fonts draw after translating.</para>
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
         public static void Translate(float x, float y)
         {
             Love2dDll.wrap_love_dll_graphics_translate(x, y);
         }
+
+        /// <summary>
+        /// Shears the coordinate system.
+        /// </summary>
+        /// <param name="kx"></param>
+        /// <param name="ky"></param>
         public static void Shear(float kx, float ky)
         {
             Love2dDll.wrap_love_dll_graphics_shear(kx, ky);
         }
+
+        /// <summary>
+        /// Resets the current coordinate transformation.
+        /// </summary>
         public static void Origin()
         {
             Love2dDll.wrap_love_dll_graphics_origin();
@@ -2448,10 +2758,23 @@ namespace Love
 
         #region graphics Drwing
 
-        public static void Stencil(Action actionFunc, StencilAction stencilAction, int value, bool keepValue)
+        /// <summary>
+        /// Draws geometry as a stencil.
+        /// <para> The geometry drawn by the supplied function sets invisible stencil values of pixels, instead of setting pixel colors. The stencil buffer (which contains those stencil values) can act like a mask / stencil - love.graphics.setStencilTest can be used afterward to determine how further rendering is affected by the stencil values in each pixel.</para>
+        /// <para> Stencil values are integers within the range of [0, 255].</para>
+        /// <para> Starting with version 11.0, a stencil buffer must be set or requested in love.graphics.setCanvas when using stencils with a Canvas. love.graphics.setCanvas{canvas, stencil=true} is an easy way to use an automatically provided temporary stencil buffer in that case.</para>
+        /// https://love2d.org/wiki/love.graphics.stencil
+        /// </summary>
+        /// <param name="actionFunc">Function which draws geometry. The stencil values of pixels, rather than the color of each pixel, will be affected by the geometry.</param>
+        /// <param name="stencilAction">How to modify any stencil values of pixels that are touched by what's drawn in the stencil function.</param>
+        /// <param name="value">The new stencil value to use for pixels if the "replace" stencil action is used. Has no effect with other stencil actions. Must be between 0 and 255.</param>
+        /// <param name="keepValue">True to preserve old stencil values of pixels, false to re-set every pixel's stencil value to 0 before executing the stencil function. love.graphics.clear will also re-set all stencil values.</param>
+        public static void Stencil(Action actionFunc, StencilAction stencilAction = StencilAction.Replace, int value = 1, bool keepValue = false)
         {
             if (!keepValue)
-                Love2dDll.wrap_love_dll_graphics_ext_stencil_clearStencil();
+            {
+                Graphics.Clear(0, 0, 0, 0);
+            }
 
             Love2dDll.wrap_love_dll_graphics_ext_stencil_drawToStencilBuffer((int)stencilAction, value);
 
@@ -2460,35 +2783,76 @@ namespace Love
             Love2dDll.wrap_love_dll_graphics_ext_stencil_stopDrawToStencilBuffer();
         }
 
-        public static void Clear(float r, float g, float b, float a)
+        public static void Clear(float r, float g, float b, float a, float stencil = 0, bool enable_stencil = true, float depth = 1, bool enable_depth = true)
         {
-            Love2dDll.wrap_love_dll_graphics_clear_rgba(r, g, b, a);
+            Love2dDll.wrap_love_dll_graphics_clear_rgba(r, g, b, a, stencil, enable_stencil, depth, enable_depth);
         }
-        public static void Clear(Float4[] colorList, bool[] enableList)
+        public static void Clear(Float4[] colorList, bool[] enableList, float stencil = 0, bool enable_stencil = true, float depth = 1, bool enable_depth = true)
         {
             if (colorList.Length != enableList.Length)
             {
                 throw new Exception("length of colorList and enableList should same !");
             }
-            Love2dDll.wrap_love_dll_graphics_clear_rgbalist(colorList, enableList, colorList.Length);
+            Love2dDll.wrap_love_dll_graphics_clear_rgbalist(colorList, enableList, colorList.Length, stencil, enable_stencil, depth, enable_depth);
         }
+
+        /// <summary>
+        /// Discards (trashes) the contents of the screen or active Canvas. This is a performance optimization function with niche use cases.
+        /// </summary>
+        /// <param name="discardColors">An array containing boolean values indicating whether to discard the texture of each active Canvas, when multiple simultaneous Canvases are active.</param>
+        /// <param name="discardStencil">Whether to discard the contents of the stencil buffer of the screen / active Canvas.</param>
         public static void Discard(bool[] discardColors, bool discardStencil)
         {
             Love2dDll.wrap_love_dll_graphics_discard(discardColors, discardColors.Length, discardStencil);
         }
+
+        /// <summary>
+        /// Displays the results of drawing operations on the screen.
+        /// This function is used when writing your own Boot.Run function. It presents all the results of your drawing operations on the screen. See the example in Boot.Run for a typical use of this function.
+        /// </summary>
         public static void Present()
         {
             Love2dDll.wrap_love_dll_graphics_present();
         }
 
-        public static bool Draw(Drawable drawable, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        /// <summary>
+        /// Draws a Drawable object (an Image, Canvas, SpriteBatch, ParticleSystem, Mesh, Text object, or Video) on the screen with optional rotation, scaling and shearing.
+        /// </summary>
+        /// <param name="drawable">A drawable object.</param>
+        /// <param name="x">The position to draw the object (x-axis).</param>
+        /// <param name="y">The position to draw the object (y-axis).</param>
+        /// <param name="angle">Orientation (radians).</param>
+        /// <param name="sx">Scale factor (x-axis).</param>
+        /// <param name="sy">Scale factor (y-axis).</param>
+        /// <param name="ox">Origin offset (x-axis).</param>
+        /// <param name="oy">Origin offset (y-axis).</param>
+        /// <param name="kx">Shearing factor (x-axis).</param>
+        /// <param name="ky">Shearing factor (y-axis).</param>
+        /// <returns></returns>
+        public static void Draw(Drawable drawable, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
-            return Love2dDll.wrap_love_dll_graphics_draw_drawable(drawable.p, x, y, angle, sx, sy, ox, oy, kx, ky);
+            Love2dDll.wrap_love_dll_graphics_draw_drawable(drawable.p, x, y, angle, sx, sy, ox, oy, kx, ky);
         }
-        public static bool Draw(Quad quad, Texture texture, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public static void Draw(Quad quad, Texture texture, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
-            return Love2dDll.wrap_love_dll_graphics_draw_texture_quad(quad.p, texture.p, x, y, angle, sx, sy, ox, oy, kx, ky);
+            Love2dDll.wrap_love_dll_graphics_draw_texture_quad(quad.p, texture.p, x, y, angle, sx, sy, ox, oy, kx, ky);
         }
+
+        /// <summary>
+        /// Draws text on screen. If no Font is set, one will be created and set (once) if needed.
+        /// As of LOVE 0.7.1, when using translation and scaling functions while drawing text, this function assumes the scale occurs first. If you don't script with this in mind, the text won't be in the right position, or possibly even on screen.
+        /// Love.Graphics.Print and Love.Graphics.Printf both support UTF-8 encoding. You'll also need a proper Font for special characters.
+        /// </summary>
+        /// <param name="text">The text to draw.</param>
+        /// <param name="x">The position to draw the object (x-axis).</param>
+        /// <param name="y">The position to draw the object (y-axis).</param>
+        /// <param name="angle">Orientation (radians).</param>
+        /// <param name="sx">Scale factor (x-axis).</param>
+        /// <param name="sy">Scale factor (y-axis).</param>
+        /// <param name="ox">Origin offset (x-axis).</param>
+        /// <param name="oy">Origin offset (y-axis).</param>
+        /// <param name="kx">Shearing factor (x-axis).</param>
+        /// <param name="ky">Shearing factor (y-axis).</param>
         public static void Print(string text, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
             ColoredString coloredStr = DllTool.ToColoredStrings(text);
@@ -2497,6 +2861,11 @@ namespace Love
                 Love2dDll.wrap_love_dll_graphics_print(tmp.Item1, tmp.Item2, coloredStr.Length, x, y, angle, sx, sy, ox, oy, kx, ky);
             });
         }
+
+        /// <summary>
+        /// Same as Love.Graphics.Print(string...), but coloredStr used to show text in different color.
+        /// </summary>
+        /// <param name="coloredStr">colors and strings </param>
         public static void Print(ColoredString coloredStr, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
             coloredStr.ExecResource((Tuple<BytePtr[], Int4[]> tmp) =>{
@@ -2509,49 +2878,110 @@ namespace Love
                 Love2dDll.wrap_love_dll_graphics_printf(tmp.Item1, tmp.Item2, coloredStr.Length, x, y, wrap, (int)align_type, angle, sx, sy, ox, oy, kx, ky);
             });
         }
-        public static bool Rectangle(DrawMode mode_type, float x, float y, float w, float h)
+
+        /// <summary>
+        /// Draws a rectangle.
+        /// </summary>
+        /// <param name="mode_type">How to draw the rectangle.</param>
+        /// <param name="x">The position of top-left corner along the x-axis.</param>
+        /// <param name="y">The position of top-left corner along the y-axis.</param>
+        /// <param name="w">Width of the rectangle.</param>
+        /// <param name="h">Height of the rectangle.</param>
+        public static void Rectangle(DrawMode mode_type, float x, float y, float w, float h)
         {
-            return Love2dDll.wrap_love_dll_graphics_rectangle((int)mode_type, x, y, w, h);
+            Love2dDll.wrap_love_dll_graphics_rectangle((int)mode_type, x, y, w, h);
         }
-        public static bool Rectangle(DrawMode mode_type, float x, float y, float w, float h, float rx, float ry, int points)
+
+        /// <summary>
+        /// Draws a rectangle with rounded corners.
+        /// </summary>
+        /// <param name="mode_type">How to draw the rectangle.</param>
+        /// <param name="x">The position of top-left corner along the x-axis.</param>
+        /// <param name="y">The position of top-left corner along the y-axis.</param>
+        /// <param name="w">Width of the rectangle.</param>
+        /// <param name="h">Height of the rectangle.</param>
+        /// <param name="rx">The x-axis radius of each round corner. Cannot be greater than half the rectangle's width.</param>
+        /// <param name="ry">The y-axis radius of each round corner. Cannot be greater than half the rectangle's height.</param>
+        /// <param name="points">The number of segments used for drawing the round corners. A default amount will be chosen if no number is given.</param>
+        public static void Rectangle(DrawMode mode_type, float x, float y, float w, float h, float rx, float ry, int points = 10)
         {
-            return Love2dDll.wrap_love_dll_graphics_rectangle_with_rounded_corners((int)mode_type, x, y, w, h, rx, ry, points);
+            Love2dDll.wrap_love_dll_graphics_rectangle_with_rounded_corners((int)mode_type, x, y, w, h, rx, ry, points = 10);
         }
-        public static bool Circle(DrawMode mode_type, float x, float y, float radius, int points)
+
+        /// <summary>
+        /// Draws a circle.
+        /// </summary>
+        /// <param name="mode_type">How to draw the circle.</param>
+        /// <param name="x">The position of the center along x-axis.</param>
+        /// <param name="y">The position of the center along y-axis.</param>
+        /// <param name="radius">The radius of the circle.</param>
+        /// <param name="points">The number of segments used for drawing the circle. Note: The default variable for the segments parameter varies between different versions of LÖVE.</param>
+        /// <returns></returns>
+        public static void Circle(DrawMode mode_type, float x, float y, float radius, int points = 10)
         {
-            return Love2dDll.wrap_love_dll_graphics_circle((int)mode_type, x, y, radius, points);
+            Love2dDll.wrap_love_dll_graphics_circle((int)mode_type, x, y, radius, points);
         }
-        public static bool Ellipse(DrawMode mode_type, float x, float y, float a, float b, int points)
+
+        /// <summary>
+        /// Draws an ellipse.
+        /// </summary>
+        /// <param name="mode_type">How to draw the ellipse.</param>
+        /// <param name="x">he position of the center along x-axis.</param>
+        /// <param name="y">he position of the center along y-axis.</param>
+        /// <param name="radiusX">The radius of the ellipse along the x-axis (half the ellipse's width).</param>
+        /// <param name="radiusY">The radius of the ellipse along the y-axis (half the ellipse's height).</param>
+        /// <param name="points">The number of segments used for drawing the ellipse.</param>
+        /// <returns></returns>
+        public static void Ellipse(DrawMode mode_type, float x, float y, float radiusX, float radiusY, int points = 10)
         {
-            return Love2dDll.wrap_love_dll_graphics_ellipse((int)mode_type, x, y, a, b, points);
+            Love2dDll.wrap_love_dll_graphics_ellipse((int)mode_type, x, y, radiusX, radiusY, points);
         }
-        public static bool Arc(DrawMode mode_type, int arcmode_type, float x, float y, float radius, float angle1, float angle2)
+        public static void Arc(DrawMode mode_type, ArcType arcmode_type, float x, float y, float radius, float angle1, float angle2)
         {
-            return Love2dDll.wrap_love_dll_graphics_arc((int)mode_type, arcmode_type, x, y, radius, angle1, angle2);
+            Love2dDll.wrap_love_dll_graphics_arc((int)mode_type, (int)arcmode_type, x, y, radius, angle1, angle2);
         }
-        public static bool Arc(DrawMode mode_type, ArcMode arcmode_type, float x, float y, float radius, float angle1, float angle2, int points)
+        public static void Arc(DrawMode mode_type, ArcType arcmode_type, float x, float y, float radius, float angle1, float angle2, int points = 10)
         {
-            return Love2dDll.wrap_love_dll_graphics_arc_points((int)mode_type, (int)arcmode_type, x, y, radius, angle1, angle2, points);
+            Love2dDll.wrap_love_dll_graphics_arc_points((int)mode_type, (int)arcmode_type, x, y, radius, angle1, angle2, points);
         }
-        public static bool Points(Float2[] coords)
+
+        /// <summary>
+        /// Draws one or more points.
+        /// </summary>
+        /// <param name="coords">The position of the each point</param>
+        public static void Points(params Float2[] coords)
         {
-            return Love2dDll.wrap_love_dll_graphics_points(coords, coords.Length);
+            Love2dDll.wrap_love_dll_graphics_points(coords, coords.Length);
         }
-        public static bool Points(Float2[] coords, Int4[] colors)
+
+        public static void Points(Float2[] coords, Int4[] colors)
         {
             if (coords.Length != colors.Length)
             {
                 throw new Exception("length of coords and colors should same");
             }
-            return Love2dDll.wrap_love_dll_graphics_points_colors(coords, colors, coords.Length);
+            Love2dDll.wrap_love_dll_graphics_points_colors(coords, colors, coords.Length);
         }
-        public static bool Line(Float2[] coords)
+
+        /// <summary>
+        /// Draws lines between points.
+        /// </summary>
+        /// <param name="coords">A array of point positions.</param>
+        /// <returns></returns>
+        public static void Line(params Float2[] coords)
         {
-            return Love2dDll.wrap_love_dll_graphics_line(coords, coords.Length);
+            Love2dDll.wrap_love_dll_graphics_line(coords, coords.Length);
         }
-        public static bool Polygon(DrawMode mode_type, Float2[] coords)
+
+        /// <summary>
+        /// Draw a polygon.
+        /// When in fill mode, the polygon must be convex and simple or rendering artifacts may occur. Love.Mathf.Triangulate and Love.Mathf.IsConvex can be used in 0.9.0+.
+        /// </summary>
+        /// <param name="mode_type">How to draw the polygon.</param>
+        /// <param name="coords">The vertices of the polygon.</param>
+        public static void Polygon(DrawMode mode_type, params Float2[] coords)
         {
-            return Love2dDll.wrap_love_dll_graphics_polygon((int)mode_type, coords, coords.Length);
+            Love2dDll.wrap_love_dll_graphics_polygon((int)mode_type, coords, coords.Length);
         }
 
         #endregion
@@ -2564,12 +2994,37 @@ namespace Love
             Love2dDll.wrap_love_dll_graphics_isCreated(out out_reslut);
             return out_reslut;
         }
+
+
+        /// <summary>
+        /// Gets the DPI scale factor of the window.
+        /// <para>The DPI scale factor represents relative pixel density. The pixel density inside the window might be greater (or smaller) than the "size" of the window. For example on a retina screen in Mac OS X with the highdpi window flag enabled, the window may take up the same physical size as an 800x600 window, but the area inside the window uses 1600x1200 pixels. love.graphics.getDPIScale() would return 2 in that case.</para>
+        /// <para>The love.window.fromPixels and love.window.toPixels functions can also be used to convert between units.</para>
+        /// <para>The highdpi window flag must be enabled to use the full pixel density of a Retina screen on Mac OS X and iOS. The flag currently does nothing on Windows and Linux, and on Android it is effectively always enabled.</para>
+        /// </summary>
+        /// <returns></returns>
+        public static float GetDPIScale()
+        {
+            double out_dpiscale = 0;
+            Love2dDll.wrap_love_dll_graphics_getDPIScale(out out_dpiscale);
+            return (float)out_dpiscale;
+        }
+
+        /// <summary>
+        /// Gets the width in pixels of the window.
+        /// </summary>
+        /// <returns></returns>
         public static int GetWidth()
         {
             int out_width = 0;
             Love2dDll.wrap_love_dll_graphics_getWidth(out out_width);
             return out_width;
         }
+
+        /// <summary>
+        /// Gets the height in pixels of the window.
+        /// </summary>
+        /// <returns></returns>
         public static int GetHeight()
         {
             int out_height = 0;
@@ -2581,24 +3036,46 @@ namespace Love
         #endregion
 
         #region graphics System Information
+
+        /// <summary>
+        /// Gets the optional graphics features and whether they're supported.
+        /// </summary>
+        /// <param name="feature_type"></param>
+        /// <returns></returns>
         public static bool GetSupported(Feature feature_type)
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_graphics_getSupported((int)feature_type, out out_result);
             return out_result;
         }
-        public static bool GetCanvasFormats(Canvas.Format format_type)
+
+        /// <summary>
+        /// Gets the available Canvas formats, and whether each is supported.
+        /// </summary>
+        /// <param name="format_type"></param>
+        /// <returns></returns>
+        public static bool GetCanvasFormats(PixelFormat format_type)
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_graphics_getCanvasFormats((int)format_type, out out_result);
             return out_result;
         }
-        public static bool GetCompressedImageFormats(CompressedImageData.Format format_type)
+        public static bool GetImageFormats(PixelFormat format_type)
         {
             bool out_result = false;
-            Love2dDll.wrap_love_dll_graphics_getCompressedImageFormats((int)format_type, out out_result);
+            Love2dDll.wrap_love_dll_graphics_getImageFormats((int)format_type, out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// Gets information about the system's video card and drivers.
+        /// 
+        /// <para>	Almost everything returned by this function is highly dependent on the system running the code and should probably not be used to make run-time decisions</para>
+        /// </summary>
+        /// <param name="name">The name of the renderer, e.g. "OpenGL" or "OpenGL ES".</param>
+        /// <param name="version">The version of the renderer with some extra driver-dependent version info, e.g. "2.1 INTEL-8.10.44".</param>
+        /// <param name="vendor">The name of the graphics card vendor, e.g. "Intel Inc".</param>
+        /// <param name="device">The name of the graphics card, e.g. "Intel HD Graphics 3000 OpenGL Engine".</param>
         public static void GetRendererInfo(out string name, out string version, out string vendor, out string device)
         {
             IntPtr out_wss;
@@ -2610,12 +3087,30 @@ namespace Love
             vendor = infos[2];
             device = infos[3];
         }
+
+        /// <summary>
+        /// Gets the system-dependent maximum values for love.graphics features.
+        /// </summary>
+        /// <param name="limit_type"></param>
+        /// <returns></returns>
         public static double GetSystemLimits(SystemLimit limit_type)
         {
             double out_result = 0;
             Love2dDll.wrap_love_dll_graphics_getSystemLimits((int)limit_type, out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// Gets performance-related rendering statistics.
+        /// <para>	The per-frame metrics (drawcalls, canvasswitches, shaderswitches) are reset by love.graphics.present, which for the default implementation of <see cref="Boot.Run"/> is called right after the execution of Scene.Draw. Therefore this function should probably be called at the end of Scene.Draw.</para>
+        /// </summary>
+        /// <param name="out_drawCalls">The number of draw calls made so far during the current frame.</param>
+        /// <param name="out_canvasSwitches">The number of times the active Canvas has been switched so far during the current frame.</param>
+        /// <param name="out_shaderSwitches">The number of times the active Shader has been changed so far during the current frame.</param>
+        /// <param name="out_canvases">The number of Canvas objects currently loaded.</param>
+        /// <param name="out_images">The number of Image objects currently loaded.</param>
+        /// <param name="out_fonts">The number of Font objects currently loaded.</param>
+        /// <param name="out_textureMemory">The estimated total size in bytes of video memory used by all loaded Images, Canvases, and Fonts.</param>
         public static void GetStats(out int out_drawCalls, out int out_canvasSwitches, out int out_shaderSwitches, out int out_canvases, out int out_images, out int out_fonts, out int out_textureMemory)
         {
             Love2dDll.wrap_love_dll_graphics_getStats(out out_drawCalls, out out_canvasSwitches, out out_shaderSwitches, out out_canvases, out out_images, out out_fonts, out out_textureMemory);

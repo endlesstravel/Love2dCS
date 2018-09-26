@@ -20,10 +20,14 @@
 #include "modules/sound/lullaby/Sound.h"
 #include "modules/sound/Decoder.h"
 #include "modules/audio/openal/Audio.h"
+#include "modules/font/Font.h"
+#include "modules/font/freetype/Font.h"
 #include "modules/audio/null/Audio.h"
 #include "modules/audio/openal/Source.h"
 #include "modules/audio/null/Source.h"
 #include "modules/math/BezierCurve.h"
+#include "modules/physics/box2d/Physics.h"
+#include "common/Memoizer.h"
 
 using namespace love::sound;
 using namespace love::audio;
@@ -36,11 +40,27 @@ using namespace love::graphics;
 using namespace love::math;
 using namespace love::joystick;
 
-using love::graphics::opengl::Shader;
-using love::graphics::opengl::SpriteBatch;
-using love::graphics::opengl::Text;
+using love::graphics::SpriteBatch;
+using love::graphics::Text;
 using love::graphics::opengl::Canvas;
-using love::graphics::opengl::Mesh;
+using love::graphics::Mesh;
+using love::graphics::Shader;
+
+
+using love::physics::box2d::Physics;
+using love::physics::box2d::Body;
+using love::physics::box2d::World;
+using love::physics::box2d::Contact;
+using love::physics::box2d::Fixture;
+using love::physics::box2d::Joint;
+using love::physics::box2d::ChainShape;
+using love::physics::box2d::EdgeShape;
+using love::physics::box2d::CircleShape;
+using love::physics::box2d::DistanceJoint;
+using love::physics::box2d::Shape;
+using love::physics::box2d::FrictionJoint;
+using love::physics::box2d::GearJoint;
+using love::Memoizer;
 
 namespace love
 {
@@ -201,7 +221,7 @@ namespace wrap
 #pragma region *new* region
 
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_filesystem_newFile(const char *filename, int fmode, File** out_file);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_filesystem_newFileData_content(const char *contents, int contents_length, const char *filename, int decoder, FileData** out_filedata);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_filesystem_newFileData_content(const void *contents, int contents_length, const char *filename, FileData** out_filedata);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_filesystem_newFileData_file(File* file, FileData** out_filedata);
 
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_sound_newDecoder_filedata(FileData* data, int bufferSize, Decoder** out_decoder);
@@ -220,6 +240,7 @@ namespace wrap
     
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_font_newRasterizer(FileData *fileData, Rasterizer** out_Rasterizer);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_font_newTrueTypeRasterizer(int size, int hinting_type, Rasterizer** out_Rasterizer);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_font_newTrueTypeRasterizer_data(Data* data, int size, int hinting_type, Rasterizer** out_Rasterizer);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_font_newBMFontRasterizer(FileData *fileData, pImageData datas[], int dataLength, Rasterizer** out_Rasterizer);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_font_newImageRasterizer(ImageData *imageData, const char* glyphsStr, int extraspacing, Rasterizer** out_Rasterizer);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_font_newGlyphData_rasterizer_str(Rasterizer* r, const char* glyphStr, GlyphData** out_GlyphData);
@@ -230,8 +251,7 @@ namespace wrap
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_math_newRandomGenerator(RandomGenerator** out_RandomGenerator);
     extern "C" LOVE_EXPORT void wrap_love_dll_math_newBezierCurve(Float2* pointsList, int pointsList_lenght, BezierCurve** out_BezierCurve);
 
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Canvas_newImageData(Canvas *canvas, love::image::ImageData **out_img);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Canvas_newImageData_xywh(Canvas *canvas, int x, int y, int w, int h, love::image::ImageData **out_img);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Canvas_newImageData_xywh(love::graphics::Canvas *canvas, int slice, int mipmap, int x, int y, int w, int h, love::image::ImageData **out_img);
 #pragma endregion
     
 #pragma region timer
@@ -270,7 +290,7 @@ namespace wrap
     extern "C" LOVE_EXPORT void wrap_love_dll_windows_hasFocus(bool4* out_result);
     extern "C" LOVE_EXPORT void wrap_love_dll_windows_hasMouseFocus(bool4* out_result);
     extern "C" LOVE_EXPORT void wrap_love_dll_windows_isVisible(bool4* out_result);
-    extern "C" LOVE_EXPORT void wrap_love_dll_windows_getPixelScale(double *out_result);
+    extern "C" LOVE_EXPORT void wrap_love_dll_windows_getDPIScale(double *out_result);
     extern "C" LOVE_EXPORT void wrap_love_dll_windows_toPixels(double value, double *out_result);
     extern "C" LOVE_EXPORT void wrap_love_dll_windows_fromPixels(double pixelvalue, double *out_result);
     extern "C" LOVE_EXPORT void wrap_love_dll_windows_minimize();
@@ -280,7 +300,6 @@ namespace wrap
     extern "C" LOVE_EXPORT void wrap_love_dll_windows_requestAttention(bool4 continuous);
     extern "C" LOVE_EXPORT void wrap_love_dll_windows_windowToPixelCoords(double *out_x, double *out_y);
     extern "C" LOVE_EXPORT void wrap_love_dll_windows_pixelToWindowCoords(double *x, double *y);
-    extern "C" LOVE_EXPORT void wrap_love_dll_windows_getPixelDimensions(int *out_w, int *out_h);
 
 #pragma endregion
 
@@ -290,7 +309,7 @@ namespace wrap
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_mouse_getSystemCursor(int sysctype, Cursor** out_cursor);
     extern "C" LOVE_EXPORT void wrap_love_dll_mouse_setCursor(Cursor *cursor);
     extern "C" LOVE_EXPORT void wrap_love_dll_mouse_getCursor(Cursor** out_cursor);
-    extern "C" LOVE_EXPORT void wrap_love_dll_mouse_hasCursor(bool4 *out_result);
+    extern "C" LOVE_EXPORT void wrap_love_dll_mouse_isCursorSupported(bool4 *out_result);
     extern "C" LOVE_EXPORT void wrap_love_dll_mouse_getX(double *out_x);
     extern "C" LOVE_EXPORT void wrap_love_dll_mouse_getY(double *out_y);
     extern "C" LOVE_EXPORT void wrap_love_dll_mouse_getPosition(double *out_x, double *out_y);
@@ -370,18 +389,12 @@ namespace wrap
     extern "C" LOVE_EXPORT void wrap_love_dll_filesystem_getSourceBaseDirectory(WrapString** out_str);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_filesystem_getRealDirectory(const char *filename, WrapString** out_str);
     extern "C" LOVE_EXPORT void wrap_love_dll_filesystem_getExecutablePath(WrapString** out_str);
-    extern "C" LOVE_EXPORT void wrap_love_dll_filesystem_exists(const char *arg, bool4 *out_result);
-    extern "C" LOVE_EXPORT void wrap_love_dll_filesystem_isDirectory(const char *arg, bool4 *out_result);
-    extern "C" LOVE_EXPORT void wrap_love_dll_filesystem_isFile(const char *arg, bool4 *out_result);
-    extern "C" LOVE_EXPORT void wrap_love_dll_filesystem_isSymlink(const char *filename, bool4 *out_result);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_filesystem_createDirectory(const char *arg);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_filesystem_remove(const char *arg);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_filesystem_read(const char *filename, int64 len, char **out_data, uint32 *out_data_length);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_filesystem_write(const char *filename, const void* input, size_t len);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_filesystem_append(const char *filename, const void* input, size_t len);
     extern "C" LOVE_EXPORT void wrap_love_dll_filesystem_getDirectoryItems(const char *dir, WrapSequenceString** out_wss);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_filesystem_getLastModified(const char *filename, int64 *out_time);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_filesystem_getSize(const char *filename, int64 *out_size);
     extern "C" LOVE_EXPORT void wrap_love_dll_filesystem_setSymlinksEnabled(bool4 enable);
     extern "C" LOVE_EXPORT void wrap_love_dll_filesystem_areSymlinksEnabled(bool4 *out_result);
     extern "C" LOVE_EXPORT void wrap_love_dll_filesystem_getRequirePath(WrapString** out_str);
@@ -398,11 +411,10 @@ namespace wrap
 #pragma region audio
 
 	extern "C" LOVE_EXPORT bool4 wrap_love_dll_audio_open_love_audio();
-    extern "C" LOVE_EXPORT void wrap_love_dll_audio_getSourceCount(int *out_reslut);
+    extern "C" LOVE_EXPORT void wrap_love_dll_audio_getActiveSourceCount(int *out_reslut);
     extern "C" LOVE_EXPORT void wrap_love_dll_audio_stop();
     extern "C" LOVE_EXPORT void wrap_love_dll_audio_pause();
-    extern "C" LOVE_EXPORT void wrap_love_dll_audio_resume();
-    extern "C" LOVE_EXPORT void wrap_love_dll_audio_rewind();
+    extern "C" LOVE_EXPORT void wrap_love_dll_audio_play(Source** source_array, int source_array_length);
     extern "C" LOVE_EXPORT void wrap_love_dll_audio_setVolume(float v);
     extern "C" LOVE_EXPORT void wrap_love_dll_audio_getVolume(float *out_volume);
     extern "C" LOVE_EXPORT void wrap_love_dll_audio_setPosition(float x, float y, float z);
@@ -413,7 +425,6 @@ namespace wrap
     extern "C" LOVE_EXPORT void wrap_love_dll_audio_getVelocity(float *out_x, float *out_y, float *out_z);
     extern "C" LOVE_EXPORT void wrap_love_dll_audio_setDopplerScale(float scale);
     extern "C" LOVE_EXPORT void wrap_love_dll_audio_getDopplerScale(float *out_scale);
-    extern "C" LOVE_EXPORT void wrap_love_dll_audio_canRecord(bool4 *out_result);
     extern "C" LOVE_EXPORT void wrap_love_dll_audio_setDistanceModel(int distancemodel_type);
     extern "C" LOVE_EXPORT void wrap_love_dll_audio_getDistanceModel(int *out_distancemodel_type);
 
@@ -451,10 +462,6 @@ namespace wrap
     extern "C" LOVE_EXPORT void wrap_love_dll_math_noise_2(float x, float y, float *out_result);
     extern "C" LOVE_EXPORT void wrap_love_dll_math_noise_3(float x, float y, float z, float *out_result);
     extern "C" LOVE_EXPORT void wrap_love_dll_math_noise_4(float x, float y, float z, float w, float *out_result);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_math_compress_str(const char* str, int str_size, int format_type, int level, CompressedData **out_compressedData);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_math_compress_data(Data *data, int format_type, int level, CompressedData **out_compressedData);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_math_decompress_data(CompressedData *data, char **out_datas, int *out_datas_length);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_math_decompress_bytes(int format_type, const char *cbytes, int cbytes_length, char **out_datas, int *out_datas_length);
 
 
 #pragma endregion
@@ -464,19 +471,17 @@ namespace wrap
 #pragma region graphics Object Creation
 
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_open_love_graphics();
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newImage_file(ImageData **imageDataList, int imageDataListLength, bool4 flagMipmaps, bool4 flagLinear, love::graphics::opengl::Image** out_image);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newImage(CompressedImageData **compressedImageDataList, int compressedImageDataListLength, bool4 flagMipmaps, bool4 flagLinear, love::graphics::opengl::Image** out_image);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newImage_data(ImageDataBase **imageDataList, bool4* compressedTypeList, int imageDataListLength, bool4 flagMipmaps, bool4 flagLinear, love::graphics::Image** out_image);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_newQuad(double x, double y, double w, double h, double sw, double sh, Quad** out_quad);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newFont(Rasterizer *rasterizer, love::graphics::opengl::Font** out_font);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newSpriteBatch(Texture *texture, int maxSprites, int usage_type, love::graphics::opengl::SpriteBatch** out_spriteBatch);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newFont(Rasterizer *rasterizer, love::graphics::Font** out_font);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newSpriteBatch(Texture *texture, int maxSprites, int usage_type, love::graphics::SpriteBatch** out_spriteBatch);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newParticleSystem(Texture *texture, int buffer, ParticleSystem** out_particleSystem);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newCanvas(int width, int height, int format_type, int msaa, Canvas** out_canvas);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newCanvas(int width, int height, int texture_type, int format_type, bool4 readable, int msaa, float dpiscale, int mipmaps, love::graphics::Canvas** out_canvas);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newShader(const char* vertexCodeStr, const char* pixelCodeStr, Shader** out_shader);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newMesh_specifiedVertices(Float2 pos[], Float2 uv[], Int4 color[], int vertexCount, int drawMode_type, int usage_type, Mesh** out_mesh);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newMesh_specifiedVertices(Float2 pos[], Float2 uv[], Float4 color[], int vertexCount, int drawMode_type, int usage_type, Mesh** out_mesh);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newMesh_count(int count, int drawMode_type, int usage_type, Mesh** out_mesh);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newText(love::graphics::opengl::Font *font, BytePtr coloredStringText[], Int4 coloredStringColor[], int coloredStringLength, Text** out_text);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newVideo(VideoStream *videoStream, love::graphics::opengl::Video** out_video);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newScreenshot(bool4 copyAlpha, ImageData** out_imageData);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newText(love::graphics::Font *font, BytePtr coloredStringText[], Int4 coloredStringColor[], int coloredStringLength, Text** out_text);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newVideo(VideoStream *videoStream, love::graphics::Video** out_video);
 
 
 
@@ -493,12 +498,12 @@ namespace wrap
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getScissor(int *out_x, int *out_y, int *out_w, int *out_h);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_setStencilTest(int compare_type, int compareValue);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getStencilTest(int *out_compare_type, int *out_compareValue);
-    extern "C" LOVE_EXPORT void wrap_love_dll_graphics_setColor(int r, int g, int b, int a);
-    extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getColor(int *out_r, int *out_g, int *out_b, int *out_a);
+    extern "C" LOVE_EXPORT void wrap_love_dll_graphics_setColor(float r, float g, float b, float a);
+    extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getColor(float *out_r, float *out_g, float *out_b, float *out_a);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_setBackgroundColor(int r, int g, int b, int a);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getBackgroundColor(int *out_r, int *out_g, int *out_b, int *out_a);
-    extern "C" LOVE_EXPORT void wrap_love_dll_graphics_setFont(love::graphics::opengl::Font *font);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_getFont(love::graphics::opengl::Font** out_font);
+    extern "C" LOVE_EXPORT void wrap_love_dll_graphics_setFont(love::graphics::Font *font);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_getFont(love::graphics::Font** out_font);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_setColorMask(bool4 r, bool4 g, bool4 b, bool4 a);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getColorMask(bool4 *out_r, bool4 *out_g, bool4 *out_b, bool4 *out_a);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_setBlendMode(int blendMode_type, int blendAlphaMode_type);
@@ -515,16 +520,11 @@ namespace wrap
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getPointSize(float *out_size);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_setWireframe(bool4 enable);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_isWireframe(bool4 *out_isWireFrame);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_setCanvas(Canvas** canvaList, int canvaListLength);
-    extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getCanvas(Canvas*** out_canvas, int *out_canvas_lenght);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_setCanvas(love::graphics::Canvas** canvaList, int canvaListLength);
+    extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getCanvas(love::graphics::Canvas*** out_canvas, int *out_canvas_lenght);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_setShader(Shader *shader);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getShader(Shader** out_shader);
-    extern "C" LOVE_EXPORT void wrap_love_dll_graphics_setDefaultShaderCode(
-        const char* glsl_codeVertexStr, const char* glsl_codePixelxStr, const char* glsl_videoPixelCodeStr,
-        const char* glsl_codeVertexStr_gammacorrect, const char* glsl_codePixelxStr_gammacorrect, const char* glsl_videoPixelCodeStr_gammacorrect,
-        const char* glsles_codeVertexStr, const char* glsles_codePixelxStr, const char* glsles_videoPixelCodeStr,
-        const char* glsles_codeVertexStr_gammacorrect, const char* glsles_codePixelxStr_gammacorrect, const char* glsles_videoPixelCodeStr_gammacorrect
-    );
+    extern "C" LOVE_EXPORT void wrap_love_dll_graphics_setDefaultShaderCode(const char **strPtr);
 
 #pragma endregion
 
@@ -542,12 +542,11 @@ namespace wrap
 
 #pragma region graphics drawing
 
-    extern "C" LOVE_EXPORT void wrap_love_dll_graphics_ext_stencil_clearStencil();
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_ext_stencil_drawToStencilBuffer(int action_type, int stencilValue);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_ext_stencil_stopDrawToStencilBuffer();
 
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_clear_rgba(float r, float g, float b, float a);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_clear_rgbalist(Float4 colorList[], bool4 enableList[], int listLength);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_clear_rgba(float r, float g, float b, float a, float stencil, bool4 enable_stencil, float depth, bool4 enable_depth);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_clear_rgbalist(Float4 colorList[], bool4 enableList[], int listLength, float stencil, bool4 enable_stencil, float depth, bool4 enable_depth);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_discard(bool4 discardColors[], int discardColorsLength, bool4 discardStencil);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_present();
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_draw_drawable(Drawable *drawable, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky);
@@ -569,14 +568,15 @@ namespace wrap
 
 #pragma region graphics Window
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_isCreated(bool4 *out_reslut);
-    extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getWidth(int *out_width);
+	extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getDPIScale(double *out_dpiscale);
+	extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getWidth(int *out_width);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getHeight(int *out_height);
 #pragma endregion
 
 #pragma region graphics System Information
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getSupported(int feature_type, bool4 *out_result);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getCanvasFormats(int format_type, bool4 *out_result);
-    extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getCompressedImageFormats(int format_type, bool4 *out_result);
+    extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getImageFormats(int format_type, bool4 *out_result);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getRendererInfo(WrapSequenceString** out_wss);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getSystemLimits(int limit_type, double *out_result);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getStats(int *out_drawCalls, int *out_canvasSwitches, int *out_shaderSwitches, int *out_canvases, int *out_images, int *out_fonts, int *out_textureMemory);
@@ -589,7 +589,6 @@ namespace wrap
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Source_stop(Source *t);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Source_pause(Source *t);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Source_resume(Source *t);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Source_rewind(Source *t);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Source_setPitch(Source *t, float pitch);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Source_getPitch(Source *t, float *out_pitch);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Source_setVolume(Source *t, float volume);
@@ -609,8 +608,6 @@ namespace wrap
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Source_isRelative(Source *t, bool4 *out_relative);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Source_setLooping(Source *t, bool4 looping);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Source_isLooping(Source *t, bool4 *out_result);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Source_isStopped(Source *t, bool4 *out_result);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Source_isPaused(Source *t, bool4 *out_result);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Source_isPlaying(Source *t, bool4 *out_result);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Source_setVolumeLimits(Source *t, float vmin, float vmax);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Source_getVolumeLimits(Source *t, float *out_vmin, float *out_vmax);
@@ -618,7 +615,7 @@ namespace wrap
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Source_getAttenuationDistances(Source *t, float *out_dref, float *out_dmax);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Source_setRolloff(Source *t, float rolloff);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Source_getRolloff(Source *t, float *out_rolloff);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Source_getChannels(Source *t, int *out_chanels);
+    extern "C" LOVE_EXPORT void wrap_love_dll_type_Source_getChannelCount(Source *t, int *out_chanels);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Source_getType(Source *t, int *out_type);
 
 #pragma endregion
@@ -680,28 +677,28 @@ namespace wrap
 
 #pragma region type - Canvas
 
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Canvas_getFormat(Canvas *canvas, int *out_format_type);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Canvas_getMSAA(Canvas *canvas, int *out_msaa);
+    extern "C" LOVE_EXPORT void wrap_love_dll_type_Canvas_getFormat(love::graphics::Canvas *canvas, int *out_format_type);
+    extern "C" LOVE_EXPORT void wrap_love_dll_type_Canvas_getMSAA(love::graphics::Canvas *canvas, int *out_msaa);
 
 #pragma endregion
 
 #pragma region type - Font
 
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Font_getHeight(love::graphics::opengl::Font *t, int *out_height);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Font_getWidth(love::graphics::opengl::Font *t, const char *str, int *out_width);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Font_getWrap(love::graphics::opengl::Font *t,
+    extern "C" LOVE_EXPORT void wrap_love_dll_type_Font_getHeight(love::graphics::Font *t, int *out_height);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Font_getWidth(love::graphics::Font *t, const char *str, int *out_width);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Font_getWrap(love::graphics::Font *t,
         BytePtr coloredStringText[], Int4 coloredStringColor[], int coloredStringLength, float wrap,
         int *out_maxWidth, WrapSequenceString **out_pws);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Font_setLineHeight(love::graphics::opengl::Font *t, float h);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Font_getLineHeight(love::graphics::opengl::Font *t, float *out_h);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Font_setFilter(love::graphics::opengl::Font *t, int min_type, int mag_type, float anisotropy);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Font_getFilter(love::graphics::opengl::Font *t, int *out_min_type, int *out_mag_type, float *out_anisotropy);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Font_getAscent(love::graphics::opengl::Font *t, int *out_ascent);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Font_getDescent(love::graphics::opengl::Font *t, int *out_descent);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Font_getBaseline(love::graphics::opengl::Font *t, float*out_baseline);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Font_hasGlyphs_uint32(love::graphics::opengl::Font *t, uint32 chr, bool4 *out_result);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Font_hasGlyphs_string(love::graphics::opengl::Font *t, const char *str, bool4 *out_result);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Font_setFallbacks(love::graphics::opengl::Font *t, love::graphics::opengl::Font **fallback, int length);
+    extern "C" LOVE_EXPORT void wrap_love_dll_type_Font_setLineHeight(love::graphics::Font *t, float h);
+    extern "C" LOVE_EXPORT void wrap_love_dll_type_Font_getLineHeight(love::graphics::Font *t, float *out_h);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Font_setFilter(love::graphics::Font *t, int min_type, int mag_type, float anisotropy);
+    extern "C" LOVE_EXPORT void wrap_love_dll_type_Font_getFilter(love::graphics::Font *t, int *out_min_type, int *out_mag_type, float *out_anisotropy);
+    extern "C" LOVE_EXPORT void wrap_love_dll_type_Font_getAscent(love::graphics::Font *t, int *out_ascent);
+    extern "C" LOVE_EXPORT void wrap_love_dll_type_Font_getDescent(love::graphics::Font *t, int *out_descent);
+    extern "C" LOVE_EXPORT void wrap_love_dll_type_Font_getBaseline(love::graphics::Font *t, float*out_baseline);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Font_hasGlyphs_uint32(love::graphics::Font *t, uint32 chr, bool4 *out_result);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Font_hasGlyphs_string(love::graphics::Font *t, const char *str, bool4 *out_result);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Font_setFallbacks(love::graphics::Font *t, love::graphics::Font **fallback, int length);
 
 
 #pragma endregion
@@ -710,25 +707,17 @@ namespace wrap
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Image_setMipmapFilter(love::graphics::opengl::Image *i, int mipmap_type, float sharpness);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Image_getMipmapFilter(love::graphics::opengl::Image *i, int *out_mipmap_type, float *out_sharpness);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Image_isCompressed(love::graphics::opengl::Image *i, bool4 *out_result);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Image_refresh(love::graphics::opengl::Image *i, int xoffset, int yoffset, int w, int h);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Image_getData(love::graphics::opengl::Image *i, Data ***out_datas, int *out_datas_lenght);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Image_replacePixels(love::graphics::opengl::Image *i, ImageData *imgData, int slice, int mipmap, int x, int y, bool4 reloadmipmaps);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Image_getFlags(love::graphics::opengl::Image* i, bool4 *out_mipmaps, bool4 *out_linear);
 
 #pragma endregion
 
 #pragma region type - Mesh
-    using love::graphics::opengl::Mesh;
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Mesh_setVertices_data(Mesh *t, Data *d, uint32 vertoffset);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Mesh_setVertices(Mesh *t, uint32 vertoffset, char *srcData, uint32 nvertices);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Mesh_setVertex(Mesh *t, uint32 index, const char* data, int data_length);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Mesh_getVertex(Mesh *t, uint32 index, char **out_data, int *out_data_length, int *out_count);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Mesh_setVertexAttribute(Mesh *t, uint32 vertindex, int attribindex, uint32 data0, uint32 data1, uint32 data2, uint32 data3);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Mesh_getVertexAttribute(Mesh *t, uint32 vertindex, int attribindex, int *out_type, int *out_components, uint32 *out_data0, uint32 *out_data1, uint32 *out_data2, uint32 *out_data3);
+    using love::graphics::Mesh;
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Mesh_setVertices(Mesh *t, int vertoffset, Float2 pos[], Float2 uv[], Float4 color[], int vertexCount);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Mesh_setVertex(Mesh *t, int index, Float2 pos, Float2 uv, Float4 color);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Mesh_getVertex(Mesh *t, int index, Float2* out_pos, Float2* out_uv, Float4* out_color);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Mesh_getVertexCount(Mesh *t, int *out_result);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Mesh_getVertexFormat(Mesh *t, WrapSequenceString **out_names, int **out_datatype, int **out_components, int *out_length);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Mesh_setAttributeEnabled(Mesh *t, const char *name, bool4 enable);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Mesh_isAttributeEnabled(Mesh *t, const char *name, bool4 *out_result);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Mesh_attachAttribute(Mesh *t, const char *name, Mesh *otherMesh);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Mesh_flush(Mesh *t);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Mesh_setVertexMap_nil(Mesh *t);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Mesh_setVertexMap(Mesh *t, uint32 *vertexmaps, int vertexmaps_length);
@@ -762,7 +751,7 @@ namespace wrap
     extern "C" LOVE_EXPORT void wrap_love_dll_type_ParticleSystem_setPosition(ParticleSystem *t, float x, float y);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_ParticleSystem_getPosition(ParticleSystem *t, float *out_x, float *out_y);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_ParticleSystem_moveTo(ParticleSystem *t, float x, float y);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_ParticleSystem_setAreaSpread(ParticleSystem *t, int distribution_type, float x, float y);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_ParticleSystem_setEmissionArea(ParticleSystem *t, int distribution_type, float x, float y, float angle, bool4 directionRelativeToCenter);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_ParticleSystem_getAreaSpread(ParticleSystem *t, int *out_distribution_type, float *out_x, float *out_y);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_ParticleSystem_setDirection(ParticleSystem *t, float direction);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_ParticleSystem_getDirection(ParticleSystem *t, float *out_direction);
@@ -814,27 +803,26 @@ namespace wrap
 
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Quad_setViewport(Quad *quad, float x, float y, float w, float h);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Quad_getViewport(Quad *quad, float *out_x, float *out_y, float *out_w, float *out_h);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Quad_getTextureDimensions(Quad *quad, double *out_sw, double *out_sh);
+    //extern "C" LOVE_EXPORT void wrap_love_dll_type_Quad_getTextureDimensions(Quad *quad, double *out_sw, double *out_sh);
 
 #pragma endregion
 
 #pragma region type - Shader
-    using love::graphics::opengl::Shader;
 
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Shader_getWarnings(Shader *shader, WrapString **out_str);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Shader_sendColors(Shader *shader, const char *name, Int4 *valuearray, int value_lenght);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Shader_sendColors(Shader *shader, const char *name, Float4 *valuearray, int value_lenght);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Shader_sendFloats(Shader *shader, const char *name, float *valuearray, int valuearray_lenght);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Shader_sendUints(Shader *shader, const char *name, uint32 *valuearray, int valuearray_lenght);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Shader_sendInts(Shader *shader, const char *name, int *valuearray, int valuearray_lenght);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Shader_sendBooleans(Shader *shader, const char *name, bool4 *valuearray, int valuearray_lenght);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Shader_sendMatrices(Shader *shader, const char *name, float *valuearray, int valuearray_lenght);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Shader_sendTexture(Shader *shader, const char *name, Texture *texture);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Shader_getExternVariable(Shader *shader, const char *name, bool4 *out_variableExists, int *out_uniform_type, int *out_components, int *out_arrayelements);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Shader_sendMatrices(Shader *shader, const char *name, float *valueArray, int columns_lenght, int rows_length, int matrix_count);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Shader_sendTexture(Shader *shader, const char *name, Texture **texture, int texture_lenght);
 
 #pragma endregion
 
 #pragma region type - SpriteBatch
 
-    using love::graphics::opengl::SpriteBatch;
+    using love::graphics::SpriteBatch;
 
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_SpriteBatch_add(SpriteBatch *t, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, int *out_index);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_SpriteBatch_add_Quad(SpriteBatch *t, Quad *quad, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, int *out_index);
@@ -845,19 +833,17 @@ namespace wrap
     extern "C" LOVE_EXPORT void wrap_love_dll_type_SpriteBatch_setTexture(SpriteBatch *t, Texture *tex);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_SpriteBatch_getTexture(SpriteBatch *t, Texture **out_texture);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_SpriteBatch_setColor_nil(SpriteBatch *t);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_SpriteBatch_setColor(SpriteBatch *t, int r, int g, int b, int a);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_SpriteBatch_getColor(SpriteBatch *t, bool4 *out_exist, int *out_r, int *out_g, int *out_b, int *out_a);
+    extern "C" LOVE_EXPORT void wrap_love_dll_type_SpriteBatch_setColor(SpriteBatch *t, float r, float g, float b, float a);
+    extern "C" LOVE_EXPORT void wrap_love_dll_type_SpriteBatch_getColor(SpriteBatch *t, bool4 *out_exist, float *out_r, float *out_g, float *out_b, float *out_a);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_SpriteBatch_getCount(SpriteBatch *t, int *out_count);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_SpriteBatch_setBufferSize(SpriteBatch *t, int size);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_SpriteBatch_getBufferSize(SpriteBatch *t, int *out_buffersize);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_SpriteBatch_attachAttribute(SpriteBatch *t, const char *name, Mesh *m);
 
 #pragma endregion
 
 #pragma region type - Text
-    using love::graphics::opengl::Text;
+    using love::graphics::Text;
 
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Text_set_nil(Text *t);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Text_set_coloredstring(Text *t, BytePtr coloredStringText[], Int4 coloredStringColor[], int coloredStringLength);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Text_setf(Text *t, BytePtr coloredStringText[], Int4 coloredStringColor[], int coloredStringLength, float wraplimit, int align_type);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Text_add(Text *t, BytePtr coloredStringText[], Int4 coloredStringColor[], int coloredStringLength,
@@ -865,8 +851,8 @@ namespace wrap
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Text_addf(Text *t, BytePtr coloredStringText[], Int4 coloredStringColor[], int coloredStringLength,
         float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, float wraplimit, int align_type, int *out_index);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Text_clear(Text *t);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Text_setFont(Text *t, love::graphics::opengl::Font *f);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Text_getFont(Text *t, love::graphics::opengl::Font **font);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Text_setFont(Text *t, love::graphics::Font *f);
+    extern "C" LOVE_EXPORT void wrap_love_dll_type_Text_getFont(Text *t, love::graphics::Font **font);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Text_getWidth(Text *t, int index, int *out_w);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Text_getHeight(Text *t, int index, int *out_h);
 
@@ -884,14 +870,14 @@ namespace wrap
 
 #pragma region type - Video
 
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Video_getStream(love::graphics::opengl::Video *video, VideoStream **out_videsStream);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Video_getSource(love::graphics::opengl::Video *video, Source **out_source);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Video_setSource_nil(love::graphics::opengl::Video *video);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Video_setSource(love::graphics::opengl::Video *video, Source *source);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Video_getWidth(love::graphics::opengl::Video *video, int *out_w);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Video_getHeight(love::graphics::opengl::Video *video, int *out_h);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Video_setFilter(love::graphics::opengl::Video *video, int filtermin_type, int filtermag_type, float anisotropy);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Video_getFilter(love::graphics::opengl::Video *video, int *out_filtermin_type, int *out_filtermag_type, float *out_anisotropy);
+    extern "C" LOVE_EXPORT void wrap_love_dll_type_Video_getStream(love::graphics::Video *video, VideoStream **out_videsStream);
+    extern "C" LOVE_EXPORT void wrap_love_dll_type_Video_getSource(love::graphics::Video *video, Source **out_source);
+    extern "C" LOVE_EXPORT void wrap_love_dll_type_Video_setSource_nil(love::graphics::Video *video);
+    extern "C" LOVE_EXPORT void wrap_love_dll_type_Video_setSource(love::graphics::Video *video, Source *source);
+    extern "C" LOVE_EXPORT void wrap_love_dll_type_Video_getWidth(love::graphics::Video *video, int *out_w);
+    extern "C" LOVE_EXPORT void wrap_love_dll_type_Video_getHeight(love::graphics::Video *video, int *out_h);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Video_setFilter(love::graphics::Video *video, int filtermin_type, int filtermag_type, float anisotropy);
+    extern "C" LOVE_EXPORT void wrap_love_dll_type_Video_getFilter(love::graphics::Video *video, int *out_filtermin_type, int *out_filtermag_type, float *out_anisotropy);
 
 
 #pragma endregion
@@ -909,14 +895,13 @@ namespace wrap
 
     extern "C" LOVE_EXPORT void wrap_love_dll_type_ImageData_getWidth(ImageData *t, int *out_w);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_ImageData_getHeight(ImageData *t, int *out_h);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_ImageData_getPixel(ImageData *t, int x, int y, uint8 *out_r, uint8 *out_g, uint8 *out_b, uint8 *out_a);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_ImageData_setPixel(ImageData *t, int x, int y, uint8 r, uint8 g, uint8 b, uint8 a);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_ImageData_GetFormat(ImageData *t, int *out_pixelFormat);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_ImageData_getPixel(ImageData *t, int x, int y, Pixel *out_pixel);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_ImageData_setPixel(ImageData *t, int x, int y, Pixel pixel);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_ImageData_paste(ImageData *t, ImageData* src, int dx, int dy, int sx, int sy, int sw, int sh);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_ImageData_encode(ImageData *t, int format_type, const char* filename);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_ImageData_ext_getPixelUnsafe(ImageData *t, int x, int y, uint8 *out_r, uint8 *out_g, uint8 *out_b, uint8 *out_a);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_ImageData_ext_setPixelUnsafe(ImageData *t, int x, int y, uint8 r, uint8 g, uint8 b, uint8 a);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_ImageData_ext_mutexLock(ImageData *t, love::thread::Lock **out_lock);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_ImageData_ext_mutexUnlock(ImageData *t, love::thread::Lock *ptrlock);
+	typedef Pixel (__cdecl *ImageData_mapPixel_func)(int x, int y, Pixel p);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_ImageData_mapPixel(ImageData *t, int x, int y, int width, int height,ImageData_mapPixel_func func);
 
 #pragma endregion
 
@@ -929,7 +914,7 @@ namespace wrap
 
 #pragma region type - Decoder
 
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Decoder_getChannels(Decoder *t, int *out_channels);
+    extern "C" LOVE_EXPORT void wrap_love_dll_type_Decoder_getChannelCount(Decoder *t, int *out_channels);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Decoder_getBitDepth(Decoder *t, int *out_bitDepth);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Decoder_getSampleRate(Decoder *t, int *out_sampleRate);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Decoder_getDuration(Decoder *t, double *out_duration);
@@ -938,7 +923,7 @@ namespace wrap
 
 #pragma region type - SoundData
 
-    extern "C" LOVE_EXPORT void wrap_love_dll_SoundData_getChannels(SoundData *t, int *out_channels);
+    extern "C" LOVE_EXPORT void wrap_love_dll_SoundData_getChannelCount(SoundData *t, int *out_channels);
     extern "C" LOVE_EXPORT void wrap_love_dll_SoundData_getBitDepth(SoundData *t, int *out_bitDepth);
     extern "C" LOVE_EXPORT void wrap_love_dll_SoundData_getSampleRate(SoundData *t, int *out_sampleRate);
     extern "C" LOVE_EXPORT void wrap_love_dll_SoundData_getSampleCount(SoundData *t, int *out_sampleCount);
@@ -1022,6 +1007,10 @@ namespace wrap
 
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Data_getSize(Data* data, uint32 *out_datasize);
 
+#pragma endregion
+
+
+#pragma region type - Body
 #pragma endregion
 }
 }

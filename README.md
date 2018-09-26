@@ -7,12 +7,13 @@ Love2dCS is a C# Wrapper for [LÖVE game engine](https://love2d.org/), it can be
 
 Love2dCS was designed to be as close as possible to the original LÖVE API, as such the documentation provided from LÖVE largely covers usage of Love2dCS. There is a slight difference between Love2dCS and LÖVE where is :
 
-* The `love.math` module in love is replaced by `Love.Mathf` in Love2dCS
-* The `love.thread` module in love is not ready to supply, you can use threads in C # instead.
+* The `love.physics` module in LÖVE is not included in Love2dCS
+* The `love.math` module in LÖVE is replaced by `Love.Mathf` in Love2dCS
+* The `love.thread` module in LÖVE is not ready to supply, you can use threads in C# instead.
 * Most index begin from 1 at LÖVE. However, index will begin from 0 at Love2dCS
 * *More in development ... *
 
-Love2dCS currently based on [LÖVE 0.10.2](https://love2d.org/wiki/0.10.2)
+Love2dCS currently based on [LÖVE 11.0](https://love2d.org/wiki/11.0)
 
 Love2dCS currently supports Windows x86. The next step will be to support windows x64. Linux and OSX temporarily was not supported.
 
@@ -21,17 +22,15 @@ Physics module temporarily not support.
 Feature
 ---
 
-* Easy to install
-* Easy to use
+* [Easy to install with Visual Studio (install introduce)](README-Install.md)
+* [Easy to use (wiki)](https://github.com/endlesstravel/Love2dCS/wiki)
 
-Setup & Getting Started
+Other
 ---
 
-1. Available on NuGet: https://www.nuget.org/packages/Love2dCS/
+* **REMEBER** enable native code debugging in VS : `Configuration Properties/Debugging/Enable native code debugging`
 
-2. And **REMEBER** enable native code debugging in VS : `Configuration Properties/Debugging/Enable native code debugging`
-
-Please read [README-getting-started.md](README-getting-started.md) for more detail.
+* Available on NuGet: https://www.nuget.org/packages/Love2dCS/ . Please read [README-getting-started.md](README-getting-started.md) for more detail.
 
 Examples
 ---
@@ -59,15 +58,16 @@ namespace Example
 
 Next to development
 ---
- - [ ] Add support for Physics 
+ - [ ] Support Love 11.0
  - [ ] Improve the document
+ - [ ] Add support for Physics 
  - [ ] Add support for win-x64 platform
 
 Documentation
 ---
-*In development ...*
+* [wiki](https://github.com/endlesstravel/Love2dCS/wiki)
 
-Temporarily please reference [love wiki](https://love2d.org/wiki/love)
+* [love wiki](https://love2d.org/wiki/love)
 
 Distribute
 ---
@@ -80,7 +80,7 @@ Develpoment
 
 2. Build C part :
 
-* Follow the instructions at the [megasource](https://bitbucket.org/rude/megasource) repository page to build LÖVE 0.10.1+.
+* Follow the instructions at the [megasource](https://bitbucket.org/rude/megasource) repository page to build LÖVE 11.0+.
 * Add files `c_api_src/wrap_love_dll.cpp ` and `c_api_src/wrap_love_dll.h` to your LÖVE project in `liblove`.
 
 ![liblove-src](https://github.com/endlesstravel/Love2dCS/raw/master/img/006-liblove-src.png "liblove-src")
