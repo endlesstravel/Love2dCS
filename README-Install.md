@@ -19,8 +19,6 @@ And click `Browse`, type `Love2dCS` in search box. And then you get result :
 
 Click `Install` to setup Love2dCS library.
 
-And **REMEBER** enable native code debugging in VS : `Configuration Properties/Debugging/Enable native code debugging`
-
 ![005-enable-native-code-dubuging](https://github.com/endlesstravel/Love2dCS/raw/master/img/005-enable-native-code-dubuging.png "005-enable-native-code-dubuging")
 
 
@@ -29,8 +27,6 @@ And **REMEBER** enable native code debugging in VS : `Configuration Properties/D
 After installing the NuGet or if you are using the Visual Studio 2015, to open the `Package Manager Console`, click on Tools Menu and choose `NuGet Package Manager` and then choose Package Manager Console.
 
 Type : `Install-Package Love2dCS` , and, for a while, you will install Love2dCS library
-
-And **REMEBER** enable native code debugging in VS : `Configuration Properties/Debugging/Enable native code debugging`
 
 ![005-enable-native-code-dubuging](https://github.com/endlesstravel/Love2dCS/raw/master/img/005-enable-native-code-dubuging.png "005-enable-native-code-dubuging")
 

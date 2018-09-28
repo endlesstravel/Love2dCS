@@ -233,6 +233,9 @@ namespace Love
         public virtual void Draw() {}
     }
 
+    /// <summary>
+    /// Boot class start params
+    /// </summary>
     public class BootConfig
     {
         /// <summary>
@@ -298,8 +301,9 @@ namespace Love
         /// </summary>
         public int? WindowX = null, WindowY = null;
     }
+
     /// <summary>
-    /// LÖVE engine entry class
+    /// LÖVE engine entrance class
     /// </summary>
     static public class Boot
     {

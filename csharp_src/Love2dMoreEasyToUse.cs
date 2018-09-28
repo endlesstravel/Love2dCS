@@ -116,6 +116,18 @@ namespace Love
 
     public partial class Graphics
     {
+        /// <summary>
+        /// Creates a new drawable Text object.
+        /// </summary>
+        /// <param name="font">The font to use for the text.</param>
+        /// <param name="coloredStr">The initial string of text that the new Text object will contain. May be nil.</param>
+        /// <returns></returns>
+        public static Text NewText(Font font, string coloredStr)
+        {
+            Check.ArgumentNull(font, "font");
+            return NewText(font, ColoredStringArray.Create(coloredStr));
+        }
+
         public static Image NewImage(ImageData imageData, bool flagMipmaps = false, bool flagLinear = false)
         {
             return NewImage(new ImageData[] { imageData }, flagMipmaps, flagLinear);
@@ -259,12 +271,6 @@ namespace Love
                 colorArray[i] = vertices[i].color;
             }
             return NewMesh(posArray, uvArray, colorArray, drawMode, usage);
-        }
-
-
-        public static Text NewText(Font font, string text)
-        {
-            return NewText(font, ColoredStringArray.Create(text));
         }
 
 

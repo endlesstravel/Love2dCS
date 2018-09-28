@@ -47,9 +47,10 @@ namespace Love
             return t;
         }
 
+        static byte[] EmptyStringByteArray = new byte[1] { 0 };
         public static byte[] ToUTF8Bytes(this string str)
         {
-            return utf8.GetBytes(str);
+            return str != null ? utf8.GetBytes(str) : EmptyStringByteArray;
         }
 
 
@@ -2235,6 +2236,7 @@ namespace Love
             Love2dDll.wrap_love_dll_graphics_newMesh_count(count, (int)drawMode, (int)usage, out out_mesh);
             return LoveObject.NewObject<Mesh>(out_mesh);
         }
+
         public static Text NewText(Font font, ColoredStringArray coloredStr)
         {
             IntPtr out_text = IntPtr.Zero;
@@ -2243,6 +2245,7 @@ namespace Love
             });
             return LoveObject.NewObject<Text>(out_text);
         }
+
         public static Video NewVideo(VideoStream videoStream)
         {
             IntPtr out_video = IntPtr.Zero;

@@ -6,9 +6,7 @@ Getting Started
 
 2. Please [install](README-Install.md) Love2dCS from NuGet to your Visual Studio first.
 
-3. Config project : And **REMEBER** enable native code debugging on your Visual Studio project : `Configuration Properties/Debugging/Enable native code debugging`
-
-4. Put the following code in the file(maybe Program.cs), and save it.
+3. Put the following code in the file(maybe Program.cs), and save it.
 ``` C#
 using Love;
 namespace Example

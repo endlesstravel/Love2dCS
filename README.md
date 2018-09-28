@@ -28,8 +28,6 @@ Feature
 Other
 ---
 
-* **REMEBER** enable native code debugging in VS : `Configuration Properties/Debugging/Enable native code debugging`
-
 * Available on NuGet: https://www.nuget.org/packages/Love2dCS/ . Please read [README-getting-started.md](README-getting-started.md) for more detail.
 
 Examples
@@ -89,6 +87,5 @@ Develpoment
 
 * Create a C# library project
 * Add all `cshapr_src/*.cs` to your C# library project.
-* **REMEBER** enable native code debugging in VS : `Configuration Properties/Debugging/Enable native code debugging`
 
 *In development ...*

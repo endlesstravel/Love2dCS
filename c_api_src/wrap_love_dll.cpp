@@ -5407,8 +5407,7 @@ namespace wrap
 		return wrap_catchexcept([&]() {
 			if (!(t->inside(sx, sy) && t->inside(sx + w - 1, sy + h - 1)))
 			{
-				wrap_ee("Invalid rectangle dimensions.");
-				return false;
+				throw love::Exception("Invalid rectangle dimensions.");
 			}
 
 			int iw = t->getWidth();
@@ -6610,7 +6609,7 @@ namespace wrap
             input.maxFraction = maxFraction;
             b2RayCastOutput output;
             if (!(*hasHit = tt->RayCast(&output, input, childIndex)))
-                return 0; // Nothing hit.
+                return; // Nothing hit.
 
             out_pos->x = output.normal.x;
             out_pos->y = output.normal.y;
