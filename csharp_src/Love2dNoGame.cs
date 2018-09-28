@@ -21,8 +21,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 using math = System.Math;
 using mathf = Love.Mathf;
@@ -64,7 +62,7 @@ namespace Love
 
             float offset_x, offset_y;
 
-            float x, y, r;
+            float x, y, r = 0;
 
             public Toast()
             {
@@ -209,7 +207,7 @@ namespace Love
                 int SIZE_Y = (int)math.Floor(wh / 32f + 3f);
                 int SIZE = SIZE_X * SIZE_Y;
 
-                batch = Graphics.NewSpriteBatch(mosaic_image, SIZE, Mesh.Usage.Stream);
+                batch = Graphics.NewSpriteBatch(mosaic_image, SIZE, SpriteBatchUsage.Stream);
                 COLORS = new Int4[] {
                     new Int4(240, 240, 240, 255), new Int4(232, 104, 162, 255), new Int4(69, 155, 168, 255), new Int4(67, 93, 119, 255),
                     new Int4(240, 240, 240, 255), new Int4(232, 104, 162, 255), new Int4(69, 155, 168, 255), new Int4(67, 93, 119, 255),
@@ -356,30 +354,31 @@ namespace Love
             public void Draw()
             {
                 batch.Clear();
-                Graphics.SetColor(255, 255, 255, 64);
+                Graphics.SetColor(1, 1, 1, 64 / 255 );
                 foreach (var piece in pices)
                 {
 			        float ct = 1 - color_t;
 			        var c0 = piece.color_prev;
                     var c1 = piece.color_next;
-                    int r = (int)easeOut(ct, c0.r, c1.r - c0.r, 1);
-                    int g = (int)easeOut(ct, c0.g, c1.g - c0.g, 1);
-			        int b = (int)easeOut(ct, c0.b, c1.b - c0.b, 1);
-                    batch.SetColor(r, g, b);
+                    float r = easeOut(ct, c0.r, c1.r - c0.r, 1);
+                    float g = easeOut(ct, c0.g, c1.g - c0.g, 1);
+			        float b = easeOut(ct, c0.b, c1.b - c0.b, 1);
+                    batch.SetColor(r / 255f, g / 255f, b / 255f);
                     batch.Add(piece.quad, piece.x, piece.y, piece.r, 1, 1, 16, 16);
                 }
 
-                Graphics.SetColor(255, 255, 255, 255);
+                Graphics.SetColor(1, 1, 1, 1);
                 Graphics.Draw(batch, 0, 0);
             }
         }
 
         Image load_image(string str_contents, string filename)
         {
-            var fdata = FileSystem.NewFileData(str_contents, filename, FileData.Decoder.Base64);
+            var fdata = FileSystem.NewFileData(Convert.FromBase64String(str_contents), filename);
             var imgData = Image.NewImageData(fdata);
             return Graphics.NewImage( imgData );
         }
+
         public override void Load()
         {
             Window.SetTitle("LÖVE " + Common.GetVersion() + " (" + Common.GetVersionCodeName() + ")");
@@ -405,10 +404,11 @@ namespace Love
 
         public override void Draw()
         {
-            Graphics.SetColor(255, 255, 255);
+            Graphics.SetColor(1, 1, 1);
             Graphics.Push();
             float scale = (float)Window.GetPixelScale();
             Graphics.Scale(scale, scale);
+            Graphics.Clear(136 / 255f, 193 / 255f, 206 / 255f, 1);
             g_toast.Draw();
             g_mosaic.Draw();
             Graphics.Pop();

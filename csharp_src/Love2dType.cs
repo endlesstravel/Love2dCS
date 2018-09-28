@@ -11,6 +11,7 @@ using System.Text;
 
 namespace Love
 {
+
     public partial class LoveObject : IDisposable
     {
         // use factory design pattern
@@ -84,15 +85,6 @@ namespace Love
         public void Pause()
         {
             Love2dDll.wrap_love_dll_type_Source_pause(p);
-        }
-        public void Resume()
-        {
-            Love2dDll.wrap_love_dll_type_Source_resume(p);
-        }
-        public void Rewind()
-        {
-            Love2dDll.wrap_love_dll_type_Source_rewind(p);
-            return;
         }
         public void SetPitch(float pitch)
         {
@@ -190,18 +182,6 @@ namespace Love
             Love2dDll.wrap_love_dll_type_Source_isLooping(p, out out_result);
             return out_result;
         }
-        public bool IsStopped()
-        {
-            bool out_result = false;
-            Love2dDll.wrap_love_dll_type_Source_isStopped(p, out out_result);
-            return out_result;
-        }
-        public bool IsPaused()
-        {
-            bool out_result = false;
-            Love2dDll.wrap_love_dll_type_Source_isPaused(p, out out_result);
-            return out_result;
-        }
         public bool IsPlaying()
         {
             bool out_result = false;
@@ -234,10 +214,10 @@ namespace Love
             Love2dDll.wrap_love_dll_type_Source_getRolloff(p, out out_rolloff);
             return out_rolloff;
         }
-        public int GetChannels()
+        public int GetChannelCount()
         {
             int out_chanels = 0;
-            Love2dDll.wrap_love_dll_type_Source_getChannels(p, out out_chanels);
+            Love2dDll.wrap_love_dll_type_Source_getChannelCount(p, out out_chanels);
             return out_chanels;
         }
         public Type GetSourceType()
@@ -356,12 +336,6 @@ namespace Love
 
     public partial class FileData : Data
     {
-        public enum Decoder
-        {
-            File,
-            Base64,
-        }; // Decoder
-
         public string GetFilename()
         {
             IntPtr out_filename = IntPtr.Zero;
@@ -496,37 +470,37 @@ namespace Love
 
     public partial class Canvas : Texture
     {
-        public enum Format : int
+        public enum Format
         {
-            NORMAL,   // Usually SRGB, RGBA8 or a similar fallback. Always supported.
-            HDR,      // Usually RGBA16F. Not always supported.
-            RGBA4,    // RGBA with 4 bits per channel.
-            RGB5A1,   // RGB with 5 bits per channel, and A with 1 bit.
-            RGB565,   // RGB with 5, 6, and 5 bits each, respectively.
-            R8,       // Single (red) 8-bit channel.
-            RG8,      // Two-channel (red and green) with 8 bits per channel.
-            RGBA8,    // RGBA with 8 bits per channel.
-            RGB10A2,  // RGB with 10 bits each, and A with 2 bits.
-            RG11B10F, // Floating point [0, +65024]. RG with 11 FP bits each, and B with 10 FP bits.
-            R16F,     // Floating point [-65504, +65504]. R with 16 FP bits.
-            RG16F,    // Floating point [-65504, +65504]. RG with 16 FP bits per channel.
-            RGBA16F,  // Floating point [-65504, +65504]. RGBA with 16 FP bits per channel.
-            R32F,     // Floating point [-65504, +65504]. R with 32 FP bits.
-            RG32F,    // Floating point [-65504, +65504]. RG with 32 FP bits per channel.
-            RGBA32F,  // Floating point [-65504, +65504]. RGBA with 32 FP bits per channel.
-            SRGB,     // sRGB with 8 bits per channel, plus 8 bit linear A.
-        };
 
-        public ImageData NewImageData()
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="slice">The cubemap face index, array index, or depth layer for cubemap, array, or volume type Canvases, respectively. This argument is ignored for regular 2D canvases.</param>
+        /// <param name="mipmap">he mipmap index to use, for Canvases with mipmaps. https://love2d.org/wiki/CanvasMipmapMode </param>
+        /// <returns></returns>
+        public ImageData NewImageData(int slice, int mipmap = 0)
         {
             IntPtr out_imageData = IntPtr.Zero;
-            Love2dDll.wrap_love_dll_type_Canvas_newImageData(p, out out_imageData);
+            Love2dDll.wrap_love_dll_type_Canvas_newImageData_xywh(p, slice, mipmap, 0, 0, GetWidth(), GetHeight(), out out_imageData);
             return NewObject<ImageData>(out_imageData);
         }
-        public ImageData NewImageData(int x, int y, int w, int h)
+
+        /// <summary>
+        /// Generates ImageData from the contents of the Canvas.
+        /// </summary>
+        /// <param name="slice">The cubemap face index, array index, or depth layer for cubemap, array, or volume type Canvases, respectively. This argument is ignored for regular 2D canvases.</param>
+        /// <param name="mipmap">he mipmap index to use, for Canvases with mipmaps. (default is 0) https://love2d.org/wiki/CanvasMipmapMode </param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="w"></param>
+        /// <param name="h"></param>
+        /// <returns></returns>
+        public ImageData NewImageData(int slice, int mipmap, int x, int y, int w, int h)
         {
             IntPtr out_imageData = IntPtr.Zero;
-            Love2dDll.wrap_love_dll_type_Canvas_newImageData_xywh(p, x, y, w, h, out out_imageData);
+            Love2dDll.wrap_love_dll_type_Canvas_newImageData_xywh(p, slice, mipmap, x, y, w, h, out out_imageData);
             return NewObject<ImageData>(out_imageData);
         }
         public Format GetFormat()
@@ -648,52 +622,62 @@ namespace Love
             Love2dDll.wrap_love_dll_type_Image_isCompressed(p, out out_result);
             return out_result;
         }
-        public void Refresh(int xoffset, int yoffset, int w, int h)
+        public void ReplacePixels(ImageData imageData, int slice, int mipmap, int x, int y, bool reloadmipmaps)
         {
-            Love2dDll.wrap_love_dll_type_Image_refresh(p, xoffset, yoffset, w, h);
-        }
-        public Data[] getData()
-        {
-            IntPtr out_datas = IntPtr.Zero;
-            int out_datas_lenght = 0;
-            Love2dDll.wrap_love_dll_type_Image_getData(p, out out_datas, out out_datas_lenght);
-
-            var list = DllTool.readIntPtrsAndRelease(out_datas, out_datas_lenght);
-            Data[] buffer = new Data[list.Length];
-            for (int i = 0; i < list.Length; i++)
-            {
-                buffer[i] = NewObject<Data>(list[i]);
-            }
-
-            return buffer;
-        }
-        public bool GetFlags(out bool out_mipmaps, out bool out_linear)
-        {
-            Love2dDll.wrap_love_dll_type_Image_getFlags(p, out out_mipmaps, out out_linear);
-            return out_mipmaps;
+            Love2dDll.wrap_love_dll_type_Image_replacePixels(p, imageData.p, slice, mipmap, x, y, reloadmipmaps);
         }
     }
 
+    public struct Vertex
+    {
+        /// <summary>
+        /// The position of the vertex .
+        /// </summary>
+        public readonly Float2 pos;
+
+        /// <summary>
+        /// The u and v texture coordinate of the vertex. Texture coordinates are normally in the range of [0, 1], but can be greater or less (see WrapMode.)
+        /// </summary>
+        public readonly Float2 uv;
+
+        /// <summary>
+        /// The vertex color.
+        /// </summary>
+        public readonly Float4 color;
+
+
+        /// <summary>
+        /// Mesh vertex.
+        /// </summary>
+        /// <param name="pos">The position of the vertex.</param>
+        /// <param name="uv">The u and vtexture coordinate of the vertex. Texture coordinates are normally in the range of [0, 1], but can be greater or less (see <see cref="Texture.WrapMode"/>)  <para>https://love2d.org/wiki/WrapMode</para></param>
+        /// <param name="color">The vertex color.</param>
+        public Vertex(Float2 pos)
+        {
+            this.pos = pos;
+            uv = new Float2(0, 0);
+            color = new Float4(1, 1, 1, 1);
+        }
+
+        /// <summary>
+        /// Mesh vertex.
+        /// </summary>
+        /// <param name="pos">The position of the vertex.</param>
+        /// <param name="uv">The u and vtexture coordinate of the vertex. Texture coordinates are normally in the range of [0, 1], but can be greater or less (see <see cref="Texture.WrapMode"/>)  <para>https://love2d.org/wiki/WrapMode</para></param>
+        /// <param name="color">The vertex color.</param>
+        public Vertex(Float2 pos, Float2 uv, Float4 color)
+        {
+            this.pos = pos;
+            this.uv = uv;
+            this.color = color;
+        }
+    }
+
+    /// <summary>
+    /// Mesh in Love2d CS is different from  love2d lua.
+    /// </summary>
     public partial class Mesh : Drawable
     {
-        // The expected usage pattern of the Mesh's vertex data.
-        public enum Usage : int
-        {
-            Stream,
-            Dynamic,
-            Static,
-        };
-
-        // How the Mesh's vertices are used when drawing.
-        // http://escience.anu.edu.au/lecture/cg/surfaceModeling/image/surfaceModeling015.png
-        public enum DrawMode : int
-        {
-            Fan,
-            Strip,
-            Triangles,
-            Points,
-        };
-
         // The type of data a vertex attribute can store.
         public enum DataType
         {
@@ -708,75 +692,43 @@ namespace Love
             public int components;
         }
 
-        public void SetVertices_data(Data data, uint vertoffset)
+        /// <summary>
+        /// Replaces a range of vertices in the Mesh with new ones. 
+        /// </summary>
+        /// <param name="vertices">each vertex</param>
+        /// <param name="startVertex">The index of the first vertex to replace.</param>
+        public void SetVertices(Vertex[] vertices, int startVertex = 0)
         {
-            Love2dDll.wrap_love_dll_type_Mesh_setVertices_data(p, data.p, vertoffset);
-            return;
+            var posArray = new Float2[vertices.Length];
+            var uvArray = new Float2[vertices.Length];
+            var colorArray = new Float4[vertices.Length];
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                posArray[i] = vertices[i].pos;
+                uvArray[i] = vertices[i].uv;
+                colorArray[i] = vertices[i].color;
+            }
+            Love2dDll.wrap_love_dll_type_Mesh_setVertices(p, startVertex, posArray, uvArray, colorArray, posArray.Length);
         }
-        public void SetVertices(uint vertoffset, byte[] srcData, uint nvertices)
+        public void SetVertex(int index, Vertex vertex)
         {
-            Love2dDll.wrap_love_dll_type_Mesh_setVertices(p, vertoffset, srcData, nvertices);
+            Love2dDll.wrap_love_dll_type_Mesh_setVertex(p, index, vertex.pos, vertex.uv, vertex.color);
         }
-        public void SetVertex(uint index, byte[] data)
+
+        // TODO
+        public Vertex getVertex(int index)
         {
-            Love2dDll.wrap_love_dll_type_Mesh_setVertex(p, index, data, data.Length);
+            Float2 pos, uv;
+            Float4 color;
+            Love2dDll.wrap_love_dll_type_Mesh_getVertex(p, index, out pos, out uv, out color);
+            return new Vertex(pos, uv, color);
         }
-        public void GetVertex(uint index, out byte[] out_datas, out int out_count)
-        {
-            IntPtr out_data = IntPtr.Zero;
-            int out_data_length = 0;
-            Love2dDll.wrap_love_dll_type_Mesh_getVertex(p, index, out out_data, out out_data_length, out out_count);
-            out_datas = DllTool.readBytesAndRelease(out_data, out_data_length);
-        }
-        public void SetVertexAttribute(uint vertindex, int attribindex, uint data0, uint data1, uint data2, uint data3)
-        {
-            Love2dDll.wrap_love_dll_type_Mesh_setVertexAttribute(p, vertindex, attribindex, data0, data1, data2, data3);
-        }
-        public void GetVertexAttribute(uint vertindex, int attribindex, out DataType out_datatype_type, out int out_components, out uint out_data0, out uint out_data1, out uint out_data2, out uint out_data3)
-        {
-            int out_datatype = 0;
-            Love2dDll.wrap_love_dll_type_Mesh_getVertexAttribute(p, vertindex, attribindex, out out_datatype, out out_components, out out_data0, out out_data1, out out_data2, out out_data3);
-            out_datatype_type = (DataType)out_datatype;
-        }
+
         public int GetVertexCount()
         {
             int out_result = 0;
             Love2dDll.wrap_love_dll_type_Mesh_getVertexCount(p, out out_result);
             return out_result;
-        }
-        public AttribFormat[] getVertexFormat()
-        {
-            IntPtr out_names = IntPtr.Zero, out_datatype = IntPtr.Zero, out_components = IntPtr.Zero;
-            int out_length = 0;
-            Love2dDll.wrap_love_dll_type_Mesh_getVertexFormat(p, out out_names, out out_datatype, out out_components, out out_length);
-
-            var names = DllTool.WSSToStringListAndRelease(out_names);
-            var datatypes = DllTool.readInt32sAndRelease(out_datatype, out_length);
-            var components = DllTool.readInt32sAndRelease(out_components, out_length);
-
-            AttribFormat[] buffer = new AttribFormat[out_length];
-            for (int i = 0; i < buffer.Length; i++)
-            {
-                buffer[i].name = names[i];
-                buffer[i].type = (DataType)(datatypes[i]);
-                buffer[i].components = components[i];
-            }
-
-            return buffer;
-        }
-        public void SetAttributeEnabled(byte[] name, bool enable)
-        {
-            Love2dDll.wrap_love_dll_type_Mesh_setAttributeEnabled(p, name, enable);
-        }
-        public bool IsAttributeEnabled(byte[] name)
-        {
-            bool out_result = false;
-            Love2dDll.wrap_love_dll_type_Mesh_isAttributeEnabled(p, name, out out_result);
-            return out_result;
-        }
-        public void AttachAttribute(byte[] name, Mesh otherMesh)
-        {
-            Love2dDll.wrap_love_dll_type_Mesh_attachAttribute(p, name, otherMesh.p);
         }
         public void Flush()
         {
@@ -818,15 +770,15 @@ namespace Love
             Love2dDll.wrap_love_dll_type_Mesh_getTexture(p, out out_result);
             return NewObject<Texture>(out_result);
         }
-        public void SetDrawMode(DrawMode mode_type)
+        public void SetDrawMode(MeshDrawMode mode_type)
         {
             Love2dDll.wrap_love_dll_type_Mesh_setDrawMode(p, (int)mode_type);
         }
-        public DrawMode GetDrawMode()
+        public MeshDrawMode GetDrawMode()
         {
             int out_mode_type = 0;
             Love2dDll.wrap_love_dll_type_Mesh_getDrawMode(p, out out_mode_type);
-            return (DrawMode)out_mode_type;
+            return (MeshDrawMode)out_mode_type;
         }
         public void SetDrawRange()
         {
@@ -844,15 +796,6 @@ namespace Love
 
     public partial class ParticleSystem : Drawable
     {
-        // Type of distribution new particles are drawn from: None, uniform, normal, ellipse.
-        public enum AreaSpreadDistribution
-        {
-            None,
-            Uniform,
-            Normal,
-            Ellipse,
-        };
-
         // Insertion modes of new particles in the list: top, bottom, random.
         public enum InsertMode
         {
@@ -897,6 +840,10 @@ namespace Love
             Love2dDll.wrap_love_dll_type_ParticleSystem_getInsertMode(p, out out_mode_type);
             return (InsertMode)out_mode_type;
         }
+        public void SetEmissionArea(AreaSpreadDistribution distribution, float dx, float dy, float angle = 0, bool directionRelativeToCenter = false)
+        {
+            Love2dDll.wrap_love_dll_type_ParticleSystem_setEmissionArea(p, (int)distribution, dx, dy, angle, directionRelativeToCenter);
+        }
         public void SetEmissionRate(float rate)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setEmissionRate(p, rate);
@@ -940,10 +887,6 @@ namespace Love
         public void MoveTo(float x, float y)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_moveTo(p, x, y);
-        }
-        public void SetAreaSpread(AreaSpreadDistribution distribution_type, float x, float y)
-        {
-            Love2dDll.wrap_love_dll_type_ParticleSystem_setAreaSpread(p, (int)distribution_type, x, y);
         }
         public void GetAreaSpread(out AreaSpreadDistribution out_distribution_type, out float out_x, out float out_y)
         {
@@ -1204,13 +1147,17 @@ namespace Love
             Love2dDll.wrap_love_dll_type_Shader_getWarnings(p, out out_str);
             return DllTool.WSToStringAndRelease(out_str);
         }
-        public void SendColors(byte[] name, params Int4[] valuearray)
+        public void SendColors(byte[] name, params Float4[] valuearray)
         {
             Love2dDll.wrap_love_dll_type_Shader_sendColors(p, name, valuearray, valuearray.Length);
         }
         public void SendFloats(byte[] name, params float[] valuearray)
         {
             Love2dDll.wrap_love_dll_type_Shader_sendFloats(p, name, valuearray, valuearray.Length);
+        }
+        public void SendUints(byte[] name, params uint[] valuearray)
+        {
+            Love2dDll.wrap_love_dll_type_Shader_sendUints(p, name, valuearray, valuearray.Length);
         }
         public void SendInts(byte[] name, params int[] valuearray)
         {
@@ -1220,42 +1167,30 @@ namespace Love
         {
             Love2dDll.wrap_love_dll_type_Shader_sendBooleans(p, name, valuearray, valuearray.Length);
         }
-        public void SendMatrix(byte[] name, float[] valuearray)
-        {
-            Love2dDll.wrap_love_dll_type_Shader_sendMatrices(p, name, valuearray, valuearray.Length);
-        }
-        public void SendMatrix(byte[] name, Matrix22 valuearray)
-        {
-            Love2dDll.wrap_love_dll_type_Shader_sendMatrices(p, name, valuearray.data, valuearray.data.Length);
-        }
-        public void SendMatrix(byte[] name, Matrix33 valuearray)
-        {
-            Love2dDll.wrap_love_dll_type_Shader_sendMatrices(p, name, valuearray.data, valuearray.data.Length);
-        }
-        public void SendMatrix(byte[] name, Matrix44 valuearray)
-        {
-            Love2dDll.wrap_love_dll_type_Shader_sendMatrices(p, name, valuearray.data, valuearray.data.Length);
-        }
-        public void SendTexture(byte[] name, Texture texture)
-        {
-            Love2dDll.wrap_love_dll_type_Shader_sendTexture(p, name, texture.p);
-        }
 
-        // return Tuple<UniformType, int, int>:
-        // UniformType : The base type of the variable.
-        // int components : The number of components in the variable(e.g. 2 for a vec2 or mat2.)
-        // int arrayelements : The number of elements in the array if the variable is an array, or 1 if not.
-        public Tuple<UniformType, int, int> getExternVariable(byte[] name)
+        /// <summary>
+        /// WARNNING: incorrect use of this function can carsh program.
+        /// <para> params of valueArray.Length should equals columns * rows * count </para>
+        /// </summary>
+        /// <param name="name">uniform variable name</param>
+        /// <param name="valueArray">each float consistute matrix array</param>
+        /// <param name="columns">matrix columns</param>
+        /// <param name="rows">matrix rows</param>
+        /// <param name="count">matrix count</param>
+        public void SendMatrix(byte[] name, float[] valueArray, int columns, int rows, int count)
         {
-            bool out_variableExists = false;
-            int out_uniform_type = 0, out_components = 0, out_arrayelements = 0;
-            Love2dDll.wrap_love_dll_type_Shader_getExternVariable(p, name, out out_variableExists, out out_uniform_type, out out_components, out out_arrayelements);
-            if (out_variableExists == false)
+            if (valueArray.Length != columns * rows * count)
             {
-                return null;
+                throw new Exception("passed params error, columns * rows not equal valueArray.Length");
             }
 
-            return new Tuple<UniformType, int, int>((UniformType)out_uniform_type, out_components, out_arrayelements);
+            Love2dDll.wrap_love_dll_type_Shader_sendMatrices(p, name, valueArray, columns, rows, count);
+        }
+
+        public void SendTexture(byte[] name, params Texture[] texture)
+        {
+            IntPtr[] txts = DllTool.GenIntPtrArray(texture);
+            Love2dDll.wrap_love_dll_type_Shader_sendTexture(p, name, txts, txts.Length);
         }
     }
 
@@ -1303,28 +1238,24 @@ namespace Love
         {
             Love2dDll.wrap_love_dll_type_SpriteBatch_setColor_nil(p);
         }
-        public void SetColor(int r, int g, int b, int a = 255)
+        public void SetColor(float r, float g, float b, float a = 1)
         {
             Love2dDll.wrap_love_dll_type_SpriteBatch_setColor(p, r, g, b, a);
         }
 
         // If no color has been set with SpriteBatch:setColor or the current SpriteBatch color has been cleared, this method will return false.
-        public Tuple<bool, Int4> getColor()
+        public Tuple<bool, Float4> getColor()
         {
             bool out_exist = false;
-            int out_r, out_g, out_b, out_a;
+            float out_r, out_g, out_b, out_a;
             Love2dDll.wrap_love_dll_type_SpriteBatch_getColor(p, out out_exist, out out_r, out out_g, out out_b, out out_a);
-            return new Tuple<bool, Int4>(out_exist, new Int4(out_r, out_g, out_b, out_a));
+            return new Tuple<bool, Float4>(out_exist, new Float4(out_r, out_g, out_b, out_a));
         }
         public int GetCount()
         {
             int out_count = 0;
             Love2dDll.wrap_love_dll_type_SpriteBatch_getCount(p, out out_count);
             return out_count;
-        }
-        public void SetBufferSize(int size)
-        {
-            Love2dDll.wrap_love_dll_type_SpriteBatch_setBufferSize(p, size);
         }
         public int GetBufferSize()
         {
@@ -1338,37 +1269,34 @@ namespace Love
         }
     }
 
+
+
     public partial class Text : Drawable
     {
-        public void Set()
+        public void Set(ColoredStringArray coloredStr)
         {
-            Love2dDll.wrap_love_dll_type_Text_set_nil(p);
-            return;
-        }
-        public void Set(ColoredString coloredStr)
-        {
-            coloredStr.ExecResource((Tuple<BytePtr[], Int4[]> tmp) =>{
+            coloredStr.ExecResource((tmp) =>{
                 Love2dDll.wrap_love_dll_type_Text_set_coloredstring(p, tmp.Item1, tmp.Item2, coloredStr.Length);
             });
         }
-        public void Setf(ColoredString coloredStr, float wraplimit, Font.AlignMode align_type)
+        public void Setf(ColoredStringArray coloredStr, float wraplimit, Font.AlignMode align_type)
         {
-            coloredStr.ExecResource((Tuple<BytePtr[], Int4[]> tmp) =>{
+            coloredStr.ExecResource((tmp) =>{
                 Love2dDll.wrap_love_dll_type_Text_setf(p, tmp.Item1, tmp.Item2, coloredStr.Length, wraplimit, (int)align_type);
             });
         }
-        public int Add(ColoredString coloredStr, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public int Add(ColoredStringArray coloredStr, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
             int out_index = 0;
-            coloredStr.ExecResource((Tuple<BytePtr[], Int4[]> tmp) =>{
+            coloredStr.ExecResource((tmp) =>{
                 Love2dDll.wrap_love_dll_type_Text_add(p, tmp.Item1, tmp.Item2, coloredStr.Length, x, y, angle, sx, sy, ox, oy, kx, ky, out out_index);
             });
             return out_index;
         }
-        public int Add(ColoredString coloredStr, float wraplimit, Font.AlignMode align_type, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public int Addf(ColoredStringArray coloredStr, float wraplimit, Font.AlignMode align_type, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
             int out_index = 0;
-            coloredStr.ExecResource((Tuple<BytePtr[], Int4[]> tmp) => {
+            coloredStr.ExecResource((tmp) => {
                 Love2dDll.wrap_love_dll_type_Text_addf(p, tmp.Item1, tmp.Item2, coloredStr.Length, x, y, angle, sx, sy, ox, oy, kx, ky, wraplimit, (int)align_type, out out_index);
             });
             return out_index;
@@ -1415,8 +1343,16 @@ namespace Love
 
         public enum FilterMode
         {
-            None,
+            // None,
+
+            /// <summary>
+            /// Scale image with linear interpolation. (default)
+            /// </summary>
             Linear,
+
+            /// <summary>
+            /// Scale image with nearest neighbor interpolation.
+            /// </summary>
             Nearest,
         };
 
@@ -1517,50 +1453,13 @@ namespace Love
         }
     }
 
-    public partial class CompressedImageData : Data
+    public partial class ImageDataBase : Data
     {
-        // Recognized compressed image data formats.
-        public enum Format
-        {
-            UNKNOWN,
-            DXT1,
-            DXT3,
-            DXT5,
-            BC4,
-            BC4s,
-            BC5,
-            BC5s,
-            BC6H,
-            BC6Hs,
-            BC7,
-            PVR1_RGB2,
-            PVR1_RGB4,
-            PVR1_RGBA2,
-            PVR1_RGBA4,
-            ETC1,
-            ETC2_RGB,
-            ETC2_RGBA,
-            ETC2_RGBA1,
-            EAC_R,
-            EAC_Rs,
-            EAC_RG,
-            EAC_RGs,
-            ASTC_4x4,
-            ASTC_5x4,
-            ASTC_5x5,
-            ASTC_6x5,
-            ASTC_6x6,
-            ASTC_8x5,
-            ASTC_8x6,
-            ASTC_8x8,
-            ASTC_10x5,
-            ASTC_10x6,
-            ASTC_10x8,
-            ASTC_10x10,
-            ASTC_12x10,
-            ASTC_12x12,
-        };
 
+    }
+
+    public partial class CompressedImageData : ImageDataBase
+    {
         public int GetWidth(int miplevel)
         {
             int out_w = 0;
@@ -1579,22 +1478,26 @@ namespace Love
             Love2dDll.wrap_love_dll_type_CompressedImageData_getMipmapCount(p, out out_count);
             return out_count;
         }
-        public Format GetFormat()
+        public PixelFormat GetFormat()
         {
             int out_format_type = 0;
             Love2dDll.wrap_love_dll_type_CompressedImageData_getFormat(p, out out_format_type);
-            return (Format)out_format_type;
+            return (PixelFormat)out_format_type;
         }
     }
 
-    public partial class ImageData : Data
+    public partial class FormatHandler
     {
         public enum EncodedFormat
         {
-            TGA,
-            PNG,
+            ENCODED_TGA,
+            ENCODED_PNG,
         };
+    }
 
+
+    public partial class ImageData : ImageDataBase
+    {
         public int GetWidth()
         {
             int out_w = 0;
@@ -1607,45 +1510,37 @@ namespace Love
             Love2dDll.wrap_love_dll_type_ImageData_getHeight(p, out out_h);
             return out_h;
         }
-        public Int4 GetPixel(int x, int y)
+        public Pixel GetPixel(int x, int y)
         {
-            byte out_r, out_g, out_b, out_a;
-            Love2dDll.wrap_love_dll_type_ImageData_getPixel(p, x, y, out out_r, out out_g, out out_b, out out_a);
-            return new Int4(out_r, out_g, out_b, out_a);
+            Pixel out_pixel;
+            Love2dDll.wrap_love_dll_type_ImageData_getPixel(p, x, y, out out_pixel);
+            return out_pixel;
         }
-        public void SetPixel(int x, int y, byte r, byte g, byte b, byte a)
+        public void SetPixel(int x, int y, Pixel pixel)
         {
-            Love2dDll.wrap_love_dll_type_ImageData_setPixel(p, x, y, r, g, b, a);
-            return;
+            Love2dDll.wrap_love_dll_type_ImageData_setPixel(p, x, y, pixel);
         }
+        public PixelFormat GetFormat()
+        {
+            int format;
+            Love2dDll.wrap_love_dll_type_ImageData_GetFormat(p, out format);
+            return (PixelFormat)format;
+        }
+
         public void Paste(ImageData src_imageData, int dx, int dy, int sx, int sy, int sw, int sh)
         {
             Love2dDll.wrap_love_dll_type_ImageData_paste(p, src_imageData.p, dx, dy, sx, sy, sw, sh);
             return;
         }
-        public void Encode(EncodedFormat format_type, byte[] filename)
+        public void Encode(FormatHandler.EncodedFormat format_type, byte[] filename)
         {
             Love2dDll.wrap_love_dll_type_ImageData_encode(p, (int)format_type, filename);
         }
 
-        public delegate void MapPixelDelegate(byte r, byte g, byte b, byte a, out byte out_r, out byte out_g, out byte out_b, out byte out_a);
-        public void MapPixel(MapPixelDelegate mpd, int startX, int startY, int width, int height)
+        public delegate Pixel MapPixelDelegate(int x, int y, Pixel p);
+        public void MapPixel(int x, int y, int w, int h, MapPixelDelegate func)
         {
-            IntPtr ptrLock = IntPtr.Zero;
-            Love2dDll.wrap_love_dll_type_ImageData_ext_mutexLock(p, out ptrLock);
-
-            for (int x = startX; x < startX + width; x++)
-            {
-                for (int y = startY; y < startY + height; y++)
-                {
-                    byte out_r = 0, out_g = 0, out_b = 0, out_a = 0;
-                    Love2dDll.wrap_love_dll_type_ImageData_ext_getPixelUnsafe(p, x, y, out out_r, out out_g, out out_b, out out_a);
-                    mpd.Invoke(out_r, out_g, out_b, out_a, out out_r, out out_g, out out_b, out out_a);
-                    Love2dDll.wrap_love_dll_type_ImageData_ext_setPixelUnsafe(p, x, y, out_r, out_g, out_b, out_a);
-                }
-            }
-
-            Love2dDll.wrap_love_dll_type_ImageData_ext_mutexUnlock(p, ptrLock);
+            Love2dDll._wrap_love_dll_type_ImageData_mapPixel(p, x, y, w, h, func);
         }
 
     }
@@ -1707,10 +1602,10 @@ namespace Love
         public const int DEFAULT_BIT_DEPTH = 16;
 
 
-        public int GetChannels()
+        public int GetChannelCount()
         {
             int out_channels = 0;
-            Love2dDll.wrap_love_dll_type_Decoder_getChannels(p, out out_channels);
+            Love2dDll.wrap_love_dll_type_Decoder_getChannelCount(p, out out_channels);
             return out_channels;
         }
         public int GetBitDepth()
@@ -1735,10 +1630,10 @@ namespace Love
 
     public partial class SoundData : Data
     {
-        public int GetChannels()
+        public int GetChannelCount()
         {
             int out_channels = 0;
-            Love2dDll.wrap_love_dll_SoundData_getChannels(p, out out_channels);
+            Love2dDll.wrap_love_dll_SoundData_getChannelCount(p, out out_channels);
             return out_channels;
         }
         public int GetBitDepth()
@@ -1896,17 +1791,17 @@ namespace Love
 
     public partial class RandomGenerator : LoveObject
     {
-        public double Random()
+        public float Random()
         {
             double out_result = 0;
             Love2dDll.wrap_love_dll_type_RandomGenerator_random(p, out out_result);
-            return out_result;
+            return (float)out_result;
         }
-        public double RandomNormal(double stddev, double mean)
+        public float RandomNormal(double stddev, double mean)
         {
             double out_result = 0;
             Love2dDll.wrap_love_dll_type_RandomGenerator_randomNormal(p, stddev, mean, out out_result);
-            return out_result;
+            return (float)out_result;
         }
         public void SetSeed(uint low, uint high)
         {
@@ -1949,9 +1844,25 @@ namespace Love
             Right,
             Down,
             Left,
+
+            /// <summary>
+            /// Right+Up
+            /// </summary>
             RightUp,
+
+            /// <summary>
+            /// Right+Down
+            /// </summary>
             RightDown,
+
+            /// <summary>
+            /// Left+Up
+            /// </summary>
             LeftUp,
+
+            /// <summary>
+            /// Left+Down
+            /// </summary>
             LeftDown,
         };
 
@@ -1978,13 +1889,45 @@ namespace Love
             Back,
             Guide,
             Start,
+
+            /// <summary>
+            /// Left stick click button.
+            /// </summary>
             LeftStick,
+
+            /// <summary>
+            /// Right stick click button.
+            /// </summary>
             RightStick,
+
+            /// <summary>
+            /// Left bumper.
+            /// </summary>
             LeftShoulder,
+
+            /// <summary>
+            /// Right bumper.
+            /// </summary>
             RightShoulder,
+
+            /// <summary>
+            /// D-pad up.
+            /// </summary>
             DPadUp,
+
+            /// <summary>
+            /// D-pad down.
+            /// </summary>
             DPadDown,
+
+            /// <summary>
+            /// D-pad left.
+            /// </summary>
             DPadLeft,
+
+            /// <summary>
+            /// D-pad right.
+            /// </summary>
             DPadRight,
         };
 
@@ -2151,91 +2094,70 @@ namespace Love
 
 namespace Love
 {
-    public struct Triangle
-    {
-        public Float2 a, b, c;
-    }
 
-    public class Matrix22
+    public class ColoredString
     {
-        float m00 { set { data[0] = value; } get { return data[0]; } }
-        float m01 { set { data[1] = value; } get { return data[1]; } }
-        float m10 { set { data[2] = value; } get { return data[2]; } }
-        float m11 { set { data[3] = value; } get { return data[3]; } }
-        internal readonly float[] data = new float[4];
-    }
-
-    public class Matrix33
-    {
-        float m00 { set { data[0] = value; } get { return data[0]; } }
-        float m01 { set { data[1] = value; } get { return data[1]; } }
-        float m02 { set { data[2] = value; } get { return data[2]; } }
-        float m10 { set { data[3] = value; } get { return data[3]; } }
-        float m11 { set { data[4] = value; } get { return data[4]; } }
-        float m12 { set { data[5] = value; } get { return data[5]; } }
-        float m20 { set { data[6] = value; } get { return data[6]; } }
-        float m21 { set { data[7] = value; } get { return data[7]; } }
-        float m22 { set { data[8] = value; } get { return data[8]; } }
-        internal readonly float[] data = new float[9];
-    }
-
-    public class Matrix44
-    {
-        float m00 { set { data[0] = value; } get { return data[0]; } }
-        float m01 { set { data[1] = value; } get { return data[1]; } }
-        float m02 { set { data[2] = value; } get { return data[2]; } }
-        float m03 { set { data[3] = value; } get { return data[3]; } }
-        float m10 { set { data[4] = value; } get { return data[4]; } }
-        float m11 { set { data[5] = value; } get { return data[5]; } }
-        float m12 { set { data[6] = value; } get { return data[6]; } }
-        float m13 { set { data[7] = value; } get { return data[7]; } }
-        float m20 { set { data[8] = value; } get { return data[8]; } }
-        float m21 { set { data[9] = value; } get { return data[9]; } }
-        float m22 { set { data[10] = value; } get { return data[10]; } }
-        float m23 { set { data[11] = value; } get { return data[11]; } }
-        float m30 { set { data[12] = value; } get { return data[12]; } }
-        float m31 { set { data[13] = value; } get { return data[13]; } }
-        float m32 { set { data[14] = value; } get { return data[14]; } }
-        float m33 { set { data[15] = value; } get { return data[15]; } }
-        internal readonly float[] data = new float[16];
-    }
-
-    public struct ColoredString
-    {
-        public class Item
+        public readonly string text;
+        public readonly Float4 color;
+        public ColoredString(string text, Float4 color)
         {
-            public readonly string text;
-            public readonly Int4 color;
-            public Item(string text, Int4 color)
-            {
-                this.text = text;
-                this.color = color;
-            }
+            this.text = text;
+            this.color = color;
         }
-        public readonly Item[] items;
+
+        public static ColoredString Create(string text, Float4 color)
+        {
+            return new ColoredString(text, color);
+        }
+        public static ColoredString Create(string text, float r, float g, float b, float a = 1)
+        {
+            return Create(text, new Float4(r, g, b, a));
+        }
+    }
+
+    public struct ColoredStringArray
+    {
+
+        public static ColoredStringArray Create(string text)
+        {
+            return new ColoredStringArray(ColoredString.Create(text, new Float4(1, 1, 1, 1)));
+        }
+
+        public readonly ColoredString[] items;
 
         public int Length
         {
             get { return items.Length; }
         }
 
-        public ColoredString(string[] texts, Int4[] colors)
+        public ColoredStringArray(params ColoredString[] inputItems)
+        {
+            items = new ColoredString[inputItems.Length];
+            for (int i = 0; i < items.Length; i++)
+            {
+                items[i] = new ColoredString(inputItems[i].text, inputItems[i].color);
+            }
+
+            hObjects = new GCHandle[items.Length];
+        }
+
+        public ColoredStringArray(string[] texts, Float4[] colors)
         {
             if (texts.Length != colors.Length)
             {
                 throw new Exception("lenght of texts and colors must be same");
             }
 
-            items = new Item[texts.Length];
+            items = new ColoredString[texts.Length];
             for (int i = 0; i < items.Length; i++)
             {
-                items[i] = new Item(texts[i], colors[i]);
+                items[i] = new ColoredString(texts[i], colors[i]);
             }
 
             hObjects = new GCHandle[items.Length];
         }
 
-        public delegate void ColoredStringTempResDelegate(Tuple<BytePtr[], Int4[]> tmp);
+        public delegate void ColoredStringTempResDelegate(Tuple<BytePtr[], Float4[]> tmp);
         public void ExecResource(ColoredStringTempResDelegate func)
         {
             var tmp = ToPart();
@@ -2244,10 +2166,10 @@ namespace Love
         }
 
         GCHandle[] hObjects;
-        private Tuple<BytePtr[], Int4[]> ToPart()
+        private Tuple<BytePtr[], Float4[]> ToPart()
         {
             var texts = new BytePtr[Length];
-            var colors = new Int4[Length];
+            var colors = new Float4[Length];
             for (int i = 0; i < Length; i++)
             {
                 hObjects[i] = GCHandle.Alloc(DllTool.ToUTF8Bytes(items[i].text), GCHandleType.Pinned);
@@ -2255,7 +2177,7 @@ namespace Love
                 colors[i] = items[i].color;
             }
 
-            return new Tuple<BytePtr[], Int4[]>(texts, colors);
+            return Tuple.Create(texts, colors);
         }
 
         private void Recycle()

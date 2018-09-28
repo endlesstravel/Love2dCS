@@ -13,13 +13,13 @@ namespace Love
         {
             return NewFile(DllTool.ToUTF8Bytes(filename), fmode_type);
         }
-        public static FileData NewFileData(string contents, string filename, FileData.Decoder decoder_type)
+        public static FileData NewFileData(string contents, string filename)
         {
-            return NewFileData(DllTool.ToUTF8Bytes(contents), DllTool.ToUTF8Bytes(filename), decoder_type);
+            return NewFileData(DllTool.ToUTF8Bytes(contents), DllTool.ToUTF8Bytes(filename));
         }
-        public static FileData NewFileData(byte[] contents, string filename, FileData.Decoder decoder_type)
+        public static FileData NewFileData(byte[] contents, string filename)
         {
-            return NewFileData(contents, DllTool.ToUTF8Bytes(filename), decoder_type);
+            return NewFileData(contents, DllTool.ToUTF8Bytes(filename));
         }
         public static bool Init(string args)
         {
@@ -44,22 +44,6 @@ namespace Love
         public static String GetRealDirectory(string filename)
         {
             return GetRealDirectory(DllTool.ToUTF8Bytes(filename));
-        }
-        public static bool Exists(string arg)
-        {
-            return Exists(DllTool.ToUTF8Bytes(arg));
-        }
-        public static bool IsDirectory(string arg)
-        {
-            return IsDirectory(DllTool.ToUTF8Bytes(arg));
-        }
-        public static bool IsFile(string arg)
-        {
-            return IsFile(DllTool.ToUTF8Bytes(arg));
-        }
-        public static bool IsSymlink(string filename)
-        {
-            return IsSymlink(DllTool.ToUTF8Bytes(filename));
         }
         public static void CreateDirectory(string arg)
         {
@@ -88,10 +72,6 @@ namespace Love
         public static long GetLastModified(string filename)
         {
             return GetLastModified(DllTool.ToUTF8Bytes(filename));
-        }
-        public static long GetSize(string filename)
-        {
-            return GetSize(DllTool.ToUTF8Bytes(filename));
         }
         public static void SetRequirePath(string paths)
         {
@@ -125,11 +105,23 @@ namespace Love
 
     public partial class Graphics
     {
+        public static bool IsOpenGLES()
+        {
+            string name, unused;
+            GetRendererInfo(out name, out unused, out unused, out unused);
+            return name == "OpenGL ES";
+        }
+        public static Shader NewShader(string codeStr)
+        {
+            return NewShader(codeStr, null);
+        }
         public static Shader NewShader(string vertexCodeStr, string pixelCodeStr)
         {
+            bool gles = IsOpenGLES();
+
             IntPtr out_shader = IntPtr.Zero;
             string vertexCode, pixelCode;
-            Love2dGraphicsShaderBoot.shaderCodeToGLSL(vertexCodeStr, pixelCodeStr, out vertexCode, out pixelCode);
+            Love2dGraphicsShaderBoot.shaderCodeToGLSL(gles, vertexCodeStr, pixelCodeStr, out vertexCode, out pixelCode);
             Love2dDll.wrap_love_dll_graphics_newShader(DllTool.ToUTF8Bytes(vertexCode), DllTool.ToUTF8Bytes(pixelCode), out out_shader);
             return LoveObject.NewObject<Shader>(out_shader);
         }
@@ -172,13 +164,13 @@ namespace Love
         {
             return HasGlyphs(DllTool.ToUTF8Bytes(str));
         }
-        public Tuple<string[], int> getWrap(string text, float wrap_limit)
+        public Tuple<string[], int> GetWrap(string text, float wrap_limit)
         {
-            ColoredString coloredStr = DllTool.ToColoredStrings(text);
+            var coloredStr = ColoredStringArray.Create(text);
             IntPtr out_pws = IntPtr.Zero;
             int out_maxWidth = 0;
 
-            coloredStr.ExecResource((Tuple<BytePtr[], Int4[]> tmp) =>{
+            coloredStr.ExecResource( tmp => {
                 Love2dDll.wrap_love_dll_type_Font_getWrap(p, tmp.Item1, tmp.Item2, coloredStr.Length, wrap_limit, out out_maxWidth, out out_pws);
             });
             var lines = DllTool.WSSToStringListAndRelease(out_pws);
@@ -188,22 +180,10 @@ namespace Love
 
     public partial class Mesh
     {
-        public void SetAttributeEnabled(string name, bool enable)
-        {
-            SetAttributeEnabled(DllTool.ToUTF8Bytes(name), enable);
-        }
-        public bool IsAttributeEnabled(string name)
-        {
-            return IsAttributeEnabled(DllTool.ToUTF8Bytes(name));
-        }
-        public void AttachAttribute(string name, Mesh otherMesh)
-        {
-            AttachAttribute(DllTool.ToUTF8Bytes(name), otherMesh);
-        }
     }
     public partial class Shader
     {
-        public void SendColors(string name, params Int4[] valuearray)
+        public void SendColors(string name, params Float4[] valuearray)
         {
             SendColors(DllTool.ToUTF8Bytes(name), valuearray);
         }
@@ -219,37 +199,52 @@ namespace Love
         {
             SendBooleans(DllTool.ToUTF8Bytes(name), valuearray);
         }
-        public void SendMatrix(string name, float[] valuearray)
+        public void SendMatrix(string name, float[] valuearray, int columns, int rows, int count)
         {
-            SendMatrix(DllTool.ToUTF8Bytes(name), valuearray);
+            SendMatrix(DllTool.ToUTF8Bytes(name), valuearray, columns, rows, count);
         }
-        public void SendMatrix(string name, Matrix22 valuearray)
+        public void SendMatrix(string name, params Matrix22[] valueArray)
         {
-            SendMatrix(DllTool.ToUTF8Bytes(name), valuearray);
+            float[] values = new float[2 * 2 * valueArray.Length];
+            int offset = 0;
+            foreach (var m in valueArray)
+            {
+                Array.Copy(m.data, 0, values, offset, m.data.Length);
+                offset += m.data.Length;
+            }
+            SendMatrix(name, values, 2, 2, valueArray.Length);
         }
-        public void SendMatrix(string name, Matrix33 valuearray)
+        public void SendMatrix(string name, params Matrix33[] valueArray)
         {
-            SendMatrix(DllTool.ToUTF8Bytes(name), valuearray);
+            float[] values = new float[3 * 3 * valueArray.Length];
+            int offset = 0;
+            foreach (var m in valueArray)
+            {
+                Array.Copy(m.data, 0, values, offset, m.data.Length);
+                offset += m.data.Length;
+            }
+            SendMatrix(name, values, 3, 3, valueArray.Length);
         }
-        public void SendMatrix(string name, Matrix44 valuearray)
+        public void SendMatrix(string name, params Matrix44[] valueArray)
         {
-            SendMatrix(DllTool.ToUTF8Bytes(name), valuearray);
+            float[] values = new float[4 * 4 * valueArray.Length];
+            int offset = 0;
+            foreach (var m in valueArray)
+            {
+                Array.Copy(m.data, 0, values, offset, m.data.Length);
+                offset += m.data.Length;
+            }
+            SendMatrix(name, values, 4, 4, valueArray.Length);
         }
         public void SendTexture(string name, Texture texture)
         {
             SendTexture(DllTool.ToUTF8Bytes(name), texture);
         }
-
-        public Tuple<UniformType, int, int> getExternVariable(string name)
-        {
-            return getExternVariable(DllTool.ToUTF8Bytes(name));
-        }
-
     }
 
     public partial class SpriteBatch
     {
-        public void attachAttribute(string name, Mesh mesh)
+        public void AttachAttribute(string name, Mesh mesh)
         {
             AttachAttribute(DllTool.ToUTF8Bytes(name), mesh);
         }
@@ -266,7 +261,7 @@ namespace Love
 
     public partial class ImageData
     {
-        public void encode(EncodedFormat format_type, string filename)
+        public void Encode(FormatHandler.EncodedFormat format_type, string filename)
         {
             Encode(format_type, DllTool.ToUTF8Bytes(filename));
         }

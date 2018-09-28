@@ -22,10 +22,6 @@ windows x86
 
 * 项目已经发布到 NuGet [https://www.nuget.org/packages/Love2dCS/]( https://www.nuget.org/packages/Love2dCS/)
 
-* 请打开 `项目/属性/调试/启用本机代码调试`的选项
-
-![启用本机代码调试](https://github.com/endlesstravel/Love2dCS/raw/master/img/zh-enable-native-debuging.png "zh-enable-native-debuging")
-
 # 下一步的开发计划
 
 - [x] retain的函数调用
