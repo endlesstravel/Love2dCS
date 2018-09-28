@@ -1233,8 +1233,8 @@ namespace Love
             return CheckCAPIException(_wrap_love_dll_graphics_newMesh_count(count, drawMode_type, usage_type, out out_mesh));
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_newText")]
-        internal extern static bool _wrap_love_dll_graphics_newText(IntPtr font, BytePtr[] coloredStringText, Int4[] coloredStringColor, int coloredStringLength, out IntPtr out_text);
-        internal static bool wrap_love_dll_graphics_newText(IntPtr font, BytePtr[] coloredStringText, Int4[] coloredStringColor, int coloredStringLength, out IntPtr out_text)
+        internal extern static bool _wrap_love_dll_graphics_newText(IntPtr font, BytePtr[] coloredStringText, Float4[] coloredStringColor, int coloredStringLength, out IntPtr out_text);
+        internal static bool wrap_love_dll_graphics_newText(IntPtr font, BytePtr[] coloredStringText, Float4[] coloredStringColor, int coloredStringLength, out IntPtr out_text)
         {
             return CheckCAPIException(_wrap_love_dll_graphics_newText(font, coloredStringText, coloredStringColor, coloredStringLength, out out_text));
         }
@@ -1571,14 +1571,14 @@ namespace Love
             return CheckCAPIException(_wrap_love_dll_graphics_draw_texture_quad(quad, texture, x, y, a, sx, sy, ox, oy, kx, ky));
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_print")]
-        internal extern static bool _wrap_love_dll_graphics_print(BytePtr[] coloredStringListStr, Int4[] coloredStringListColor, int coloredStringListLength, float x, float y, float angle, float sx, float sy, float ox, float oy, float kx, float ky);
-        internal static bool wrap_love_dll_graphics_print(BytePtr[] coloredStringListStr, Int4[] coloredStringListColor, int coloredStringListLength, float x, float y, float angle, float sx, float sy, float ox, float oy, float kx, float ky)
+        internal extern static bool _wrap_love_dll_graphics_print(BytePtr[] coloredStringListStr, Float4[] coloredStringListColor, int coloredStringListLength, float x, float y, float angle, float sx, float sy, float ox, float oy, float kx, float ky);
+        internal static bool wrap_love_dll_graphics_print(BytePtr[] coloredStringListStr, Float4[] coloredStringListColor, int coloredStringListLength, float x, float y, float angle, float sx, float sy, float ox, float oy, float kx, float ky)
         {
             return CheckCAPIException(_wrap_love_dll_graphics_print(coloredStringListStr, coloredStringListColor, coloredStringListLength, x, y, angle, sx, sy, ox, oy, kx, ky));
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_printf")]
-        internal extern static bool _wrap_love_dll_graphics_printf(BytePtr[] coloredStringListStr, Int4[] coloredStringListColor, int coloredStringListLength, float x, float y, float wrap, int align_type, float angle, float sx, float sy, float ox, float oy, float kx, float ky);
-        internal static bool wrap_love_dll_graphics_printf(BytePtr[] coloredStringListStr, Int4[] coloredStringListColor, int coloredStringListLength, float x, float y, float wrap, int align_type, float angle, float sx, float sy, float ox, float oy, float kx, float ky)
+        internal extern static bool _wrap_love_dll_graphics_printf(BytePtr[] coloredStringListStr, Float4[] coloredStringListColor, int coloredStringListLength, float x, float y, float wrap, int align_type, float angle, float sx, float sy, float ox, float oy, float kx, float ky);
+        internal static bool wrap_love_dll_graphics_printf(BytePtr[] coloredStringListStr, Float4[] coloredStringListColor, int coloredStringListLength, float x, float y, float wrap, int align_type, float angle, float sx, float sy, float ox, float oy, float kx, float ky)
         {
             return CheckCAPIException(_wrap_love_dll_graphics_printf(coloredStringListStr, coloredStringListColor, coloredStringListLength, x, y, wrap, align_type, angle, sx, sy, ox, oy, kx, ky));
         }
@@ -2189,8 +2189,8 @@ namespace Love
             return CheckCAPIException(_wrap_love_dll_type_Font_getWidth(t, str, out out_width));
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Font_getWrap")]
-        internal extern static bool _wrap_love_dll_type_Font_getWrap(IntPtr t, BytePtr[] coloredStringText, Int4[] coloredStringColor, int coloredStringLength, float wrap, out int out_maxWidth, out IntPtr out_pws);
-        internal static bool wrap_love_dll_type_Font_getWrap(IntPtr t, BytePtr[] coloredStringText, Int4[] coloredStringColor, int coloredStringLength, float wrap, out int out_maxWidth, out IntPtr out_pws)
+        internal extern static bool _wrap_love_dll_type_Font_getWrap(IntPtr t, BytePtr[] coloredStringText, Float4[] coloredStringColor, int coloredStringLength, float wrap, out int out_maxWidth, out IntPtr out_pws);
+        internal static bool wrap_love_dll_type_Font_getWrap(IntPtr t, BytePtr[] coloredStringText, Float4[] coloredStringColor, int coloredStringLength, float wrap, out int out_maxWidth, out IntPtr out_pws)
         {
             return CheckCAPIException(_wrap_love_dll_type_Font_getWrap(t, coloredStringText, coloredStringColor, coloredStringLength, wrap, out out_maxWidth, out out_pws));
         }
@@ -2927,26 +2927,26 @@ namespace Love
         #region  type - Text
 
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Text_set_coloredstring")]
-        internal extern static bool _wrap_love_dll_type_Text_set_coloredstring(IntPtr p, BytePtr[] coloredStringText, Int4[] coloredStringColor, int coloredStringLength);
-        internal static bool wrap_love_dll_type_Text_set_coloredstring(IntPtr p, BytePtr[] coloredStringText, Int4[] coloredStringColor, int coloredStringLength)
+        internal extern static bool _wrap_love_dll_type_Text_set_coloredstring(IntPtr p, BytePtr[] coloredStringText, Float4[] coloredStringColor, int coloredStringLength);
+        internal static bool wrap_love_dll_type_Text_set_coloredstring(IntPtr p, BytePtr[] coloredStringText, Float4[] coloredStringColor, int coloredStringLength)
         {
             return CheckCAPIException(_wrap_love_dll_type_Text_set_coloredstring(p, coloredStringText, coloredStringColor, coloredStringLength));
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Text_setf")]
-        internal extern static bool _wrap_love_dll_type_Text_setf(IntPtr p, BytePtr[] coloredStringText, Int4[] coloredStringColor, int coloredStringLength, float wraplimit, int align_type);
-        internal static bool wrap_love_dll_type_Text_setf(IntPtr p, BytePtr[] coloredStringText, Int4[] coloredStringColor, int coloredStringLength, float wraplimit, int align_type)
+        internal extern static bool _wrap_love_dll_type_Text_setf(IntPtr p, BytePtr[] coloredStringText, Float4[] coloredStringColor, int coloredStringLength, float wraplimit, int align_type);
+        internal static bool wrap_love_dll_type_Text_setf(IntPtr p, BytePtr[] coloredStringText, Float4[] coloredStringColor, int coloredStringLength, float wraplimit, int align_type)
         {
             return CheckCAPIException(_wrap_love_dll_type_Text_setf(p, coloredStringText, coloredStringColor, coloredStringLength, wraplimit, align_type));
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Text_add")]
-        internal extern static bool _wrap_love_dll_type_Text_add(IntPtr p, BytePtr[] coloredStringText, Int4[] coloredStringColor, int coloredStringLength, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, out int out_index);
-        internal static bool wrap_love_dll_type_Text_add(IntPtr p, BytePtr[] coloredStringText, Int4[] coloredStringColor, int coloredStringLength, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, out int out_index)
+        internal extern static bool _wrap_love_dll_type_Text_add(IntPtr p, BytePtr[] coloredStringText, Float4[] coloredStringColor, int coloredStringLength, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, out int out_index);
+        internal static bool wrap_love_dll_type_Text_add(IntPtr p, BytePtr[] coloredStringText, Float4[] coloredStringColor, int coloredStringLength, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, out int out_index)
         {
             return CheckCAPIException(_wrap_love_dll_type_Text_add(p, coloredStringText, coloredStringColor, coloredStringLength, x, y, a, sx, sy, ox, oy, kx, ky, out out_index));
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Text_addf")]
-        internal extern static bool _wrap_love_dll_type_Text_addf(IntPtr p, BytePtr[] coloredStringText, Int4[] coloredStringColor, int coloredStringLength, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, float wraplimit, int align_type, out int out_index);
-        internal static bool wrap_love_dll_type_Text_addf(IntPtr p, BytePtr[] coloredStringText, Int4[] coloredStringColor, int coloredStringLength, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, float wraplimit, int align_type, out int out_index)
+        internal extern static bool _wrap_love_dll_type_Text_addf(IntPtr p, BytePtr[] coloredStringText, Float4[] coloredStringColor, int coloredStringLength, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, float wraplimit, int align_type, out int out_index);
+        internal static bool wrap_love_dll_type_Text_addf(IntPtr p, BytePtr[] coloredStringText, Float4[] coloredStringColor, int coloredStringLength, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, float wraplimit, int align_type, out int out_index)
         {
             return CheckCAPIException(_wrap_love_dll_type_Text_addf(p, coloredStringText, coloredStringColor, coloredStringLength, x, y, a, sx, sy, ox, oy, kx, ky, wraplimit, align_type, out out_index));
         }

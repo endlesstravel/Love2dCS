@@ -1273,30 +1273,30 @@ namespace Love
 
     public partial class Text : Drawable
     {
-        public void Set(ColoredString coloredStr)
+        public void Set(ColoredStringArray coloredStr)
         {
-            coloredStr.ExecResource((Tuple<BytePtr[], Int4[]> tmp) =>{
+            coloredStr.ExecResource((tmp) =>{
                 Love2dDll.wrap_love_dll_type_Text_set_coloredstring(p, tmp.Item1, tmp.Item2, coloredStr.Length);
             });
         }
-        public void Setf(ColoredString coloredStr, float wraplimit, Font.AlignMode align_type)
+        public void Setf(ColoredStringArray coloredStr, float wraplimit, Font.AlignMode align_type)
         {
-            coloredStr.ExecResource((Tuple<BytePtr[], Int4[]> tmp) =>{
+            coloredStr.ExecResource((tmp) =>{
                 Love2dDll.wrap_love_dll_type_Text_setf(p, tmp.Item1, tmp.Item2, coloredStr.Length, wraplimit, (int)align_type);
             });
         }
-        public int Add(ColoredString coloredStr, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public int Add(ColoredStringArray coloredStr, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
             int out_index = 0;
-            coloredStr.ExecResource((Tuple<BytePtr[], Int4[]> tmp) =>{
+            coloredStr.ExecResource((tmp) =>{
                 Love2dDll.wrap_love_dll_type_Text_add(p, tmp.Item1, tmp.Item2, coloredStr.Length, x, y, angle, sx, sy, ox, oy, kx, ky, out out_index);
             });
             return out_index;
         }
-        public int Add(ColoredString coloredStr, float wraplimit, Font.AlignMode align_type, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public int Addf(ColoredStringArray coloredStr, float wraplimit, Font.AlignMode align_type, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
             int out_index = 0;
-            coloredStr.ExecResource((Tuple<BytePtr[], Int4[]> tmp) => {
+            coloredStr.ExecResource((tmp) => {
                 Love2dDll.wrap_love_dll_type_Text_addf(p, tmp.Item1, tmp.Item2, coloredStr.Length, x, y, angle, sx, sy, ox, oy, kx, ky, wraplimit, (int)align_type, out out_index);
             });
             return out_index;
@@ -2094,62 +2094,70 @@ namespace Love
 
 namespace Love
 {
-    public struct ColoredString
+
+    public class ColoredString
     {
-        public static ColoredStringItem Item(string text, Int4 color)
+        public readonly string text;
+        public readonly Float4 color;
+        public ColoredString(string text, Float4 color)
         {
-            return new ColoredStringItem(text, color);
-        }
-        public static ColoredStringItem Item(string text, int r, int g, int b, int a = 255)
-        {
-            return new ColoredStringItem(text, new Int4(r, g, b, a));
+            this.text = text;
+            this.color = color;
         }
 
-        public class ColoredStringItem
+        public static ColoredString Create(string text, Float4 color)
         {
-            public readonly string text;
-            public readonly Int4 color;
-            public ColoredStringItem(string text, Int4 color)
-            {
-                this.text = text;
-                this.color = color;
-            }
+            return new ColoredString(text, color);
         }
-        public readonly ColoredStringItem[] items;
+        public static ColoredString Create(string text, float r, float g, float b, float a = 1)
+        {
+            return Create(text, new Float4(r, g, b, a));
+        }
+    }
+
+    public struct ColoredStringArray
+    {
+
+        public static ColoredStringArray Create(string text)
+        {
+            return new ColoredStringArray(ColoredString.Create(text, new Float4(1, 1, 1, 1)));
+        }
+
+        public readonly ColoredString[] items;
 
         public int Length
         {
             get { return items.Length; }
         }
 
-        public ColoredString(params ColoredStringItem[] inputItems)
+        public ColoredStringArray(params ColoredString[] inputItems)
         {
-            items = new ColoredStringItem[inputItems.Length];
+            items = new ColoredString[inputItems.Length];
             for (int i = 0; i < items.Length; i++)
             {
-                items[i] = new ColoredStringItem(inputItems[i].text, inputItems[i].color);
+                items[i] = new ColoredString(inputItems[i].text, inputItems[i].color);
             }
 
             hObjects = new GCHandle[items.Length];
         }
 
-        public ColoredString(string[] texts, Int4[] colors)
+        public ColoredStringArray(string[] texts, Float4[] colors)
         {
             if (texts.Length != colors.Length)
             {
                 throw new Exception("lenght of texts and colors must be same");
             }
 
-            items = new ColoredStringItem[texts.Length];
+            items = new ColoredString[texts.Length];
             for (int i = 0; i < items.Length; i++)
             {
-                items[i] = new ColoredStringItem(texts[i], colors[i]);
+                items[i] = new ColoredString(texts[i], colors[i]);
             }
 
             hObjects = new GCHandle[items.Length];
         }
 
-        public delegate void ColoredStringTempResDelegate(Tuple<BytePtr[], Int4[]> tmp);
+        public delegate void ColoredStringTempResDelegate(Tuple<BytePtr[], Float4[]> tmp);
         public void ExecResource(ColoredStringTempResDelegate func)
         {
             var tmp = ToPart();
@@ -2158,10 +2166,10 @@ namespace Love
         }
 
         GCHandle[] hObjects;
-        private Tuple<BytePtr[], Int4[]> ToPart()
+        private Tuple<BytePtr[], Float4[]> ToPart()
         {
             var texts = new BytePtr[Length];
-            var colors = new Int4[Length];
+            var colors = new Float4[Length];
             for (int i = 0; i < Length; i++)
             {
                 hObjects[i] = GCHandle.Alloc(DllTool.ToUTF8Bytes(items[i].text), GCHandleType.Pinned);
@@ -2169,7 +2177,7 @@ namespace Love
                 colors[i] = items[i].color;
             }
 
-            return new Tuple<BytePtr[], Int4[]>(texts, colors);
+            return Tuple.Create(texts, colors);
         }
 
         private void Recycle()

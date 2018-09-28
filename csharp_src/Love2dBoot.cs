@@ -5,7 +5,7 @@ using System;
 
 namespace Love
 {
-    public class Scene
+    abstract public class Scene
     {
         /// <summary>
         /// Triggered when a key is pressed.

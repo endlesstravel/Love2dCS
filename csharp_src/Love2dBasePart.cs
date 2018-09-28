@@ -52,11 +52,6 @@ namespace Love
             return utf8.GetBytes(str);
         }
 
-        public static ColoredString ToColoredStrings(string str)
-        {
-            ColoredString buffer = new ColoredString(new string[] {str }, new Int4[] { new Int4(255, 255, 255, 255) });
-            return buffer;
-        }
 
         public static string GetLoveLastError()
         {
@@ -2240,10 +2235,10 @@ namespace Love
             Love2dDll.wrap_love_dll_graphics_newMesh_count(count, (int)drawMode, (int)usage, out out_mesh);
             return LoveObject.NewObject<Mesh>(out_mesh);
         }
-        public static Text NewText(Font font, ColoredString coloredStr)
+        public static Text NewText(Font font, ColoredStringArray coloredStr)
         {
             IntPtr out_text = IntPtr.Zero;
-            coloredStr.ExecResource((Tuple<BytePtr[], Int4[]> tmp) => {
+            coloredStr.ExecResource((tmp) => {
                 Love2dDll.wrap_love_dll_graphics_newText(font.p, tmp.Item1, tmp.Item2, coloredStr.items.Length, out out_text);
             });
             return LoveObject.NewObject<Text>(out_text);
@@ -2414,9 +2409,21 @@ namespace Love
             Love2dDll.wrap_love_dll_graphics_getBackgroundColor(out out_r, out out_g, out out_b, out out_a);
             return new Int4(out_r, out_g, out_b, out_a);
         }
-        public static void SetFont(Font font)
+
+        /// <summary>
+        /// set font used. pass null to use default font
+        /// </summary>
+        /// <param name="font"></param>
+        public static void SetFont(Font font = null)
         {
-            Love2dDll.wrap_love_dll_graphics_setFont(font.p);
+            if (font == null)
+            {
+                Love2dDll.wrap_love_dll_graphics_setFont(IntPtr.Zero);
+            }
+            else
+            {
+                Love2dDll.wrap_love_dll_graphics_setFont(font.p);
+            }
         }
 
         /// <summary>
@@ -2783,11 +2790,12 @@ namespace Love
             Love2dDll.wrap_love_dll_graphics_ext_stencil_stopDrawToStencilBuffer();
         }
 
-        public static void Clear(float r, float g, float b, float a, float stencil = 0, bool enable_stencil = true, float depth = 1, bool enable_depth = true)
+        public static void Clear(float r, float g, float b, float a = 1, float stencil = 0, bool enable_stencil = true, float depth = 1, bool enable_depth = true)
         {
             Love2dDll.wrap_love_dll_graphics_clear_rgba(r, g, b, a, stencil, enable_stencil, depth, enable_depth);
         }
-        public static void Clear(Float4[] colorList, bool[] enableList, float stencil = 0, bool enable_stencil = true, float depth = 1, bool enable_depth = true)
+
+        private static void Clear(Float4[] colorList, bool[] enableList, float stencil = 0, bool enable_stencil = true, float depth = 1, bool enable_depth = true)
         {
             if (colorList.Length != enableList.Length)
             {
@@ -2855,9 +2863,9 @@ namespace Love
         /// <param name="ky">Shearing factor (y-axis).</param>
         public static void Print(string text, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
-            ColoredString coloredStr = DllTool.ToColoredStrings(text);
+            var coloredStr = ColoredStringArray.Create(text);
 
-            coloredStr.ExecResource((Tuple<BytePtr[], Int4[]> tmp) =>{
+            coloredStr.ExecResource((tmp) =>{
                 Love2dDll.wrap_love_dll_graphics_print(tmp.Item1, tmp.Item2, coloredStr.Length, x, y, angle, sx, sy, ox, oy, kx, ky);
             });
         }
@@ -2866,15 +2874,15 @@ namespace Love
         /// Same as Love.Graphics.Print(string...), but coloredStr used to show text in different color.
         /// </summary>
         /// <param name="coloredStr">colors and strings </param>
-        public static void Print(ColoredString coloredStr, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public static void Print(ColoredStringArray coloredStr, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
-            coloredStr.ExecResource((Tuple<BytePtr[], Int4[]> tmp) =>{
+            coloredStr.ExecResource((tmp) =>{
                 Love2dDll.wrap_love_dll_graphics_print(tmp.Item1, tmp.Item2, coloredStr.Length, x, y, angle, sx, sy, ox, oy, kx, ky);
             });
         }
-        public static void Printf(ColoredString coloredStr, float x, float y, float wrap, Font.AlignMode align_type, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public static void Printf(ColoredStringArray coloredStr, float x, float y, float wrap, Font.AlignMode align_type, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
-            coloredStr.ExecResource((Tuple<BytePtr[], Int4[]> tmp) =>{
+            coloredStr.ExecResource((tmp) =>{
                 Love2dDll.wrap_love_dll_graphics_printf(tmp.Item1, tmp.Item2, coloredStr.Length, x, y, wrap, (int)align_type, angle, sx, sy, ox, oy, kx, ky);
             });
         }

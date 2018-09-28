@@ -2702,7 +2702,7 @@ namespace wrap
         auto usage = (vertex::Usage)usage_type;
         return wrap_catchexcept([&]() { *out_mesh = graphicsInstance->newMesh(count, drawMode, usage); });
     }
-    bool4 wrap_love_dll_graphics_newText(love::graphics::Font *font, BytePtr coloredStringText[], Int4 coloredStringColor[],  int coloredStringLength, Text** out_text)
+    bool4 wrap_love_dll_graphics_newText(love::graphics::Font *font, BytePtr coloredStringText[], Float4 coloredStringColor[],  int coloredStringLength, Text** out_text)
     {
         std::vector<love::graphics::Font::ColoredString> strings;
         strings.reserve(coloredStringLength);
@@ -3143,7 +3143,7 @@ namespace wrap
             graphicsInstance->draw(texture, quad, Matrix4(x, y, a, sx, sy, ox, oy, kx, ky));
         });
     }
-    bool4 wrap_love_dll_graphics_print(BytePtr coloredStringListStr[], Int4 coloredStringListColor[], int coloredStringListLength, float x, float y, float angle, float sx, float sy, float ox, float oy, float kx, float ky)
+    bool4 wrap_love_dll_graphics_print(BytePtr coloredStringListStr[], Float4 coloredStringListColor[], int coloredStringListLength, float x, float y, float angle, float sx, float sy, float ox, float oy, float kx, float ky)
     {
         std::vector<love::graphics::Font::ColoredString> coloredStrings;
         coloredStrings.reserve(coloredStringListLength);
@@ -3162,7 +3162,7 @@ namespace wrap
 
         return wrap_catchexcept([&]() { graphicsInstance->print(coloredStrings, Matrix4(x, y, angle, sx, sy, ox, oy, kx, ky)); });
     }
-    bool4 wrap_love_dll_graphics_printf(BytePtr coloredStringListStr[], Int4 coloredStringListColor[], int coloredStringListLength, float x, float y, float wrap, int align_type, float angle, float sx, float sy, float ox, float oy, float kx, float ky)
+    bool4 wrap_love_dll_graphics_printf(BytePtr coloredStringListStr[], Float4 coloredStringListColor[], int coloredStringListLength, float x, float y, float wrap, int align_type, float angle, float sx, float sy, float ox, float oy, float kx, float ky)
     {
         std::vector<love::graphics::Font::ColoredString> coloredStrings;
         coloredStrings.reserve(coloredStringListLength);
@@ -3949,7 +3949,7 @@ namespace wrap
     }
 
     bool4 wrap_love_dll_type_Font_getWrap(love::graphics::Font *t, 
-        BytePtr coloredStringText[], Int4 coloredStringColor[], int coloredStringLength, float wrap,
+        BytePtr coloredStringText[], Float4 coloredStringColor[], int coloredStringLength, float wrap,
         int *out_maxWidth, WrapSequenceString **out_pws)
     {
         std::vector<love::graphics::Font::ColoredString> strings;
@@ -5119,7 +5119,7 @@ namespace wrap
 
 #pragma region type - Text
 
-    bool4 wrap_love_dll_type_Text_set_coloredstring(Text *t, BytePtr coloredStringText[], Int4 coloredStringColor[], int coloredStringLength)
+    bool4 wrap_love_dll_type_Text_set_coloredstring(Text *t, BytePtr coloredStringText[], Float4 coloredStringColor[], int coloredStringLength)
     {
         // Single argument: unformatted text.
         std::vector<love::graphics::Font::ColoredString> strings;
@@ -5138,7 +5138,7 @@ namespace wrap
         return wrap_catchexcept([&]() { t->set(strings); });
     }
 
-    bool4 wrap_love_dll_type_Text_setf(Text *t, BytePtr coloredStringText[], Int4 coloredStringColor[], int coloredStringLength, float wraplimit, int align_type)
+    bool4 wrap_love_dll_type_Text_setf(Text *t, BytePtr coloredStringText[], Float4 coloredStringColor[], int coloredStringLength, float wraplimit, int align_type)
     {
         std::vector<love::graphics::Font::ColoredString> strings;
         strings.reserve(coloredStringLength);
@@ -5157,7 +5157,7 @@ namespace wrap
         return wrap_catchexcept([&]() { t->set(strings, wraplimit, align); });
     }
 
-    bool4 wrap_love_dll_type_Text_add(Text *t, BytePtr coloredStringText[], Int4 coloredStringColor[], int coloredStringLength,
+    bool4 wrap_love_dll_type_Text_add(Text *t, BytePtr coloredStringText[], Float4 coloredStringColor[], int coloredStringLength,
         float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, int *out_index)
     {
         std::vector<love::graphics::Font::ColoredString> strings;
@@ -5176,7 +5176,7 @@ namespace wrap
         return wrap_catchexcept([&]() { *out_index = t->add(strings, m); });
     }
 
-    bool4 wrap_love_dll_type_Text_addf(Text *t, BytePtr coloredStringText[], Int4 coloredStringColor[], int coloredStringLength,
+    bool4 wrap_love_dll_type_Text_addf(Text *t, BytePtr coloredStringText[], Float4 coloredStringColor[], int coloredStringLength,
         float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, float wraplimit, int align_type, int *out_index)
     {
         std::vector<love::graphics::Font::ColoredString> strings;

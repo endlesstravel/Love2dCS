@@ -103,29 +103,6 @@ namespace Love
             return NewRasterizer(filedata);
         }
 
-        public static Font NewFont(string filename)
-        {
-            var fileData = FileSystem.NewFileData(filename);
-            var rasterizer = Font.NewRasterizer(fileData);
-            return Graphics.NewFont(rasterizer);
-        }
-
-        /// <summary>
-        /// Creates a new Font by loading a specifically formatted image.
-        /// <para>In versions prior to 0.9.0, LÖVE expects ISO 8859-1 encoding for the glyphs string.</para>
-        /// <para>	This function can be slow if it is called repeatedly, such as from Scene.Update. If you need to use a specific resource often, create it once and store it somewhere it can be reused!</para>
-        /// </summary>
-        /// <param name="filename">The filepath to the image file.</param>
-        /// <param name="glyphs">A string of the characters in the image in order from left to right.</param>
-        /// <param name="extraspacing">Additional spacing (positive or negative) to apply to each glyph in the Font.</param>
-        /// <returns></returns>
-        public static Font NewImageFont(string filename, string glyphs, int extraspacing = 0)
-        {
-            var imageData = Image.NewImageData(filename);
-            var glyphsBytes = DllTool.ToUTF8Bytes(glyphs);
-            var rasterizerImage = Font.NewImageRasterizer(imageData, glyphsBytes, extraspacing);
-            return Graphics.NewFont(rasterizerImage);
-        }
     }
 
     public partial class Video
@@ -172,15 +149,55 @@ namespace Love
             return NewImage(filedata, flagMipmaps, flagLinear);
         }
 
+
         /// <summary>
-        /// Create a new BMFont or TrueType font.
-        /// <para>If the file is a TrueType font, it will be size 12. Use the variant below to create a TrueType font with a custom size</para>
         /// </summary>
-        /// <param name="filename">The filepath to the BMFont or TrueType font file.</param>
-        /// <returns>A Font object which can be used to draw text on screen.</returns>
-        public static Font NewFont(string filename)
+        /// <param name="filename">The filepath to the BMFont file.</param>
+        /// <param name="imageFileName">The filepath to the BMFont's image file.</param>
+        /// <returns></returns>
+        public static Font NewBMFont(string filename, params string[] imageFilename)
         {
-            return Font.NewFont(filename);
+            if (imageFilename == null)
+            {
+                throw new Exception("imageFilename array can't be null !");
+            }
+
+            var imageData = new ImageData[imageFilename.Length];
+            for (int i = 0; i < imageFilename.Length; i++)
+            {
+                imageData[i] = Image.NewImageData(imageFilename[i]);
+            }
+            var filedata  = FileSystem.NewFileData(filename);
+            var rasterizerImage = Font.NewBMFontRasterizer(filedata, imageData);
+            return NewFont(rasterizerImage);
+        }
+
+
+        /// <summary>
+        /// Create a new BMFont. The filepath to the BMFont's image file specified inside the BMFont file will be used.
+        /// </summary>
+        /// <param name="filename">The filepath to the BMFont file.</param>
+        /// <returns></returns>
+        public static Font NewBMFont(string filename)
+        {
+            return NewBMFont(filename, new string[0]);
+        }
+
+        /// <summary>
+        /// Creates a new Font by loading a specifically formatted image.
+        /// <para>In versions prior to 0.9.0, LÖVE expects ISO 8859-1 encoding for the glyphs string.</para>
+        /// <para>	This function can be slow if it is called repeatedly, such as from Scene.Update. If you need to use a specific resource often, create it once and store it somewhere it can be reused!</para>
+        /// </summary>
+        /// <param name="filename">The filepath to the image file.</param>
+        /// <param name="glyphs">A string of the characters in the image in order from left to right.</param>
+        /// <param name="extraspacing">Additional spacing (positive or negative) to apply to each glyph in the Font.</param>
+        /// <returns></returns>
+        public static Font NewImageFont(string filename, string glyphs, int extraspacing = 0)
+        {
+            var imageData = Image.NewImageData(filename);
+            var glyphsBytes = DllTool.ToUTF8Bytes(glyphs);
+            var rasterizerImage = Font.NewImageRasterizer(imageData, glyphsBytes, extraspacing);
+            return NewFont(rasterizerImage);
         }
 
         /// <summary>
@@ -189,11 +206,11 @@ namespace Love
         /// <param name="filename">The filepath to the TrueType font file.</param>
         /// <param name="size">The size of the font in pixels.</param>
         /// <returns>A Font object which can be used to draw text on screen.</returns>
-        public static Font NewFont(string filename, int size)
+        public static Font NewFont(string filename, int size = 12, TrueTypeRasterizer.Hinting hinting = TrueTypeRasterizer.Hinting.Normal)
         {
             var fileData = FileSystem.NewFileData(filename);
-            var rasterizer = Font.NewTrueTypeRasterizer(fileData, size);
-            return Graphics.NewFont(rasterizer);
+            var rasterizer = Font.NewTrueTypeRasterizer(fileData, size, hinting);
+            return NewFont(rasterizer);
         }
 
         /// <summary>
@@ -247,7 +264,7 @@ namespace Love
 
         public static Text NewText(Font font, string text)
         {
-            return NewText(font, DllTool.ToColoredStrings(text));
+            return NewText(font, ColoredStringArray.Create(text));
         }
 
 
@@ -269,9 +286,9 @@ namespace Love
             Points(coords, colors);
         }
 
-        public static void Print(ColoredString.ColoredStringItem[] coloredStr, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public static void Print(ColoredString[] coloredStr, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
-            Print(new ColoredString(coloredStr), x, y, angle, sx, sy, ox, oy, kx, ky);
+            Print(new ColoredStringArray(coloredStr), x, y, angle, sx, sy, ox, oy, kx, ky);
         }
 
         /// <summary>
@@ -289,9 +306,9 @@ namespace Love
         /// <param name="oy">Origin offset (y-axis).</param>
         /// <param name="kx">Shearing factor (x-axis).</param>
         /// <param name="ky">Shearing factor (y-axis).</param>
-        public static void Printf(ColoredString.ColoredStringItem[] coloredStr, float x, float y, float wrap, Font.AlignMode align_type = Font.AlignMode.Left, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public static void Printf(ColoredString[] coloredStr, float x, float y, float wrap, Font.AlignMode align_type = Font.AlignMode.Left, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
-            Printf(new ColoredString(coloredStr), x, y, wrap, align_type, angle, sx, sy, ox, oy, kx, ky);
+            Printf(new ColoredStringArray(coloredStr), x, y, wrap, align_type, angle, sx, sy, ox, oy, kx, ky);
         }
 
         /// <summary>
@@ -334,11 +351,11 @@ namespace Love
     {
         public int Add(string text, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
-            return Add(DllTool.ToColoredStrings(text), x, y, angle, sx, sy, ox, oy, kx, ky);
+            return Add(ColoredStringArray.Create(text), x, y, angle, sx, sy, ox, oy, kx, ky);
         }
         public int add(string text, float wraplimit, Font.AlignMode align_type, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
-            return Add(DllTool.ToColoredStrings(text), wraplimit, align_type, x, y, angle, sx, sy, ox, oy, kx, ky);
+            return Addf(ColoredStringArray.Create(text), wraplimit, align_type, x, y, angle, sx, sy, ox, oy, kx, ky);
         }
     }
 

@@ -166,11 +166,11 @@ namespace Love
         }
         public Tuple<string[], int> GetWrap(string text, float wrap_limit)
         {
-            ColoredString coloredStr = DllTool.ToColoredStrings(text);
+            var coloredStr = ColoredStringArray.Create(text);
             IntPtr out_pws = IntPtr.Zero;
             int out_maxWidth = 0;
 
-            coloredStr.ExecResource((Tuple<BytePtr[], Int4[]> tmp) =>{
+            coloredStr.ExecResource( tmp => {
                 Love2dDll.wrap_love_dll_type_Font_getWrap(p, tmp.Item1, tmp.Item2, coloredStr.Length, wrap_limit, out out_maxWidth, out out_pws);
             });
             var lines = DllTool.WSSToStringListAndRelease(out_pws);
