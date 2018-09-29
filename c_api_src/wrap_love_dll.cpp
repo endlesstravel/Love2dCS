@@ -2702,6 +2702,7 @@ namespace wrap
         auto usage = (vertex::Usage)usage_type;
         return wrap_catchexcept([&]() { *out_mesh = graphicsInstance->newMesh(count, drawMode, usage); });
     }
+
     bool4 wrap_love_dll_graphics_newText(love::graphics::Font *font, BytePtr coloredStringText[], Float4 coloredStringColor[],  int coloredStringLength, Text** out_text)
     {
         std::vector<love::graphics::Font::ColoredString> strings;
@@ -2715,6 +2716,7 @@ namespace wrap
             coloredstr.color.b = coloredStringColor[i].b;
             coloredstr.color.a = coloredStringColor[i].a;
             coloredstr.str = coloredStringText[i].data;
+			strings.push_back(coloredstr);
         }
 
         return wrap_catchexcept( [&]() { *out_text = graphicsInstance->newText(font, strings); });
@@ -3131,8 +3133,6 @@ namespace wrap
 
     bool4 wrap_love_dll_graphics_draw_drawable(Drawable *drawable, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky)
     {
-        Quad *quad = nullptr;
-
         return wrap_catchexcept([&]() {
             graphicsInstance->draw(drawable, Matrix4(x, y, a, sx, sy, ox, oy, kx, ky));
         });
@@ -3156,7 +3156,6 @@ namespace wrap
             cs.color.g = coloredStringListColor[i].g;
             cs.color.b = coloredStringListColor[i].b;
             cs.color.a = coloredStringListColor[i].a;
-
             coloredStrings.push_back(cs);
         }
 
@@ -3175,7 +3174,6 @@ namespace wrap
             cs.color.g = coloredStringListColor[i].g;
             cs.color.b = coloredStringListColor[i].b;
             cs.color.a = coloredStringListColor[i].a;
-
             coloredStrings.push_back(cs);
         }
 
@@ -3963,8 +3961,8 @@ namespace wrap
             coloredstr.color.b = coloredStringColor[i].b;
             coloredstr.color.a = coloredStringColor[i].a;
             coloredstr.str = coloredStringText[i].data;
+			strings.push_back(coloredstr);
         }
-
 
         int max_width = 0;
         std::vector<std::string> lines;
@@ -5133,6 +5131,7 @@ namespace wrap
             coloredstr.color.b = coloredStringColor[i].b;
             coloredstr.color.a = coloredStringColor[i].a;
             coloredstr.str = coloredStringText[i].data;
+			strings.push_back(coloredstr);
         }
 
         return wrap_catchexcept([&]() { t->set(strings); });
@@ -5151,6 +5150,7 @@ namespace wrap
             coloredstr.color.b = coloredStringColor[i].b;
             coloredstr.color.a = coloredStringColor[i].a;
             coloredstr.str = coloredStringText[i].data;
+			strings.push_back(coloredstr);
         }
 
         auto align = (love::graphics::Font::AlignMode)align_type;
@@ -5171,6 +5171,7 @@ namespace wrap
             coloredstr.color.b = coloredStringColor[i].b;
             coloredstr.color.a = coloredStringColor[i].a;
             coloredstr.str = coloredStringText[i].data;
+			strings.push_back(coloredstr);
         }
 		Matrix4 m(x, y, a, sx, sy, ox, oy, kx, ky);
         return wrap_catchexcept([&]() { *out_index = t->add(strings, m); });
@@ -5190,6 +5191,7 @@ namespace wrap
             coloredstr.color.b = coloredStringColor[i].b;
             coloredstr.color.a = coloredStringColor[i].a;
             coloredstr.str = coloredStringText[i].data;
+			strings.push_back(coloredstr);
         }
         auto align = (love::graphics::Font::AlignMode)align_type;
 		Matrix4 m(x, y, a, sx, sy, ox, oy, kx, ky);
