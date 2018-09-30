@@ -1,5 +1,45 @@
 ﻿namespace Love
 {
+
+    /// <summary>
+    /// <para>全屏模式的类型。</para>
+    /// <para>Types of fullscreen modes.</para>
+    /// </summary>
+    public enum FullscreenType
+    {
+        /// <summary>
+        /// Standard exclusive-fullscreen mode. Changes the display mode (actual resolution) of the monitor.
+        /// </summary>
+        Exclusive,
+
+        /// <summary>
+        /// Sometimes known as borderless fullscreen windowed mode. A borderless screen-sized window is created which sits on top of all desktop UI elements. The window is automatically resized to match the dimensions of the desktop, and its size cannot be changed.
+        /// </summary>
+        DeskTop,
+    };
+
+    /// <summary>
+    /// <para>消息框对话框的类型。</para>
+    /// <para>Types of message box dialogs.</para>
+    /// </summary>
+    public enum MessageBoxType
+    {
+        /// <summary>
+        /// Error dialog.
+        /// </summary>
+        Error,
+
+        /// <summary>
+        /// Warning dialog.
+        /// </summary>
+        Warning,
+
+        /// <summary>
+        /// Informational dialog.
+        /// </summary>
+        Info,
+    };
+
     /// <summary>
     /// Different types of arcs that can be drawn.
     /// </summary>

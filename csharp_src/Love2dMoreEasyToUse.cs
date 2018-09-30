@@ -12,12 +12,22 @@ namespace Love
 
     public partial class Window
     {
+        /// <summary>
+        /// Enters or exits fullscreen. The display to use when entering fullscreen is chosen based on which display the window is currently in, if multiple monitors are connected.
+        /// </summary>
+        /// <param name="fullscreen">Whether to enter or exit fullscreen mode.</param>
+        /// <returns>True if an attempt to enter fullscreen was successful, false otherwise.</returns>
         public static bool SetFullscreen(bool fullscreen)
         {
             bool out_fullscreen; FullscreenType out_fstype;
             GetFullscreen(out out_fullscreen, out out_fstype);
             return SetFullscreen(fullscreen, out_fstype);
         }
+
+        /// <summary>
+        /// Gets whether the window is fullscreen.
+        /// </summary>
+        /// <returns>True if the window is fullscreen, false otherwise.</returns>
         public static bool GetFullscreen()
         {
             bool out_fullscreen; FullscreenType out_fstype;

@@ -199,7 +199,7 @@ namespace Love
                 float sw = mosaic_image.GetWidth(), sh = mosaic_image.GetHeight();
                 float ww = (float)Window.FromPixels(Graphics.GetWidth()), wh = (float)Window.FromPixels(Graphics.GetHeight());
 
-                if (Window.GetPixelScale() > 2)
+                if (Window.GetDPIScale() > 2)
                 {
                     mosaic_image = g_images_mosaic[1];
                 }
@@ -406,7 +406,7 @@ namespace Love
         {
             Graphics.SetColor(1, 1, 1);
             Graphics.Push();
-            float scale = (float)Window.GetPixelScale();
+            float scale = (float)Window.GetDPIScale();
             Graphics.Scale(scale, scale);
             Graphics.Clear(136 / 255f, 193 / 255f, 206 / 255f, 1);
             g_toast.Draw();
@@ -460,7 +460,7 @@ namespace Love
                 float difftime = Timer.GetTime() - last_touch_time;
                 if (difftime < 0.3f && dist < 0.5f)
                 {
-                    if (Window.ShowMessageBox("Exit No-Game Screen", "", Window.MessageBoxType.Warning))
+                    if (Window.ShowMessageBox("Exit No-Game Screen", "", MessageBoxType.Warning))
                     {
                         Event.Quit();
                     }

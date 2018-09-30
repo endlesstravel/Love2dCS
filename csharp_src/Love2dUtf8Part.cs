@@ -81,11 +81,26 @@ namespace Love
 
     public partial class Window
     {
+        /// <summary>
+        /// Sets the window title.
+        /// <para>Constantly updating the window title can lead to issues on some systems and therefore is discouraged.</para>
+        /// </summary>
+        /// <param name="titleStr">The new window title.</param>
         public static void SetTitle(string titleStr)
         {
             SetTitle(DllTool.ToUTF8Bytes(titleStr));
         }
-        public static bool ShowMessageBox(string title, string message, MessageBoxType msgbox_type, bool attachToWindow = true)
+
+        /// <summary>
+        /// Displays a simple message box with a single 'OK' button.
+        /// <para>	This function will pause all execution of the main thread until the user has clicked a button to exit the message box. Calling the function from a different thread may cause love to crash.</para>
+        /// </summary>
+        /// <param name="title">The title of the message box.</param>
+        /// <param name="message">The text inside the message box.</param>
+        /// <param name="msgbox_type">The type of the message box.</param>
+        /// <param name="attachToWindow">Whether the message box should be attached to the love window or free-floating.</param>
+        /// <returns>Whether the message box was successfully displayed.</returns>
+        public static bool ShowMessageBox(string title, string message, MessageBoxType msgbox_type = MessageBoxType.Info, bool attachToWindow = true)
         {
             return ShowMessageBox(DllTool.ToUTF8Bytes(title), DllTool.ToUTF8Bytes(message), msgbox_type, attachToWindow);
         }
