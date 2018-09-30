@@ -355,7 +355,7 @@ namespace Love
             return string.Join("\n", parts);
         }
 
-        static Love2dGraphicsShaderBoot()
+        static void InitGraphicsShader()
         {
             InitGLSLStrings();
 
@@ -513,9 +513,11 @@ namespace Love
             out_pixelcode = pixelcode;
         }
 
-        public static void init()
+        public static void Init()
         {
             Console.WriteLine("init shader code boot ...");
+            InitGraphicsShader();
+            Console.WriteLine("init shader code success");
         }
     }
 }

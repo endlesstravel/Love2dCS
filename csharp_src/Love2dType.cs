@@ -11,8 +11,10 @@ using System.Text;
 
 namespace Love
 {
-
-    public partial class LoveObject : IDisposable
+    /// <summary>
+    /// LÖVE 引擎对象
+    /// </summary>
+    public abstract partial class LoveObject : IDisposable
     {
         // use factory design pattern
         public static T NewObject<T>(IntPtr ip) where T : LoveObject, new()

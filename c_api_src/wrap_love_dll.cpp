@@ -480,14 +480,16 @@ namespace wrap
         });
     }
 
-    bool4 wrap_love_dll_windows_setMode_w_h_setting(int width, int height, bool4 fullscreen, int fstype, bool4 vsync, int msaa, bool4 resizable, int minwidth, int minheight, bool4 borderless, bool4 centered, int display, bool4 highdpi, double refreshrate, bool4 useposition, int x, int y)
+    bool4 wrap_love_dll_windows_setMode_w_h_setting(int width, int height, bool4 fullscreen, int fstype, bool4 vsync, int msaa, int depth, bool4 stencil, bool4 resizable, int minwidth, int minheight, bool4 borderless, bool4 centered, int display, bool4 highdpi, double refreshrate, bool4 useposition, int x, int y)
     {
         WindowSettings settings;
 
         settings.fullscreen = fullscreen;
         settings.fstype = (Window::FullscreenType)fstype; // default is Window::FULLSCREEN_DESKTOP
         settings.vsync = vsync;
-        settings.msaa = msaa;
+		settings.msaa = msaa;
+		settings.depth = depth;
+		settings.stencil = stencil;
         settings.resizable = resizable;
         settings.minwidth = minwidth;
         settings.minheight = minheight;
@@ -505,7 +507,7 @@ namespace wrap
         });
     }
 
-    void wrap_love_dll_windows_getMode(int *out_width, int *out_height, bool4 *out_fullscreen,int *out_fstype, bool4 *out_vsync, int *out_msaa, bool4 *out_resizable, int *out_minwidth, int *out_minheight, bool4 *out_borderless, bool4 *out_centered, int *out_display, bool4 *out_highdpi, double *out_refreshrate, bool4 *out_useposition, int *out_x, int *out_y)
+    void wrap_love_dll_windows_getMode(int *out_width, int *out_height, bool4 *out_fullscreen,int *out_fstype, bool4 *out_vsync, int *out_msaa, int *out_depth, bool4 *out_stencil, bool4 *out_resizable, int *out_minwidth, int *out_minheight, bool4 *out_borderless, bool4 *out_centered, int *out_display, bool4 *out_highdpi, double *out_refreshrate, bool4 *out_useposition, int *out_x, int *out_y)
     {
         WindowSettings settings;
         windowInstance->getWindow(*out_width, *out_height, settings);
@@ -513,7 +515,9 @@ namespace wrap
         *out_fullscreen = settings.fullscreen;
         *out_fstype = settings.fstype;
         *out_vsync = settings.vsync;
-        *out_msaa = settings.msaa;
+		*out_msaa = settings.msaa;
+		*out_depth = settings.depth;
+		*out_stencil = settings.stencil;
         *out_resizable = settings.resizable;
         *out_minwidth = settings.minwidth;
         *out_minheight = settings.minheight;
@@ -664,6 +668,26 @@ namespace wrap
     {
         *out_result = windowInstance->showMessageBox(title, message, (Window::MessageBoxType)type, attachToWindow);
     }
+
+	void wrap_love_dll_windows_showMessageBox_list(const char *title, const char *message, BytePtr* buttons, int buttonsLength, int enterButtonIndex, int escapebuttonIndex, int type, bool4 attachToWindow, int* out_index_returned)
+	{
+		Window::MessageBoxData data = {};
+
+		data.title = title;
+		data.message = message;
+
+		for (int i = 0; i < buttonsLength; i++)
+		{
+			data.buttons.push_back(buttons[i].data);
+		}
+
+		data.enterButtonIndex = enterButtonIndex;
+		data.escapeButtonIndex = escapebuttonIndex;
+		data.type = (Window::MessageBoxType)type;
+		data.attachToWindow = attachToWindow;
+
+		*out_index_returned = windowInstance->showMessageBox(data);
+	}
 
     void wrap_love_dll_windows_requestAttention(bool4 continuous)
     {

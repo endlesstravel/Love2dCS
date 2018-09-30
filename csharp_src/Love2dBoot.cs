@@ -5,6 +5,10 @@ using System;
 
 namespace Love
 {
+    /// <summary>
+    /// <para>继承本类，作为 Boot.Run 的启动参数。</para>
+    /// <para>Inherit this class as the startup parameter for Boot.Run()</para>
+    /// </summary>
     abstract public class Scene
     {
         /// <summary>
@@ -271,7 +275,7 @@ namespace Love
         /// <summary>
         /// Choose between "DeskTop" fullscreen or "Exclusive" fullscreen mode 
         /// </summary>
-        public Window.FullscreenType WindowFullscreen = Window.FullscreenType.DeskTop;
+        public FullscreenType WindowFullscreen = FullscreenType.DeskTop;
 
         /// <summary>
         /// Vertical sync mode
@@ -304,6 +308,7 @@ namespace Love
 
     /// <summary>
     /// LÖVE engine entrance class
+    /// <para>LÖVE 引擎入口类</para> 
     /// </summary>
     static public class Boot
     {
@@ -333,32 +338,30 @@ namespace Love
             }
 
             bool usePosition = bootConfig.WindowX != null && bootConfig.WindowY != null;
-            Window.SetMode(
-                bootConfig.WindowWidth,
-                bootConfig.WindowHeight,
-                bootConfig.WindowFullscreen == Window.FullscreenType.Exclusive,
-                bootConfig.WindowFullscreen,
-                bootConfig.WindowVsync,
-                bootConfig.WindowMSAA,
-                bootConfig.WindowResizable,
-                bootConfig.WindowMinWidth,
-                bootConfig.WindowMinHeight,
-                bootConfig.WindowBorderless,
-                bootConfig.WindowCentered,
-                bootConfig.WindowDisplay,
-                bootConfig.WindowHighdpi,
-                60,
-                usePosition,
-                bootConfig.WindowX != null ? (int)bootConfig.WindowX : 0,
-                bootConfig.WindowY != null ? (int)bootConfig.WindowY : 0
-                );
+
+            WindowSettings settings = new WindowSettings();
+
+            settings.fullscreenType = bootConfig.WindowFullscreen;
+            settings.vsync = bootConfig.WindowVsync;
+            settings.msaa = bootConfig.WindowMSAA;
+            settings.resizable = bootConfig.WindowResizable;
+            settings.minWidth = bootConfig.WindowMinWidth;
+            settings.minHeight = bootConfig.WindowMinHeight;
+            settings.borderless = bootConfig.WindowBorderless;
+            settings.centered = bootConfig.WindowCentered;
+            settings.display = bootConfig.WindowDisplay;
+            settings.highDpi = bootConfig.WindowHighdpi;
+            settings.useposition = usePosition;
+            settings.x = bootConfig.WindowX != null ? (int)bootConfig.WindowX : 0;
+            settings.y = bootConfig.WindowY != null ? (int)bootConfig.WindowY : 0;
+            Window.SetMode(bootConfig.WindowWidth, bootConfig.WindowHeight, settings);
 
             string str = FileSystem.GetExecutablePath();
             int index = str.LastIndexOf(@"\");
             if (index == -1)
                 index = str.LastIndexOf(@"/");
             string path = str.Substring(0, index);
-            Console.WriteLine(path);
+            Console.WriteLine($"FileSystem set source with path : {path}");
             FileSystem.SetSource(path);
         }
 
@@ -382,7 +385,7 @@ namespace Love
         }
 
         /// <summary>
-        /// LÖVE engine entry function
+        /// LÖVE engine entrance function
         /// </summary>
         /// <param name="scene">The way to run LÖVE engine</param>
         /// <param name="bootConfig">LÖVE engine boot config</param>
@@ -395,7 +398,7 @@ namespace Love
             }
             catch (Exception e)
             {
-                Window.ShowMessageBox("error", e.ToString(), Window.MessageBoxType.Error);
+                Window.ShowMessageBox("error", e.ToString(), MessageBoxType.Error);
             }
         }
     }

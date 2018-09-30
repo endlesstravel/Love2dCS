@@ -284,6 +284,10 @@ namespace Love
         }
     }
 
+    /// <summary>
+    /// <para></para>
+    /// <para></para>
+    /// </summary>
     public partial class Common
     {
         /// <summary>
@@ -297,6 +301,10 @@ namespace Love
             return DllTool.WSToStringAndRelease(out_str);
         }
 
+        /// <summary>
+        /// Gets the current running version code of LÖVE.
+        /// </summary>
+        /// <returns></returns>
         public static string GetVersionCodeName()
         {
             IntPtr out_str = IntPtr.Zero;
@@ -306,6 +314,10 @@ namespace Love
 
     }
 
+    /// <summary>
+    /// <para>提供高精度计时功能。</para>
+    /// <para>Provides high-resolution timing functionality.</para>
+    /// </summary>
     public partial class Timer
     {
         public static bool Init()
@@ -375,27 +387,13 @@ namespace Love
         }
     }
 
+    /// <summary>
+    /// <para>用于修改窗口和获取窗口信息。</para>
+    /// <para>Provides an interface for modifying and retrieving information about the program's window.</para>
+    /// </summary>
     public partial class Window
     {
-        public enum FullscreenType
-        {
-            /// <summary>
-            /// Standard exclusive-fullscreen mode. Changes the display mode (actual resolution) of the monitor.
-            /// </summary>
-            Exclusive,
-
-            /// <summary>
-            /// Sometimes known as borderless fullscreen windowed mode. A borderless screen-sized window is created which sits on top of all desktop UI elements. The window is automatically resized to match the dimensions of the desktop, and its size cannot be changed.
-            /// </summary>
-            DeskTop,
-        };
-
-        public enum MessageBoxType
-        {
-            Error,
-            Warning,
-            Info,
-        };
+        
 
         public static bool Init()
         {
@@ -403,173 +401,420 @@ namespace Love
             return res;
         }
 
+        /// <summary>
+        /// <para>获取当前显示器的数量。</para>
+        /// Gets the number of connected monitors.
+        /// </summary>
+        /// <returns></returns>
         public static int GetDisplayCount()
         {
             int out_count = 0;
             Love2dDll.wrap_love_dll_windows_getDisplayCount(out out_count);
             return out_count;
         }
+
+        /// <summary>
+        /// <para>获取显示器的名称。</para>
+        /// <para>Gets the name of a display.</para>
+        /// </summary>
+        /// <param name="displayindex"></param>
+        /// <returns></returns>
         public static string GetDisplayName(int displayindex)
         {
             IntPtr out_name = IntPtr.Zero;
             Love2dDll.wrap_love_dll_windows_getDisplayName(displayindex, out out_name);
             return DllTool.WSToStringAndRelease(out_name);
         }
-        public static void SetMode(int width, int height)
+
+        /// <summary>
+        /// <para>设置窗口的显示模式和属性。</para>
+        /// <para>如果width或height为0，则setMode将使用桌面的宽度和高度。</para>
+        /// <para>更改显示模式可能会产生副作用：例如，将清除 Canvas 并使用Shader：send发送到着色器的值将被删除。 如果需要，请务必事先保存 Canvas 的内容或之后重新绘制。</para>
+        /// <para>Sets the display mode and properties of the window.</para>
+        /// <para>If width or height is 0, setMode will use the width and height of the desktop.</para>
+        /// <para>Changing the display mode may have side effects: for example, canvases will be cleared and values sent to shaders with Shader:send will be erased. Make sure to save the contents of canvases beforehand or re-draw to them afterward if you need to.</para>
+        /// </summary>
+        /// <param name="width">Display width.</param>
+        /// <param name="height">Display height.</param>
+        /// <param name="flag"></param>
+        public static bool SetMode(int width, int height, WindowSettings flag = null)
         {
-            Love2dDll.wrap_love_dll_windows_setMode_w_h(width, height);
+            if (flag == null)
+            {
+                return Love2dDll.wrap_love_dll_windows_setMode_w_h(width, height);
+            }
+            return Love2dDll.wrap_love_dll_windows_setMode_w_h_setting(
+                width, height,
+                flag.fullscreen, (int)flag.fullscreenType, flag.vsync,
+                flag.msaa, flag.depth, flag.stencil, 
+                flag.resizable, flag.minWidth, flag.minHeight, 
+                flag.borderless, flag.centered, flag.display, 
+                flag.highDpi, flag.refreshrate, flag.useposition, flag.x, flag.y);
         }
-        public static void SetMode(int width, int height, bool fullscreen, FullscreenType fstype, bool vsync, int msaa, bool resizable, int minwidth, int minheight, bool borderless, bool centered, int display, bool highdpi, double refreshrate, bool useposition, int x, int y)
+
+        /// <summary>
+        /// Gets the display mode and properties of the window.
+        /// </summary>
+        /// <param name="out_width">Window width.</param>
+        /// <param name="out_height">Window height.</param>
+        /// <returns></returns>
+        public static WindowSettings GetMode(out int out_width, out int out_height)
         {
-            Love2dDll.wrap_love_dll_windows_setMode_w_h_setting(width, height, fullscreen, (int)fstype, vsync, msaa, resizable, minwidth, minheight, borderless, centered, display, highdpi, refreshrate, useposition, x, y);
+            WindowSettings flag = new WindowSettings();
+
+            int fullscreenType = 0;
+
+            Love2dDll.wrap_love_dll_windows_getMode(
+                out out_width, out out_height, 
+                out flag.fullscreen, out fullscreenType, out flag.vsync, 
+                out flag.msaa, out flag.depth, out flag.stencil,
+                out flag.resizable, out flag.minWidth,  out flag.minHeight,
+                out flag.borderless, out flag.centered, out flag.display, 
+                out flag.highDpi, out flag.refreshrate, out flag.useposition, out flag.x, out flag.y);
+
+            flag.fullscreenType = (FullscreenType)fullscreenType;
+
+
+            return flag;
         }
-        public static void GetMode(out int out_width, out int out_height, out bool out_fullscreen, out FullscreenType out_fstype, out bool out_vsync, out int out_msaa, out bool out_resizable, out int out_minwidth, out int out_minheight, out bool out_borderless, out bool out_centered, out int out_display, out bool out_highdpi, out double out_refreshrate, out bool out_useposition, out int out_x, out int out_y)
-        {
-            int outfstype;
-            Love2dDll.wrap_love_dll_windows_getMode(out out_width, out out_height, out out_fullscreen, out outfstype, out out_vsync, out out_msaa, out out_resizable, out out_minwidth, out out_minheight, out out_borderless, out out_centered, out out_display, out out_highdpi, out out_refreshrate, out out_useposition, out out_x, out out_y);
-            out_fstype = (FullscreenType)outfstype;
-        }
-        public static Int2[] GetFullscreenModes(int displayindex)
+
+        /// <summary>
+        /// Gets a list of supported fullscreen modes.
+        /// </summary>
+        /// <param name="displayindex">The index of the display, if multiple monitors are available.</param>
+        /// <returns></returns>
+        public static Int2[] GetFullscreenModes(int displayindex = 0)
         {
             IntPtr out_modes;
             int out_modes_length;
             Love2dDll.wrap_love_dll_windows_getFullscreenModes(displayindex, out out_modes, out out_modes_length);
             return DllTool.readInt2sAndRelease(out_modes, out_modes_length);
         }
-        public static bool SetFullscreen(bool fullscreen, FullscreenType fstype)
+
+        /// <summary>
+        /// Enters or exits fullscreen. The display to use when entering fullscreen is chosen based on which display the window is currently in, if multiple monitors are connected.
+        /// </summary>
+        /// <param name="fullscreen">Whether to enter or exit fullscreen mode.</param>
+        /// <param name="fstype">The type of fullscreen mode to use.</param>
+        /// <returns>True if an attempt to enter fullscreen was successful, false otherwise.</returns>
+        public static bool SetFullscreen(bool fullscreen, FullscreenType fstype = FullscreenType.Exclusive)
         {
             bool out_success = false;
             Love2dDll.wrap_love_dll_windows_setFullscreen(fullscreen, (int)fstype, out out_success);
             return out_success;
         }
+
+        /// <summary>
+        /// Gets whether the window is fullscreen.
+        /// </summary>
+        /// <param name="out_fullscreen">True if the window is fullscreen, false otherwise.</param>
+        /// <param name="out_fstype">The type of fullscreen mode used.</param>
         public static void GetFullscreen(out bool out_fullscreen, out FullscreenType out_fstype)
         {
             int t_out_fstype;
             Love2dDll.wrap_love_dll_windows_getFullscreen(out out_fullscreen, out t_out_fstype);
             out_fstype = (FullscreenType)t_out_fstype;
         }
+
+        /// <summary>
+        /// True if the window is open, false otherwise.
+        /// </summary>
+        /// <returns></returns>
         public static bool IsOpen()
         {
             bool out_isopen = false;
             Love2dDll.wrap_love_dll_windows_isOpen(out out_isopen);
             return out_isopen;
         }
+
+        /// <summary>
+        /// Closes the window. It can be reopened with love.window.setMode.
+        /// <para>love.graphics functions and objects will cause a hard crash of LÖVE if used while the window is closed.</para>
+        /// </summary>
         public static void Close()
         {
             Love2dDll.wrap_love_dll_windows_close();
         }
-        public static void GetDesktopDimensions(int displayindex, out int out_width, out int out_height)
+
+        /// <summary>
+        /// Gets the width and height of the desktop.
+        /// </summary>
+        /// <param name="displayIndex">The index of the display, if multiple monitors are available.</param>
+        public static Int2 GetDesktopDimensions(int displayIndex = 0)
         {
-            Love2dDll.wrap_love_dll_windows_getDesktopDimensions(displayindex, out out_width, out out_height);
+            int out_width, out_height;
+            Love2dDll.wrap_love_dll_windows_getDesktopDimensions(displayIndex, out out_width, out out_height);
+            return new Int2(out_width, out_height);
         }
-        public static void SetPosition(int x, int y, int displayindex)
+
+        /// <summary>
+        /// Sets the position of the window on the screen.
+        /// </summary>
+        /// <param name="x">The x-coordinate of the window's position.</param>
+        /// <param name="y">The y-coordinate of the window's position.</param>
+        /// <param name="displayindex">The window position is in the coordinate space of the specified display.</param>
+        public static void SetPosition(int x, int y, int displayindex = 0)
         {
             Love2dDll.wrap_love_dll_windows_setPosition(x, y, displayindex);
         }
-        public static void GetPosition(out int out_x, out int out_y, out int out_displayindex)
+
+        /// <summary>
+        /// Gets the position of the window on the screen
+        /// </summary>
+        /// <returns></returns>
+        public static Int2 GetPosition()
         {
+            int out_x, out_y, out_displayindex;
             Love2dDll.wrap_love_dll_windows_getPosition(out out_x, out out_y, out out_displayindex);
+            return new Int2(out_x, out_y);
         }
+
+        /// <summary>
+        /// Gets the position of the window on the screen.
+        /// And the index of the display that the window is in.
+        /// </summary>
+        /// <param name="out_displayindex"></param>
+        /// <returns></returns>
+        public static Int2 GetPosition(out int out_displayindex)
+        {
+            int out_x, out_y;
+            Love2dDll.wrap_love_dll_windows_getPosition(out out_x, out out_y, out out_displayindex);
+            return new Int2(out_x, out_y);
+        }
+
+        /// <summary>
+        /// Sets the window icon until the game is quit. Not all operating systems support very large icon images.
+        /// </summary>
+        /// <param name="imagedata">The window icon image.</param>
+        /// <returns></returns>
         public static bool SetIcon(ImageData imagedata)
         {
             bool out_success = false;
             Love2dDll.wrap_love_dll_windows_setIcon(imagedata.p, out out_success);
             return out_success;
         }
+
+        /// <summary>
+        /// The window icon imagedata, or nil if no icon has been set with love.window.setIcon.
+        /// </summary>
+        /// <returns></returns>
         public static ImageData GetIcon()
         {
             IntPtr out_imagedata = IntPtr.Zero;
             Love2dDll.wrap_love_dll_windows_getIcon(out out_imagedata);
             return LoveObject.NewObject<ImageData>(out_imagedata);
         }
+
+        /// <summary>
+        /// Sets whether the display is allowed to sleep while the program is running.
+        /// <para>Display sleep is disabled by default. Some types of input(e.g.joystick button presses) might not prevent the display from sleeping, if display sleep is allowed.</para>        
+        /// </summary>
+        /// <param name="enable">True to enable system display sleep, false to disable it.</param>
         public static void SetDisplaySleepEnabled(bool enable)
         {
             Love2dDll.wrap_love_dll_windows_setDisplaySleepEnabled(enable);
         }
+
+        /// <summary>
+        /// Gets whether the display is allowed to sleep while the program is running.
+        /// <para>Display sleep is disabled by default. Some types of input (e.g. joystick button presses) might not prevent the display from sleeping, if display sleep is allowed.</para>
+        /// </summary>
+        /// <returns></returns>
         public static bool IsDisplaySleepEnabled()
         {
             bool out_enable = false;
             Love2dDll.wrap_love_dll_windows_isDisplaySleepEnabled(out out_enable);
             return out_enable;
         }
+
+        /// <summary>
+        /// Sets the window title. (UTF-8 byte array version)
+        /// <para>Constantly updating the window title can lead to issues on some systems and therefore is discouraged.</para>
+        /// </summary>
+        /// <param name="titleStr">The new window title.(UTF-8 byte array)</param>
         public static void SetTitle(byte[] titleStr)
         {
             Love2dDll.wrap_love_dll_windows_setTitle(titleStr);
         }
+
+        /// <summary>
+        /// Gets the window title.
+        /// </summary>
+        /// <returns></returns>
         public static string GetTitle()
         {
             IntPtr out_title = IntPtr.Zero;
             Love2dDll.wrap_love_dll_windows_getTitle(out out_title);
             return DllTool.WSToStringAndRelease(out_title);
         }
+
+        /// <summary>
+        /// Checks if the game window has keyboard focus.
+        /// </summary>
+        /// <returns>True if the window has the focus or false if not.</returns>
         public static bool HasFocus()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_windows_hasFocus(out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// Checks if the game window has mouse focus.
+        /// </summary>
+        /// <returns>True if the window has mouse focus or false if not.</returns>
         public static bool HasMouseFocus()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_windows_hasMouseFocus(out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// Checks if the game window is visible.
+        /// <para>The window is considered visible if it's not minimized and the program isn't hidden.</para>
+        /// </summary>
+        /// <returns></returns>
         public static bool IsVisible()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_windows_isVisible(out out_result);
             return out_result;
         }
-        public static double GetPixelScale()
+
+        /// <summary>
+        /// <para>Gets the DPI scale factor associated with the window.</para>
+        /// <para>The pixel density inside the window might be greater (or smaller) than the "size" of the window. For example on a retina screen in Mac OS X with the highdpi window flag enabled, the window may take up the same physical size as an 800x600 window, but the area inside the window uses 1600x1200 pixels. love.window.getDPIScale() would return 2.0 in that case.</para>
+        /// <para>The love.window.fromPixels and love.window.toPixels functions can also be used to convert between units.</para>
+        /// <para>The highdpi window flag must be enabled to use the full pixel density of a Retina screen on Mac OS X and iOS. The flag currently does nothing on Windows and Linux, and on Android it is effectively always enabled.</para>
+        /// </summary>
+        /// <returns>The pixel scale factor associated with the window.</returns>
+        public static double GetDPIScale()
         {
             double out_result = 0;
             Love2dDll.wrap_love_dll_windows_getDPIScale(out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// <para>Converts a number from density-independent units to pixels.</para>
+        /// <para>The pixel density inside the window might be greater (or smaller) than the "size" of the window. For example on a retina screen in Mac OS X with the highdpi window flag enabled, the window may take up the same physical size as an 800x600 window, but the area inside the window uses 1600x1200 pixels. love.window.getDPIScale() would return 2.0 in that case.</para>
+        /// <para>The love.window.fromPixels and love.window.toPixels functions can also be used to convert between units.</para>
+        /// <para>The highdpi window flag must be enabled to use the full pixel density of a Retina screen on Mac OS X and iOS. The flag currently does nothing on Windows and Linux, and on Android it is effectively always enabled.</para>
+        /// <para>Most LÖVE functions return values and expect arguments in terms of pixels rather than density-independent units.</para>
+        /// </summary>
+        /// <param name="value">A number in density-independent units to convert to pixels.</param>
+        /// <returns>The converted number, in pixels.</returns>
         public static double ToPixels(double value)
         {
             double out_result = 0;
             Love2dDll.wrap_love_dll_windows_toPixels(value, out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// <para>Converts a number from pixels to density-independent units.</para>
+        /// <para>The pixel density inside the window might be greater (or smaller) than the "size" of the window. For example on a retina screen in Mac OS X with the highdpi window flag enabled, the window may take up the same physical size as an 800x600 window, but the area inside the window uses 1600x1200 pixels. love.window.getDPIScale() would return 2.0 in that case.</para>
+        /// <para>The love.window.fromPixels and love.window.toPixels functions can also be used to convert between units.</para>
+        /// <para>The highdpi window flag must be enabled to use the full pixel density of a Retina screen on Mac OS X and iOS. The flag currently does nothing on Windows and Linux, and on Android it is effectively always enabled.</para>
+        /// <para>Most LÖVE functions return values and expect arguments in terms of pixels rather than density-independent units.</para>
+        /// </summary>
+        /// <param name="pixelvalue">A number in pixels to convert to density-independent units.</param>
+        /// <returns>The converted number, in density-independent units.</returns>
         public static double FromPixels(double pixelvalue)
         {
             double out_result = 0;
             Love2dDll.wrap_love_dll_windows_fromPixels(pixelvalue, out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// <para>Minimizes the window to the system's task bar / dock.</para>
+        /// </summary>
         public static void Minimize()
         {
             Love2dDll.wrap_love_dll_windows_minimize();
         }
+
+        /// <summary>
+        /// <para>Makes the window as large as possible.</para>
+        /// <para>This function has no effect if the window isn't resizable, since it essentially programmatically presses the window's "maximize" button.</para>
+        /// </summary>
         public static void Maximize()
         {
             Love2dDll.wrap_love_dll_windows_maximize();
         }
+
+        /// <summary>
+        /// <para>Gets whether the Window is currently maximized.</para>
+        /// <para>The window can be maximized if it is not fullscreen and is resizable, and either the user has pressed the window's Maximize button or love.window.maximize has been called.</para>
+        /// </summary>
+        /// <returns>True if the window is currently maximized in windowed mode, false otherwise.</returns>
         public static bool IsMaximized()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_windows_isMaximized(out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// Displays a simple message box with a single 'OK' button. (UTF-8 version)
+        /// <para>	This function will pause all execution of the main thread until the user has clicked a button to exit the message box. Calling the function from a different thread may cause love to crash.</para>
+        /// </summary>
+        /// <param name="title">The title of the message box. (UTF-8 byte array)</param>
+        /// <param name="message">The text inside the message box. (UTF-8 byte array)</param>
+        /// <param name="msgbox_type">The type of the message box.</param>
+        /// <param name="attachToWindow">Whether the message box should be attached to the love window or free-floating.</param>
+        /// <returns>Whether the message box was successfully displayed.</returns>
         public static bool ShowMessageBox(byte[] title, byte[] message, MessageBoxType msgbox_type, bool attachToWindow = true)
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_windows_showMessageBox(title, message, (int)msgbox_type, attachToWindow, out out_result);
             return out_result;
         }
-        public static void RequestAttention(bool continuous)
+
+        /// <summary>
+        /// Displays a message box with a customized list of buttons.
+        /// <para>	This function will pause all execution of the main thread until the user has clicked a button to exit the message box. Calling the function from a different thread may cause love to crash.</para>
+        /// </summary>
+        /// <param name="title">The title of the message box.</param>
+        /// <param name="message">The text inside the message box.</param>
+        /// <param name="buttonName"></param>
+        /// <param name="enterButtonIndex"> when the user presses 'enter', which button index should be return </param>
+        /// <param name="escapebuttonIndex"> when the user presses 'escapeb', which button index should be return </param>
+        /// <param name="msgbox_type">The type of the message box.</param>
+        /// <param name="attachToWindow">Whether the message box should be attached to the love window or free-floating.</param>
+        /// <returns>The index of the button pressed by the user. May be 0 if the message box dialog was closed without pressing a button.</returns>
+        public static int ShowMessageBox(string title, string message, string[] buttonName, int enterButtonIndex, int escapebuttonIndex, MessageBoxType msgbox_type = MessageBoxType.Info, bool attachToWindow = true)
+        {
+            int out_index_returned = 0;
+            DllTool.ExecuteStringArray(buttonName, (temp) => {
+                Love2dDll.wrap_love_dll_windows_showMessageBox_list(
+                    DllTool.ToUTF8Bytes(title), DllTool.ToUTF8Bytes(message),
+                    temp, temp.Length, enterButtonIndex, escapebuttonIndex,
+                    (int)msgbox_type, attachToWindow, out out_index_returned);
+            });
+            return out_index_returned;
+        }
+
+        /// <summary>
+        /// Causes the window to request the attention of the user if it is not in the foreground.
+        /// <para>In Windows the taskbar icon will flash, and in OS X the dock icon will bounce.</para>
+        /// </summary>
+        /// <param name="continuous"></param>
+        public static void RequestAttention(bool continuous = false)
         {
             Love2dDll.wrap_love_dll_windows_requestAttention(continuous);
         }
-        public static void WindowToPixelCoords(out double out_x, out double out_y)
-        {
-            Love2dDll.wrap_love_dll_windows_windowToPixelCoords(out out_x, out out_y);
-        }
-        public static void PixelToWindowCoords(out double x, out double y)
-        {
-            Love2dDll.wrap_love_dll_windows_pixelToWindowCoords(out x, out y);
-        }
+
+        //public static void WindowToPixelCoords(out double out_x, out double out_y)
+        //{
+        //    Love2dDll.wrap_love_dll_windows_windowToPixelCoords(out out_x, out out_y);
+        //}
+        //public static void PixelToWindowCoords(out double x, out double y)
+        //{
+        //    Love2dDll.wrap_love_dll_windows_pixelToWindowCoords(out x, out y);
+        //}
     }
 
     public partial class Mouse
@@ -2130,7 +2375,7 @@ namespace Love
         public static bool Init()
         {
             Love2dDll.wrap_love_dll_graphics_open_love_graphics();
-            Love.Love2dGraphicsShaderBoot.init();
+            Love.Love2dGraphicsShaderBoot.Init();
             return true;
         }
 

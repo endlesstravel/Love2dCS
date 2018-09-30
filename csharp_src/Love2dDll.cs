@@ -310,16 +310,16 @@ namespace Love
             return CheckCAPIException(_wrap_love_dll_windows_setMode_w_h(width, height));
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_windows_setMode_w_h_setting")]
-        internal extern static bool _wrap_love_dll_windows_setMode_w_h_setting(int width, int height, bool fullscreen, int fstype, bool vsync, int msaa, bool resizable, int minwidth, int minheight, bool borderless, bool centered, int display, bool highdpi, double refreshrate, bool useposition, int x, int y);
-        internal static bool wrap_love_dll_windows_setMode_w_h_setting(int width, int height, bool fullscreen, int fstype, bool vsync, int msaa, bool resizable, int minwidth, int minheight, bool borderless, bool centered, int display, bool highdpi, double refreshrate, bool useposition, int x, int y)
+        internal extern static bool _wrap_love_dll_windows_setMode_w_h_setting(int width, int height, bool fullscreen, int fstype, bool vsync, int msaa, int depth, bool stencil, bool resizable, int minwidth, int minheight, bool borderless, bool centered, int display, bool highdpi, double refreshrate, bool useposition, int x, int y);
+        internal static bool wrap_love_dll_windows_setMode_w_h_setting(int width, int height, bool fullscreen, int fstype, bool vsync, int msaa, int depth, bool stencil, bool resizable, int minwidth, int minheight, bool borderless, bool centered, int display, bool highdpi, double refreshrate, bool useposition, int x, int y)
         {
-            return CheckCAPIException(_wrap_love_dll_windows_setMode_w_h_setting(width, height, fullscreen, fstype, vsync, msaa, resizable, minwidth, minheight, borderless, centered, display, highdpi, refreshrate, useposition, x, y));
+            return CheckCAPIException(_wrap_love_dll_windows_setMode_w_h_setting(width, height, fullscreen, fstype, vsync, msaa, depth, stencil, resizable, minwidth, minheight, borderless, centered, display, highdpi, refreshrate, useposition, x, y));
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_windows_getMode")]
-        internal extern static void _wrap_love_dll_windows_getMode(out int out_width, out int out_height, out bool out_fullscreen, out int out_fstype, out bool out_vsync, out int out_msaa, out bool out_resizable, out int out_minwidth, out int out_minheight, out bool out_borderless, out bool out_centered, out int out_display, out bool out_highdpi, out double out_refreshrate, out bool out_useposition, out int out_x, out int out_y);
-        internal static void wrap_love_dll_windows_getMode(out int out_width, out int out_height, out bool out_fullscreen, out int out_fstype, out bool out_vsync, out int out_msaa, out bool out_resizable, out int out_minwidth, out int out_minheight, out bool out_borderless, out bool out_centered, out int out_display, out bool out_highdpi, out double out_refreshrate, out bool out_useposition, out int out_x, out int out_y)
+        internal extern static void _wrap_love_dll_windows_getMode(out int out_width, out int out_height, out bool out_fullscreen, out int out_fstype, out bool out_vsync, out int out_msaa, out int out_depth, out bool out_stencil, out bool out_resizable, out int out_minwidth, out int out_minheight, out bool out_borderless, out bool out_centered, out int out_display, out bool out_highdpi, out double out_refreshrate, out bool out_useposition, out int out_x, out int out_y);
+        internal static void wrap_love_dll_windows_getMode(out int out_width, out int out_height, out bool out_fullscreen, out int out_fstype, out bool out_vsync, out int out_msaa, out int out_depth, out bool out_stencil, out bool out_resizable, out int out_minwidth, out int out_minheight, out bool out_borderless, out bool out_centered, out int out_display, out bool out_highdpi, out double out_refreshrate, out bool out_useposition, out int out_x, out int out_y)
         {
-            _wrap_love_dll_windows_getMode(out out_width, out out_height, out out_fullscreen, out out_fstype, out out_vsync, out out_msaa, out out_resizable, out out_minwidth, out out_minheight, out out_borderless, out out_centered, out out_display, out out_highdpi, out out_refreshrate, out out_useposition, out out_x, out out_y);
+            _wrap_love_dll_windows_getMode(out out_width, out out_height, out out_fullscreen, out out_fstype, out out_vsync, out out_msaa, out out_depth, out out_stencil, out out_resizable, out out_minwidth, out out_minheight, out out_borderless, out out_centered, out out_display, out out_highdpi, out out_refreshrate, out out_useposition, out out_x, out out_y);
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_windows_getFullscreenModes")]
         internal extern static void _wrap_love_dll_windows_getFullscreenModes(int displayindex, out IntPtr out_modes, out int out_modes_length);
@@ -464,6 +464,12 @@ namespace Love
         internal static void wrap_love_dll_windows_showMessageBox(byte[] title, byte[] message, int type, bool attachToWindow, out bool out_result)
         {
             _wrap_love_dll_windows_showMessageBox(title, message, type, attachToWindow, out out_result);
+        }
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_windows_showMessageBox_list")]
+        internal extern static void _wrap_love_dll_windows_showMessageBox_list(byte[] title, byte[] message, BytePtr[] buttonName, int buttonsLength, int enterButtonIndex, int escapebuttonIndex, int type, bool attachToWindow, out int out_index_returned);
+        internal static void wrap_love_dll_windows_showMessageBox_list(byte[] title, byte[] message, BytePtr[] buttonName, int buttonsLength, int enterButtonIndex, int escapebuttonIndex, int type, bool attachToWindow, out int out_index_returned)
+        {
+            _wrap_love_dll_windows_showMessageBox_list(title, message, buttonName, buttonsLength, enterButtonIndex, escapebuttonIndex, type, attachToWindow, out out_index_returned);
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_windows_requestAttention")]
         internal extern static void _wrap_love_dll_windows_requestAttention(bool continuous);
