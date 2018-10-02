@@ -72,16 +72,16 @@ namespace Love
     public partial class Audio
     {
         //// new plus
-        public static Source NewSource(File file, Source.Type type)
+        public static Source NewSource(File file, SourceType type)
         {
             var sounddata = Sound.NewSoundData(file);
             return NewSource(sounddata, type);
         }
-        public static Source NewSource(FileData fdata, Source.Type type)
+        public static Source NewSource(FileData fdata, SourceType type)
         {
             return NewSource(Sound.NewDecoder(fdata), type);
         }
-        public static Source NewSource(string filename, Source.Type type)
+        public static Source NewSource(string filename, SourceType type)
         {
             //return NewSource(FileSystem.NewFile(filename));
             var file = FileSystem.NewFile(filename);
@@ -105,6 +105,16 @@ namespace Love
         }
     }
 
+    public partial class Mouse
+    {
+        public static Float2 GetPosition()
+        {
+            double out_x, out_y;
+            Love2dDll.wrap_love_dll_mouse_getPosition(out out_x, out out_y);
+            return new Float2((float)out_x, (float)out_y);
+        }
+    }
+
     public partial class Font
     {
         public static Rasterizer NewRasterizer(string filename)
@@ -122,6 +132,58 @@ namespace Love
             var file = FileSystem.NewFile(filename);
             return NewVideoStream(file);
         }
+
+        /// <summary>
+        /// Starts playing the Video.
+        /// </summary>
+        public void Play()
+        {
+            GetStream().Play();
+        }
+
+        /// <summary>
+        /// Pauses the Video.
+        /// </summary>
+        public void Pause()
+        {
+            GetStream().Pause();
+        }
+
+        /// <summary>
+        /// Sets the current playback position of the Video.
+        /// </summary>
+        /// <param name="offset"></param>
+        public void Seek(double offset)
+        {
+            GetStream().Seek(offset);
+        }
+
+        /// <summary>
+        /// Rewinds the Video to the beginning.
+        /// </summary>
+        public void Rewind()
+        {
+            GetStream().Rewind();
+        }
+
+        /// <summary>
+        /// Gets the current playback position of the Video.
+        /// </summary>
+        /// <returns></returns>
+        public double Tell()
+        {
+            return GetStream().Tell();
+        }
+
+        /// <summary>
+        /// Gets whether the Video is currently playing.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsPlaying()
+        {
+            return GetStream().IsPlaying();
+        }
+
     }
 
     public partial class Graphics
@@ -235,6 +297,8 @@ namespace Love
             return NewFont(rasterizer);
         }
 
+
+
         /// <summary>
         /// Draws an arc using the "pie" ArcType.
         /// </summary>
@@ -307,8 +371,13 @@ namespace Love
             Print(new ColoredStringArray(coloredStr), x, y, angle, sx, sy, ox, oy, kx, ky);
         }
 
+
         /// <summary>
-        /// 
+        /// <para> Draws formatted text, with word wrap and alignment.</para>
+        /// <para> See additional notes in love.graphics.print. </para>
+        /// <para>In version 0.9.2 and earlier, wrapping was implemented by breaking up words by spaces and putting them back together to make sure things fit nicely within the limit provided. However, due to the way this is done, extra spaces between words would end up missing when printed on the screen, and some lines could overflow past the provided wrap limit. In version 0.10.0 and newer this is no longer the case.</para>
+        /// <para>Aligning does not work as one might expect! It doesn't align to the x/y coordinates given, but in a rectangle, where the limit is the width.</para>
+        /// <para>Text may appear blurry if it's rendered at non-integer pixel locations.</para>
         /// </summary>
         /// <param name="coloredStr">A text string.</param>
         /// <param name="x">The position on the x-axis.</param>
@@ -322,9 +391,9 @@ namespace Love
         /// <param name="oy">Origin offset (y-axis).</param>
         /// <param name="kx">Shearing factor (x-axis).</param>
         /// <param name="ky">Shearing factor (y-axis).</param>
-        public static void Printf(ColoredString[] coloredStr, float x, float y, float wrap, Font.AlignMode align_type = Font.AlignMode.Left, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public static void Printf(string text, float x, float y, float wrap, Font.AlignMode align_type = Font.AlignMode.Left, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
-            Printf(new ColoredStringArray(coloredStr), x, y, wrap, align_type, angle, sx, sy, ox, oy, kx, ky);
+            Printf(ColoredStringArray.Create(text), x, y, wrap, align_type, angle, sx, sy, ox, oy, kx, ky);
         }
 
         /// <summary>

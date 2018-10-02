@@ -452,6 +452,33 @@ namespace Love
                 flag.highDpi, flag.refreshrate, flag.useposition, flag.x, flag.y);
         }
 
+
+        /// <summary>
+        /// <para>设置窗口的显示模式和属性。</para>
+        /// <para>如果width或height为0，则setMode将使用桌面的宽度和高度。</para>
+        /// <para>更改显示模式可能会产生副作用：例如，将清除 Canvas 并使用Shader：send发送到着色器的值将被删除。 如果需要，请务必事先保存 Canvas 的内容或之后重新绘制。</para>
+        /// <para>Sets the display mode and properties of the window.</para>
+        /// <para>If width or height is 0, setMode will use the width and height of the desktop.</para>
+        /// <para>Changing the display mode may have side effects: for example, canvases will be cleared and values sent to shaders with Shader:send will be erased. Make sure to save the contents of canvases beforehand or re-draw to them afterward if you need to.</para>
+        /// </summary>
+        /// <param name="flag"></param>
+        public static bool SetMode(WindowSettings flag = null)
+        {
+            int w, h;
+            GetMode(out w, out h);
+            return SetMode(w, h, flag);
+        }
+
+        /// <summary>
+        /// Gets the display mode and properties of the window.
+        /// </summary>
+        /// <returns></returns>
+        public static WindowSettings GetMode()
+        {
+            int t;
+            return GetMode(out t, out t);
+        }
+
         /// <summary>
         /// Gets the display mode and properties of the window.
         /// </summary>
@@ -477,6 +504,8 @@ namespace Love
 
             return flag;
         }
+
+        
 
         /// <summary>
         /// Gets a list of supported fullscreen modes.
@@ -2011,13 +2040,13 @@ namespace Love
         //// raw *new*
         // filename -> file -> filedata -> decoder -> source 
         //             file -> sounddata -> 
-        public static Source NewSource(Decoder decoder, Source.Type type)
+        public static Source NewSource(Decoder decoder, SourceType type)
         {
             IntPtr out_decoder_ptr;
             Love2dDll.wrap_love_dll_audio_newSource_decoder(decoder.p, (int)type, out out_decoder_ptr);
             return LoveObject.NewObject<Source>(out_decoder_ptr);
         }
-        public static Source NewSource(SoundData sd, Source.Type type)
+        public static Source NewSource(SoundData sd, SourceType type)
         {
             IntPtr out_decoder_ptr;
             Love2dDll.wrap_love_dll_audio_newSource_sounddata(sd.p, (int)type, out out_decoder_ptr);
@@ -2046,8 +2075,10 @@ namespace Love
         {
             Love2dDll.wrap_love_dll_audio_pause();
         }
-        public static void Play(Source[] sources)
+        public static void Play(params Source[] sources)
         {
+            Check.ArgumentNull(sources);
+
             IntPtr[] ptrs = new IntPtr[sources.Length];
             for (int i = 0; i < sources.Length; i++)
             {
@@ -2356,18 +2387,6 @@ namespace Love
             /// The maximum number of antialiasing samples for a Canvas.
             /// </summary>
             CanvasMSAA,
-        };
-        public enum StackType : int
-        {
-            /// <summary>
-            /// All Love.Graphics state, including transform state.
-            /// </summary>
-            All,
-
-            /// <summary>
-            /// The transformation stack (Love.Graphics.translate, Love.Graphics.rotate, etc.)
-            /// </summary>
-            Transform,
         };
 
         #region graphics Object Creation
@@ -3128,6 +3147,7 @@ namespace Love
                 Love2dDll.wrap_love_dll_graphics_print(tmp.Item1, tmp.Item2, coloredStr.Length, x, y, angle, sx, sy, ox, oy, kx, ky);
             });
         }
+
         public static void Printf(ColoredStringArray coloredStr, float x, float y, float wrap, Font.AlignMode align_type, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
             coloredStr.ExecResource((tmp) =>{

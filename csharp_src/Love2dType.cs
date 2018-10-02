@@ -56,12 +56,6 @@ namespace Love
 
     public partial class Source : LoveObject
     {
-        public enum Type : int
-        {
-            Static = 0,
-            Stream,
-        };
-
         public enum TimeUnit : int
         {
             Seconds = 0,
@@ -222,11 +216,11 @@ namespace Love
             Love2dDll.wrap_love_dll_type_Source_getChannelCount(p, out out_chanels);
             return out_chanels;
         }
-        public Type GetSourceType()
+        public SourceType GetSourceType()
         {
             int out_type = 0;
             Love2dDll.wrap_love_dll_type_Source_getType(p, out out_type);
-            return (Type)out_type;
+            return (SourceType)out_type;
         }
     }
 
@@ -1319,13 +1313,26 @@ namespace Love
             Love2dDll.wrap_love_dll_type_Text_getFont(p, out font);
             return NewObject<Font>(font);
         }
-        public int GetWidth(int index)
+
+        /// <summary>
+        /// Gets the width of the text in pixels.
+        /// </summary>
+        /// <param name="index">An index number returned by Text:add or Text:addf.</param>
+        /// <returns>The width of the sub-string (before scaling and other transformations).</returns>
+        public int GetWidth(int index = 0)
         {
             int out_w = 0;
             Love2dDll.wrap_love_dll_type_Text_getWidth(p, index, out out_w);
             return out_w;
         }
-        public int GetHeight(int index)
+
+
+        /// <summary>
+        /// Gets the height of the text in pixels.
+        /// </summary>
+        /// <param name="index">An index number returned by Text:add or Text:addf.</param>
+        /// <returns>The height of the sub-string (before scaling and other transformations).</returns>
+        public int GetHeight(int index = 0)
         {
             int out_h = 0;
             Love2dDll.wrap_love_dll_type_Text_getHeight(p, index, out out_h);

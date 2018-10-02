@@ -1,6 +1,25 @@
 ﻿namespace Love
 {
 
+    public enum SourceType : int
+    {
+        Static = 0,
+        Stream,
+    };
+
+    public enum StackType : int
+    {
+        /// <summary>
+        /// All Love.Graphics state, including transform state.
+        /// </summary>
+        All,
+
+        /// <summary>
+        /// The transformation stack (Love.Graphics.translate, Love.Graphics.rotate, etc.)
+        /// </summary>
+        Transform,
+    };
+
     /// <summary>
     /// <para>全屏模式的类型。</para>
     /// <para>Types of fullscreen modes.</para>

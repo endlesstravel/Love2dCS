@@ -328,6 +328,7 @@ namespace Love
             Audio.Init();
             Font.Init();
             Image.Init();
+            Video.Init();
             Window.Init();
             Graphics.Init();
 
