@@ -1,6 +1,22 @@
 ﻿namespace Love
 {
     /// <summary>
+    /// Units that represent time.
+    /// </summary>
+    public enum TimeUnit : int
+    {
+        /// <summary>
+        /// Regular seconds.
+        /// </summary>
+        Seconds = 0,
+
+        /// <summary>
+        /// Audio samples.
+        /// </summary>
+        Samples,
+    };
+
+    /// <summary>
     /// All the keys you can press. Note that some keys may not be available on your keyboard or system.
     /// </summary>
     public enum KeyConstant : int

@@ -1763,15 +1763,17 @@ namespace Love
 
     public partial class Video
     {
-        //// raw new
+        /// <summary>
+        /// Creates a new VideoStream. Currently only Ogg Theora video files are supported. VideoStreams can't draw videos, see love.graphics.newVideo for that.
+        /// </summary>
+        /// <param name="file">The File object containing the Ogg Theora video.</param>
+        /// <returns>A new VideoStream.</returns>
         public static VideoStream NewVideoStream(File file)
         {
             IntPtr out_videostream;
             Love2dDll.wrap_love_dll_newVideoStream(file.p, out out_videostream);
             return LoveObject.NewObject<VideoStream>(out_videostream);
         }
-        //// end raw new
-
 
         public static bool Init()
         {
@@ -2023,11 +2025,26 @@ namespace Love
             return LoveObject.NewObject<Text>(out_text);
         }
 
-        public static Video NewVideo(VideoStream videoStream)
+        /// <summary>
+        /// Creates a new drawable Video. Currently only Ogg Theora video files are supported.
+        /// </summary>
+        /// <param name="videoStream"> a VideoStream object </param>
+        /// <param name="audio">Whether to try to load the video's audio into an audio Source. If not explicitly set to true or false, it will try without causing an error if the video has no audio.</param>
+        /// <param name="dipScale">The DPI scale factor of the video. if it was null, value will be Graphics.GetDPIScale()</param>
+        /// <returns></returns>
+        public static Video NewVideo(VideoStream videoStream, bool audio = true, float? dipScale = null)
         {
             IntPtr out_video = IntPtr.Zero;
-            Love2dDll.wrap_love_dll_graphics_newVideo(videoStream.p, out out_video);
-            return LoveObject.NewObject<Video>(out_video);
+            Love2dDll.wrap_love_dll_graphics_newVideo(videoStream.p, dipScale == null ? GetDPIScale() : dipScale.Value, out out_video);
+            var video = LoveObject.NewObject<Video>(out_video);
+
+            if (audio)
+            {
+                var source = Audio.NewSource(videoStream.GetFilename(), SourceType.Stream);
+                video.SetSource(source);
+            }
+
+            return video;
         }
 
         #endregion

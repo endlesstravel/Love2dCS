@@ -6,6 +6,7 @@ namespace Love
     abstract class Stage
     {
         virtual public void OnLoad() { }
+        virtual public void OnKeyPressed(KeyConstant key) { }
         virtual public void OnUpdate(float dt) { }
         virtual public void OnDraw() { }
         virtual public void OnPause() { }
@@ -47,11 +48,24 @@ namespace Love
             bgm.Play();
         }
 
-        public override void OnUpdate(float dt)
+        public override void OnPause()
         {
-            if (Keyboard.IsDown(KeyConstant.P))
+            if (bgm != null)
             {
-                if( bgm.IsPlaying() == false )
+                bgm.Pause();
+            }
+        }
+
+        public override void OnReOpne()
+        {
+            Audio.Play(bgm);
+        }
+
+        public override void OnKeyPressed(KeyConstant key)
+        {
+            if (key == KeyConstant.P)
+            {
+                if (bgm.IsPlaying() == false)
                 {
                     Audio.Play(bgm);
                 }
@@ -60,13 +74,39 @@ namespace Love
                     bgm.Pause();
                 }
             }
+
+            if (key == KeyConstant.S)
+            {
+                bgm.Seek(0, TimeUnit.Seconds);
+            }
+
+
+            if (key == KeyConstant.R)
+            {
+                bgm.SetRelative(!bgm.IsRelative());
+            }
+
+            if (key == KeyConstant.Left)
+            {
+                var pos = bgm.GetPosition();
+                bgm.SetPosition(pos.x - 30, pos.y, pos.z);
+            }
+
+            if (key == KeyConstant.Right)
+            {
+                var pos = bgm.GetPosition();
+                bgm.SetPosition(pos.x + 30, pos.y, pos.z);
+            }
         }
 
         public override void OnDraw()
         {
             string[] strs =
             {
-                "[P] : pause / play music",
+                "[P] :pause / play music",
+                "[R] :set telative true",
+                "[Left] :set pos x - 30",
+                "[Right] :set pos x + 30",
                 bgm.IsPlaying() ? "music playing ..." : "pause",
             };
             Graphics.SetColor(0, 0, 0);
@@ -81,7 +121,19 @@ namespace Love
 
         public override void OnReOpne()
         {
-            video.Play();
+            if (video != null)
+            {
+                video.Rewind();
+                video.Play();
+            }
+        }
+
+        public override void OnPause()
+        {
+            if (video != null)
+            {
+                video.Pause();
+            }
         }
 
         public override void OnLoad()
@@ -89,15 +141,34 @@ namespace Love
             var vstream = Video.NewVideoStream("res/small.ogv");
             video = Graphics.NewVideo(vstream);
             video.Play();
+            var source = video.GetSource();
+            Console.Write(source.ToString());
         }
 
         public override void OnDraw()
         {
             Graphics.Draw(video, 10, 50);
+            string[] str =
+            {
+                "[R]: seek(0)",
+                $"name:{video.GetStream().GetFilename()}",
+                $"playing:{video.IsPlaying()}",
+                $"tell:{video.Tell()}",
+            };
+            Graphics.Print(string.Join("   ", str), 10, 5);
         }
 
         public override void OnUpdate(float dt)
         {
+            video.SetSource(video.GetSource());
+        }
+
+        public override void OnKeyPressed(KeyConstant key)
+        {
+            if (key == KeyConstant.R)
+            {
+                video.Seek(0);
+            }
         }
     }
 
@@ -261,6 +332,20 @@ namespace Love
                 Graphics.Pop();
             }
 
+            bool lastIsDown = false;
+            bool isDown = false;
+            public void Update()
+            {
+                if (lastIsDown == false && Mouse.IsDown(1))
+                {
+                    isDown = true;
+                }
+                else
+                {
+                    isDown = false;
+                }
+                lastIsDown = Mouse.IsDown(1);
+            }
 
             public bool IsHover()
             {
@@ -270,8 +355,7 @@ namespace Love
 
             public bool IsDown()
             {
-                var mdown = Mouse.IsDown(1);
-                return mdown && IsHover();
+                return isDown && IsHover();
             }
         }
 
@@ -302,27 +386,50 @@ namespace Love
 
         public override void Update(float dt)
         {
-            if (currentStage != null)
+            foreach (var container in list)
             {
-                currentStage.OnUpdate(dt);
+                container.Update();
             }
 
             foreach (var container in list)
             {
                 if (container.IsDown())
                 {
-                    currentStage = container.GetStage();
-                    if (loaded.Contains(currentStage) == false)
+                    if ( currentStage != container.GetStage() )
                     {
-                        currentStage.OnLoad();
-                        loaded.Add(currentStage);
+                        if (currentStage != null)
+                        {
+                            currentStage.OnPause();
+                        }
+
+                        currentStage = container.GetStage();
+
+                        if (loaded.Contains(currentStage) == false)
+                        {
+                            currentStage.OnLoad();
+                            loaded.Add(currentStage);
+                        }
+                        else
+                        {
+                            currentStage.OnReOpne();
+                        }
                     }
-                    else
-                    {
-                        currentStage.OnReOpne();
-                    }
-                    break;
+                    return;
                 }
+            }
+
+
+            if (currentStage != null)
+            {
+                currentStage.OnUpdate(dt);
+            }
+        }
+
+        public override void KeyPressed(KeyConstant key, Scancode scancode, bool isRepeat)
+        {
+            if (currentStage != null)
+            {
+                currentStage.OnKeyPressed(key);
             }
         }
 

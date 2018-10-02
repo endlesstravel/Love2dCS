@@ -1245,10 +1245,10 @@ namespace Love
             return CheckCAPIException(_wrap_love_dll_graphics_newText(font, coloredStringText, coloredStringColor, coloredStringLength, out out_text));
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_newVideo")]
-        internal extern static bool _wrap_love_dll_graphics_newVideo(IntPtr videoStream, out IntPtr out_video);
-        internal static bool wrap_love_dll_graphics_newVideo(IntPtr videoStream, out IntPtr out_video)
+        internal extern static bool _wrap_love_dll_graphics_newVideo(IntPtr videoStream, float dpiScale, out IntPtr out_video);
+        internal static bool wrap_love_dll_graphics_newVideo(IntPtr videoStream, float dpiScale, out IntPtr out_video)
         {
-            return CheckCAPIException(_wrap_love_dll_graphics_newVideo(videoStream, out out_video));
+            return CheckCAPIException(_wrap_love_dll_graphics_newVideo(videoStream, dpiScale, out out_video));
         }
 
 
@@ -3281,6 +3281,12 @@ namespace Love
         #endregion
         #region  type - VideoStream
 
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_VideoStream_setSync")]
+        internal extern static void _wrap_love_dll_type_VideoStream_setSync(IntPtr p, IntPtr source);
+        internal static void wrap_love_dll_type_VideoStream_setSync(IntPtr p, IntPtr source)
+        {
+            _wrap_love_dll_type_VideoStream_setSync(p, source);
+        }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_VideoStream_getFilename")]
         internal extern static void _wrap_love_dll_type_VideoStream_getFilename(IntPtr p, out IntPtr out_filename);
         internal static void wrap_love_dll_type_VideoStream_getFilename(IntPtr p, out IntPtr out_filename)

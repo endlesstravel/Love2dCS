@@ -80,8 +80,8 @@ Next to development
 | Thread        | 00%     |      00%       |        |                |
 | Timer         | 80%     |      00%       |        |                |
 | Touch         | 80%     |      00%       |        |                |
-| Video         | 00%     |      00%       |   not passed     |        Need To repair        |
-| Window        | 80%     |      80%      |        |                |
+| Video         | 80%     |      80%       |   70% passed     |        Need To more test        |
+| Window        | 80%     |      80%       |        |                |
 
 Documentation
 ---
