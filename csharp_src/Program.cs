@@ -44,12 +44,12 @@ namespace Love
         {
             // https://opengameart.org/content/prepare-your-swords
             bgm = Audio.NewSource("res/prepare_your_swords.ogg", SourceType.Stream);
-            Audio.Play(bgm);
+            bgm.Play();
         }
 
         public override void OnUpdate(float dt)
         {
-            if (Keyboard.IsDown(Keyboard.Key.P))
+            if (Keyboard.IsDown(KeyConstant.P))
             {
                 if( bgm.IsPlaying() == false )
                 {
@@ -326,19 +326,19 @@ namespace Love
             }
         }
 
-        public override void KeyReleased(Keyboard.Key key, Keyboard.Scancode scancode)
+        public override void KeyReleased(KeyConstant key, Scancode scancode)
         {
-            if (key == Keyboard.Key.Space)
+            if (key == KeyConstant.Space)
             {
                 Window.SetFullscreen(!Window.GetFullscreen());
             }
 
-            if (key == Keyboard.Key.Escape)
+            if (key == KeyConstant.Escape)
             {
                 Event.Quit();
             }
 
-            if (key == Keyboard.Key.B)
+            if (key == KeyConstant.B)
             {
                 WindowSettings settings = Window.GetMode();
                 settings.borderless = !settings.borderless;
@@ -388,6 +388,4 @@ namespace Love
             Boot.Run(new Program());
         }
     }
-
-
 }
