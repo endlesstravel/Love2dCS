@@ -34,8 +34,8 @@ namespace Example
 the method of `Scene` will  be called just as it is named :
 
 ``` C#
-KeyPressed(Keyboard.Key key, Keyboard.Scancode scancode, bool isRepeat)
-KeyReleased(Keyboard.Key key, Keyboard.Scancode scancode)
+KeyPressed(KeyConstant key, Scancode scancode, bool isRepeat)
+KeyReleased(KeyConstant key, Scancode scancode)
 MouseMoved(float x, float y, float dx, float dy, bool isTouch)
 MousePressed(float x, float y, int button, bool isTouch)
 MouseReleased(float x, float y, int button, bool isTouch)
@@ -139,9 +139,9 @@ namespace Example
 {
     class Program : Scene
     {
-        public override void KeyPressed(Keyboard.Key key, Keyboard.Scancode scancode, bool isRepeat)
+        public override void KeyPressed(KeyConstant key, Scancode scancode, bool isRepeat)
         {
-            if (Keyboard.Key.Escape == key)
+            if (KeyConstant.Escape == key)
                 Event.Quit();
         }
 
