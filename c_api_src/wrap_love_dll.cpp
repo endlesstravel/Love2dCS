@@ -2289,9 +2289,10 @@ namespace wrap
 	}
 	void wrap_love_dll_audio_play(Source** source_array, int source_array_length)
 	{
-        std::vector<Source*> vec(source_array_length);
-        for (int i = 0; i < source_array_length; i++)
-            vec.push_back(source_array[i]);
+        std::vector<Source*> vec;
+		vec.reserve(source_array_length);
+		for (int i = 0; i < source_array_length; i++)
+			vec.push_back(source_array[i]);
 
         audioInstance->play(vec);
 	}

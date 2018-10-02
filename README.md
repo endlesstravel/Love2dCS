@@ -61,6 +61,28 @@ Next to development
  - [ ] Add support for Physics 
  - [ ] Add support for win-x64 platform
 
+| Module        | Process | code comments | Test   | Remark         |
+| ------------- |--------:|--------------:| ------:| --------------:|
+| Audio         | 80%     |      00%       |        |                |
+| Data          | 00%     |      00%       |        |                |
+| Event         | 80%     |      00%       |        |                |
+| FileSystem    | 80%     |      00%       |        |                |
+| Font          | 80%     |      00%       |        |                |
+| Graphics      | 80%     |      00%       |        |                |
+| Image         | 80%     |      00%       |        |                |
+| Joystick      | 80%     |      00%       |        |                |
+| Keyborad      | 80%     |      00%       |        |                |
+| Math          | 80%     |      00%       |        |                |
+| Mouse         | 80%     |      00%       |        |                |
+| Physics       |  /      |      00%       |        |                |
+| Sound         | 80%     |      00%       |        |                |
+| System        | 00%     |      00%       |        |                |
+| Thread        | 00%     |      00%       |        |                |
+| Timer         | 80%     |      00%       |        |                |
+| Touch         | 80%     |      00%       |        |                |
+| Video         | 00%     |      00%       |   not passed     |        Need To repair        |
+| Window        | 80%     |      80%      |        |                |
+
 Documentation
 ---
 * [wiki](https://github.com/endlesstravel/Love2dCS/wiki)
