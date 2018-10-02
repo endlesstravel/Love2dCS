@@ -17,14 +17,14 @@ namespace Love
         /// <param name="key">Character of the pressed key.</param>
         /// <param name="scancode">The scancode representing the pressed key.</param>
         /// <param name="isRepeat">Whether this keypress event is a repeat. The delay between key repeats depends on the user's system settings.</param>
-        public virtual void KeyPressed(Keyboard.Key key, Keyboard.Scancode scancode, bool isRepeat) { }
+        public virtual void KeyPressed(KeyConstant key, Scancode scancode, bool isRepeat) { }
 
         /// <summary>
         /// Triggered when a keyboard key is released.
         /// </summary>
         /// <param name="key">Character of the pressed key.</param>
         /// <param name="scancode">The scancode representing the pressed key.</param>
-        public virtual void KeyReleased(Keyboard.Key key, Keyboard.Scancode scancode) { }
+        public virtual void KeyReleased(KeyConstant key, Scancode scancode) { }
 
         /// <summary>
         /// Callback function triggered when the mouse is moved.

@@ -419,15 +419,15 @@ namespace Love
             g_toast.center();
         }
 
-        public override void KeyReleased(Keyboard.Key key, Keyboard.Scancode scancode)
+        public override void KeyReleased(KeyConstant key, Scancode scancode)
         {
-            if (key == Keyboard.Key.Escape)
+            if (key == KeyConstant.Escape)
                 Event.Quit();
         }
 
-        public override void KeyPressed(Keyboard.Key key, Keyboard.Scancode scancode, bool isRepeat)
+        public override void KeyPressed(KeyConstant key, Scancode scancode, bool isRepeat)
         {
-            if (key == Keyboard.Key.F)
+            if (key == KeyConstant.F)
             {
                 Window.SetFullscreen(!Window.GetFullscreen());
             }
