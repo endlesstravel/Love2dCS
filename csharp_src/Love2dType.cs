@@ -56,11 +56,6 @@ namespace Love
 
     public partial class Source : LoveObject
     {
-        public enum TimeUnit : int
-        {
-            Seconds = 0,
-            Samples,
-        };
 
         public Source Clone()
         {
@@ -1429,13 +1424,19 @@ namespace Love
             Love2dDll.wrap_love_dll_type_Video_getSource(p, out out_source);
             return NewObject<Source>(out_source);
         }
-        public void SetSource()
+
+        public void SetSource(Source source = null)
         {
-            Love2dDll.wrap_love_dll_type_Video_setSource_nil(p);
-        }
-        public void SetSource(Source source)
-        {
-            Love2dDll.wrap_love_dll_type_Video_setSource(p, source.p);
+            if (source == null)
+            {
+                Love2dDll.wrap_love_dll_type_Video_setSource_nil(p);
+                Love2dDll.wrap_love_dll_type_VideoStream_setSync(GetStream().p, IntPtr.Zero);
+            }
+            else
+            {
+                Love2dDll.wrap_love_dll_type_Video_setSource(p, source.p);
+                Love2dDll.wrap_love_dll_type_VideoStream_setSync(GetStream().p, source.p);
+            }
         }
         public int GetWidth()
         {

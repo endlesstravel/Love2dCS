@@ -482,7 +482,7 @@ namespace wrap
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newMesh_specifiedVertices(Float2 pos[], Float2 uv[], Float4 color[], int vertexCount, int drawMode_type, int usage_type, Mesh** out_mesh);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newMesh_count(int count, int drawMode_type, int usage_type, Mesh** out_mesh);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newText(love::graphics::Font *font, BytePtr coloredStringText[], Float4 coloredStringColor[], int coloredStringLength, Text** out_text);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newVideo(VideoStream *videoStream, love::graphics::Video** out_video);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newVideo(VideoStream *videoStream, float dpiScale, graphics::Video** out_video);
 
 
 
@@ -936,7 +936,7 @@ namespace wrap
 #pragma endregion
 
 #pragma region type - VideoStream
-
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_VideoStream_setSync(VideoStream *stream, Source* source);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_VideoStream_getFilename(VideoStream *stream, WrapString **out_filename);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_VideoStream_play(VideoStream *stream);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_VideoStream_pause(VideoStream *stream);

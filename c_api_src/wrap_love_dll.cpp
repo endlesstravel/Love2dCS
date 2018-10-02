@@ -595,7 +595,11 @@ namespace wrap
     void wrap_love_dll_windows_getIcon(ImageData** out_imagedata)
     {
         *out_imagedata = windowInstance->getIcon();
-        (*out_imagedata)->retain();
+
+		if (*out_imagedata != nullptr)
+		{
+			(*out_imagedata)->retain();
+		}
     }
 
     void wrap_love_dll_windows_setDisplaySleepEnabled(bool4 enable)
@@ -745,7 +749,10 @@ namespace wrap
     void wrap_love_dll_mouse_getCursor(Cursor** out_cursor)
     {
         *out_cursor = mouseInstance->getCursor();
-        (*out_cursor)->retain();
+		if (*out_cursor != nullptr)
+		{
+			(*out_cursor)->retain();
+		}
     }
 
     void wrap_love_dll_mouse_isCursorSupported(bool4 *out_result)
@@ -2746,9 +2753,11 @@ namespace wrap
 
         return wrap_catchexcept( [&]() { *out_text = graphicsInstance->newText(font, strings); });
     }
-    bool4 wrap_love_dll_graphics_newVideo(VideoStream *videoStream, love::graphics::Video** out_video)
+    bool4 wrap_love_dll_graphics_newVideo(VideoStream *videoStream, float dpiScale, graphics::Video** out_video)
     {
-        return wrap_catchexcept( [&]() { *out_video = graphicsInstance->newVideo(videoStream, 1.0f); });
+        return wrap_catchexcept([&]() {
+			*out_video = graphicsInstance->newVideo(videoStream, dpiScale);
+		});
     }
 
 #pragma endregion
@@ -5303,13 +5312,19 @@ namespace wrap
     void wrap_love_dll_type_Video_getStream(love::graphics::Video *video, VideoStream **out_videsStream)
     {
         *out_videsStream = video->getStream();
-        (*out_videsStream)->retain();
+		if (*out_videsStream != nullptr)
+		{
+			(*out_videsStream)->retain();
+		}
     }
 
     void wrap_love_dll_type_Video_getSource(love::graphics::Video *video, Source **out_source)
     {
         *out_source = video->getSource();
-        (*out_source)->retain();
+		if (*out_source != nullptr)
+		{
+			(*out_source)->retain();
+		}
     }
 
     void wrap_love_dll_type_Video_setSource_nil(love::graphics::Video *video)
@@ -5537,6 +5552,23 @@ namespace wrap
 #pragma endregion
 
 #pragma region type - VideoStream
+
+	void wrap_love_dll_type_VideoStream_setSync(VideoStream *stream, Source* source)
+	{
+		if (source == nullptr)
+		{
+			auto newSync = new VideoStream::DeltaSync();
+			newSync->copyState(stream->getSync());
+			stream->setSync(newSync);
+			newSync->release();
+		}
+		else
+		{
+			auto sync = new VideoStream::SourceSync(source);
+			stream->setSync(sync);
+			sync->release();
+		}
+	}
 
     void wrap_love_dll_type_VideoStream_getFilename(VideoStream *stream, WrapString **out_filename)
     {

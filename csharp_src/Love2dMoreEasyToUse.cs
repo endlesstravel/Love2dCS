@@ -122,11 +122,15 @@ namespace Love
             var filedata = FileSystem.NewFileData(filename);
             return NewRasterizer(filedata);
         }
-
     }
 
     public partial class Video
     {
+        /// <summary>
+        /// Creates a new VideoStream. Currently only Ogg Theora video files are supported. VideoStreams can't draw videos, see love.graphics.newVideo for that.
+        /// </summary>
+        /// <param name="filename">The file path to the Ogg Theora video file.</param>
+        /// <returns>A new VideoStream.</returns>
         public static VideoStream NewVideoStream(string filename)
         {
             var file = FileSystem.NewFile(filename);
@@ -297,6 +301,17 @@ namespace Love
             return NewFont(rasterizer);
         }
 
+        /// <summary>
+        /// Creates a new drawable Video. Currently only Ogg Theora video files are supported.
+        /// </summary>
+        /// <param name="filename">The file path to the Ogg Theora video file.</param>
+        /// <param name="audio">Whether to try to load the video's audio into an audio Source. If not explicitly set to true or false, it will try without causing an error if the video has no audio.</param>
+        /// <param name="dipScale">The DPI scale factor of the video. if it was null, value will be Graphics.GetDPIScale()</param>
+        /// <returns></returns>
+        Video NewVideo(string filename, bool audio = true, float? dipScale = null)
+        {
+            return NewVideo(Video.NewVideoStream(filename), audio, dipScale);
+        }
 
 
         /// <summary>
