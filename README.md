@@ -61,7 +61,7 @@ Next to development
  - [ ] Add support for Physics 
  - [ ] Add support for win-x64 platform
 
-| Module        | Process | code comments | Test   | Remark         |
+| Module        | Process | code comment | Test   | Remark         |
 | ------------- |--------:|--------------:| ------:| --------------:|
 | Audio         | 80%     |      00%       |        |                |
 | Data          | 00%     |      00%       |        |                |
@@ -73,14 +73,14 @@ Next to development
 | Joystick      | 80%     |      00%       |        |                |
 | Keyborad      | 80%     |      00%       |        |                |
 | Math          | 80%     |      00%       |        |                |
-| Mouse         | 80%     |      00%       |        |                |
+| Mouse         | 90%     |      90%       |   90% Passed     |  Mouse.SetRelativeMode will crash, need to repair               |
 | Physics       |  /      |      00%       |        |                |
 | Sound         | 80%     |      00%       |        |                |
 | System        | 00%     |      00%       |        |                |
 | Thread        | 00%     |      00%       |        |                |
 | Timer         | 80%     |      00%       |        |                |
 | Touch         | 80%     |      00%       |        |                |
-| Video         | 80%     |      80%       |   70% passed     |        Need To more test        |
+| Video         | 80%     |      80%       |   90% passed     |          |
 | Window        | 80%     |      80%       |        |                |
 
 Documentation

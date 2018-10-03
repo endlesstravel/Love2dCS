@@ -1557,43 +1557,21 @@ namespace Love
 
     public partial class Cursor : LoveObject
     {
-        // Types of system cursors.
-        public enum SystemCursor
-        {
-            Arrow,
-            Ibeam,
-            Wait,
-            Crosshair,
-            WaitArrow,
-            SizeNWSE,
-            SizeNESW,
-            SizeWE,
-            SizeNS,
-            SizeAll,
-            No,
-            Hand,
-        };
-
-        public enum CursorType
-        {
-            System,
-            Image,
-        };
-
-        // What is the type of Curor is ? System type or Custom-Image type ?
-        public CursorType GetCursorType()
+        /// <summary>
+        /// Gets the type of the Cursor.
+        /// </summary>
+        /// <returns>The type of the Cursor.</returns>
+        new public Tuple<CursorType, SystemCursor> GetType()
         {
             int out_cursortype_type = 0;
-            Love2dDll.wrap_love_dll_type_Cursor_getType(p, out out_cursortype_type);
-            return (CursorType)out_cursortype_type;
-        }
+            bool out_custom = false;
+            Love2dDll.wrap_love_dll_type_Cursor_getType(p, out out_cursortype_type, out out_custom);
+            if (out_custom)
+            {
+                return Tuple.Create(CursorType.Custom, SystemCursor.Arrow);
+            }
 
-        // If type of Curor is System type, which System type of the cursor is ?
-        public SystemCursor GetSystemType()
-        {
-            int out_systype_type = 0;
-            Love2dDll.wrap_love_dll_type_Cursor_getSystemType(p, out out_systype_type);
-            return (SystemCursor)out_systype_type;
+            return Tuple.Create(CursorType.System, (SystemCursor)out_cursortype_type);
         }
     }
 

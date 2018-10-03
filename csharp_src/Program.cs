@@ -13,6 +13,14 @@ namespace Love
         virtual public void OnReOpne() { }
     }
 
+    class Button
+    {
+        public void Update(float dt)
+        {
+
+        }
+    }
+
     [AttributeUsage(AttributeTargets.Class)]
     public class StageName : Attribute
     {
@@ -21,6 +29,100 @@ namespace Love
             Name = name;
         }
         public readonly string Name;
+    }
+
+    [StageName("test mouse")]
+    class TestMouse : Stage
+    {
+        Cursor cursor;
+        public override void OnLoad()
+        {
+            // https://opengameart.org/content/bw-ornamental-cursor-19x19
+            cursor = Mouse.NewCursor("res/pointer.png", 0, 0);
+            Mouse.SetCursor(cursor);
+        }
+        public override void OnUpdate(float dt)
+        {
+        }
+        public override void OnReOpne()
+        {
+            Mouse.SetCursor(cursor);
+        }
+        public override void OnKeyPressed(KeyConstant key)
+        {
+            var dic = new Dictionary<KeyConstant, SystemCursor>();
+            dic.Add(KeyConstant.A, SystemCursor.Arrow);
+            dic.Add(KeyConstant.B, SystemCursor.Crosshair);
+            dic.Add(KeyConstant.C, SystemCursor.Hand);
+            dic.Add(KeyConstant.D, SystemCursor.Ibeam);
+            dic.Add(KeyConstant.E, SystemCursor.No);
+            dic.Add(KeyConstant.F, SystemCursor.SizeAll);
+            dic.Add(KeyConstant.G, SystemCursor.SizeNESW);
+            dic.Add(KeyConstant.H, SystemCursor.SizeNS);
+            dic.Add(KeyConstant.I, SystemCursor.SizeNWSE);
+            dic.Add(KeyConstant.J, SystemCursor.SizeWE);
+            dic.Add(KeyConstant.K, SystemCursor.Wait);
+            dic.Add(KeyConstant.L, SystemCursor.WaitArrow);
+
+            if (dic.ContainsKey(key))
+            {
+                Mouse.SetCursor(Mouse.GetSystemCursor(dic[key]));
+            }
+
+            if (key == KeyConstant.Number1)
+            {
+                Mouse.SetCursor(cursor);
+            }
+
+            if (key == KeyConstant.Number2)
+            {
+                Mouse.SetGrabbed(!Mouse.IsGrabbed());
+            }
+
+            if (key == KeyConstant.Number3)
+            {
+                Mouse.SetPosition(10, 20);
+            }
+
+            if (key == KeyConstant.Number4)
+            {
+                Mouse.SetVisible(!Mouse.IsVisible());
+            }
+
+            if (key == KeyConstant.Number5)
+            {
+                Mouse.SetRelativeMode(!Mouse.GetRelativeMode());
+            }
+        }
+        public override void OnDraw()
+        {
+            Graphics.SetColor(0, 0, 0);
+
+            string[] str =
+            {
+                "[A-L]: set cursor to different system curosr",
+                "[1]: set cursor custom curosr",
+                "[2]: toggle grabs the mouse and confines it to the window. ",
+                "[3]: change pos to (0,0). ",
+                "[4]: toggle visible / invisible. ",
+                "[5]: toggle relative mode. ",
+                "\n",
+                $"cursor cursor type: {Mouse.GetCursor().GetType()}",
+                $"Is Grabbed         : {Mouse.IsGrabbed()}",
+                $"pos   : {Mouse.GetPosition()}",
+                $"Get Relative Mode   : {Mouse.GetRelativeMode()}",
+                $"Is Visible         : {Mouse.IsVisible()}",
+                $"Is Cursor Supported : {Mouse.IsCursorSupported()}",
+                $"down 1: {Mouse.IsDown(1)}",
+                $"down 2: {Mouse.IsDown(2)}",
+                $"down 3: {Mouse.IsDown(3)}",
+                $"down 4: {Mouse.IsDown(4)}",
+                $"down 5: {Mouse.IsDown(5)}",
+                "\n",
+            };
+
+            Graphics.Print(string.Join("\n", str), 10, 10);
+        }
     }
 
     [StageName("test other")]
@@ -376,6 +478,7 @@ namespace Love
 
         public override void Load()
         {
+            AddStage(new TestMouse());
             AddStage(new TestFont());
             AddStage(new TestSound());
             AddStage(new TestVideo());
@@ -435,22 +538,23 @@ namespace Love
 
         public override void KeyReleased(KeyConstant key, Scancode scancode)
         {
-            if (key == KeyConstant.Space)
-            {
-                Window.SetFullscreen(!Window.GetFullscreen());
-            }
-
             if (key == KeyConstant.Escape)
             {
                 Event.Quit();
             }
 
-            if (key == KeyConstant.B)
+            if (key == KeyConstant.F1)
             {
                 WindowSettings settings = Window.GetMode();
                 settings.borderless = !settings.borderless;
                 Window.SetMode(settings);
             }
+
+            if (key == KeyConstant.F2)
+            {
+                Window.SetFullscreen(!Window.GetFullscreen());
+            }
+
         }
 
         public override void Draw()
@@ -484,8 +588,8 @@ namespace Love
             {
                 $"FPS:{Timer.GetFPS()}",
                 $"[Escape]:quit",
-                $"[B]:bordless / not bordless window",
-                $"[Space]:full screen / window",
+                $"[F1]:bordless / not bordless window",
+                $"[F2]:full screen / window",
             };
             Graphics.Print(string.Join("    ", strs), 0, 0);
         }
