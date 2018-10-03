@@ -1,6 +1,85 @@
 ﻿namespace Love
 {
     /// <summary>
+    /// Types of cursors.
+    /// </summary>
+    public enum SystemCursor : int
+    {
+        /// <summary>
+        /// An arrow pointer.
+        /// </summary>
+        Arrow,
+
+        /// <summary>
+        /// An I-beam, normally used when mousing over editable or selectable text.
+        /// </summary>
+        Ibeam,
+
+        /// <summary>
+        /// Wait graphic.
+        /// </summary>
+        Wait,
+
+        /// <summary>
+        /// Crosshair symbol.
+        /// </summary>
+        Crosshair,
+
+        /// <summary>
+        /// Small wait cursor with an arrow pointer.
+        /// </summary>
+        WaitArrow,
+
+        /// <summary>
+        /// Double arrow pointing to the top-left and bottom-right.
+        /// </summary>
+        SizeNWSE,
+
+        /// <summary>
+        /// Double arrow pointing to the top-right and bottom-left.
+        /// </summary>
+        SizeNESW,
+
+        /// <summary>
+        /// Double arrow pointing left and right.
+        /// </summary>
+        SizeWE,
+
+        /// <summary>
+        /// Double arrow pointing up and down.
+        /// </summary>
+        SizeNS,
+
+        /// <summary>
+        /// Four-pointed arrow pointing up, down, left, and right.
+        /// </summary>
+        SizeAll,
+
+        /// <summary>
+        /// Slashed circle or crossbones.
+        /// </summary>
+        No,
+
+        /// <summary>
+        /// Hand symbol.
+        /// </summary>
+        Hand,
+    }
+
+    public enum CursorType: int
+    {
+        /// <summary>
+        /// 自定义的光标类型
+        /// </summary>
+        Custom,
+
+        /// <summary>
+        /// 系统的光标
+        /// </summary>
+        System,
+    }
+
+    /// <summary>
     /// Units that represent time.
     /// </summary>
     public enum TimeUnit : int
@@ -238,7 +317,7 @@
     };
 
     /// <summary>
-    /// <para>Scancodes are keyboard layout-independent, so the scancode "w" will be generated if the key in the same place as the "w" key on an American QWERTY keyboard <see cref="https://en.wikipedia.org/wiki/Keyboard_layout#/media/File:ISO_keyboard_(105)_QWERTY_UK.svg"/>  is pressed, no matter what the key is labelled or what the user's operating system settings are.</para>
+    /// <para>Scancodes are keyboard layout-independent, so the scancode "w" will be generated if the key in the same place as the "w" key on an American QWERTY keyboard ( https://en.wikipedia.org/wiki/Keyboard_layout#/media/File:ISO_keyboard_(105)_QWERTY_UK.svg )  is pressed, no matter what the key is labelled or what the user's operating system settings are.</para>
     /// <para>Using scancodes, rather than keycodes, is useful because keyboards with layouts differing from the US/UK layout(s) might have keys that generate 'unknown' keycodes, but the scancodes will still be detected. This however would necessitate having a list for each keyboard layout one would choose to support.</para>
     /// <para>One could use textinput or textedited instead, but those only give back the end result of keys used, i.e. you can't get modifiers on their own from it, only the final symbols that were generated.</para>
     /// </summary>

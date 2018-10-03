@@ -908,8 +908,7 @@ namespace wrap
 
 #pragma region type - Cursor
     
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Cursor_getType(Cursor *cursor, int *out_cursortype_type);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Cursor_getSystemType(Cursor *cursor, int *out_systype_type);
+    extern "C" LOVE_EXPORT void wrap_love_dll_type_Cursor_getType(Cursor *cursor, int *out_cursortype_type, bool4* out_custom);
 
 #pragma endregion
 

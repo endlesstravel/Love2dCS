@@ -5472,16 +5472,19 @@ namespace wrap
 
 #pragma region type - Cursor
 
-    void wrap_love_dll_type_Cursor_getType(Cursor *cursor, int *out_cursortype_type)
+    void wrap_love_dll_type_Cursor_getType(Cursor *cursor, int *out_cursortype_type, bool4 *out_custom)
     {
         Cursor::CursorType ctype = cursor->getType();
-        *out_cursortype_type = ctype;
-    }
-
-    void wrap_love_dll_type_Cursor_getSystemType(Cursor *cursor, int *out_systype_type)
-    {
-        Cursor::SystemCursor systype = cursor->getSystemType();
-        *out_systype_type = systype;
+		if (ctype == Cursor::CursorType::CURSORTYPE_IMAGE)
+		{
+			*out_custom = true;
+			*out_cursortype_type = 0;
+		}
+		else
+		{
+			*out_custom = false;
+			*out_cursortype_type = cursor->getSystemType();
+		}
     }
 
 #pragma endregion

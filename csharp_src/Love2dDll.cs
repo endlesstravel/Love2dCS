@@ -3186,18 +3186,11 @@ namespace Love
         #region  type - Cursor
 
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Cursor_getType")]
-        internal extern static void _wrap_love_dll_type_Cursor_getType(IntPtr p, out int out_cursortype_type);
-        internal static void wrap_love_dll_type_Cursor_getType(IntPtr p, out int out_cursortype_type)
+        internal extern static void _wrap_love_dll_type_Cursor_getType(IntPtr p, out int out_cursortype_type, out bool out_custom);
+        internal static void wrap_love_dll_type_Cursor_getType(IntPtr p, out int out_cursortype_type, out bool out_custom)
         {
-            _wrap_love_dll_type_Cursor_getType(p, out out_cursortype_type);
+            _wrap_love_dll_type_Cursor_getType(p, out out_cursortype_type, out out_custom);
         }
-        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Cursor_getSystemType")]
-        internal extern static void _wrap_love_dll_type_Cursor_getSystemType(IntPtr p, out int out_systype_type);
-        internal static void wrap_love_dll_type_Cursor_getSystemType(IntPtr p, out int out_systype_type)
-        {
-            _wrap_love_dll_type_Cursor_getSystemType(p, out out_systype_type);
-        }
-
 
 
         #endregion
@@ -3791,6 +3784,11 @@ namespace Love
             this.y = y;
         }
         public float x, y;
+
+        public override string ToString()
+        {
+            return $"({x},{y})";
+        }
     };
 
     [StructLayout(LayoutKind.Sequential)]
