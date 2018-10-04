@@ -140,10 +140,10 @@ namespace Love
             return CheckCAPIException(_wrap_love_dll_audio_newSource_decoder(decoder, type, out out_source));
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_audio_newSource_sounddata")]
-        internal extern static bool _wrap_love_dll_audio_newSource_sounddata(IntPtr sd, int type, out IntPtr out_source);
-        internal static bool wrap_love_dll_audio_newSource_sounddata(IntPtr sd, int type, out IntPtr out_source)
+        internal extern static bool _wrap_love_dll_audio_newSource_sounddata(IntPtr sd, out IntPtr out_source);
+        internal static bool wrap_love_dll_audio_newSource_sounddata(IntPtr sd, out IntPtr out_source)
         {
-            return CheckCAPIException(_wrap_love_dll_audio_newSource_sounddata(sd, type, out out_source));
+            return CheckCAPIException(_wrap_love_dll_audio_newSource_sounddata(sd, out out_source));
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_mouse_newCursor")]
         internal extern static bool _wrap_love_dll_mouse_newCursor(IntPtr imageData, int hotx, int hoty, out IntPtr out_cursor);

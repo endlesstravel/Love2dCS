@@ -48,7 +48,6 @@ namespace Love
 
     public partial class Sound
     {
-
         //// new plus
         public static SoundData NewSoundData(File file)
         {
@@ -71,24 +70,40 @@ namespace Love
 
     public partial class Audio
     {
-        //// new plus
-        public static Source NewSource(File file, SourceType type)
-        {
-            var sounddata = Sound.NewSoundData(file);
-            return NewSource(sounddata, type);
-        }
+        /// <summary>
+        /// Creates a new Source from file data. 
+        /// </summary>
+        /// <param name="fdata">The FileData to create a Source from.</param>
+        /// <param name="type">Streaming or static source.</param>
+        /// <returns></returns>
         public static Source NewSource(FileData fdata, SourceType type)
         {
             return NewSource(Sound.NewDecoder(fdata), type);
         }
+
+        /// <summary>
+        /// Creates a new Source from file name. 
+        /// </summary>
+        /// <param name="decoder">The filepath to the audio file.</param>
+        /// <param name="type">Streaming or static source.</param>
+        /// <returns></returns>
         public static Source NewSource(string filename, SourceType type)
         {
-            //return NewSource(FileSystem.NewFile(filename));
             var file = FileSystem.NewFile(filename);
             var dec = Sound.NewDecoder(file);
             return NewSource(dec, type);
         }
-        //// end new plus
+
+        /// <summary>
+        /// Returns the orientation of the listener.
+        /// </summary>
+        /// <returns>tuple (Forward vector of the listener orientation, Up vector of the listener orientation.)</returns>
+        public static Tuple<Float3, Float3> GetOrientation()
+        {
+            Float3 forword, up;
+            GetOrientation(out forword, out up);
+            return Tuple.Create(forword, up);
+        }
     }
 
     public partial class Image  // this is part of love module

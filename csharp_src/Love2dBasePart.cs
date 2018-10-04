@@ -1652,23 +1652,30 @@ namespace Love
 
     public partial class Audio
     {
-        //// raw *new*
-        // filename -> file -> filedata -> decoder -> source 
-        //             file -> sounddata -> 
+        /// <summary>
+        /// Creates a new Source from a Decoder. 
+        /// </summary>
+        /// <param name="decoder">The Decoder to create a Source from.</param>
+        /// <param name="type">Streaming or static source.</param>
+        /// <returns></returns>
         public static Source NewSource(Decoder decoder, SourceType type)
         {
             IntPtr out_decoder_ptr;
             Love2dDll.wrap_love_dll_audio_newSource_decoder(decoder.p, (int)type, out out_decoder_ptr);
             return LoveObject.NewObject<Source>(out_decoder_ptr);
         }
-        public static Source NewSource(SoundData sd, SourceType type)
+
+        /// <summary>
+        /// Sources created from SoundData are always static.
+        /// </summary>
+        /// <param name="sd">The SoundData to create a Source from.</param>
+        /// <returns></returns>
+        public static Source NewSource(SoundData sd)
         {
             IntPtr out_decoder_ptr;
-            Love2dDll.wrap_love_dll_audio_newSource_sounddata(sd.p, (int)type, out out_decoder_ptr);
+            Love2dDll.wrap_love_dll_audio_newSource_sounddata(sd.p, out out_decoder_ptr);
             return LoveObject.NewObject<Source>(out_decoder_ptr);
         }
-        //// end *new*
-
 
 
         public static bool Init()
@@ -1676,20 +1683,59 @@ namespace Love
             return Love2dDll.wrap_love_dll_audio_open_love_audio();
         }
 
+        /// <summary>
+        /// Gets the current number of simultaneously playing sources.
+        /// </summary>
+        /// <returns></returns>
         public static int GetActiveSourceCount()
         {
             int out_reslut = 0;
             Love2dDll.wrap_love_dll_audio_getActiveSourceCount(out out_reslut);
             return out_reslut;
         }
+
+        /// <summary>
+        /// Stops all currently played sources.
+        /// </summary>
         public static void Stop()
         {
             Love2dDll.wrap_love_dll_audio_stop();
         }
+
+        /// <summary>
+        /// Stops specified source.
+        /// </summary>
+        public static void Stop(params Source[] list)
+        {
+            foreach (var source in list)
+            {
+                source.Stop();
+            }
+        }
+
+        /// <summary>
+        /// Pauses all currently played Sources.
+        /// </summary>
         public static void Pause()
         {
             Love2dDll.wrap_love_dll_audio_pause();
         }
+
+        /// <summary>
+        /// Pauses specific played Sources.
+        /// </summary>
+        public static void Pause(params Source[] list)
+        {
+            foreach( var source in list)
+            {
+                source.Pause();
+            }
+        }
+
+        /// <summary>
+        /// Plays the specified Source.
+        /// </summary>
+        /// <param name="sources"></param>
         public static void Play(params Source[] sources)
         {
             Check.ArgumentNull(sources);
@@ -1702,66 +1748,132 @@ namespace Love
 
             Love2dDll.wrap_love_dll_audio_play(ptrs, ptrs.Length);
         }
+
+        /// <summary>
+        /// Sets the master volume.
+        /// </summary>
+        /// <param name="v">1.0 is max and 0.0 is off.</param>
         public static void SetVolume(float v)
         {
             Love2dDll.wrap_love_dll_audio_setVolume(v);
         }
+
+        /// <summary>
+        /// Returns the master volume.
+        /// </summary>
+        /// <returns></returns>
         public static float GetVolume()
         {
             float out_volume = 0;
             Love2dDll.wrap_love_dll_audio_getVolume(out out_volume);
             return out_volume;
         }
+
+        /// <summary>
+        /// Sets the position of the listener.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
         public static void SetPosition(float x, float y, float z)
         {
             Love2dDll.wrap_love_dll_audio_setPosition(x, y, z);
         }
+
+        /// <summary>
+        /// Returns the position of the listener.
+        /// </summary>
+        /// <returns></returns>
         public static Float3 GetPosition()
         {
             float out_x, out_y, out_z;
             Love2dDll.wrap_love_dll_audio_getPosition(out out_x, out out_y, out out_z);
             return new Float3(out_x, out_y, out_z);
         }
-        public static void SetOrientation(float x, float y, float z, float dx, float dy, float dz)
+
+        /// <summary>
+        /// Sets the orientation of the listener.
+        /// </summary>
+        /// <param name="forward">Forward vector of the listener orientation.</param>
+        /// <param name="up">Up vector of the listener orientation.</param>
+        public static void SetOrientation(Float3 forward, Float3 up)
         {
-            Love2dDll.wrap_love_dll_audio_setOrientation(x, y, z, dx, dy, dz);
+            Love2dDll.wrap_love_dll_audio_setOrientation(forward.x, forward.y, forward.z, up.x, up.y, up.z);
         }
-        public static void GetOrientation(out Float3 pos, out Float3 dir)
+
+        /// <summary>
+        /// Returns the orientation of the listener.
+        /// </summary>
+        /// <param name="forward">Forward vector of the listener orientation.</param>
+        /// <param name="up">Up vector of the listener orientation.</param>
+        public static void GetOrientation(out Float3 forward, out Float3 up)
         {
             float out_x,out_y,out_z,out_dx,out_dy,out_dz;
             Love2dDll.wrap_love_dll_audio_getOrientation(out out_x, out out_y, out out_z, out out_dx, out out_dy, out out_dz);
-            pos = new Float3(out_x, out_y, out_z);
-            dir = new Float3(out_dx, out_dy, out_dz);
+            forward = new Float3(out_x, out_y, out_z);
+            up = new Float3(out_dx, out_dy, out_dz);
         }
+
+        /// <summary>
+        /// Sets the velocity of the listener.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
         public static void SetVelocity(float x, float y, float z)
         {
             Love2dDll.wrap_love_dll_audio_setVelocity(x, y, z);
         }
+
+        /// <summary>
+        /// Returns the velocity of the listener.
+        /// </summary>
+        /// <returns></returns>
         public static Float3 GetVelocity()
         {
             float out_x, out_y, out_z;
             Love2dDll.wrap_love_dll_audio_getVelocity(out out_x, out out_y, out out_z);
             return new Float3(out_x, out_y, out_z);
         }
+
+        /// <summary>
+        /// Sets a global scale factor for doppler effects.
+        /// </summary>
+        /// <param name="scale">The new doppler scale factor. The scale must be greater than 0.</param>
         public static void SetDopplerScale(float scale)
         {
             Love2dDll.wrap_love_dll_audio_setDopplerScale(scale);
         }
+
+        /// <summary>
+        /// Gets the global scale factor for doppler effects.
+        /// </summary>
+        /// <returns></returns>
         public static float GetDopplerScale()
         {
             float out_scale = 0;
             Love2dDll.wrap_love_dll_audio_getDopplerScale(out out_scale);
             return out_scale;
         }
-        public static void SetDistanceModel(int distancemodel_type)
+
+        /// <summary>
+        /// Sets the distance attenuation model.
+        /// </summary>
+        /// <param name="distancemodel_type"></param>
+        public static void SetDistanceModel(DistanceModel distancemodel_type)
         {
-            Love2dDll.wrap_love_dll_audio_setDistanceModel(distancemodel_type);
+            Love2dDll.wrap_love_dll_audio_setDistanceModel((int)distancemodel_type);
         }
-        public static int GetDistanceModel()
+
+        /// <summary>
+        /// Returns the distance attenuation model.
+        /// </summary>
+        /// <returns></returns>
+        public static DistanceModel GetDistanceModel()
         {
             int out_distancemodel_type = 0;
             Love2dDll.wrap_love_dll_audio_getDistanceModel(out out_distancemodel_type);
-            return out_distancemodel_type;
+            return (DistanceModel)out_distancemodel_type;
         }
 
     }

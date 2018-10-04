@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Love
 {
@@ -136,6 +137,19 @@ namespace Love
         }
         public override void OnDraw()
         {
+            Graphics.SetLineWidth(2);
+            Graphics.SetColor(1, 0, 0);
+            Float2[] list =
+            {
+                new Float2(10, 10),
+                new Float2(20, 10),
+                new Float2(20, 20),
+                new Float2(30, 20),
+                new Float2(30, 30),
+                new Float2(40, 30),
+                new Float2(40, 40),
+            };
+            Graphics.Line(list);
         }
     }
 
@@ -234,26 +248,38 @@ namespace Love
 
         public override void OnDraw()
         {
+            var sb = new List<string>();
+            sb.Add($"audio active source count : {Audio.GetActiveSourceCount()}");
+            sb.Add($"audio distance modle : {Audio.GetDistanceModel()}");
+            sb.Add($"audio Doppler Scale : {Audio.GetDopplerScale()}");
+            sb.Add($"audio Orientation : {Audio.GetOrientation()}");
+            sb.Add($"audio Velocity : {Audio.GetVelocity()}");
+            sb.Add($"--------------------------------------------------");
+            sb.Add($"current source controled : { dictionary[currentControl] }");
+            sb.Add($"[1-3] : switch control source index");
+            sb.Add("\n");
+            sb.Add($"playing : {currentControl.IsPlaying()}");
+            sb.Add($"tell : {currentControl.Tell(TimeUnit.Seconds)}");
+            sb.Add($"channel count : {currentControl.GetChannelCount()}");
+            sb.Add("\n------------------------------------------------");
+            sb.Add("[P] : pause / play");
+            sb.Add("[S] : seek to 0");
 
-            string[] strs =
+            if (currentControl.GetChannelCount() == 1)
             {
-                $"current source controled : { dictionary[currentControl] }",
-                $"[1-3]:switch control source index",
-                "\n",
-                $"playing : {currentControl.IsPlaying()}",
-                $"tell : {currentControl.Tell(TimeUnit.Seconds)}",
-                $"channel count : {currentControl.GetChannelCount()}",
-                $"pos : {currentControl.GetPosition()}",
-                "\n",
-                "[P] :pause / play",
-                "[R] :set telative true",
-                "[Left] :set pos x - 1",
-                "[Right] :set pos x + 1",
-                "[Down] :set pos y - 1",
-                "[Up] :set pos y + 1",
-            };
+                sb.Add("\n");
+                sb.Add($"pos : {currentControl.GetPosition()}");
+                sb.Add("[R] : toggle Relative");
+                sb.Add("[Left] : set pos x - 1");
+                sb.Add("[Right] :set pos x + 1");
+                sb.Add("[Down] : set pos y - 1");
+                sb.Add("[Up] : set pos y + 1");
+            }
+            else
+            {
+            }
             Graphics.SetColor(0, 0, 0);
-            Graphics.Print(string.Join("\n", strs), 10, 100);
+            Graphics.Print(string.Join("\n", sb), 10, 100);
         }
     }
 
@@ -284,8 +310,6 @@ namespace Love
             var vstream = Video.NewVideoStream("res/small.ogv");
             video = Graphics.NewVideo(vstream);
             video.Play();
-            var source = video.GetSource();
-            Console.Write(source.ToString());
         }
 
         public override void OnDraw()
@@ -415,7 +439,7 @@ namespace Love
             Graphics.Print("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789?.,", 0, 100);
 
             Graphics.SetFont(bmfFont);
-            Graphics.Print("你好？？?.,", 0, 200);
+            Graphics.Printf("如烟往事俱忘却，心底无私天地宽。——陶铸\n不应当急于求成，应当去熟悉自己的研究对象，锲而不舍，时间会成全一切。凡事开始最难，然而更难的是何以善终。——莎士比亚\n", 0, 200, 500);
         }
     }
 
