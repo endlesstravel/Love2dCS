@@ -139,77 +139,118 @@ namespace Love
         }
     }
 
-    [StageName("Sound")]
-    class TestSound : Stage
+    [StageName("Audio")]
+    class TestAudio : Stage
     {
-        Source bgm;
+        Source[] sourceList = new Source[3];
+        Dictionary<Source, string> dictionary = new Dictionary<Source, string>();
+        Source currentControl;
         public override void OnLoad()
         {
             // https://opengameart.org/content/prepare-your-swords
-            bgm = Audio.NewSource("res/prepare_your_swords.ogg", SourceType.Stream);
-            bgm.Play();
+            sourceList[0] = Audio.NewSource("res/prepare_your_swords_mono.mp3", SourceType.Stream);
+            dictionary.Add(sourceList[0], "res/prepare_your_swords_mono.mp3");
+
+            // https://opengameart.org/content/prepare-your-swords
+            sourceList[1] = Audio.NewSource("res/prepare_your_swords.ogg", SourceType.Stream);
+            dictionary.Add(sourceList[1], "res/prepare_your_swords.ogg");
+
+            // https://opengameart.org/content/gui-sound-effects
+            sourceList[2] = Audio.NewSource("res/negative.mp3", SourceType.Static);
+            dictionary.Add(sourceList[2], "res/negative.mp3");
+
+            // set to 0
+            currentControl = sourceList[0];
         }
 
         public override void OnPause()
         {
-            if (bgm != null)
-            {
-                bgm.Pause();
-            }
-        }
-
-        public override void OnReOpne()
-        {
-            Audio.Play(bgm);
+            Audio.Pause();
         }
 
         public override void OnKeyPressed(KeyConstant key)
         {
+            if (key == KeyConstant.Number1)
+            {
+                currentControl = sourceList[0];
+            }
+
+            if (key == KeyConstant.Number2)
+            {
+                currentControl = sourceList[1];
+            }
+
+            if (key == KeyConstant.Number3)
+            {
+                currentControl = sourceList[2];
+            }
+
             if (key == KeyConstant.P)
             {
-                if (bgm.IsPlaying() == false)
+                if (currentControl.IsPlaying() == false)
                 {
-                    Audio.Play(bgm);
+                    currentControl.Play();
                 }
                 else
                 {
-                    bgm.Pause();
+                    currentControl.Pause();
                 }
             }
 
             if (key == KeyConstant.S)
             {
-                bgm.Seek(0, TimeUnit.Seconds);
+                currentControl.Seek(0, TimeUnit.Seconds);
             }
-
 
             if (key == KeyConstant.R)
             {
-                bgm.SetRelative(!bgm.IsRelative());
+                currentControl.SetRelative(!currentControl.IsRelative());
             }
 
             if (key == KeyConstant.Left)
             {
-                var pos = bgm.GetPosition();
-                bgm.SetPosition(pos.x - 30, pos.y, pos.z);
+                var pos = currentControl.GetPosition();
+                currentControl.SetPosition(pos.x - 1, pos.y, pos.z);
             }
 
             if (key == KeyConstant.Right)
             {
-                var pos = bgm.GetPosition();
-                bgm.SetPosition(pos.x + 30, pos.y, pos.z);
+                var pos = currentControl.GetPosition();
+                currentControl.SetPosition(pos.x + 1, pos.y, pos.z);
+            }
+
+            if (key == KeyConstant.Down)
+            {
+                var pos = currentControl.GetPosition();
+                currentControl.SetPosition(pos.x, pos.y - 1, pos.z);
+            }
+
+            if (key == KeyConstant.Up)
+            {
+                var pos = currentControl.GetPosition();
+                currentControl.SetPosition(pos.x, pos.y + 1, pos.z);
             }
         }
 
         public override void OnDraw()
         {
+
             string[] strs =
             {
-                "[P] :pause / play music",
+                $"current source controled : { dictionary[currentControl] }",
+                $"[1-3]:switch control source index",
+                "\n",
+                $"playing : {currentControl.IsPlaying()}",
+                $"tell : {currentControl.Tell(TimeUnit.Seconds)}",
+                $"channel count : {currentControl.GetChannelCount()}",
+                $"pos : {currentControl.GetPosition()}",
+                "\n",
+                "[P] :pause / play",
                 "[R] :set telative true",
-                "[Left] :set pos x - 30",
-                "[Right] :set pos x + 30",
-                bgm.IsPlaying() ? "music playing ..." : "pause",
+                "[Left] :set pos x - 1",
+                "[Right] :set pos x + 1",
+                "[Down] :set pos y - 1",
+                "[Up] :set pos y + 1",
             };
             Graphics.SetColor(0, 0, 0);
             Graphics.Print(string.Join("\n", strs), 10, 100);
@@ -480,7 +521,7 @@ namespace Love
         {
             AddStage(new TestMouse());
             AddStage(new TestFont());
-            AddStage(new TestSound());
+            AddStage(new TestAudio());
             AddStage(new TestVideo());
             AddStage(new TestStencil());
             AddStage(new TestText());

@@ -380,10 +380,7 @@ namespace wrap
         points.reserve(pointsList_lenght);
         for (int i = 0; i < pointsList_lenght; i += 2)
         {
-            Vector2 v;
-            v.x = pointsList[i].x;
-            v.y = pointsList[i].y;
-            points.push_back(v);
+            points.push_back(Vector2(pointsList[i].x, pointsList[i].y));
         }
         *out_BezierCurve = Math::instance.newBezierCurve(points);
     }
@@ -857,7 +854,7 @@ namespace wrap
 
     void wrap_love_dll_keyboard_isDown(int key_type, bool4 *out_result)
     {
-        std::vector<Keyboard::Key> keylist;
+		std::vector<Keyboard::Key> keylist;
         keylist.push_back((Keyboard::Key)key_type);
         *out_result = keyboardInstance->isDown(keylist);
     }
@@ -2456,10 +2453,7 @@ namespace wrap
             points.reserve(pointsList_lenght);
             for (int i = 0; i < pointsList_lenght; i += 2)
             {
-                Vector2 v;
-                v.x = pointsList[i].x;
-                v.y = pointsList[i].y;
-                points.push_back(v);
+                points.push_back(Vector2(pointsList[i].x, pointsList[i].y));
             }
             std::vector<love::Vector2> &vertices = points;
 
@@ -2495,10 +2489,7 @@ namespace wrap
         points.reserve(pointsList_lenght);
         for (int i = 0; i < pointsList_lenght; i += 2)
         {
-            Vector2 v;
-            v.x = pointsList[i].x;
-            v.y = pointsList[i].y;
-            points.push_back(v);
+            points.push_back(Vector2(pointsList[i].x, pointsList[i].y));
         }
         *out_result = math::isConvex(points);
     }
@@ -3134,12 +3125,14 @@ namespace wrap
 
             for (int i = 0; i < listLength; i++)
             {
+				OptionalColorf ocf;
                 Float4 &c = colorList[i];
-                colors[i].hasValue = enableList[i];
-                colors[i].value.r = c.r;
-                colors[i].value.g = c.g;
-                colors[i].value.b = c.b;
-                colors[i].value.a = c.a;
+                ocf.hasValue = enableList[i];
+                ocf.value.r = c.r;
+                ocf.value.g = c.g;
+                ocf.value.b = c.b;
+                ocf.value.a = c.a;
+				colors.push_back(ocf);
             }
 
             OptionalInt optStencil(stencil);
@@ -3265,12 +3258,12 @@ namespace wrap
     bool4 wrap_love_dll_graphics_points(Float2 coords[], int coordsLength)
     {
         int numpoints = coordsLength;
-        std::vector<Vector2> points(coordsLength);
+        std::vector<Vector2> points;
+		points.reserve(coordsLength);
 
         for (int i = 0; i < coordsLength; i++)
         {
-            points[i].x = coords[i].x;
-            points[i].y = coords[i].y;
+			points.push_back(Vector2(coords[i].x, coords[i].y));
         }
         
 
@@ -3280,18 +3273,15 @@ namespace wrap
     bool4 wrap_love_dll_graphics_points_colors(Float2 coords[], Int4 colors[], int coordsLength)
     {
         int numpoints = coordsLength;
-        std::vector<Vector2> points(coordsLength);
-        std::vector<Colorf> colorsVector(coordsLength);
+        std::vector<Vector2> points;
+        std::vector<Colorf> colorsVector;
+		points.reserve(coordsLength);
+		colorsVector.reserve(coordsLength);
 
         for (int i = 0; i < coordsLength; i++)
         {
-            points[i].x = coords[i].x;
-            points[i].y = coords[i].y;
-            
-            colorsVector[i].r = colors[i].r;
-            colorsVector[i].g = colors[i].g;
-            colorsVector[i].b = colors[i].b;
-            colorsVector[i].a = colors[i].a;
+			points.push_back(Vector2(coords[i].x, coords[i].y));
+			colorsVector.push_back(Colorf(colors[i].r, colors[i].g, colors[i].b, colors[i].a));
         }
 
         bool res = wrap_catchexcept([&]() {
@@ -3308,12 +3298,12 @@ namespace wrap
             return false;
         }
 
-        std::vector<Vector2> points(coordsLength);
+        std::vector<Vector2> points;
+		points.reserve(coordsLength);
 
         for (int i = 0; i < coordsLength; i++)
         {
-            points[i].x = coords[i].x;
-            points[i].y = coords[i].y;
+			points.push_back(Vector2(coords[i].x, coords[i].y));
         }
 
         bool res = wrap_catchexcept([&]() {
@@ -3333,11 +3323,12 @@ namespace wrap
         auto mode = (Graphics::DrawMode)mode_type;
 
         // fetch coords
-        std::vector<Vector2> points(coordsLength + 1);
+        std::vector<Vector2> points;
+		points.reserve(coordsLength + 1);
+
         for (int i = 0; i < coordsLength; i++)
         {
-            points[i].x = coords[i].x;
-            points[i].y = coords[i].y;
+			points.push_back(Vector2(coords[i].x, coords[i].y));
         }
         // make a closed loop
         points.push_back(Vector2(coords[0].x, coords[0].y));
@@ -3523,7 +3514,7 @@ namespace wrap
         float v[3];
         v[0] = x;
         v[1] = y;
-        v[2] = x;
+        v[2] = z;
         return wrap_catchexcept([&]() { t->setPosition(v); });
     }
 
@@ -3543,7 +3534,7 @@ namespace wrap
         float v[3];
         v[0] = x;
         v[1] = y;
-        v[2] = x;
+        v[2] = z;
         return wrap_catchexcept([&]() { t->setVelocity(v); });
     }
 
@@ -3563,7 +3554,7 @@ namespace wrap
         float v[3];
         v[0] = x;
         v[1] = y;
-        v[2] = x;
+        v[2] = z;
         return wrap_catchexcept( [&]() { t->setDirection(v); });
     }
 
@@ -4586,9 +4577,11 @@ namespace wrap
         }
         else
         {
-            std::vector<float> sizes(sizearray_length);
+            std::vector<float> sizes;
+			sizes.reserve(sizearray_length);
+
             for (size_t i = 0; i < sizearray_length; ++i)
-                sizes[i] = sizearray[i];
+                sizes.push_back(sizearray[i]);
 
             t->setSizes(sizes);
         }
@@ -4680,13 +4673,12 @@ namespace wrap
             return false;
         }
 
-        std::vector<Colorf> colors(colorarray_length);
+        std::vector<Colorf> colors;
+		colors.reserve(colorarray_length);
+
         for (int i = 0; i < colorarray_length; i++)
         {
-            colors[i].r = colorarray[i].r;
-            colors[i].g = colorarray[i].g;
-            colors[i].b = colorarray[i].b;
-            colors[i].a = colorarray[i].a;
+			colors.push_back(Colorf(colorarray[i].r, colorarray[i].g, colorarray[i].b, colorarray[i].a));
         }
 
         t->setColor(colors);
@@ -4710,12 +4702,12 @@ namespace wrap
 
     void wrap_love_dll_type_ParticleSystem_setQuads(ParticleSystem *t, Quad** quadsarray, int quadsarray_length)
     {
-        std::vector<Quad *> quads(quadsarray_length);
+        std::vector<Quad *> quads;
+		quads.reserve(quadsarray_length);
+
+        for (int i = 0; i < quadsarray_length; i++)
         {
-            for (int i = 0; i < quadsarray_length; i++)
-            {
-                quads[i] = quadsarray[i];
-            }
+            quads.push_back(quadsarray[i]);
         }
 
         t->setQuads(quads);

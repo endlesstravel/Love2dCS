@@ -1077,8 +1077,6 @@ namespace Love
 
     public partial class Keyboard
     {
-        
-
         public static bool Init()
         {
             return Love2dDll.wrap_love_dll_keyboard_open_love_keyboard();
@@ -1654,17 +1652,6 @@ namespace Love
 
     public partial class Audio
     {
-        public enum DistanceModel
-        {
-            None,
-            Inverse,
-            Clamped,
-            Linear,
-            LinearClamped,
-            Exponent,
-            ExponentClamped,
-        };
-
         //// raw *new*
         // filename -> file -> filedata -> decoder -> source 
         //             file -> sounddata -> 

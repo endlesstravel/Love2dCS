@@ -74,10 +74,10 @@ Next to development
 | Keyborad      | 80%     |      00%       |        |                |
 | Math          | 80%     |      00%       |        |                |
 | Mouse         | 90%     |      90%       |   90% Passed     |  Mouse.SetRelativeMode will crash, need to repair               |
-| Physics       |  /      |      00%       |        |                |
+| Physics       |  /      |      /         |        |                |
 | Sound         | 80%     |      00%       |        |                |
 | System        | 00%     |      00%       |        |                |
-| Thread        | 00%     |      00%       |        |                |
+| Thread        |   /     |        /       |        |                |
 | Timer         | 80%     |      00%       |        |                |
 | Touch         | 80%     |      00%       |        |                |
 | Video         | 80%     |      80%       |   90% passed     |          |
