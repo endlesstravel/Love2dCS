@@ -140,10 +140,10 @@ namespace Love
             return CheckCAPIException(_wrap_love_dll_audio_newSource_decoder(decoder, type, out out_source));
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_audio_newSource_sounddata")]
-        internal extern static bool _wrap_love_dll_audio_newSource_sounddata(IntPtr sd, int type, out IntPtr out_source);
-        internal static bool wrap_love_dll_audio_newSource_sounddata(IntPtr sd, int type, out IntPtr out_source)
+        internal extern static bool _wrap_love_dll_audio_newSource_sounddata(IntPtr sd, out IntPtr out_source);
+        internal static bool wrap_love_dll_audio_newSource_sounddata(IntPtr sd, out IntPtr out_source)
         {
-            return CheckCAPIException(_wrap_love_dll_audio_newSource_sounddata(sd, type, out out_source));
+            return CheckCAPIException(_wrap_love_dll_audio_newSource_sounddata(sd, out out_source));
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_mouse_newCursor")]
         internal extern static bool _wrap_love_dll_mouse_newCursor(IntPtr imageData, int hotx, int hoty, out IntPtr out_cursor);
@@ -884,19 +884,19 @@ namespace Love
         internal extern static void _wrap_love_dll_filesystem_getInfo(byte[] arg, out int out_filetype, out long out_size, out long out_modtime, out bool out_result);
         internal static void wrap_love_dll_filesystem_getInfo(byte[] arg, out int out_filetype, out long out_size, out long out_modtime, out bool out_result)
         {
-            wrap_love_dll_filesystem_getInfo(arg, out out_filetype, out out_size, out out_modtime,  out out_result);
+            _wrap_love_dll_filesystem_getInfo(arg, out out_filetype, out out_size, out out_modtime,  out out_result);
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_filesystem_createDirectory")]
-        internal extern static bool _wrap_love_dll_filesystem_createDirectory(byte[] arg);
-        internal static bool wrap_love_dll_filesystem_createDirectory(byte[] arg)
+        internal extern static void _wrap_love_dll_filesystem_createDirectory(byte[] arg, out bool out_result);
+        internal static void wrap_love_dll_filesystem_createDirectory(byte[] arg, out bool out_result)
         {
-            return CheckCAPIException(_wrap_love_dll_filesystem_createDirectory(arg));
+            _wrap_love_dll_filesystem_createDirectory(arg, out out_result);
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_filesystem_remove")]
-        internal extern static bool _wrap_love_dll_filesystem_remove(byte[] arg);
-        internal static bool wrap_love_dll_filesystem_remove(byte[] arg)
+        internal extern static void _wrap_love_dll_filesystem_remove(byte[] arg, out bool out_result);
+        internal static void wrap_love_dll_filesystem_remove(byte[] arg, out bool out_result)
         {
-            return CheckCAPIException(_wrap_love_dll_filesystem_remove(arg));
+            _wrap_love_dll_filesystem_remove(arg, out out_result);
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_filesystem_read")]
         internal extern static bool _wrap_love_dll_filesystem_read(byte[] filename, long len, out IntPtr out_data, out uint out_data_length);
@@ -3800,6 +3800,11 @@ namespace Love
             this.x = x;
             this.y = y;
             this.z = z;
+        }
+
+        public override string ToString()
+        {
+            return $"({x}, {y}, {z})";
         }
     }
 

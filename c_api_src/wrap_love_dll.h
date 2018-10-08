@@ -156,6 +156,7 @@ namespace wrap
     {
         WrapSequenceString* wss = new WrapSequenceString();
         wss->len = lines.size();
+		wss->sequence = new pchar[lines.size()];
 
         for (int i = 0; i < wss->len; i++)
         {
@@ -374,6 +375,7 @@ namespace wrap
 
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_filesystem_open_love_filesystem();
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_filesystem_init(const char* arg0);
+	extern "C" LOVE_EXPORT void wrap_love_dll_filesystem_getInfo(const char *arg, int* out_filetype, int64* out_size, int64 *out_modtime, bool4 *out_result);
     extern "C" LOVE_EXPORT void wrap_love_dll_filesystem_setFused(bool4 flag);
     extern "C" LOVE_EXPORT void wrap_love_dll_filesystem_isFused(bool4 *out_result);
     extern "C" LOVE_EXPORT void wrap_love_dll_filesystem_setAndroidSaveExternal(bool4 useExternal);
@@ -390,8 +392,8 @@ namespace wrap
     extern "C" LOVE_EXPORT void wrap_love_dll_filesystem_getSourceBaseDirectory(WrapString** out_str);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_filesystem_getRealDirectory(const char *filename, WrapString** out_str);
     extern "C" LOVE_EXPORT void wrap_love_dll_filesystem_getExecutablePath(WrapString** out_str);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_filesystem_createDirectory(const char *arg);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_filesystem_remove(const char *arg);
+    extern "C" LOVE_EXPORT void wrap_love_dll_filesystem_createDirectory(const char *arg, bool4 *out_result);
+    extern "C" LOVE_EXPORT void wrap_love_dll_filesystem_remove(const char *arg, bool4 *out_result);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_filesystem_read(const char *filename, int64 len, char **out_data, uint32 *out_data_length);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_filesystem_write(const char *filename, const void* input, size_t len);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_filesystem_append(const char *filename, const void* input, size_t len);

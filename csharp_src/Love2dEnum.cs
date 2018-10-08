@@ -1,6 +1,122 @@
 ﻿namespace Love
 {
     /// <summary>
+    /// The different modes you can open a File in.
+    /// </summary>
+    public enum FileMode : int
+    {
+        /// <summary>
+        /// Do not open a file (represents a closed file.)
+        /// </summary>
+        Closed,
+
+        /// <summary>
+        /// Open a file for read.
+        /// </summary>
+        Read,
+
+        /// <summary>
+        /// Open a file for write.
+        /// </summary>
+        Write,
+
+        /// <summary>
+        /// Open a file for append.
+        /// </summary>
+        Append,
+    };
+
+    /// <summary>
+    /// Buffer modes for File objects.
+    /// </summary>
+    public enum BufferMode : int
+    {
+        /// <summary>
+        /// No buffering. The result of write and append operations appears immediately.
+        /// </summary>
+        None,
+
+        /// <summary>
+        /// Line buffering. Write and append operations are buffered until a newline is output or the buffer size limit is reached.
+        /// </summary>
+        Line,
+
+        /// <summary>
+        /// Full buffering. Write and append operations are always buffered until the buffer size limit is reached.
+        /// </summary>
+        Full,
+    };
+
+    /// <summary>
+    /// The type of a file.
+    /// </summary>
+    public enum FileType : int
+    {
+        /// <summary>
+        /// Regular file.
+        /// </summary>
+        File,
+
+        /// <summary>
+        /// Directory.
+        /// </summary>
+        Directory,
+
+        /// <summary>
+        /// Symbolic link.
+        /// </summary>
+        SymLink,
+
+        /// <summary>
+        /// Something completely different like a device.
+        /// </summary>
+        Other,
+    };
+
+
+    /// <summary>
+    /// The different distance models.
+    /// <para>Extended information can be found in the chapter "3.4. Attenuation By Distance" of the OpenAL 1.1 specification.( https://www.openal.org/documentation/openal-1.1-specification.pdf )</para>
+    /// </summary>
+    public enum DistanceModel
+    {
+        /// <summary>
+        /// Sources do not get attenuated.
+        /// </summary>
+        None,
+
+        /// <summary>
+        /// Inverse distance attenuation.
+        /// </summary>
+        Inverse,
+
+        /// <summary>
+        /// Inverse distance attenuation. Gain is clamped. In version 0.9.2 and older this is named inverse clamped.
+        /// </summary>
+        InverseClamped,
+
+        /// <summary>
+        /// Linear attenuation.
+        /// </summary>
+        Linear,
+
+        /// <summary>
+        /// Linear attenuation. Gain is clamped. In version 0.9.2 and older this is named linear clamped.
+        /// </summary>
+        LinearClamped,
+
+        /// <summary>
+        /// Exponential attenuation.
+        /// </summary>
+        Exponent,
+
+        /// <summary>
+        /// Exponential attenuation. Gain is clamped. In version 0.9.2 and older this is named exponent clamped.
+        /// </summary>
+        ExponentClamped,
+    };
+
+    /// <summary>
     /// Types of cursors.
     /// </summary>
     public enum SystemCursor : int

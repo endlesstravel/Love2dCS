@@ -1077,8 +1077,6 @@ namespace Love
 
     public partial class Keyboard
     {
-        
-
         public static bool Init()
         {
             return Love2dDll.wrap_love_dll_keyboard_open_love_keyboard();
@@ -1421,195 +1419,380 @@ namespace Love
 
     public partial class FileSystem
     {
-        public enum FileType : int 
-        {
-            FILETYPE_FILE,
-            FILETYPE_DIRECTORY,
-            FILETYPE_SYMLINK,
-            FILETYPE_OTHER,
-            FILETYPE_MAX_ENUM
-        };
-
         public class Info
         {
             // Numbers will be -1 if they cannot be determined.
             public int64 size;
             public int64 modifyTime;
             public FileType type;
+
+            public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
+            {
+                // Unix timestamp is seconds past epoch
+                var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+                dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
+                return dtDateTime;
+            }
+
+            public override string ToString()
+            {
+                var time = UnixTimeStampToDateTime(modifyTime);
+                return $"size: {string.Format("{0:0,00}", size)}, modify-time: {time}, type: {type}";
+            }
         };
 
-        //// raw *new*
-        public static File NewFile(byte[] filename, File.Mode fmode_type = File.Mode.Read)
+        /// <summary>
+        /// Creates a new File object. It needs to be opened before it can be accessed. (UTF-8 version)
+        /// </summary>
+        /// <param name="filename">The filename of the file.(UTF-8 byte array needed)</param>
+        /// <param name="fmode_type">The mode to open the file in.</param>
+        /// <returns></returns>
+        public static File NewFile(byte[] filename, FileMode fmode_type = FileMode.Read)
         {
             IntPtr out_file;
             Love2dDll.wrap_love_dll_filesystem_newFile(filename, (int)fmode_type, out out_file);
             return LoveObject.NewObject<File>(out_file);
         }
+
+        /// <summary>
+        /// Creates a new FileData object.
+        /// </summary>
+        /// <param name="contents">The contents of the file.</param>
+        /// <param name="filename">The name of the file.</param>
+        /// <returns></returns>
         public static FileData NewFileData(byte[] contents, byte[] filename)
         {
             IntPtr out_file;
             Love2dDll.wrap_love_dll_filesystem_newFileData_content(contents, contents.Length, filename, out out_file);
             return LoveObject.NewObject<FileData>(out_file);
         }
+
+        /// <summary>
+        /// Creates a new FileData object.
+        /// </summary>
+        /// <param name="file">The file.</param>
+        /// <returns></returns>
         public static FileData NewFileData(File file)
         {
             IntPtr out_file;
             Love2dDll.wrap_love_dll_filesystem_newFileData_file(file.p, out out_file);
             return LoveObject.NewObject<FileData>(out_file);
         }
-        //// end *new*
 
+        /// <summary>
+        /// Initializes FileSystem, will be called internally, so should not be used explictly.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public static bool Init(byte[] args)
         {
             Love2dDll.wrap_love_dll_filesystem_open_love_filesystem();
             return Love2dDll.wrap_love_dll_filesystem_init(args);
         }
 
-        public static void SetFused(bool flag)
+        public static void _SetFused(bool flag)
         {
             Love2dDll.wrap_love_dll_filesystem_setFused(flag);
         }
+
+        /// <summary>
+        /// <para>Gets whether the game is in fused mode or not.</para>
+        /// <para>If a game is in fused mode, its save directory will be directly in the Appdata directory instead of Appdata/LOVE/. The game will also be able to load C Lua dynamic libraries which are located in the save directory.</para>
+        /// <para>A game is in fused mode if the source .love has been fused to the executable (see Game Distribution), or if "--fused" has been given as a command-line argument when starting the game.</para>
+        /// </summary>
+        /// <returns></returns>
         public static bool IsFused()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_filesystem_isFused(out out_result);
             return out_result;
         }
+
+
         public static void SetAndroidSaveExternal(bool useExternal)
         {
             Love2dDll.wrap_love_dll_filesystem_setAndroidSaveExternal(useExternal);
         }
-        public static void SetIdentity(byte[] arg, bool append = false)
+
+
+        /// <summary>
+        /// Sets the write directory for your game. Note that you can only set the name of the folder to store your files in, not the location.
+        /// </summary>
+        /// <param name="path">The new identity that will be used as write directory.(UTF-8 byte array needed)</param>
+        /// <param name="append">Whether the identity directory will be searched when reading a filepath before or after the game's source directory and any currently.
+        /// TRUE: results in searching source before searching save directory; FALSE: results in searching game save directory before searching source directorymounted archives.</param>
+        public static void SetIdentity(byte[] path, bool append = false)
         {
-            Love2dDll.wrap_love_dll_filesystem_setIdentity(arg, append);
+            Love2dDll.wrap_love_dll_filesystem_setIdentity(path, append);
         }
+
+        /// <summary>
+        /// Gets the write directory name for your game. Note that this only returns the name of the folder to store your files in, not the full path.
+        /// </summary>
+        /// <returns></returns>
         public static string GetIdentity()
         {
             IntPtr out_str = IntPtr.Zero;
             Love2dDll.wrap_love_dll_filesystem_getIdentity(out out_str);
             return DllTool.WSToStringAndRelease(out_str);
         }
-        public static void SetSource(byte[] arg)
+
+        /// <summary>
+        /// Sets the source of the game, where the code is present. This function can only be called once, and is normally automatically done by LÖVE.
+        /// </summary>
+        /// <param name="path">Absolute path to the game's source folder.(UTF-8 byte array needed)</param>
+        public static void SetSource(byte[] path)
         {
-            Love2dDll.wrap_love_dll_filesystem_setSource(arg);
+            Love2dDll.wrap_love_dll_filesystem_setSource(path);
         }
+
+        /// <summary>
+        /// <para>initially it was .exe folder </para>
+        /// lua version: Returns the full path to the the .love file or directory. If the game is fused to the LÖVE executable, then the executable is returned.
+        /// </summary>
+        /// <returns>The full platform-dependent path of the .love file or directory.</returns>
         public static string GetSource()
         {
             IntPtr out_str = IntPtr.Zero;
             Love2dDll.wrap_love_dll_filesystem_getSource(out out_str);
             return DllTool.WSToStringAndRelease(out_str);
         }
-        public static bool Mount(byte[] archive, byte[] mountpoint, bool appendToPath)
+
+        /// <summary>
+        /// Mounts a zip file or folder in the game's save directory for reading. It is also possible to mount love.filesystem.getSourceBaseDirectory if the game is in fused mode.
+        /// </summary>
+        /// <param name="archive">The folder or zip file in the game's save directory to mount.(UTF-8 byte array needed)</param>
+        /// <param name="mountpoint">The new path the archive will be mounted to.(UTF-8 byte array needed)</param>
+        /// <param name="appendToPath">Whether the archive will be searched when reading a filepath before or after already-mounted archives. This includes the game's source and save directories.</param>
+        /// <returns></returns>
+        public static bool Mount(byte[] archive, byte[] mountpoint, bool appendToPath = false)
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_filesystem_mount(archive, mountpoint, appendToPath, out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// Unmounts a zip file or folder previously mounted for reading with <see cref="Mount"/>.
+        /// </summary>
+        /// <param name="archive">The folder or zip file in the game's save directory which is currently mounted.</param>
+        /// <returns>True if the archive was successfully unmounted, false otherwise.</returns>
         public static bool Unmount(byte[] archive)
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_filesystem_unmount(archive, out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// Gets the current working directory.
+        /// </summary>
+        /// <returns></returns>
         public static string GetWorkingDirectory()
         {
             IntPtr out_str = IntPtr.Zero;
             Love2dDll.wrap_love_dll_filesystem_getWorkingDirectory(out out_str);
             return DllTool.WSToStringAndRelease(out_str);
         }
+
+        /// <summary>
+        /// Returns the path of the user's directory
+        /// </summary>
+        /// <returns></returns>
         public static string GetUserDirectory()
         {
             IntPtr out_str = IntPtr.Zero;
             Love2dDll.wrap_love_dll_filesystem_getUserDirectory(out out_str);
             return DllTool.WSToStringAndRelease(out_str);
         }
+
+        /// <summary>
+        /// Returns the application data directory (could be the same as getUserDirectory
+        /// </summary>
+        /// <returns></returns>
         public static string GetAppdataDirectory()
         {
             IntPtr out_str = IntPtr.Zero;
             Love2dDll.wrap_love_dll_filesystem_getAppdataDirectory(out out_str);
             return DllTool.WSToStringAndRelease(out_str);
         }
+
+        /// <summary>
+        /// Gets the full path to the designated save directory. This can be useful if you want to use the standard io library (or something else) to read or write in the save directory.
+        /// </summary>
+        /// <returns></returns>
         public static string GetSaveDirectory()
         {
             IntPtr out_str = IntPtr.Zero;
             Love2dDll.wrap_love_dll_filesystem_getSaveDirectory(out out_str);
             return DllTool.WSToStringAndRelease(out_str);
         }
-        public static string GetSourceBaseDirectory()
-        {
-            IntPtr out_str = IntPtr.Zero;
-            Love2dDll.wrap_love_dll_filesystem_getSourceBaseDirectory(out out_str);
-            return DllTool.WSToStringAndRelease(out_str);
-        }
+
+        /// <summary>
+        /// <para>Gets the platform-specific absolute path of the directory containing a filepath.</para>
+        /// </summary>
+        /// <param name="filename">The filepath to get the directory of.(UTF-8 byte array needed)</param>
+        /// <returns>The platform-specific full path of the directory containing the filepath.</returns>
         public static string GetRealDirectory(byte[] filename)
         {
             IntPtr out_str = IntPtr.Zero;
             Love2dDll.wrap_love_dll_filesystem_getRealDirectory(filename, out out_str);
             return DllTool.WSToStringAndRelease(out_str);
         }
+
+        /// <summary>
+        /// will be called internally, so should not be used explictly.
+        /// </summary>
+        /// <returns></returns>
         public static string GetExecutablePath()
         {
             IntPtr out_str = IntPtr.Zero;
             Love2dDll.wrap_love_dll_filesystem_getExecutablePath(out out_str);
             return DllTool.WSToStringAndRelease(out_str);
         }
-        public static Info GetInfo(byte[] arg)
+
+        /// <summary>
+        /// Gets information about the specified file or directory.
+        /// </summary>
+        /// <param name="path">The file or directory path to check.</param>
+        /// <returns></returns>
+        public static Info GetInfo(byte[] path)
         {
             int fileType_int = 0;
             Info info = new Info();
             bool success;
-            Love2dDll.wrap_love_dll_filesystem_getInfo(arg, out fileType_int, out info.size, out info.modifyTime, out success);
+            Love2dDll.wrap_love_dll_filesystem_getInfo(path, out fileType_int, out info.size, out info.modifyTime, out success);
             info.type = (FileType)fileType_int;
             return success ? info : null;
         }
-        public static void CreateDirectory(byte[] arg)
+
+        /// <summary>
+        /// <para>Recursively creates a directory.</para>
+        /// <para>When called with "a/b" it creates both "a" and "a/b", if they don't exist already.</para>
+        /// </summary>
+        /// <param name="name">The directory to create. (UTF-8 byte array needed)</param>
+        /// <returns>True if the directory was created, false if not.</returns>
+        public static bool CreateDirectory(byte[] name)
         {
-            Love2dDll.wrap_love_dll_filesystem_createDirectory(arg);
+            bool out_result;
+            Love2dDll.wrap_love_dll_filesystem_createDirectory(name, out out_result);
+            return out_result;
         }
-        public static void Remove(byte[] arg)
+
+        /// <summary>
+        /// Removes a file or empty directory.
+        /// </summary>
+        /// <param name="path">The file or directory to remove.</param>
+        public static bool Remove(byte[] path)
         {
-            Love2dDll.wrap_love_dll_filesystem_remove(arg);
+            bool out_result;
+            Love2dDll.wrap_love_dll_filesystem_remove(path, out out_result);
+            return out_result;
         }
-        public static byte[] read(byte[] filename, long len = -1)
+
+        /// <summary>
+        /// Read the contents of a file.
+        /// </summary>
+        /// <param name="filename">The name (and path) of the file. (UTF-8 byte array needed)</param>
+        /// <param name="len">How many bytes to read. (-1 means all)</param>
+        /// <returns></returns>
+        public static byte[] Read(byte[] filename, long len = -1)
         {
             IntPtr out_data;
             uint out_data_length;
             Love2dDll.wrap_love_dll_filesystem_read(filename, len, out out_data, out out_data_length);
             return DllTool.readBytesAndRelease(out_data, out_data_length);
         }
+
+        /// <summary>
+        /// Write data to a file in the save directory. If the file existed already, it will be completely replaced by the new contents.
+        /// </summary>
+        /// <param name="filename">The name (and path) of the file.(UTF-8 byte need)</param>
+        /// <param name="input">The data to write to the file.</param>
         public static void Write(byte[] filename, byte[] input)
         {
             Love2dDll.wrap_love_dll_filesystem_write(filename, input, (uint)input.Length);
         }
+
+        /// <summary>
+        /// Append data to an existing file. (UTF-8 version)
+        /// </summary>
+        /// <param name="filename">The name (and path) of the file.</param>
+        /// <param name="input">The data to append to the file.</param>
         public static void Append(byte[] filename, byte[] input)
         {
             Love2dDll.wrap_love_dll_filesystem_append(filename, input, (uint)input.Length);
         }
-        public static string[] getDirectoryItems(byte[] dir)
+
+        /// <summary>
+        /// <para>Returns a table with the names of files and subdirectories in the specified path. The table is not sorted in any way; the order is undefined.</para>
+        /// <para>If the path passed to the function exists in the game and the save directory, it will list the files and directories from both places.</para>
+        /// </summary>
+        /// <param name="dir">The directory.</param>
+        /// <returns></returns>
+        public static string[] GetDirectoryItems(byte[] dir)
         {
             IntPtr out_wss = IntPtr.Zero;
             Love2dDll.wrap_love_dll_filesystem_getDirectoryItems(dir, out out_wss);
             return DllTool.WSSToStringListAndRelease(out_wss);
         }
-        public static long GetLastModified(byte[] filename)
+
+        /// <summary>
+        /// <para>Deprecated in LÖVE 11.0</para>
+        /// <para>Gets the last modification time of a file.</para>
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        public static long _GetLastModified(byte[] filename)
         {
             long out_time;
             Love2dDll.wrap_love_dll_filesystem_getLastModified(filename, out out_time);
             return out_time;
         }
+
+        /// <summary>
+        /// Gets whether love.filesystem follows symbolic links.
+        /// </summary>
+        /// <returns></returns>
         public static bool AreSymlinksEnabled()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_filesystem_areSymlinksEnabled(out out_result);
             return out_result;
         }
-        public static string GetRequirePath()
+
+        /// <summary>
+        /// <para>no need for C# version</para>
+        /// Returns the full path to the directory containing the .love file.
+        /// </summary>
+        /// <returns></returns>
+        public static string _GetSourceBaseDirectory()
+        {
+            IntPtr out_str = IntPtr.Zero;
+            Love2dDll.wrap_love_dll_filesystem_getSourceBaseDirectory(out out_str);
+            return DllTool.WSToStringAndRelease(out_str);
+        }
+
+        /// <summary>
+        /// <para>no need for C# version</para>
+        /// Gets the filesystem paths that will be searched when require is called.
+        /// </summary>
+        /// <returns></returns>
+        public static string _GetRequirePath()
         {
             IntPtr out_str = IntPtr.Zero;
             Love2dDll.wrap_love_dll_filesystem_getRequirePath(out out_str);
             return DllTool.WSToStringAndRelease(out_str);
         }
-        public static void SetRequirePath(byte[] paths)
+
+        /// <summary>
+        /// <para>no need for C# version</para>
+        /// <para>Sets the filesystem paths that will be searched when require is called.</para>
+        /// <para>The paths string given to this function is a sequence of path templates separated by semicolons. The argument passed to require will be inserted in place of any question mark ("?") character in each template (after the dot characters in the argument passed to require are replaced by directory separators.)</para>
+        /// <para>The paths are relative to the game's source and save directories, as well as any paths mounted with love.filesystem.mount.</para>
+        /// </summary>
+        /// <param name="paths"></param>
+        public static void _SetRequirePath(byte[] paths)
         {
             Love2dDll.wrap_love_dll_filesystem_setRequirePath(paths);
         }
@@ -1654,34 +1837,30 @@ namespace Love
 
     public partial class Audio
     {
-        public enum DistanceModel
-        {
-            None,
-            Inverse,
-            Clamped,
-            Linear,
-            LinearClamped,
-            Exponent,
-            ExponentClamped,
-        };
-
-        //// raw *new*
-        // filename -> file -> filedata -> decoder -> source 
-        //             file -> sounddata -> 
+        /// <summary>
+        /// Creates a new Source from a Decoder. 
+        /// </summary>
+        /// <param name="decoder">The Decoder to create a Source from.</param>
+        /// <param name="type">Streaming or static source.</param>
+        /// <returns></returns>
         public static Source NewSource(Decoder decoder, SourceType type)
         {
             IntPtr out_decoder_ptr;
             Love2dDll.wrap_love_dll_audio_newSource_decoder(decoder.p, (int)type, out out_decoder_ptr);
             return LoveObject.NewObject<Source>(out_decoder_ptr);
         }
-        public static Source NewSource(SoundData sd, SourceType type)
+
+        /// <summary>
+        /// Sources created from SoundData are always static.
+        /// </summary>
+        /// <param name="sd">The SoundData to create a Source from.</param>
+        /// <returns></returns>
+        public static Source NewSource(SoundData sd)
         {
             IntPtr out_decoder_ptr;
-            Love2dDll.wrap_love_dll_audio_newSource_sounddata(sd.p, (int)type, out out_decoder_ptr);
+            Love2dDll.wrap_love_dll_audio_newSource_sounddata(sd.p, out out_decoder_ptr);
             return LoveObject.NewObject<Source>(out_decoder_ptr);
         }
-        //// end *new*
-
 
 
         public static bool Init()
@@ -1689,20 +1868,59 @@ namespace Love
             return Love2dDll.wrap_love_dll_audio_open_love_audio();
         }
 
+        /// <summary>
+        /// Gets the current number of simultaneously playing sources.
+        /// </summary>
+        /// <returns></returns>
         public static int GetActiveSourceCount()
         {
             int out_reslut = 0;
             Love2dDll.wrap_love_dll_audio_getActiveSourceCount(out out_reslut);
             return out_reslut;
         }
+
+        /// <summary>
+        /// Stops all currently played sources.
+        /// </summary>
         public static void Stop()
         {
             Love2dDll.wrap_love_dll_audio_stop();
         }
+
+        /// <summary>
+        /// Stops specified source.
+        /// </summary>
+        public static void Stop(params Source[] list)
+        {
+            foreach (var source in list)
+            {
+                source.Stop();
+            }
+        }
+
+        /// <summary>
+        /// Pauses all currently played Sources.
+        /// </summary>
         public static void Pause()
         {
             Love2dDll.wrap_love_dll_audio_pause();
         }
+
+        /// <summary>
+        /// Pauses specific played Sources.
+        /// </summary>
+        public static void Pause(params Source[] list)
+        {
+            foreach( var source in list)
+            {
+                source.Pause();
+            }
+        }
+
+        /// <summary>
+        /// Plays the specified Source.
+        /// </summary>
+        /// <param name="sources"></param>
         public static void Play(params Source[] sources)
         {
             Check.ArgumentNull(sources);
@@ -1715,66 +1933,132 @@ namespace Love
 
             Love2dDll.wrap_love_dll_audio_play(ptrs, ptrs.Length);
         }
+
+        /// <summary>
+        /// Sets the master volume.
+        /// </summary>
+        /// <param name="v">1.0 is max and 0.0 is off.</param>
         public static void SetVolume(float v)
         {
             Love2dDll.wrap_love_dll_audio_setVolume(v);
         }
+
+        /// <summary>
+        /// Returns the master volume.
+        /// </summary>
+        /// <returns></returns>
         public static float GetVolume()
         {
             float out_volume = 0;
             Love2dDll.wrap_love_dll_audio_getVolume(out out_volume);
             return out_volume;
         }
+
+        /// <summary>
+        /// Sets the position of the listener.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
         public static void SetPosition(float x, float y, float z)
         {
             Love2dDll.wrap_love_dll_audio_setPosition(x, y, z);
         }
+
+        /// <summary>
+        /// Returns the position of the listener.
+        /// </summary>
+        /// <returns></returns>
         public static Float3 GetPosition()
         {
             float out_x, out_y, out_z;
             Love2dDll.wrap_love_dll_audio_getPosition(out out_x, out out_y, out out_z);
             return new Float3(out_x, out_y, out_z);
         }
-        public static void SetOrientation(float x, float y, float z, float dx, float dy, float dz)
+
+        /// <summary>
+        /// Sets the orientation of the listener.
+        /// </summary>
+        /// <param name="forward">Forward vector of the listener orientation.</param>
+        /// <param name="up">Up vector of the listener orientation.</param>
+        public static void SetOrientation(Float3 forward, Float3 up)
         {
-            Love2dDll.wrap_love_dll_audio_setOrientation(x, y, z, dx, dy, dz);
+            Love2dDll.wrap_love_dll_audio_setOrientation(forward.x, forward.y, forward.z, up.x, up.y, up.z);
         }
-        public static void GetOrientation(out Float3 pos, out Float3 dir)
+
+        /// <summary>
+        /// Returns the orientation of the listener.
+        /// </summary>
+        /// <param name="forward">Forward vector of the listener orientation.</param>
+        /// <param name="up">Up vector of the listener orientation.</param>
+        public static void GetOrientation(out Float3 forward, out Float3 up)
         {
             float out_x,out_y,out_z,out_dx,out_dy,out_dz;
             Love2dDll.wrap_love_dll_audio_getOrientation(out out_x, out out_y, out out_z, out out_dx, out out_dy, out out_dz);
-            pos = new Float3(out_x, out_y, out_z);
-            dir = new Float3(out_dx, out_dy, out_dz);
+            forward = new Float3(out_x, out_y, out_z);
+            up = new Float3(out_dx, out_dy, out_dz);
         }
+
+        /// <summary>
+        /// Sets the velocity of the listener.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
         public static void SetVelocity(float x, float y, float z)
         {
             Love2dDll.wrap_love_dll_audio_setVelocity(x, y, z);
         }
+
+        /// <summary>
+        /// Returns the velocity of the listener.
+        /// </summary>
+        /// <returns></returns>
         public static Float3 GetVelocity()
         {
             float out_x, out_y, out_z;
             Love2dDll.wrap_love_dll_audio_getVelocity(out out_x, out out_y, out out_z);
             return new Float3(out_x, out_y, out_z);
         }
+
+        /// <summary>
+        /// Sets a global scale factor for doppler effects.
+        /// </summary>
+        /// <param name="scale">The new doppler scale factor. The scale must be greater than 0.</param>
         public static void SetDopplerScale(float scale)
         {
             Love2dDll.wrap_love_dll_audio_setDopplerScale(scale);
         }
+
+        /// <summary>
+        /// Gets the global scale factor for doppler effects.
+        /// </summary>
+        /// <returns></returns>
         public static float GetDopplerScale()
         {
             float out_scale = 0;
             Love2dDll.wrap_love_dll_audio_getDopplerScale(out out_scale);
             return out_scale;
         }
-        public static void SetDistanceModel(int distancemodel_type)
+
+        /// <summary>
+        /// Sets the distance attenuation model.
+        /// </summary>
+        /// <param name="distancemodel_type"></param>
+        public static void SetDistanceModel(DistanceModel distancemodel_type)
         {
-            Love2dDll.wrap_love_dll_audio_setDistanceModel(distancemodel_type);
+            Love2dDll.wrap_love_dll_audio_setDistanceModel((int)distancemodel_type);
         }
-        public static int GetDistanceModel()
+
+        /// <summary>
+        /// Returns the distance attenuation model.
+        /// </summary>
+        /// <returns></returns>
+        public static DistanceModel GetDistanceModel()
         {
             int out_distancemodel_type = 0;
             Love2dDll.wrap_love_dll_audio_getDistanceModel(out out_distancemodel_type);
-            return out_distancemodel_type;
+            return (DistanceModel)out_distancemodel_type;
         }
 
     }

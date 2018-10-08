@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Love
 {
@@ -125,6 +126,137 @@ namespace Love
         }
     }
 
+
+    [StageName("test file")]
+    class TestFile : Stage
+    {
+        static string TEST_FILE_PATH = "test.txt";
+        static string IDENTIFY_PATH = "test_for_my_work";
+        static string MOUNT_PATH = "E:\\Animate";
+        string recursiveEnumerateBuffer;
+        public override void OnKeyPressed(KeyConstant key)
+        {
+            if (key == KeyConstant.A)
+            {
+                FileSystem.Append(TEST_FILE_PATH, "You have to be happiness.\n");
+            }
+
+            if (key == KeyConstant.I)
+            {
+                FileSystem.SetIdentity(IDENTIFY_PATH);
+            }
+
+            if (key == KeyConstant.C)
+            {
+                FileSystem.Write(TEST_FILE_PATH, "new file .... \n");
+            }
+
+
+            if (key == KeyConstant.D)
+            {
+                var success = FileSystem.CreateDirectory("a_dir");
+                Console.WriteLine("CreateDirectory success : {0}", success);
+            }
+
+
+            if (key == KeyConstant.E)
+            {
+                var success = FileSystem.Remove(TEST_FILE_PATH);
+                Console.WriteLine("remove success : {0}", success);
+            }
+
+            if (key == KeyConstant.M)
+            {
+                var success = FileSystem.Mount(MOUNT_PATH, "win_boot_ressources");
+                Console.WriteLine("mount success : {0}", success);
+            }
+
+            if (key == KeyConstant.R)
+            {
+                recursiveEnumerateBuffer = recursiveEnumerate("", "", "");
+            }
+
+            if (key == KeyConstant.S)
+            {
+                throw new Exception("no support yet");
+            }
+        }
+        public override void OnLoad()
+        {
+            recursiveEnumerateBuffer = recursiveEnumerate("", "", "");
+        }
+        public override void OnUpdate(float dt)
+        {
+        }
+
+        public string recursiveEnumerate(string folder, string fileTree, string tab)
+        {
+            var list = FileSystem.getDirectoryItems(folder);
+            foreach (var item in list)
+            {
+                var file = folder + "/" + item;
+                var info = FileSystem.GetInfo(file);
+                if (info != null)
+                {
+                    if (info.type == FileType.File)
+                    {
+                        fileTree = fileTree + "\n" + tab + file;
+                    }
+                    else if (info.type == FileType.Directory)
+                    {
+                        fileTree = fileTree + "\n" + file + " (DIR)";
+                        fileTree = recursiveEnumerate(file, fileTree, tab + "  ");
+                    }
+                }
+            }
+
+            return fileTree;
+        }
+
+
+        public override void OnDraw()
+        {
+            var info = FileSystem.GetInfo(TEST_FILE_PATH);
+
+            var sb = new List<string>();
+            sb.Add($"-------------------- {TEST_FILE_PATH} --------------------");
+            sb.Add($"exist : {info != null}");
+            if (info != null)
+            {
+                string content = System.Text.Encoding.UTF8.GetString(FileSystem.Read(TEST_FILE_PATH));
+
+                sb.Add($"info : {info}");
+                sb.Add($"realpath : {FileSystem.GetRealDirectory(TEST_FILE_PATH)}");
+                sb.Add($"text content : {content}");
+
+            }
+            sb.Add($"-------------------- Operate --------------------");
+            sb.Add($"[A]: Append to file  '{TEST_FILE_PATH}'  'You have to be happiness.(LR)' ");
+            sb.Add($"[C]: (Re)create new file  '{TEST_FILE_PATH}' with content 'new file ....(LR)' ");
+            sb.Add($"[E]: remove file  '{TEST_FILE_PATH}'  ");
+            sb.Add($"[I]: Set identify path to  '{IDENTIFY_PATH}' ");
+            sb.Add($"[S]: toogle symbolic link switch ");
+            sb.Add($"-------------------- Status --------------------");
+            sb.Add($"whether the game is in fused mode or not: {FileSystem.IsFused()}");
+            sb.Add($"current working directory: {FileSystem.GetWorkingDirectory()}");
+            sb.Add($"whether love.filesystem follows symbolic links: {FileSystem.AreSymlinksEnabled()}");
+            sb.Add($"application data directory: {FileSystem.GetAppdataDirectory()}");
+            sb.Add($"the full path to the designated save directory: {FileSystem.GetSaveDirectory()}");
+            sb.Add($"the full path to the source or directory.: {FileSystem.GetSource()}");
+            sb.Add($"Require Path: {FileSystem._GetRequirePath()}");
+            sb.Add($"the full path to the directory containing the .love file.: {FileSystem._GetSourceBaseDirectory()}");
+            sb.Add($"the path of the user's directory: {FileSystem.GetUserDirectory()}");
+            sb.Add($"the write directory name for your game: {FileSystem.GetIdentity()}");
+            sb.Add($"-------------------- recursive enumerate files --------------------");
+            sb.Add($"[R]: refresh file list");
+            sb.Add($"{recursiveEnumerateBuffer}");
+
+
+            Graphics.SetColor(0, 0, 0);
+            Graphics.Print(string.Join("\n", sb), 10, 10);
+        }
+    }
+
     [StageName("test other")]
     class TestOther : Stage
     {
@@ -136,83 +268,149 @@ namespace Love
         }
         public override void OnDraw()
         {
+            Graphics.SetLineWidth(2);
+            Graphics.SetColor(1, 0, 0);
+            Float2[] list =
+            {
+                new Float2(10, 10),
+                new Float2(20, 10),
+                new Float2(20, 20),
+                new Float2(30, 20),
+                new Float2(30, 30),
+                new Float2(40, 30),
+                new Float2(40, 40),
+            };
+            Graphics.Line(list);
         }
     }
 
-    [StageName("Sound")]
-    class TestSound : Stage
+    [StageName("Audio")]
+    class TestAudio : Stage
     {
-        Source bgm;
+        Source[] sourceList = new Source[3];
+        Dictionary<Source, string> dictionary = new Dictionary<Source, string>();
+        Source currentControl;
         public override void OnLoad()
         {
             // https://opengameart.org/content/prepare-your-swords
-            bgm = Audio.NewSource("res/prepare_your_swords.ogg", SourceType.Stream);
-            bgm.Play();
+            sourceList[0] = Audio.NewSource("res/prepare_your_swords_mono.mp3", SourceType.Stream);
+            dictionary.Add(sourceList[0], "res/prepare_your_swords_mono.mp3");
+
+            // https://opengameart.org/content/prepare-your-swords
+            sourceList[1] = Audio.NewSource("res/prepare_your_swords.ogg", SourceType.Stream);
+            dictionary.Add(sourceList[1], "res/prepare_your_swords.ogg");
+
+            // https://opengameart.org/content/gui-sound-effects
+            sourceList[2] = Audio.NewSource("res/negative.mp3", SourceType.Static);
+            dictionary.Add(sourceList[2], "res/negative.mp3");
+
+            // set to 0
+            currentControl = sourceList[0];
         }
 
         public override void OnPause()
         {
-            if (bgm != null)
-            {
-                bgm.Pause();
-            }
-        }
-
-        public override void OnReOpne()
-        {
-            Audio.Play(bgm);
+            Audio.Pause();
         }
 
         public override void OnKeyPressed(KeyConstant key)
         {
+            if (key == KeyConstant.Number1)
+            {
+                currentControl = sourceList[0];
+            }
+
+            if (key == KeyConstant.Number2)
+            {
+                currentControl = sourceList[1];
+            }
+
+            if (key == KeyConstant.Number3)
+            {
+                currentControl = sourceList[2];
+            }
+
             if (key == KeyConstant.P)
             {
-                if (bgm.IsPlaying() == false)
+                if (currentControl.IsPlaying() == false)
                 {
-                    Audio.Play(bgm);
+                    currentControl.Play();
                 }
                 else
                 {
-                    bgm.Pause();
+                    currentControl.Pause();
                 }
             }
 
             if (key == KeyConstant.S)
             {
-                bgm.Seek(0, TimeUnit.Seconds);
+                currentControl.Seek(0, TimeUnit.Seconds);
             }
-
 
             if (key == KeyConstant.R)
             {
-                bgm.SetRelative(!bgm.IsRelative());
+                currentControl.SetRelative(!currentControl.IsRelative());
             }
 
             if (key == KeyConstant.Left)
             {
-                var pos = bgm.GetPosition();
-                bgm.SetPosition(pos.x - 30, pos.y, pos.z);
+                var pos = currentControl.GetPosition();
+                currentControl.SetPosition(pos.x - 1, pos.y, pos.z);
             }
 
             if (key == KeyConstant.Right)
             {
-                var pos = bgm.GetPosition();
-                bgm.SetPosition(pos.x + 30, pos.y, pos.z);
+                var pos = currentControl.GetPosition();
+                currentControl.SetPosition(pos.x + 1, pos.y, pos.z);
+            }
+
+            if (key == KeyConstant.Down)
+            {
+                var pos = currentControl.GetPosition();
+                currentControl.SetPosition(pos.x, pos.y - 1, pos.z);
+            }
+
+            if (key == KeyConstant.Up)
+            {
+                var pos = currentControl.GetPosition();
+                currentControl.SetPosition(pos.x, pos.y + 1, pos.z);
             }
         }
 
         public override void OnDraw()
         {
-            string[] strs =
+            var sb = new List<string>();
+            sb.Add($"audio active source count : {Audio.GetActiveSourceCount()}");
+            sb.Add($"audio distance modle : {Audio.GetDistanceModel()}");
+            sb.Add($"audio Doppler Scale : {Audio.GetDopplerScale()}");
+            sb.Add($"audio Orientation : {Audio.GetOrientation()}");
+            sb.Add($"audio Velocity : {Audio.GetVelocity()}");
+            sb.Add($"--------------------------------------------------");
+            sb.Add($"current source controled : { dictionary[currentControl] }");
+            sb.Add($"[1-3] : switch control source index");
+            sb.Add("\n");
+            sb.Add($"playing : {currentControl.IsPlaying()}");
+            sb.Add($"tell : {currentControl.Tell(TimeUnit.Seconds)}");
+            sb.Add($"channel count : {currentControl.GetChannelCount()}");
+            sb.Add("\n------------------------------------------------");
+            sb.Add("[P] : pause / play");
+            sb.Add("[S] : seek to 0");
+
+            if (currentControl.GetChannelCount() == 1)
             {
-                "[P] :pause / play music",
-                "[R] :set telative true",
-                "[Left] :set pos x - 30",
-                "[Right] :set pos x + 30",
-                bgm.IsPlaying() ? "music playing ..." : "pause",
-            };
+                sb.Add("\n");
+                sb.Add($"pos : {currentControl.GetPosition()}");
+                sb.Add("[R] : toggle Relative");
+                sb.Add("[Left] : set pos x - 1");
+                sb.Add("[Right] :set pos x + 1");
+                sb.Add("[Down] : set pos y - 1");
+                sb.Add("[Up] : set pos y + 1");
+            }
+            else
+            {
+            }
             Graphics.SetColor(0, 0, 0);
-            Graphics.Print(string.Join("\n", strs), 10, 100);
+            Graphics.Print(string.Join("\n", sb), 10, 100);
         }
     }
 
@@ -243,8 +441,6 @@ namespace Love
             var vstream = Video.NewVideoStream("res/small.ogv");
             video = Graphics.NewVideo(vstream);
             video.Play();
-            var source = video.GetSource();
-            Console.Write(source.ToString());
         }
 
         public override void OnDraw()
@@ -374,7 +570,7 @@ namespace Love
             Graphics.Print("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789?.,", 0, 100);
 
             Graphics.SetFont(bmfFont);
-            Graphics.Print("你好？？?.,", 0, 200);
+            Graphics.Printf("如烟往事俱忘却，心底无私天地宽。——陶铸\n不应当急于求成，应当去熟悉自己的研究对象，锲而不舍，时间会成全一切。凡事开始最难，然而更难的是何以善终。——莎士比亚\n", 0, 200, 500);
         }
     }
 
@@ -479,8 +675,9 @@ namespace Love
         public override void Load()
         {
             AddStage(new TestMouse());
+            AddStage(new TestFile());
             AddStage(new TestFont());
-            AddStage(new TestSound());
+            AddStage(new TestAudio());
             AddStage(new TestVideo());
             AddStage(new TestStencil());
             AddStage(new TestText());

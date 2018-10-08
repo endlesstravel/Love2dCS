@@ -221,28 +221,13 @@ namespace Love
 
     public partial class File : LoveObject
     {
-        public enum Mode : int
-        {
-            Closed,
-            Read,
-            Write,
-            Append,
-        };
-
-        public enum BufferMode : int
-        {
-            None,
-            Line,
-            Full,
-        };
-
         public double GetSize()
         {
             double out_size = 0;
             Love2dDll.wrap_love_dll_type_File_getSize(p, out out_size);
             return out_size;
         }
-        public void Open(Mode mode_type)
+        public void Open(FileMode mode_type)
         {
             Love2dDll.wrap_love_dll_type_File_open(p, (int)mode_type);
         }
@@ -304,11 +289,11 @@ namespace Love
             Love2dDll.wrap_love_dll_type_File_getBuffer(p, out bufmode_type, out out_size);
             out_bufmode_type = (BufferMode)bufmode_type;
         }
-        public Mode GetMode()
+        public FileMode GetMode()
         {
             int mode_type = 0;
             Love2dDll.wrap_love_dll_type_File_getMode(p, out mode_type);
-            return (Mode)mode_type;
+            return (FileMode)mode_type;
         }
         public string GetFilename()
         {
