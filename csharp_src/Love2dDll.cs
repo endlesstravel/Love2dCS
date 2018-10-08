@@ -884,19 +884,19 @@ namespace Love
         internal extern static void _wrap_love_dll_filesystem_getInfo(byte[] arg, out int out_filetype, out long out_size, out long out_modtime, out bool out_result);
         internal static void wrap_love_dll_filesystem_getInfo(byte[] arg, out int out_filetype, out long out_size, out long out_modtime, out bool out_result)
         {
-            wrap_love_dll_filesystem_getInfo(arg, out out_filetype, out out_size, out out_modtime,  out out_result);
+            _wrap_love_dll_filesystem_getInfo(arg, out out_filetype, out out_size, out out_modtime,  out out_result);
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_filesystem_createDirectory")]
-        internal extern static bool _wrap_love_dll_filesystem_createDirectory(byte[] arg);
-        internal static bool wrap_love_dll_filesystem_createDirectory(byte[] arg)
+        internal extern static void _wrap_love_dll_filesystem_createDirectory(byte[] arg, out bool out_result);
+        internal static void wrap_love_dll_filesystem_createDirectory(byte[] arg, out bool out_result)
         {
-            return CheckCAPIException(_wrap_love_dll_filesystem_createDirectory(arg));
+            _wrap_love_dll_filesystem_createDirectory(arg, out out_result);
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_filesystem_remove")]
-        internal extern static bool _wrap_love_dll_filesystem_remove(byte[] arg);
-        internal static bool wrap_love_dll_filesystem_remove(byte[] arg)
+        internal extern static void _wrap_love_dll_filesystem_remove(byte[] arg, out bool out_result);
+        internal static void wrap_love_dll_filesystem_remove(byte[] arg, out bool out_result)
         {
-            return CheckCAPIException(_wrap_love_dll_filesystem_remove(arg));
+            _wrap_love_dll_filesystem_remove(arg, out out_result);
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_filesystem_read")]
         internal extern static bool _wrap_love_dll_filesystem_read(byte[] filename, long len, out IntPtr out_data, out uint out_data_length);

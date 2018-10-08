@@ -9,31 +9,87 @@ namespace Love
 
     public partial class FileSystem
     {
-        public static File NewFile(string filename, File.Mode fmode_type = File.Mode.Read)
+        /// <summary>
+        /// Creates a new File object. It needs to be opened before it can be accessed.
+        /// </summary>
+        /// <param name="filename">The filename of the file.</param>
+        /// <param name="fmode_type">The mode to open the file in.</param>
+        /// <returns></returns>
+        public static File NewFile(string filename, FileMode fmode_type = FileMode.Read)
         {
             return NewFile(DllTool.ToUTF8Bytes(filename), fmode_type);
         }
+
+        /// <summary>
+        /// Creates a new FileData object.
+        /// </summary>
+        /// <param name="contents">The contents of the file.</param>
+        /// <param name="filename">The name of the file.</param>
+        /// <returns></returns>
         public static FileData NewFileData(string contents, string filename)
         {
             return NewFileData(DllTool.ToUTF8Bytes(contents), DllTool.ToUTF8Bytes(filename));
         }
+
+        /// <summary>
+        /// Creates a new FileData object.
+        /// </summary>
+        /// <param name="contents">The contents of the file.</param>
+        /// <param name="filename">The name  of the file.</param>
+        /// <returns></returns>
         public static FileData NewFileData(byte[] contents, string filename)
         {
             return NewFileData(contents, DllTool.ToUTF8Bytes(filename));
         }
+
+        /// <summary>
+        /// Initializes FileSystem, will be called internally, so should not be used explictly.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public static bool Init(string args)
         {
             return Init(DllTool.ToUTF8Bytes(args));
         }
-        public static void SetIdentity(string arg, bool append = false)
+
+        /// <summary>
+        /// Gets information about the specified file or directory.
+        /// </summary>
+        /// <param name="path">The file or directory path to check.</param>
+        /// <returns></returns>
+        public static Info GetInfo(string path)
         {
-            SetIdentity(DllTool.ToUTF8Bytes(arg), append);
+            return GetInfo(DllTool.ToUTF8Bytes(path));
         }
-        public static void SetSource(string arg)
+
+        /// <summary>
+        /// Sets the write directory for your game. Note that you can only set the name of the folder to store your files in, not the location.
+        /// </summary>
+        /// <param name="path">The new identity that will be used as write directory.</param>
+        /// <param name="append">Whether the identity directory will be searched when reading a filepath before or after the game's source directory and any currently.
+        /// TRUE: results in searching source before searching save directory; FALSE: results in searching game save directory before searching source directorymounted archives.</param>
+        public static void SetIdentity(string path, bool append = false)
         {
-            SetSource(DllTool.ToUTF8Bytes(arg));
+            SetIdentity(DllTool.ToUTF8Bytes(path), append);
         }
-        public static bool Mount(string archive, string mountpoint, bool appendToPath)
+
+        /// <summary>
+        /// Sets the source of the game, where the code is present. This function can only be called once, and is normally automatically done by LÖVE.
+        /// </summary>
+        /// <param name="path">Absolute path to the game's source folder.</param>
+        public static void SetSource(string path)
+        {
+            SetSource(DllTool.ToUTF8Bytes(path));
+        }
+
+        /// <summary>
+        /// Mounts a zip file or folder in the game's save directory for reading. It is also possible to mount love.filesystem.getSourceBaseDirectory if the game is in fused mode.
+        /// </summary>
+        /// <param name="archive">The folder or zip file in the game's save directory to mount.</param>
+        /// <param name="mountpoint">The new path the archive will be mounted to.</param>
+        /// <param name="appendToPath">Whether the archive will be searched when reading a filepath before or after already-mounted archives. This includes the game's source and save directories.</param>
+        /// <returns></returns>
+        public static bool Mount(string archive, string mountpoint, bool appendToPath = false)
         {
             return Mount(DllTool.ToUTF8Bytes(archive), DllTool.ToUTF8Bytes(mountpoint), appendToPath);
         }
@@ -41,41 +97,110 @@ namespace Love
         {
             return Unmount(DllTool.ToUTF8Bytes(archive));
         }
-        public static String GetRealDirectory(string filename)
+
+        /// <summary>
+        /// <para>Gets the platform-specific absolute path of the directory containing a filepath.</para>
+        /// </summary>
+        /// <param name="filename">The filepath to get the directory of.</param>
+        /// <returns>The platform-specific full path of the directory containing the filepath.</returns>
+        public static string GetRealDirectory(string filename)
         {
             return GetRealDirectory(DllTool.ToUTF8Bytes(filename));
         }
-        public static void CreateDirectory(string arg)
+
+        /// <summary>
+        /// <para>Recursively creates a directory.</para>
+        /// <para>When called with "a/b" it creates both "a" and "a/b", if they don't exist already.</para>
+        /// </summary>
+        /// <param name="name">The directory to create.</param>
+        /// <returns>True if the directory was created, false if not.</returns>
+        public static bool CreateDirectory(string name)
         {
-            CreateDirectory(DllTool.ToUTF8Bytes(arg));
+            return CreateDirectory(DllTool.ToUTF8Bytes(name));
         }
-        public static void Remove(string arg)
+
+        /// <summary>
+        /// Removes a file (or directory).
+        /// </summary>
+        /// <param name="path">The file or directory to remove.</param>
+        public static bool Remove(string path)
         {
-            Remove(DllTool.ToUTF8Bytes(arg));
+            return Remove(DllTool.ToUTF8Bytes(path));
         }
-        public static byte[] read(string filename, long len = -1)
+
+        /// <summary>
+        /// Read the contents of a file.
+        /// </summary>
+        /// <param name="filename">The name (and path) of the file.</param>
+        /// <param name="len">How many bytes to read. (-1 means all)</param>
+        /// <returns></returns>
+        public static byte[] Read(string filename, long len = -1)
         {
-            return read(DllTool.ToUTF8Bytes(filename), len);
+            return Read(DllTool.ToUTF8Bytes(filename), len);
         }
+
+        /// <summary>
+        /// Write data to a file in the save directory. If the file existed already, it will be completely replaced by the new contents.
+        /// </summary>
+        /// <param name="filename">The name (and path) of the file.</param>
+        /// <param name="input">The data to write to the file.</param>
         public static void Write(string filename, byte[] input)
         {
             Write(DllTool.ToUTF8Bytes(filename), input);
         }
+
+
+        /// <summary>
+        /// Write data to a file in the save directory. If the file existed already, it will be completely replaced by the new contents.
+        /// <para>encode with UTF-8</para>
+        /// </summary>
+        /// <param name="filename">The name (and path) of the file.</param>
+        /// <param name="input">The string data to write to the file.</param>
+        public static void Write(string filename, string input)
+        {
+            Write(DllTool.ToUTF8Bytes(filename), DllTool.ToUTF8Bytes(input));
+        }
+
+        /// <summary>
+        /// Append data to an existing file.
+        /// </summary>
+        /// <param name="filename">The name (and path) of the file.</param>
+        /// <param name="input">The data to append to the file.</param>
         public static void Append(string filename, byte[] input)
         {
             Append(DllTool.ToUTF8Bytes(filename), input);
         }
-        public static String[] getDirectoryItems(string dir)
+
+        /// <summary>
+        /// Append text to an existing file (encode with UTF-8).
+        /// </summary>
+        /// <param name="filename">The name (and path) of the file.</param>
+        /// <param name="txt">string to append</param>
+        public static void Append(string filename, string txt)
         {
-            return getDirectoryItems(DllTool.ToUTF8Bytes(dir));
+            Append(DllTool.ToUTF8Bytes(filename), DllTool.ToUTF8Bytes(txt));
         }
-        public static long GetLastModified(string filename)
+
+        /// <summary>
+        /// <para>Returns a table with the names of files and subdirectories in the specified path. The array is not sorted in any way; the order is undefined.</para>
+        /// <para>If the path passed to the function exists in the game and the save directory, it will list the files and directories from both places.</para>
+        /// </summary>
+        /// <param name="dir">The directory.</param>
+        /// <returns></returns>
+        public static string[] GetDirectoryItems(string dir)
         {
-            return GetLastModified(DllTool.ToUTF8Bytes(filename));
+            return GetDirectoryItems(DllTool.ToUTF8Bytes(dir));
         }
-        public static void SetRequirePath(string paths)
+
+
+        public static long _GetLastModified(string filename)
         {
-            SetRequirePath(DllTool.ToUTF8Bytes(paths));
+            return _GetLastModified(DllTool.ToUTF8Bytes(filename));
+        }
+
+        public static void _SetRequirePath(string paths)
+        {
+            _SetRequirePath(DllTool.ToUTF8Bytes(paths));
         }
     }
 

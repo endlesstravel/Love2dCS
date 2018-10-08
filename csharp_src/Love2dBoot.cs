@@ -357,11 +357,11 @@ namespace Love
             settings.y = bootConfig.WindowY != null ? (int)bootConfig.WindowY : 0;
             Window.SetMode(bootConfig.WindowWidth, bootConfig.WindowHeight, settings);
 
-            string str = FileSystem.GetExecutablePath();
-            int index = str.LastIndexOf(@"\");
+            string executablePath = FileSystem.GetExecutablePath();
+            int index = executablePath.LastIndexOf(@"\");
             if (index == -1)
-                index = str.LastIndexOf(@"/");
-            string path = str.Substring(0, index);
+                index = executablePath.LastIndexOf(@"/");
+            string path = executablePath.Substring(0, index);
             Console.WriteLine($"FileSystem set source with path : {path}");
             FileSystem.SetSource(path);
         }

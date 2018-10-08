@@ -2114,14 +2114,14 @@ namespace wrap
         }
     }
 
-	bool4 wrap_love_dll_filesystem_createDirectory(const char *arg)
+	void wrap_love_dll_filesystem_createDirectory(const char *arg, bool4 *out_result)
 	{
-		return fsInstance->createDirectory(arg);
+		*out_result = fsInstance->createDirectory(arg);
 	}
 
-	bool4 wrap_love_dll_filesystem_remove(const char *arg)
+	void wrap_love_dll_filesystem_remove(const char *arg, bool4 *out_result)
 	{
-		return fsInstance->remove(arg);
+		*out_result = fsInstance->remove(arg);
 	}
 
 	bool4 wrap_love_dll_filesystem_read(const char *filename, int64 len, char **out_data, uint32 *out_data_length)

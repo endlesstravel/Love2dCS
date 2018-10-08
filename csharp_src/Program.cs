@@ -126,6 +126,137 @@ namespace Love
         }
     }
 
+
+    [StageName("test file")]
+    class TestFile : Stage
+    {
+        static string TEST_FILE_PATH = "test.txt";
+        static string IDENTIFY_PATH = "test_for_my_work";
+        static string MOUNT_PATH = "E:\\Animate";
+        string recursiveEnumerateBuffer;
+        public override void OnKeyPressed(KeyConstant key)
+        {
+            if (key == KeyConstant.A)
+            {
+                FileSystem.Append(TEST_FILE_PATH, "You have to be happiness.\n");
+            }
+
+            if (key == KeyConstant.I)
+            {
+                FileSystem.SetIdentity(IDENTIFY_PATH);
+            }
+
+            if (key == KeyConstant.C)
+            {
+                FileSystem.Write(TEST_FILE_PATH, "new file .... \n");
+            }
+
+
+            if (key == KeyConstant.D)
+            {
+                var success = FileSystem.CreateDirectory("a_dir");
+                Console.WriteLine("CreateDirectory success : {0}", success);
+            }
+
+
+            if (key == KeyConstant.E)
+            {
+                var success = FileSystem.Remove(TEST_FILE_PATH);
+                Console.WriteLine("remove success : {0}", success);
+            }
+
+            if (key == KeyConstant.M)
+            {
+                var success = FileSystem.Mount(MOUNT_PATH, "win_boot_ressources");
+                Console.WriteLine("mount success : {0}", success);
+            }
+
+            if (key == KeyConstant.R)
+            {
+                recursiveEnumerateBuffer = recursiveEnumerate("", "", "");
+            }
+
+            if (key == KeyConstant.S)
+            {
+                throw new Exception("no support yet");
+            }
+        }
+        public override void OnLoad()
+        {
+            recursiveEnumerateBuffer = recursiveEnumerate("", "", "");
+        }
+        public override void OnUpdate(float dt)
+        {
+        }
+
+        public string recursiveEnumerate(string folder, string fileTree, string tab)
+        {
+            var list = FileSystem.getDirectoryItems(folder);
+            foreach (var item in list)
+            {
+                var file = folder + "/" + item;
+                var info = FileSystem.GetInfo(file);
+                if (info != null)
+                {
+                    if (info.type == FileType.File)
+                    {
+                        fileTree = fileTree + "\n" + tab + file;
+                    }
+                    else if (info.type == FileType.Directory)
+                    {
+                        fileTree = fileTree + "\n" + file + " (DIR)";
+                        fileTree = recursiveEnumerate(file, fileTree, tab + "  ");
+                    }
+                }
+            }
+
+            return fileTree;
+        }
+
+
+        public override void OnDraw()
+        {
+            var info = FileSystem.GetInfo(TEST_FILE_PATH);
+
+            var sb = new List<string>();
+            sb.Add($"-------------------- {TEST_FILE_PATH} --------------------");
+            sb.Add($"exist : {info != null}");
+            if (info != null)
+            {
+                string content = System.Text.Encoding.UTF8.GetString(FileSystem.Read(TEST_FILE_PATH));
+
+                sb.Add($"info : {info}");
+                sb.Add($"realpath : {FileSystem.GetRealDirectory(TEST_FILE_PATH)}");
+                sb.Add($"text content : {content}");
+
+            }
+            sb.Add($"-------------------- Operate --------------------");
+            sb.Add($"[A]: Append to file  '{TEST_FILE_PATH}'  'You have to be happiness.(LR)' ");
+            sb.Add($"[C]: (Re)create new file  '{TEST_FILE_PATH}' with content 'new file ....(LR)' ");
+            sb.Add($"[E]: remove file  '{TEST_FILE_PATH}'  ");
+            sb.Add($"[I]: Set identify path to  '{IDENTIFY_PATH}' ");
+            sb.Add($"[S]: toogle symbolic link switch ");
+            sb.Add($"-------------------- Status --------------------");
+            sb.Add($"whether the game is in fused mode or not: {FileSystem.IsFused()}");
+            sb.Add($"current working directory: {FileSystem.GetWorkingDirectory()}");
+            sb.Add($"whether love.filesystem follows symbolic links: {FileSystem.AreSymlinksEnabled()}");
+            sb.Add($"application data directory: {FileSystem.GetAppdataDirectory()}");
+            sb.Add($"the full path to the designated save directory: {FileSystem.GetSaveDirectory()}");
+            sb.Add($"the full path to the source or directory.: {FileSystem.GetSource()}");
+            sb.Add($"Require Path: {FileSystem._GetRequirePath()}");
+            sb.Add($"the full path to the directory containing the .love file.: {FileSystem._GetSourceBaseDirectory()}");
+            sb.Add($"the path of the user's directory: {FileSystem.GetUserDirectory()}");
+            sb.Add($"the write directory name for your game: {FileSystem.GetIdentity()}");
+            sb.Add($"-------------------- recursive enumerate files --------------------");
+            sb.Add($"[R]: refresh file list");
+            sb.Add($"{recursiveEnumerateBuffer}");
+
+
+            Graphics.SetColor(0, 0, 0);
+            Graphics.Print(string.Join("\n", sb), 10, 10);
+        }
+    }
+
     [StageName("test other")]
     class TestOther : Stage
     {
@@ -544,6 +675,7 @@ namespace Love
         public override void Load()
         {
             AddStage(new TestMouse());
+            AddStage(new TestFile());
             AddStage(new TestFont());
             AddStage(new TestAudio());
             AddStage(new TestVideo());

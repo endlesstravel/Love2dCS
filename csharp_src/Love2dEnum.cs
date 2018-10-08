@@ -1,5 +1,78 @@
 ﻿namespace Love
 {
+    /// <summary>
+    /// The different modes you can open a File in.
+    /// </summary>
+    public enum FileMode : int
+    {
+        /// <summary>
+        /// Do not open a file (represents a closed file.)
+        /// </summary>
+        Closed,
+
+        /// <summary>
+        /// Open a file for read.
+        /// </summary>
+        Read,
+
+        /// <summary>
+        /// Open a file for write.
+        /// </summary>
+        Write,
+
+        /// <summary>
+        /// Open a file for append.
+        /// </summary>
+        Append,
+    };
+
+    /// <summary>
+    /// Buffer modes for File objects.
+    /// </summary>
+    public enum BufferMode : int
+    {
+        /// <summary>
+        /// No buffering. The result of write and append operations appears immediately.
+        /// </summary>
+        None,
+
+        /// <summary>
+        /// Line buffering. Write and append operations are buffered until a newline is output or the buffer size limit is reached.
+        /// </summary>
+        Line,
+
+        /// <summary>
+        /// Full buffering. Write and append operations are always buffered until the buffer size limit is reached.
+        /// </summary>
+        Full,
+    };
+
+    /// <summary>
+    /// The type of a file.
+    /// </summary>
+    public enum FileType : int
+    {
+        /// <summary>
+        /// Regular file.
+        /// </summary>
+        File,
+
+        /// <summary>
+        /// Directory.
+        /// </summary>
+        Directory,
+
+        /// <summary>
+        /// Symbolic link.
+        /// </summary>
+        SymLink,
+
+        /// <summary>
+        /// Something completely different like a device.
+        /// </summary>
+        Other,
+    };
+
 
     /// <summary>
     /// The different distance models.
