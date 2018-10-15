@@ -48,9 +48,21 @@ namespace Love
             int w = imageData.GetWidth();
             int h = imageData.GetHeight();
 
-            PrintExecTime("imageData.MapPixel_slow((int x, int y, Float4 pixel)  ", () =>
+            PrintExecTime("imageData.MapPixel((int x, int y, Float4 pixel, x, y, w, h )  ", () =>
             {
-                imageData.MapPixel_slow((int x, int y, Float4 pixel) =>
+                imageData.MapPixel((int x, int y, Float4 pixel) =>
+                {
+                    pixel.r = 0;
+                    pixel.g = 0;
+                    pixel.b = 0.9f;
+                    pixel.a = 1;
+                    return pixel;
+                }, 0, 0, W, H);
+            });
+
+            PrintExecTime("imageData.MapPixel((int x, int y, Float4 pixel)  ", () =>
+            {
+                imageData.MapPixel((int x, int y, Float4 pixel) =>
                 {
                     pixel.r = 0;
                     pixel.g = 0;
@@ -59,7 +71,8 @@ namespace Love
                     return pixel;
                 });
             });
-            PrintExecTime("imageData.MapPixel((int x, int y, Pixel p) =>  ", () =>
+
+            PrintExecTime("imageData.MapPixel((int x, int y, Pixel p), x, y, w, h ) =>  ", () =>
             {
                 imageData.MapPixel((int x, int y, Pixel p) =>
                 {
@@ -96,11 +109,9 @@ namespace Love
                 }, 0, 0, W, H);
             });
 
-
-
-            PrintExecTime("imageData.MapPixel_fast((int x, int y, Pixel p) =>  ", () =>
+            PrintExecTime("imageData.MapPixel((int x, int y, Pixel p) =>  ", () =>
             {
-                imageData.MapPixel_fast((int x, int y, Pixel p) =>
+                imageData.MapPixel((int x, int y, Pixel p) =>
                 {
                     if (format == PixelFormat.RGBA8)
                     {
@@ -135,30 +146,10 @@ namespace Love
                 });
             });
 
-
-            PrintExecTime("Float[]   imageData.GetPixelsFloat() =>  ", () =>
+            PrintExecTime("Float[] imageData.GetPixelsFloat() =>  ", () =>
             {
                 var p = imageData.GetPixelsFloat();
             });
-
-            PrintExecTime("imageData.SetPixelsFloat_slow( Float4[] p) =>  ", () =>
-            {
-                Float4[] pixelBuffer = new Float4[w * h];
-                for (int x = 0; x < w; x++)
-                {
-                    for (int y = 0; y < h; y++)
-                    {
-                        Float4 pixel = new Float4();
-                        pixel.r = 0.5f;
-                        pixel.g = 0.4f;
-                        pixel.b = 0.1f;
-                        pixel.a = 1;
-                        pixelBuffer[y * w + x] = pixel;
-                    }
-                }
-                imageData.SetPixelsFloat_slow(pixelBuffer);
-            });
-
 
             PrintExecTime("imageData.SetPixelsFloat( Float4[] p) =>  ", () =>
             {
@@ -178,7 +169,6 @@ namespace Love
                 imageData.SetPixelsFloat(pixelBuffer);
             });
 
-
             PrintExecTime("Pixel[] imageData.GetPixels() =>  ", () =>
             {
                 var p = imageData.GetPixels();
@@ -186,7 +176,7 @@ namespace Love
 
             PrintExecTime("imageData.SetPixels( Pixel[] p) =>  ", () =>
             {
-                Pixel[] pixelBuffer = imageData.GetPixels();// new Pixel[w * h];
+                Pixel[] pixelBuffer = new Pixel[w * h];
                 for (int x = 0; x < w; x++)
                 {
                     for (int y = 0; y < h; y++)
