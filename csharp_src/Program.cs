@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Love
 {
@@ -13,6 +12,258 @@ namespace Love
         virtual public void OnPause() { }
         virtual public void OnReOpne() { }
     }
+
+
+    [StageName("test image data")]
+    class TestImageData : Stage
+    {
+        static int W = 1000, H = 1000;
+        ImageData imageData;
+        Image image;
+
+        void PrintExecTime(string name, Action action)
+        {
+            var start = DateTime.Now.Ticks;
+            action();
+            Console.WriteLine($"{name}, consume time: { (DateTime.Now.Ticks - start) / TimeSpan.TicksPerMillisecond }");
+        }
+
+        public override void OnLoad()
+        {
+            byte[] data = new byte[W * H * 4];
+
+            for (int x = 0; x < W; x++)
+            {
+                for (int y = 0; y < H; y++)
+                {
+                    data[(x + y * W) * 4 + 0] = 255;
+                    data[(x + y * W) * 4 + 1] = 0;
+                    data[(x + y * W) * 4 + 2] = 0;
+                    data[(x + y * W) * 4 + 3] = 255;
+                }
+            }
+
+            imageData = Image.NewImageData(W, H, ImageDataPixelFormat.RGBA8);
+            var format = imageData.GetFormat();
+            int w = imageData.GetWidth();
+            int h = imageData.GetHeight();
+
+            PrintExecTime("imageData.MapPixel_slow((int x, int y, Float4 pixel)  ", () =>
+            {
+                imageData.MapPixel_slow((int x, int y, Float4 pixel) =>
+                {
+                    pixel.r = 0;
+                    pixel.g = 0;
+                    pixel.b = 0.9f;
+                    pixel.a = 1;
+                    return pixel;
+                });
+            });
+            PrintExecTime("imageData.MapPixel((int x, int y, Pixel p) =>  ", () =>
+            {
+                imageData.MapPixel((int x, int y, Pixel p) =>
+                {
+                    if (format == PixelFormat.RGBA8)
+                    {
+                        p.rgba8.r = 145;
+                        p.rgba8.g = 0;
+                        p.rgba8.b = 255;
+                        p.rgba8.a = 255;
+                    }
+                    else if (format == PixelFormat.RGBA16)
+                    {
+                        p.rgba16.r = 0;
+                        p.rgba16.g = 0;
+                        p.rgba16.b = (ushort)(0.9f * ushort.MaxValue);
+                        p.rgba16.a = (ushort)(0.99f * ushort.MaxValue);
+                    }
+                    else if (format == PixelFormat.RGBA16F)
+                    {
+                        p.rgba16f.r = Half.FromFloat(0.2f);
+                        p.rgba16f.g = Half.FromFloat(1);
+                        p.rgba16f.b = Half.FromFloat(0);
+                        p.rgba16f.a = Half.FromFloat(1);
+                    }
+                    else if (format == PixelFormat.RGBA32F)
+                    {
+                        p.rgba32f.r = 0.9f;
+                        p.rgba32f.g = 0.3f;
+                        p.rgba32f.b = 0.6f;
+                        p.rgba32f.a = 0.9f;
+                    }
+
+                    return p;
+                }, 0, 0, W, H);
+            });
+
+
+
+            PrintExecTime("imageData.MapPixel_fast((int x, int y, Pixel p) =>  ", () =>
+            {
+                imageData.MapPixel_fast((int x, int y, Pixel p) =>
+                {
+                    if (format == PixelFormat.RGBA8)
+                    {
+                        p.rgba8.r = 145;
+                        p.rgba8.g = 0;
+                        p.rgba8.b = 255;
+                        p.rgba8.a = 255;
+                    }
+                    else if (format == PixelFormat.RGBA16)
+                    {
+                        p.rgba16.r = 0;
+                        p.rgba16.g = 0;
+                        p.rgba16.b = (ushort)(0.9f * ushort.MaxValue);
+                        p.rgba16.a = (ushort)(0.99f * ushort.MaxValue);
+                    }
+                    else if (format == PixelFormat.RGBA16F)
+                    {
+                        p.rgba16f.r = Half.FromFloat(0.2f);
+                        p.rgba16f.g = Half.FromFloat(1);
+                        p.rgba16f.b = Half.FromFloat(0);
+                        p.rgba16f.a = Half.FromFloat(1);
+                    }
+                    else if (format == PixelFormat.RGBA32F)
+                    {
+                        p.rgba32f.r = 0.9f;
+                        p.rgba32f.g = 0.3f;
+                        p.rgba32f.b = 0.6f;
+                        p.rgba32f.a = 0.9f;
+                    }
+
+                    return p;
+                });
+            });
+
+
+            PrintExecTime("Float[]   imageData.GetPixelsFloat() =>  ", () =>
+            {
+                var p = imageData.GetPixelsFloat();
+            });
+
+            PrintExecTime("imageData.SetPixelsFloat_slow( Float4[] p) =>  ", () =>
+            {
+                Float4[] pixelBuffer = new Float4[w * h];
+                for (int x = 0; x < w; x++)
+                {
+                    for (int y = 0; y < h; y++)
+                    {
+                        Float4 pixel = new Float4();
+                        pixel.r = 0.5f;
+                        pixel.g = 0.4f;
+                        pixel.b = 0.1f;
+                        pixel.a = 1;
+                        pixelBuffer[y * w + x] = pixel;
+                    }
+                }
+                imageData.SetPixelsFloat_slow(pixelBuffer);
+            });
+
+
+            PrintExecTime("imageData.SetPixelsFloat( Float4[] p) =>  ", () =>
+            {
+                Float4[] pixelBuffer = new Float4[w * h];
+                for (int x = 0; x < w; x++)
+                {
+                    for (int y = 0; y < h; y++)
+                    {
+                        Float4 pixel = new Float4();
+                        pixel.r = 0.5f;
+                        pixel.g = 0.4f;
+                        pixel.b = 0.1f;
+                        pixel.a = 1;
+                        pixelBuffer[y * w + x] = pixel;
+                    }
+                }
+                imageData.SetPixelsFloat(pixelBuffer);
+            });
+
+
+            PrintExecTime("Pixel[] imageData.GetPixels() =>  ", () =>
+            {
+                var p = imageData.GetPixels();
+            });
+
+            PrintExecTime("imageData.SetPixels( Pixel[] p) =>  ", () =>
+            {
+                Pixel[] pixelBuffer = imageData.GetPixels();// new Pixel[w * h];
+                for (int x = 0; x < w; x++)
+                {
+                    for (int y = 0; y < h; y++)
+                    {
+                        Pixel p = new Pixel();
+                        if (format == PixelFormat.RGBA8)
+                        {
+                            p.rgba8.r = 145;
+                            p.rgba8.g = 0;
+                            p.rgba8.b = 255;
+                            p.rgba8.a = 255;
+                        }
+                        else if (format == PixelFormat.RGBA16)
+                        {
+                            p.rgba16.r = 0;
+                            p.rgba16.g = 0;
+                            p.rgba16.b = (ushort)(0.9f * ushort.MaxValue);
+                            p.rgba16.a = (ushort)(0.99f * ushort.MaxValue);
+                        }
+                        else if (format == PixelFormat.RGBA16F)
+                        {
+                            p.rgba16f.r = Half.FromFloat(0.2f);
+                            p.rgba16f.g = Half.FromFloat(1);
+                            p.rgba16f.b = Half.FromFloat(0);
+                            p.rgba16f.a = Half.FromFloat(1);
+                        }
+                        else if (format == PixelFormat.RGBA32F)
+                        {
+                            p.rgba32f.r = 0.9f;
+                            p.rgba32f.g = 0.3f;
+                            p.rgba32f.b = 0.6f;
+                            p.rgba32f.a = 0.9f;
+                        }
+
+                        pixelBuffer[y * w + x] = p;
+                    }
+                }
+                imageData.SetPixels(pixelBuffer);
+            });
+
+            image = Graphics.NewImage(imageData);
+        }
+        public override void OnUpdate(float dt)
+        {
+        }
+        public override void OnDraw()
+        {
+            Graphics.SetColor(0, 0, 0);
+            Graphics.Print($"{image.GetWidth()} {image.GetHeight()} {imageData.GetFormat()} {imageData.GetSize()}", 0, 0);
+
+            Graphics.SetColor(1, 1, 1);
+            Graphics.Draw(image, 10, 10);
+        }
+    }
+
+
+    [StageName("test shader")]
+    class TestShader : Stage
+    {
+        Shader shader;
+        Image img;
+        public override void OnLoad()
+        {
+            //shader = new Shader();
+        }
+        public override void OnUpdate(float dt)
+        {
+        }
+        public override void OnDraw()
+        {
+          
+        }
+    }
+
+
+
+
 
     class Button
     {
@@ -95,6 +346,7 @@ namespace Love
                 Mouse.SetRelativeMode(!Mouse.GetRelativeMode());
             }
         }
+
         public override void OnDraw()
         {
             Graphics.SetColor(0, 0, 0);
@@ -191,18 +443,18 @@ namespace Love
 
         public string recursiveEnumerate(string folder, string fileTree, string tab)
         {
-            var list = FileSystem.getDirectoryItems(folder);
+            var list = FileSystem.GetDirectoryItems(folder);
             foreach (var item in list)
             {
                 var file = folder + "/" + item;
                 var info = FileSystem.GetInfo(file);
                 if (info != null)
                 {
-                    if (info.type == FileType.File)
+                    if (info.Type == FileType.File)
                     {
                         fileTree = fileTree + "\n" + tab + file;
                     }
-                    else if (info.type == FileType.Directory)
+                    else if (info.Type == FileType.Directory)
                     {
                         fileTree = fileTree + "\n" + file + " (DIR)";
                         fileTree = recursiveEnumerate(file, fileTree, tab + "  ");
@@ -677,6 +929,7 @@ namespace Love
             AddStage(new TestMouse());
             AddStage(new TestFile());
             AddStage(new TestFont());
+            AddStage(new TestImageData());
             AddStage(new TestAudio());
             AddStage(new TestVideo());
             AddStage(new TestStencil());

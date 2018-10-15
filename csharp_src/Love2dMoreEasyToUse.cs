@@ -4,11 +4,35 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace Love
 {
 
     #region Love Module
+
+    public partial class Event
+    {
+        /// <summary>
+        /// Returns an iterator for messages in the event queue.
+        /// </summary>
+        /// <param name="scene">event handler</param>
+        /// <returns></returns>
+        public static bool Poll(Scene scene)
+        {
+            return PollOrWait(scene, true);
+        }
+
+        /// <summary>
+        /// Like <see cref="Poll"/>, but blocks until there is an event in the queue.	
+        /// </summary>
+        /// <param name="scene">event handler</param>
+        /// <returns></returns>
+        public static bool Wait(Scene scene)
+        {
+            return PollOrWait(scene, false);
+        }
+    }
 
     public partial class Window
     {
@@ -121,8 +145,609 @@ namespace Love
             var filedata = FileSystem.NewFileData(filename);
             return NewCompressedData(filedata);
         }
-    }
 
+
+        public static ImageData NewImageData(float[,] rawData, ImageDataPixelFormat format)
+        {
+            Check.ArgumentNull(rawData, "data");
+            int w = rawData.GetLength(0);
+            int h = rawData.GetLength(1);
+            float[][] data = new float[w][];
+
+            for (int x = 0; x < w; x++)
+            {
+                for (int y = 0; y < h; y++)
+                {
+                    data[x][y] = rawData[x, y];
+                }
+            }
+            
+            return NewImageData(false, data, format);
+        }
+
+
+        /// <summary>
+        /// Creates a new ImageData object.
+        /// <code>
+        /// [0,0] [0,1] [0,2] .. [0,]
+        /// </code>
+        /// <para> </para>
+        /// </summary>
+        /// <param name="rawData"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
+        public static ImageData NewImageData(float[][] rawData, ImageDataPixelFormat format)
+        {
+            return NewImageData(true, rawData, format);
+        }
+
+        private static ImageData NewImageData(bool nullCheck, float[][] rawData, ImageDataPixelFormat format)
+        {
+            Check.ArgumentNull(rawData, "data");
+            int w = 0;
+            int h = rawData.Length;
+            if (h > 0)
+            {
+                if (rawData[0] == null)
+                {
+                    throw new Exception("col[0] was null !");
+                }
+                w = rawData[0].Length;
+
+                for (int i = 1; i < rawData.Length; i++)
+                {
+                    float[] row = rawData[i];
+                    if (row == null)
+                    {
+                        throw new Exception($"col[{i}] was null !");
+                    }
+
+                    if (row.Length != w)
+                    {
+                        throw new Exception($"w not equal with col[{i}]");
+                    }
+                }
+            }
+            
+
+            byte[] data = new byte[1];
+            if (format == ImageDataPixelFormat.RGBA8)
+            {
+
+            }
+            else if (format == ImageDataPixelFormat.RGBA16)
+            {
+
+            }
+            else if (format == ImageDataPixelFormat.RGBA16F)
+            {
+
+            }
+            else if (format == ImageDataPixelFormat.RGBA32F)
+            {
+
+            }
+
+            return NewImageData(w, h, format, data);
+        }
+    }
+    public partial class ImageData
+    {
+        ////// https://stackoverflow.com/questions/5155180/changing-a-c-sharp-delegates-calling-convention-to-cdecl
+        ////[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        //// public delegate Pixel MapPixelDelegate(int x, int y, Pixel p);
+        ////public void MapPixel(int x, int y, int w, int h, MapPixelDelegate func)
+        ////{
+        ////    Love2dDll.wrap_love_dll_type_ImageData_mapPixel(p, x, y, w, h, new MapPixelDelegate(func));
+        ////}
+
+        public delegate Pixel MapPixelDelegate(int x, int y, Pixel p);
+        public delegate Float4 MapPixelColorDelegate(int x, int y, Float4 p);
+
+        static void WriteVector4(IntPtr dest, int offset, Float4 input, PixelFormat format)
+        {
+            Pixel pixel = new Pixel();
+            if (format == PixelFormat.RGBA8)
+            {
+                unchecked
+                {
+                    pixel.rgba8.r = (byte)(input.r * byte.MaxValue);
+                    pixel.rgba8.g = (byte)(input.g * byte.MaxValue);
+                    pixel.rgba8.b = (byte)(input.b * byte.MaxValue);
+                    pixel.rgba8.a = (byte)(input.a * byte.MaxValue);
+                }
+            }
+            else if (format == PixelFormat.RGBA16)
+            {
+                unchecked
+                {
+                    pixel.rgba16.r = (ushort)(input.r * ushort.MaxValue);
+                    pixel.rgba16.g = (ushort)(input.g * ushort.MaxValue);
+                    pixel.rgba16.b = (ushort)(input.b * ushort.MaxValue);
+                    pixel.rgba16.a = (ushort)(input.a * ushort.MaxValue);
+                }
+            }
+            else if (format == PixelFormat.RGBA16F)
+            {
+                pixel.rgba16f.r = Half.FromFloat(input.r);
+                pixel.rgba16f.g = Half.FromFloat(input.g);
+                pixel.rgba16f.b = Half.FromFloat(input.b);
+                pixel.rgba16f.a = Half.FromFloat(input.a);
+            }
+            else if (format == PixelFormat.RGBA32F)
+            {
+                pixel.rgba32f.r = input.r;
+                pixel.rgba32f.g = input.g;
+                pixel.rgba32f.b = input.b;
+                pixel.rgba32f.a = input.a;
+            }
+            WritePixel(dest, offset, pixel, format); ;
+        }
+
+        static void ReadVector4(IntPtr dest, int offset, PixelFormat format, ref Float4 output)
+        {
+            Pixel pixel = ReadPixel(dest, offset, format);
+            if (format == PixelFormat.RGBA8)
+            {
+                output.r = (byte)(pixel.rgba8.r * byte.MaxValue);
+                output.g = (byte)(pixel.rgba8.g * byte.MaxValue);
+                output.b = (byte)(pixel.rgba8.b * byte.MaxValue);
+                output.a = (byte)(pixel.rgba8.a * byte.MaxValue);
+            }
+            else if (format == PixelFormat.RGBA16)
+            {
+                output.r = pixel.rgba16.r / (float)ushort.MaxValue;
+                output.g = pixel.rgba16.g / (float)ushort.MaxValue;
+                output.b = pixel.rgba16.b / (float)ushort.MaxValue;
+                output.a = pixel.rgba16.a / (float)ushort.MaxValue;
+            }
+            else if (format == PixelFormat.RGBA16F)
+            {
+                output.r = pixel.rgba16f.r.ToFloat();
+                output.g = pixel.rgba16f.g.ToFloat();
+                output.b = pixel.rgba16f.b.ToFloat();
+                output.a = pixel.rgba16f.a.ToFloat();
+            }
+            else if (format == PixelFormat.RGBA32F)
+            {
+                output.r = pixel.rgba32f.r;
+                output.g = pixel.rgba32f.g;
+                output.b = pixel.rgba32f.b;
+                output.a = pixel.rgba32f.a;
+            }
+        }
+
+        /// <summary>
+        /// <para> Transform an image by applying a function to every pixel. </para>
+        /// <para> This function is a higher-order function(https://en.wikipedia.org/wiki/Higher-order_function). It takes another function as a parameter, and calls it once for each pixel in the ImageData. </para>
+        /// <para>The passed function is called with six parameters for each pixel in turn. The parameters are numbers that represent the x and y coordinates of the pixel and its red, green, blue and alpha values. The function should return the new red, green, blue, and alpha values for that pixel.</para>
+        /// </summary>
+        /// <param name="func">Function to apply to every pixel.</param>
+        //public void MapPixel(MapPixelColorDelegate func)
+        //{
+        //    MapPixel_slow(func, 0, 0, GetWidth(), GetHeight());
+        //}
+        public void MapPixel_slow(MapPixelColorDelegate func)
+        {
+            var buffer = GetPixelsFloat();
+            int w = GetWidth();
+            int h = GetHeight();
+            for (int y = 0; y < h; y++)
+            {
+                for (int x = 0; x < w; x++)
+                {
+                    int offset = x + y * h;
+                    buffer[offset] = func(x, y, buffer[offset]);
+                }
+            }
+            SetPixelsFloat(buffer);
+        }
+
+        /// <summary>
+        /// <para> Transform an image by applying a function to every pixel. </para>
+        /// <para> This function is a higher-order function(https://en.wikipedia.org/wiki/Higher-order_function). It takes another function as a parameter, and calls it once for each pixel in the ImageData. </para>
+        /// <para>The passed function is called with six parameters for each pixel in turn. The parameters are numbers that represent the x and y coordinates of the pixel and its red, green, blue and alpha values. The function should return the new red, green, blue, and alpha values for that pixel.</para>
+        /// </summary>
+        /// <param name="func">Function to apply to every pixel.</param>
+        /// <param name="sx">The x-axis of the top-left corner of the area within the ImageData to apply the function to.</param>
+        /// <param name="sy">The y-axis of the top-left corner of the area within the ImageData to apply the function to.</param>
+        /// <param name="w">The width of the area within the ImageData to apply the function to.</param>
+        /// <param name="h">The height of the area within the ImageData to apply the function to.</param>
+        public void MapPixel_slow(MapPixelColorDelegate func, int sx, int sy, int w, int h)
+        {
+            int ex = sx + w;
+            int ey = sy + h;
+            if ((0 <= sx && ex - 1 < GetWidth() && 0 <= sy && ey - 1 < GetHeight()) == false)
+            {
+                throw new Exception("Invalid rectangle dimensions.");
+            }
+
+            int pixelSize = 0;
+            Love2dDll.inner_wrap_love_dll_type_ImageData_getPixelSize(p, out pixelSize);
+
+            Love2dDll.inner_wrap_love_dll_type_ImageData_lock(p);
+            var pointer = GetPointer();
+            int iw = GetWidth();
+            var format = GetFormat();
+
+            Float4 input = new Float4();
+            for (int y = sy; y < ey; y++)
+            {
+                for (int x = sx; x < ex; x++)
+                {
+                    int offset = (y * iw + x) * pixelSize;
+                    ReadVector4(pointer, offset, format, ref input);
+                    var output = func(x, y, input);
+                    WriteVector4(pointer, offset, output, format);
+                }
+            }
+            Love2dDll.inner_wrap_love_dll_type_ImageData_unlock(p);
+        }
+
+        static void WritePixel(IntPtr dest, int offset, Pixel pixel, PixelFormat format)
+        {
+            if (format == PixelFormat.RGBA8)
+            {
+                Marshal.WriteInt32(dest, offset, pixel.intValue0);
+            }
+            else if (format == PixelFormat.RGBA16)
+            {
+                Marshal.WriteInt64(dest, offset, pixel.longValue0);
+            }
+            else if (format == PixelFormat.RGBA16F)
+            {
+                Marshal.WriteInt64(dest, offset, pixel.longValue0);
+            }
+            else if (format == PixelFormat.RGBA32F)
+            {
+                Marshal.WriteInt64(dest, offset, pixel.longValue0);
+                Marshal.WriteInt64(dest, offset + 8, pixel.longValue1);
+            }
+        }
+
+        static Pixel ReadPixel(IntPtr dest, int offset, PixelFormat format)
+        {
+            Pixel pixel = new Pixel();
+            if (format == PixelFormat.RGBA8)
+            {
+                pixel.intValue0 = Marshal.ReadInt32(dest, offset);
+            }
+            else if (format == PixelFormat.RGBA16)
+            {
+                pixel.longValue0 = Marshal.ReadInt64(dest, offset);
+            }
+            else if (format == PixelFormat.RGBA16F)
+            {
+                pixel.longValue0 = Marshal.ReadInt64(dest, offset);
+            }
+            else if (format == PixelFormat.RGBA32F)
+            {
+                pixel.longValue0 = Marshal.ReadInt64(dest, offset);
+                pixel.longValue1 = Marshal.ReadInt64(dest, offset + 8);
+            }
+
+            return pixel;
+        }
+
+        /// <summary>
+        /// <para> Advance version of <see cref="MapPixel_slow(MapPixelColorDelegate, int, int, int, int)"/>,</para>
+        /// <para>if you don't know how to handle pixel format, please use <see cref="MapPixel_slow(MapPixelColorDelegate, int, int, int, int)"/> </para>
+        /// <para>if you need speed, consider use <see cref="SetPixels(Pixel[])"/></para>
+        /// <para> this function about 2X fast then <see cref="MapPixel_slow(MapPixelColorDelegate, int, int, int, int)"/> </para>
+        /// </summary>
+        /// <param name="sx">The x-axis of the top-left corner of the area within the ImageData to apply the function to.</param>
+        /// <param name="sy">The y-axis of the top-left corner of the area within the ImageData to apply the function to.</param>
+        /// <param name="w">The width of the area within the ImageData to apply the function to.</param>
+        /// <param name="h">The height of the area within the ImageData to apply the function to.</param>
+        /// <param name="func">Function to apply to every pixel.</param>
+        public void MapPixel(MapPixelDelegate func, int sx, int sy, int w, int h)
+        {
+            int ex = sx + w;
+            int ey = sy + h;
+            if ((0 <= sx && ex - 1 < GetWidth() && 0 <= sy && ey - 1 < GetHeight()) == false)
+            {
+                throw new Exception("Invalid rectangle dimensions.");
+            }
+
+
+            int pixelSize = 0;
+            Love2dDll.inner_wrap_love_dll_type_ImageData_getPixelSize(p, out pixelSize);
+
+            Love2dDll.inner_wrap_love_dll_type_ImageData_lock(p);
+            var pointer = GetPointer();
+            int iw = GetWidth();
+            var format = GetFormat();
+
+
+            for (int y = sy; y < ey; y++)
+            {
+                for (int x = sx; x < ex; x++)
+                {
+                    int offset = (y * iw + x) * pixelSize;
+                    var input = ReadPixel(pointer, offset, format);
+                    var output = func(x, y, input);
+                    WritePixel(pointer, offset, output, format);
+                }
+            }
+            Love2dDll.inner_wrap_love_dll_type_ImageData_unlock(p);
+        }
+
+        public void MapPixel_fast(MapPixelDelegate func)
+        {
+            var buffer = GetPixels();
+            int w = GetWidth();
+            int h = GetHeight();
+            for (int y = 0; y < h; y++)
+            {
+                for (int x = 0; x < w; x++)
+                {
+                    int offset = x + y * h;
+                    buffer[offset] = func(x, y, buffer[offset]);
+                }
+            }
+            SetPixels(buffer);
+        }
+
+
+        /// <summary>
+        /// get every pixel
+        /// </summary>
+        public Pixel[] GetPixels()
+        {
+            int w = GetWidth();
+            int h = GetHeight();
+            Pixel[] output = new Pixel[w * h];
+
+            int pixelSize = 0;
+            Love2dDll.inner_wrap_love_dll_type_ImageData_getPixelSize(p, out pixelSize);
+            if (pixelSize == 16) // r,g,b,a 32 / 32f (16 bytes)
+            {
+                long[] buffer = new long[w * h * 2];
+                Love2dDll.inner_wrap_love_dll_type_ImageData_lock(p);
+                var pointer = GetPointer();
+                Marshal.Copy(pointer, buffer, 0, buffer.Length);
+                Love2dDll.inner_wrap_love_dll_type_ImageData_unlock(p);
+
+                for (int i = 0; i < w * h; i++)
+                {
+                    output[i].longValue0 = buffer[i * 2];
+                    output[i].longValue1 = buffer[i * 2 + 1];
+                }
+            }
+            else if (pixelSize == 8) // r,g,b,a 16 / 16f  (8 bytes)
+            {
+                long[] buffer = new long[w * h];
+                Love2dDll.inner_wrap_love_dll_type_ImageData_lock(p);
+                var pointer = GetPointer();
+                Marshal.Copy(pointer, buffer, 0, buffer.Length);
+                Love2dDll.inner_wrap_love_dll_type_ImageData_unlock(p);
+
+                for (int i = 0; i < w * h; i++)
+                {
+                    output[i].longValue0 = buffer[i];
+                }
+            }
+            else if (pixelSize == 4)// r,g,b,a 8  (4 bytes)
+            {
+                int[] buffer = new int[w * h];
+                Love2dDll.inner_wrap_love_dll_type_ImageData_lock(p);
+                var pointer = GetPointer();
+                Marshal.Copy(pointer, buffer, 0, buffer.Length);
+                Love2dDll.inner_wrap_love_dll_type_ImageData_unlock(p);
+
+                for (int i = 0; i < w * h; i++)
+                {
+                    output[i].intValue0 = buffer[i];
+                }
+            }
+
+            return output;
+        }
+
+
+        public Float4[] GetPixelsFloat()
+        {
+            int w = GetWidth();
+            int h = GetHeight();
+            Float4[] output = new Float4[w * h];
+            DllTool.ExecuteAsIntprt(output, dest => Love2dDll.inner_wrap_love_dll_type_ImageData_getPixels_float4(p, dest));
+            return output;
+        }
+
+        /// <summary>
+        /// set every pixel with given data
+        /// </summary>
+        /// <param name="data"></param>
+        public void SetPixels(Pixel[] data)
+        {
+            Check.ArgumentNull(data);
+            int w = GetWidth();
+            int h = GetHeight();
+            if (data.Length != w * h)
+            {
+                throw new Exception("Length of input data not equal with GetWidth() * GetHeight() ");
+            }
+
+            int pixelSize = 0;
+            Love2dDll.inner_wrap_love_dll_type_ImageData_getPixelSize(p, out pixelSize);
+
+
+            if (pixelSize == 16) // r,g,b,a 32 / 32f (16 bytes)
+            {
+                long[] buffer = new long[w * h * 2];
+                for (int i = 0; i < w * h; i++)
+                {
+                    buffer[i * 2] = data[i].longValue0;
+                    buffer[i * 2 + 1] = data[i].longValue1;
+                }
+
+                Love2dDll.inner_wrap_love_dll_type_ImageData_lock(p);
+                var pointer = GetPointer();
+                Marshal.Copy(buffer, 0, pointer, buffer.Length);
+                Love2dDll.inner_wrap_love_dll_type_ImageData_unlock(p);
+            }
+            else if (pixelSize == 8) // r,g,b,a 16 / 16f  (8 bytes)
+            {
+                long[] buffer = new long[w * h];
+                for (int i = 0; i < w * h; i++)
+                {
+                    buffer[i] = data[i].longValue0;
+                }
+
+                Love2dDll.inner_wrap_love_dll_type_ImageData_lock(p);
+                var pointer = GetPointer();
+                Marshal.Copy(buffer, 0, pointer, buffer.Length);
+                Love2dDll.inner_wrap_love_dll_type_ImageData_unlock(p);
+            }
+            else if (pixelSize == 4)// r,g,b,a 8  (4 bytes)
+            {
+                int[] buffer = new int[w * h];
+                for (int i = 0; i < w * h; i++)
+                {
+                    buffer[i] = data[i].intValue0;
+                }
+
+                Love2dDll.inner_wrap_love_dll_type_ImageData_lock(p);
+                var pointer = GetPointer();
+                Marshal.Copy(buffer, 0, pointer, buffer.Length);
+                Love2dDll.inner_wrap_love_dll_type_ImageData_unlock(p);
+            }
+        }
+
+        public void SetPixelsFloat(Float4[] data)
+        {
+            Check.ArgumentNull(data);
+            int w = GetWidth();
+            int h = GetHeight();
+            if (data.Length != w * h)
+            {
+                throw new Exception("Length of input data not equal with GetWidth() * GetHeight() ");
+            }
+
+            Love2dDll.inner_wrap_love_dll_type_ImageData_setPixels_float4(p, data);
+        }
+
+        public void SetPixelsFloat_slow(Float4[] data)
+        {
+            Check.ArgumentNull(data);
+            int w = GetWidth();
+            int h = GetHeight();
+            if (data.Length != w * h)
+            {
+                throw new Exception("Length of input data not equal with GetWidth() * GetHeight() ");
+            }
+
+            int pixelSize = 0;
+            Love2dDll.inner_wrap_love_dll_type_ImageData_getPixelSize(p, out pixelSize);
+
+            var format = GetFormat();
+
+            unchecked
+            {
+                if (format == PixelFormat.RGBA8)
+                {
+                    byte[] buffer = new byte[w * h * 4];
+                    for (int i = 0; i < w * h; i++)
+                    {
+                        buffer[i * 4 + 0] = (byte)(data[i].r * byte.MaxValue);
+                        buffer[i * 4 + 1] = (byte)(data[i].g * byte.MaxValue);
+                        buffer[i * 4 + 2] = (byte)(data[i].b * byte.MaxValue);
+                        buffer[i * 4 + 3] = (byte)(data[i].a * byte.MaxValue);
+                    }
+
+                    Love2dDll.inner_wrap_love_dll_type_ImageData_lock(p);
+                    var pointer = GetPointer();
+                    Marshal.Copy(buffer, 0, pointer, buffer.Length);
+                    Love2dDll.inner_wrap_love_dll_type_ImageData_unlock(p);
+                }
+                else if (format == PixelFormat.RGBA16)
+                {
+                    short[] buffer = new short[w * h * 4];
+                    for (int i = 0; i < w * h; i++)
+                    {
+                        buffer[i * 4 + 0] = (short)((ushort)(data[i].r * ushort.MaxValue));
+                        buffer[i * 4 + 1] = (short)((ushort)(data[i].g * ushort.MaxValue));
+                        buffer[i * 4 + 2] = (short)((ushort)(data[i].b * ushort.MaxValue));
+                        buffer[i * 4 + 3] = (short)((ushort)(data[i].a * ushort.MaxValue));
+                    }
+
+                    Love2dDll.inner_wrap_love_dll_type_ImageData_lock(p);
+                    var pointer = GetPointer();
+                    Marshal.Copy(buffer, 0, pointer, buffer.Length);
+                    Love2dDll.inner_wrap_love_dll_type_ImageData_unlock(p);
+                }
+                else if (format == PixelFormat.RGBA16F)
+                {
+                    short[] buffer = new short[w * h * 4];
+                    for (int i = 0; i < w * h; i++)
+                    {
+                        buffer[i * 4 + 0] = (short)Half.FromFloat(data[i].r).value;
+                        buffer[i * 4 + 1] = (short)Half.FromFloat(data[i].g).value;
+                        buffer[i * 4 + 2] = (short)Half.FromFloat(data[i].b).value;
+                        buffer[i * 4 + 3] = (short)Half.FromFloat(data[i].a).value;
+                    }
+
+                    Love2dDll.inner_wrap_love_dll_type_ImageData_lock(p);
+                    var pointer = GetPointer();
+                    Marshal.Copy(buffer, 0, pointer, buffer.Length);
+                    Love2dDll.inner_wrap_love_dll_type_ImageData_unlock(p);
+                }
+                else if (format == PixelFormat.RGBA32F)
+                {
+                    float[] buffer = new float[w * h * 4];
+                    for (int i = 0; i < w * h; i++)
+                    {
+                        buffer[i * 4 + 0] = data[i].r;
+                        buffer[i * 4 + 1] = data[i].g;
+                        buffer[i * 4 + 2] = data[i].b;
+                        buffer[i * 4 + 3] = data[i].a;
+                    }
+
+                    Love2dDll.inner_wrap_love_dll_type_ImageData_lock(p);
+                    var pointer = GetPointer();
+                    Marshal.Copy(buffer, 0, pointer, buffer.Length);
+                    Love2dDll.inner_wrap_love_dll_type_ImageData_unlock(p);
+                }
+            }
+        }
+
+
+        ////public void MapPixel_unsafe(int sx, int sy, int w, int h, RGBA8_MapPixelDelegate func)
+        ////{
+        ////    int ex = sx + w;
+        ////    int ey = sy + h;
+        ////    if ((0 <= sx && ex - 1 < GetWidth() && 0 <= sy && ey - 1 < GetHeight()) == false)
+        ////    {
+        ////        throw new Exception("Invalid rectangle dimensions.");
+        ////    }
+        ////    int pixelSize = 0;
+        ////    Love2dDll.inner_wrap_love_dll_type_ImageData_getPixelSize(p, out pixelSize);
+        ////    var pointer = GetPointer();
+        ////    int iw = GetWidth();
+        ////    byte[] mem = new byte[32];
+        ////    unsafe
+        ////    {
+        ////        // Make a byte pointer to the byte array
+        ////        byte* bgImgPtr = (byte*)pointer;
+        ////        for (int y = sy; y < ey; y++)
+        ////        {
+        ////            for (int x = sx; x < ex; x++)
+        ////            {
+        ////                int offset = (y * iw + x) * pixelSize;
+        ////                mem[0] = bgImgPtr[offset + 0];
+        ////                mem[1] = bgImgPtr[offset + 1];
+        ////                mem[2] = bgImgPtr[offset + 2];
+        ////                mem[3] = bgImgPtr[offset + 3];
+        ////                byte[] output = func(x, y, mem);
+        ////                bgImgPtr[offset + 0] = output[0];
+        ////                bgImgPtr[offset + 1] = output[1];
+        ////                bgImgPtr[offset + 2] = output[2];
+        ////                bgImgPtr[offset + 3] = output[3];
+        ////            }
+        ////        }
+        ////    }
+        ////}
+    }
     public partial class Mouse
     {
         /// <summary>
@@ -148,6 +773,9 @@ namespace Love
         }
     }
 
+    /// <summary>
+    /// Allows you to work with fonts.
+    /// </summary>
     public partial class Font
     {
         public static Rasterizer NewRasterizer(string filename)
@@ -463,10 +1091,10 @@ namespace Love
     }
 
 
-    #endregion
+#endregion
 
 
-    #region Love Type
+#region Love Type
 
     public partial class File
     {
@@ -493,5 +1121,5 @@ namespace Love
     }
 
 
-    #endregion
+#endregion
 }

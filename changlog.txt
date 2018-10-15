@@ -1,0 +1,6 @@
+﻿2018年10月12日
+
+1. 禁止所有默认构造函数
+2. 修复 Canvas:GetFormat 错误
+3. 修复 map pixel 错误，并提升其易用性和性能
+4. 增强 Love.Mathf 模块
