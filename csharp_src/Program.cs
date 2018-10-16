@@ -253,7 +253,7 @@ namespace Love
 
 
 
-
+    
 
     class Button
     {
@@ -263,6 +263,7 @@ namespace Love
         }
     }
 
+
     [AttributeUsage(AttributeTargets.Class)]
     public class StageName : Attribute
     {
@@ -271,6 +272,58 @@ namespace Love
             Name = name;
         }
         public readonly string Name;
+    }
+
+    [StageName("test key board")]
+    class TestKeyborad : Stage
+    {
+        public override void OnKeyPressed(KeyConstant key)
+        {
+            if (key == KeyConstant.R)
+            {
+                Keyboard.SetKeyRepeat(!Keyboard.HasKeyRepeat());
+            }
+
+            if (key == KeyConstant.T)
+            {
+                Keyboard.SetTextInput(!Keyboard.HasTextInput());
+            }
+        }
+
+        public override void OnDraw()
+        {
+            var sb = new List<string>();
+
+            sb.Add($"-------------------- status --------------------");
+            sb.Add($" whether key repeat is enabled : {Keyboard.HasKeyRepeat()}");
+            sb.Add($" whether text input events are enabled : {Keyboard.HasTextInput()}");
+
+            sb.Add($"-------------------- recursive enumerate files --------------------");
+            sb.Add($"[R]: toogle Key Repeat");
+            sb.Add($"[T]: toogle Text Input");
+
+            var keyThatWasDown = new List<KeyConstant>();
+            foreach(var key in Enum.GetValues( typeof(KeyConstant)) )
+            {
+                if (Keyboard.IsDown((KeyConstant)key))
+                {
+                    keyThatWasDown.Add((KeyConstant)key);
+                }
+            }
+
+            sb.Add($"key that down : {string.Join(",", keyThatWasDown)}");
+
+            var scancodeThatWasDown = new List<Scancode>();
+            foreach (var key in keyThatWasDown)
+            {
+                scancodeThatWasDown.Add(Keyboard.GetScancodeFromKey(key));
+            }
+            sb.Add($"scancode that down (convert from KeyConstant) : {string.Join(",", scancodeThatWasDown)}");
+
+
+            Graphics.SetColor(0, 0, 0);
+            Graphics.Print(string.Join("\n", sb), 10, 10);
+        }
     }
 
     [StageName("test mouse")]
@@ -917,6 +970,7 @@ namespace Love
         public override void Load()
         {
             AddStage(new TestMouse());
+            AddStage(new TestKeyborad());
             AddStage(new TestFile());
             AddStage(new TestFont());
             AddStage(new TestImageData());
@@ -1038,5 +1092,12 @@ namespace Love
         {
             Boot.Run(new Program());
         }
+
+        static void SetWindowHandle(IntPtr p)
+        {
+            Love2dDll.inner_wrap_love_dll_windows_updateSDL2WindowWithHandle(p);
+        }
     }
+
+
 }

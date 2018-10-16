@@ -19,3 +19,7 @@ need to test
 Mouse
 ---
 * `Mouse.SetRelativeMode` will crash, need to repair
+
+Keyboard
+---
+* `Keyboard.SetTextInput(bool enable, double x, double y, double w, double h)` not support on windows 

@@ -285,6 +285,10 @@ namespace Love
         #endregion
 
         #region window
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
+        internal extern static bool inner_wrap_love_dll_windows_updateSDL2WindowWithHandle(IntPtr p);
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_windows_open_love_window")]
         internal extern static bool _wrap_love_dll_windows_open_love_window();
         internal static bool wrap_love_dll_windows_open_love_window()

@@ -1108,50 +1108,108 @@ namespace Love
         {
             Love2dDll.wrap_love_dll_keyboard_setKeyRepeat(enable);
         }
+
+        /// <summary>
+        /// Gets whether key repeat is enabled.
+        /// </summary>
+        /// <returns></returns>
         public static bool HasKeyRepeat()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_keyboard_hasKeyRepeat(out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// Checks whether a certain <see cref="KeyConstant"/> is down. Not to be confused with <see cref="Scene.KeyPressed(KeyConstant, Scancode, bool)"/> or <see cref="Scene.KeyReleased(KeyConstant, Scancode)"/>.
+        /// </summary>
+        /// <param name="key_type">The key to check.</param>
+        /// <returns>True if the key is down, false if not.</returns>
         public static bool IsDown(KeyConstant key_type)
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_keyboard_isDown((int)key_type, out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// Checks whether a certain <see cref="Scancode"/> is down. Not to be confused with <see cref="Scene.KeyPressed(KeyConstant, Scancode, bool)"/> or <see cref="Scene.KeyReleased(KeyConstant, Scancode)"/>.
+        /// <para>Unlike regular KeyConstants, Scancodes are keyboard layout-independent. The scancode "w" is used if the key in the same place as the "w" key on an American keyboard is pressed, no matter what the key is labelled or what the user's operating system settings are.</para>
+        /// </summary>
+        /// <param name="scancode_type"></param>
+        /// <returns></returns>
         public static bool IsScancodeDown(Scancode scancode_type)
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_keyboard_isScancodeDown((int)scancode_type, out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// Gets the hardware scancode corresponding to the given key.
+        /// <para>Unlike <see cref="KeyConstant"/>, <see cref="Scancode"/> are keyboard layout-independent. For example the scancode "w" will be generated if the key in the same place as the "w" key on an American keyboard is pressed, no matter what the key is labelled or what the user's operating system settings are.</para>
+        /// <para><see cref="Scancode"/> are useful for creating default controls that have the same physical locations on on all systems.</para>
+        /// </summary>
+        /// <param name="key_type">The key to get the scancode from.</param>
+        /// <returns>The scancode corresponding to the given key, or "unknown" if the given key has no known physical representation on the current system.</returns>
         public static Scancode GetScancodeFromKey(KeyConstant key_type)
         {
             int out_scancode_type = 0;
             Love2dDll.wrap_love_dll_keyboard_getScancodeFromKey((int)key_type, out out_scancode_type);
             return (Scancode)out_scancode_type;
         }
+
+        /// <summary>
+        /// <para>Gets the key corresponding to the given hardware scancode.</para>
+        /// <para>Unlike <see cref="KeyConstant"/>, <see cref="Scancode"/> are keyboard layout-independent. For example the scancode "w" will be generated if the key in the same place as the "w" key on an American keyboard is pressed, no matter what the key is labelled or what the user's operating system settings are.</para>
+        /// <para><see cref="Scancode"/> are useful for creating default controls that have the same physical locations on on all systems.</para>
+        /// </summary>
+        /// <param name="scancode_type">The scancode to get the key from.</param>
+        /// <returns>The key corresponding to the given <see cref="Scancode"/> , or "unknown" if the <see cref="Scancode"/> doesn't map to a KeyConstant on the current system.</returns>
         public static KeyConstant GetKeyFromScancode(Scancode scancode_type)
         {
             int out_key_type = 0;
             Love2dDll.wrap_love_dll_keyboard_getKeyFromScancode((int)scancode_type, out out_key_type);
             return (KeyConstant)out_key_type;
         }
+
+        /// <summary>
+        /// <para>Enables or disables text input events. It is enabled by default on Windows, Mac, and Linux, and disabled by default on iOS and Android.</para>
+        /// <para>On touch devices, this shows the system's native on-screen keyboard when it's enabled.</para>
+        /// </summary>
+        /// <param name="enable">Whether text input events should be enabled.</param>
         public static void SetTextInput(bool enable)
         {
             Love2dDll.wrap_love_dll_keyboard_setTextInput(enable);
         }
-        public static void SetTextInput_xywh(bool enable, double x, double y, double w, double h)
+
+        /// <summary>
+        /// <para>Enables or disables text input events. It is enabled by default on Windows, Mac, and Linux, and disabled by default on iOS and Android.</para>
+        /// <para>On iOS and Android this variant tells the OS that the specified rectangle is where text will show up in the game, which prevents the system on-screen keyboard from covering the text.</para>
+        /// <para>On touch devices, this shows the system's native on-screen keyboard when it's enabled.</para>
+        /// </summary>
+        /// <param name="enable">Whether text input events should be enabled.</param>
+        /// <param name="x">Text rectangle x position.</param>
+        /// <param name="y">Text rectangle y position.</param>
+        /// <param name="w">Text rectangle width.</param>
+        /// <param name="h">Text rectangle height.</param>
+        public static void SetTextInput(bool enable, double x, double y, double w, double h)
         {
             Love2dDll.wrap_love_dll_keyboard_setTextInput_xywh(enable, x, y, w, h);
         }
+
+        /// <summary>
+        /// Gets whether key repeat is enabled.
+        /// </summary>
+        /// <returns>Whether key repeat is enabled.</returns>
         public static bool HasTextInput()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_keyboard_hasTextInput(out out_result);
             return out_result;
         }
+
+
         public static bool HasScreenKeyboard()
         {
             bool out_result = false;
@@ -1861,33 +1919,62 @@ namespace Love
 
     public partial class Sound
     {
-        //// raw *new*
-        // filename -> file -> filedata -> decoder -> sounddata
+        /// <summary>
+        /// Attempts to find a decoder for the encoded sound data in the specified file.
+        /// </summary>
+        /// <param name="fdata">The file data with encoded sound data.</param>
+        /// <param name="buffersize">The size of each decoded chunk, in bytes.</param>
+        /// <returns></returns>
         public static Decoder NewDecoder(FileData fdata, int buffersize = Decoder.DEFAULT_BUFFER_SIZE)
         {
             IntPtr out_ptr;
             Love2dDll.wrap_love_dll_sound_newDecoder_filedata(fdata.p, buffersize, out out_ptr);
             return LoveObject.NewObject<Decoder>(out_ptr);
         }
+
+        /// <summary>
+        /// Attempts to find a decoder for the encoded sound data in the specified file.
+        /// </summary>
+        /// <param name="file">The file with encoded sound data.</param>
+        /// <param name="buffersize">The size of each decoded chunk, in bytes.</param>
+        /// <returns></returns>
         public static Decoder NewDecoder(File file, int buffersize = Decoder.DEFAULT_BUFFER_SIZE)
         {
             IntPtr out_ptr;
             Love2dDll.wrap_love_dll_sound_newDecoder_file(file.p, buffersize, out out_ptr);
             return LoveObject.NewObject<Decoder>(out_ptr);
         }
+
+        /// <summary>
+        /// <para>Creates a new SoundData.</para>
+        /// <para>It's also possible to create SoundData with a custom sample rate, channel and bit depth.</para>
+        /// <para>The sound data will be decoded to the memory in a raw format. It is recommended to create only short sounds like effects, as a 3 minute song uses 30 MB of memory this way.</para>
+        /// </summary>
+        /// <param name="decoder">Decode data from this Decoder until EOF.</param>
+        /// <returns>A new SoundData object.</returns>
         public static SoundData NewSoundData(Decoder decoder)
         {
             IntPtr out_soundData_ptr;
             Love2dDll.wrap_love_dll_sound_newSoundData_decoder(decoder.p, out out_soundData_ptr);
             return LoveObject.NewObject<SoundData>(out_soundData_ptr);
         }
+
+        /// <summary>
+        /// <para>Creates a new SoundData.</para>
+        /// <para>It's also possible to create SoundData with a custom sample rate, channel and bit depth.</para>
+        /// <para>The sound data will be decoded to the memory in a raw format. It is recommended to create only short sounds like effects, as a 3 minute song uses 30 MB of memory this way.</para>
+        /// </summary>
+        /// <param name="samples">Total number of samples.</param>
+        /// <param name="sampleRate">Number of samples per second</param>
+        /// <param name="bits">Bits per sample (8 or 16).</param>
+        /// <param name="channels">Either 1 for mono or 2 for stereo.</param>
+        /// <returns>A new SoundData object.</returns>
         public static SoundData NewSoundData(int samples, int sampleRate = Decoder.DEFAULT_SAMPLE_RATE, int bits = Decoder.DEFAULT_BIT_DEPTH, int channels = Decoder.DEFAULT_CHANNELS)
         {
             IntPtr out_soundData_ptr;
             Love2dDll.wrap_love_dll_sound_newSoundData(samples, sampleRate, bits, channels, out out_soundData_ptr);
             return LoveObject.NewObject<SoundData>(out_soundData_ptr);
         }
-        //// end *new*
 
         public static bool Init()
         {
