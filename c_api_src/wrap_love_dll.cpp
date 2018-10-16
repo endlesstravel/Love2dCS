@@ -30,6 +30,7 @@
 #include "modules/audio/openal/Source.h"
 #include "modules/audio/null/Source.h"
 #include "modules/image/Image.h"
+#include "modules/image/ImageData.h"
 #include "modules/font/freetype/Font.h"
 #include "modules/video/theora/Video.h"
 #include "modules/graphics/opengl/Graphics.h"
@@ -87,7 +88,7 @@ namespace wrap
 
 #pragma region ErrorPint
 
-	const int MaxBuffer = 2048;
+	const int MaxBuffer = 2 * 1024 * 1024;
 	char errStrBuffer[MaxBuffer] = "no error.";
 
     void wrap_love_dll_last_error(WrapString **out_errormsg)
@@ -282,21 +283,21 @@ namespace wrap
         return wrap_catchexcept([&]() { *out_cursor = mouseInstance->newCursor(imageData, hotx, hoty); });
     }
 
-    bool4 wrap_love_dll_image_newImageData_wh_data(int w, int h, const unsigned char* data, int dataLength, ImageData** out_imagedata)
+    bool4 wrap_love_dll_image_newImageData_wh_format_data(int w, int h, const unsigned char* data, int dataLength, int formatType, ImageData** out_imagedata)
     {
         return wrap_catchexcept([&]() {
             if (w <= 0 || h <= 0)
             {
                 throw love::Exception("Invalid image size.");
             }
-            ImageData *t = imageInstance->newImageData(w, h);
+            ImageData *t = imageInstance->newImageData(w, h, (PixelFormat)formatType);
 
-            if (data)
+            if (data && dataLength != 0)
             {
                 if (dataLength != t->getSize())
                 {
                     t->release();
-                    throw love::Exception("The size of the raw byte string must match the ImageData's actual size in bytes.");
+                    throw love::Exception("The size of the raw byte must match the ImageData's actual size in bytes.");
                 }
 
                 memcpy(t->getData(), data, t->getSize());
@@ -442,6 +443,56 @@ namespace wrap
 #pragma endregion
 
 #pragma region window
+
+
+	void inner_wrap_love_dll_windows_createSDL2WindowWithHandle()
+	{
+		class HackSDL2Window : public love::window::Window
+		{
+		public:
+			std::string title;
+
+			int windowWidth = 800;
+			int windowHeight = 600;
+			int pixelWidth = 800;
+			int pixelHeight = 600;
+			WindowSettings settings;
+			StrongRef<love::image::ImageData> icon;
+
+			bool open;
+
+			bool mouseGrabbed;
+
+			SDL_Window *window;
+			SDL_GLContext context;
+
+
+
+			void create_SDL2_widow_context_with_win32_handle(void* handle)
+			{
+
+				if (context)
+				{
+					SDL_GL_DeleteContext(context);
+					context = nullptr;
+				}
+
+				if (window)
+				{
+					SDL_DestroyWindow(window);
+					//SDL_FlushEvent(SDL_WINDOWEVENT);
+					window = nullptr;
+				}
+
+				window = SDL_CreateWindowFrom(handle);
+				context = SDL_GL_CreateContext(window);
+			}
+		};
+
+		auto hack_ptr = reinterpret_cast<HackSDL2Window*>(windowInstance);
+
+		wrap_ee("%d", windowInstance);
+	}
 
     bool4 wrap_love_dll_windows_open_love_window()
     {
@@ -5436,27 +5487,139 @@ namespace wrap
         });
     }
 
-	bool4 wrap_love_dll_type_ImageData_mapPixel(ImageData *t, int sx, int sy, int w, int h, ImageData_mapPixel_func func)
+	void inner_wrap_love_dll_type_ImageData_getPixelSize(ImageData *t, int *out_pixelSize)
 	{
-		return wrap_catchexcept([&]() {
-			if (!(t->inside(sx, sy) && t->inside(sx + w - 1, sy + h - 1)))
-			{
-				throw love::Exception("Invalid rectangle dimensions.");
-			}
+		*out_pixelSize = t->getPixelSize();
+	}
 
-			int iw = t->getWidth();
-			uint8 *data = (uint8 *)t->getData();
-			size_t pixelsize = t->getPixelSize();
+	void inner_wrap_love_dll_type_ImageData_lock(ImageData *t)
+	{
+		t->getMutex()->lock();
+	}
 
-			for (int y = sy; y < sy + h; y++)
+	void inner_wrap_love_dll_type_ImageData_unlock(ImageData *t)
+	{
+		t->getMutex()->unlock();
+	}
+
+	void inner_wrap_love_dll_type_ImageData_setPixels(ImageData *t, void* src, int bytesLength)
+	{
+		thread::Lock(t->getMutex());
+		memcpy(t->getData(), src, bytesLength);
+	}
+
+	void inner_wrap_love_dll_type_ImageData_getPixels_float4(ImageData *t, Float4* dest)
+	{
+		int w = t->getWidth();
+		int h = t->getHeight();
+		int size = w * h;
+		auto format = t->getFormat();
+		int pixelSize = t->getPixelSize();
+
+		thread::Lock(t->getMutex());
+		uint8* data = (uint8*)t->getData();
+		if (format == PixelFormat::PIXELFORMAT_RGBA8)
+		{
+			for (int i = 0; i < size; i++)
 			{
-				for (int x = sx; x < sx + w; x++)
-				{
-					Pixel *pixeldata = (Pixel *)(data + (y * iw + x) * pixelsize);
-					*pixeldata = func(x, y, *pixeldata);
-				}
+				Float4& f = dest[i];
+				uint8* pointer = (uint8*)(data + i * pixelSize);
+
+				f.r = ((int)pointer[0]) / 255.0;
+				f.g = ((int)pointer[1]) / 255.0;
+				f.b = ((int)pointer[2]) / 255.0;
+				f.a = ((int)pointer[3]) / 255.0;
 			}
-		});
+		}
+		else if (format == PixelFormat::PIXELFORMAT_RGBA16)
+		{
+			for (int i = 0; i < size; i++)
+			{
+				Float4& f = dest[i];
+				uint16* pointer = (uint16*)(data + i * pixelSize);
+				f.r = ((int)pointer[0]) / 65535.0;
+				f.g = ((int)pointer[1]) / 65535.0;
+				f.b = ((int)pointer[2]) / 65535.0;
+				f.a = ((int)pointer[3]) / 65535.0;
+			}
+		}
+		else if (format == PixelFormat::PIXELFORMAT_RGBA16F)
+		{
+			for (int i = 0; i < size; i++)
+			{
+				Float4& f = dest[i];
+				uint16* pointer = (uint16*)(data + i * pixelSize);
+				f.r = halfToFloat(pointer[0]);
+				f.g = halfToFloat(pointer[1]);
+				f.b = halfToFloat(pointer[2]);
+				f.a = halfToFloat(pointer[3]);
+			}
+		}
+		else if (format == PixelFormat::PIXELFORMAT_RGBA32F)
+		{
+			for (int i = 0; i < size; i++)
+			{
+				Float4& f = dest[i];
+				float* pointer = (float*)(data + i * pixelSize);
+				f.r = pointer[0];
+				f.g = pointer[1];
+				f.b = pointer[2];
+				f.a = pointer[3];
+			}
+		}
+	}
+
+
+	void inner_wrap_love_dll_type_ImageData_setPixels_float4(ImageData *t, Float4* src)
+	{
+		int w = t->getWidth();
+		int h = t->getHeight();
+		int size = w * h;
+		auto format = t->getFormat();
+		int pixelSize = t->getPixelSize();
+
+		thread::Lock(t->getMutex());
+		uint8* data = (uint8*)t->getData();
+		if (format == PixelFormat::PIXELFORMAT_RGBA8)
+		{
+			for (int i = 0; i < size; i++)
+			{
+				Float4& f = src[i];
+				uint8* pointer = (uint8*)(data + i * pixelSize);
+				pointer[0] = f.r * 255;
+				pointer[1] = f.g * 255;
+				pointer[2] = f.b * 255;
+				pointer[3] = f.a * 255;
+			}
+		}
+		else if (format == PixelFormat::PIXELFORMAT_RGBA16)
+		{
+			for (int i = 0; i < size; i++)
+			{
+				Float4& f = src[i];
+				uint16* pointer = (uint16*)(data + i * pixelSize);
+				pointer[0] = f.r * 65535;
+				pointer[1] = f.g * 65535;
+				pointer[2] = f.b * 65535;
+				pointer[3] = f.a * 65535;
+			}
+		}
+		else if (format == PixelFormat::PIXELFORMAT_RGBA16F)
+		{
+			for (int i = 0; i < size; i++)
+			{
+				Float4& f = src[i];
+				uint16* pointer = (uint16*)(data + i * pixelSize);
+				pointer[0] = floatToHalf(f.r);
+				pointer[1] = floatToHalf(f.g);
+				pointer[2] = floatToHalf(f.b);
+				pointer[3] = floatToHalf(f.a);
+			}
+		}
+		else if (format == PixelFormat::PIXELFORMAT_RGBA32F)
+		{
+			memcpy(data, src, size * pixelSize);
+		}
 	}
     
 
@@ -5865,6 +6028,11 @@ namespace wrap
     {
         *out_datasize = data->getSize();
     }
+
+	void wrap_love_dll_type_Data_getPointer(Data* data, void **out_pointer)
+	{
+		*out_pointer = data->getData();
+	}
 
 #pragma endregion
 

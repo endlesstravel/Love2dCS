@@ -37,6 +37,23 @@ namespace Love
             }
         }
 
+        public static void ExecuteAsIntprt(object obj, Action<IntPtr> func)
+        {
+            GCHandle handle = GCHandle.Alloc(obj, GCHandleType.Pinned);
+            try
+            {
+                IntPtr pointer = handle.AddrOfPinnedObject();
+                func(pointer);
+            }
+            finally
+            {
+                if (handle.IsAllocated)
+                {
+                    handle.Free();
+                }
+            }
+        }
+
         public static IntPtr[] GenIntPtrArray<T>(T[] loveObjArray) where T : LoveObject
         {
             IntPtr[] t = new IntPtr[loveObjArray.Length];
@@ -149,7 +166,7 @@ namespace Love
             return buffer;
         }
 
-        public static T[] readIntPtrsWithConvertAndRelease<T>(IntPtr p, long size) where T : LoveObject, new()
+        public static T[] readIntPtrsWithConvertAndRelease<T>(IntPtr p, long size) where T : LoveObject
         {
             IntPtr[] buffer = new IntPtr[size];
             for (int i = 0; i < size; i++)
@@ -1081,54 +1098,118 @@ namespace Love
         {
             return Love2dDll.wrap_love_dll_keyboard_open_love_keyboard();
         }
+
+        /// <summary>
+        /// Enables or disables key repeat for love.keypressed. It is disabled by default.
+        /// <para>The interval between repeats depends on the user's system settings. This function doesn't affect whether <see cref="Scene.TextInput"/> is called multiple times while a key is held down</para>
+        /// </summary>
+        /// <param name="enable">Whether repeat keypress events should be enabled when a key is held down.</param>
         public static void SetKeyRepeat(bool enable)
         {
             Love2dDll.wrap_love_dll_keyboard_setKeyRepeat(enable);
         }
+
+        /// <summary>
+        /// Gets whether key repeat is enabled.
+        /// </summary>
+        /// <returns></returns>
         public static bool HasKeyRepeat()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_keyboard_hasKeyRepeat(out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// Checks whether a certain <see cref="KeyConstant"/> is down. Not to be confused with <see cref="Scene.KeyPressed(KeyConstant, Scancode, bool)"/> or <see cref="Scene.KeyReleased(KeyConstant, Scancode)"/>.
+        /// </summary>
+        /// <param name="key_type">The key to check.</param>
+        /// <returns>True if the key is down, false if not.</returns>
         public static bool IsDown(KeyConstant key_type)
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_keyboard_isDown((int)key_type, out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// Checks whether a certain <see cref="Scancode"/> is down. Not to be confused with <see cref="Scene.KeyPressed(KeyConstant, Scancode, bool)"/> or <see cref="Scene.KeyReleased(KeyConstant, Scancode)"/>.
+        /// <para>Unlike regular KeyConstants, Scancodes are keyboard layout-independent. The scancode "w" is used if the key in the same place as the "w" key on an American keyboard is pressed, no matter what the key is labelled or what the user's operating system settings are.</para>
+        /// </summary>
+        /// <param name="scancode_type"></param>
+        /// <returns></returns>
         public static bool IsScancodeDown(Scancode scancode_type)
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_keyboard_isScancodeDown((int)scancode_type, out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// Gets the hardware scancode corresponding to the given key.
+        /// <para>Unlike <see cref="KeyConstant"/>, <see cref="Scancode"/> are keyboard layout-independent. For example the scancode "w" will be generated if the key in the same place as the "w" key on an American keyboard is pressed, no matter what the key is labelled or what the user's operating system settings are.</para>
+        /// <para><see cref="Scancode"/> are useful for creating default controls that have the same physical locations on on all systems.</para>
+        /// </summary>
+        /// <param name="key_type">The key to get the scancode from.</param>
+        /// <returns>The scancode corresponding to the given key, or "unknown" if the given key has no known physical representation on the current system.</returns>
         public static Scancode GetScancodeFromKey(KeyConstant key_type)
         {
             int out_scancode_type = 0;
             Love2dDll.wrap_love_dll_keyboard_getScancodeFromKey((int)key_type, out out_scancode_type);
             return (Scancode)out_scancode_type;
         }
+
+        /// <summary>
+        /// <para>Gets the key corresponding to the given hardware scancode.</para>
+        /// <para>Unlike <see cref="KeyConstant"/>, <see cref="Scancode"/> are keyboard layout-independent. For example the scancode "w" will be generated if the key in the same place as the "w" key on an American keyboard is pressed, no matter what the key is labelled or what the user's operating system settings are.</para>
+        /// <para><see cref="Scancode"/> are useful for creating default controls that have the same physical locations on on all systems.</para>
+        /// </summary>
+        /// <param name="scancode_type">The scancode to get the key from.</param>
+        /// <returns>The key corresponding to the given <see cref="Scancode"/> , or "unknown" if the <see cref="Scancode"/> doesn't map to a KeyConstant on the current system.</returns>
         public static KeyConstant GetKeyFromScancode(Scancode scancode_type)
         {
             int out_key_type = 0;
             Love2dDll.wrap_love_dll_keyboard_getKeyFromScancode((int)scancode_type, out out_key_type);
             return (KeyConstant)out_key_type;
         }
+
+        /// <summary>
+        /// <para>Enables or disables text input events. It is enabled by default on Windows, Mac, and Linux, and disabled by default on iOS and Android.</para>
+        /// <para>On touch devices, this shows the system's native on-screen keyboard when it's enabled.</para>
+        /// </summary>
+        /// <param name="enable">Whether text input events should be enabled.</param>
         public static void SetTextInput(bool enable)
         {
             Love2dDll.wrap_love_dll_keyboard_setTextInput(enable);
         }
-        public static void SetTextInput_xywh(bool enable, double x, double y, double w, double h)
+
+        /// <summary>
+        /// <para>Enables or disables text input events. It is enabled by default on Windows, Mac, and Linux, and disabled by default on iOS and Android.</para>
+        /// <para>On iOS and Android this variant tells the OS that the specified rectangle is where text will show up in the game, which prevents the system on-screen keyboard from covering the text.</para>
+        /// <para>On touch devices, this shows the system's native on-screen keyboard when it's enabled.</para>
+        /// </summary>
+        /// <param name="enable">Whether text input events should be enabled.</param>
+        /// <param name="x">Text rectangle x position.</param>
+        /// <param name="y">Text rectangle y position.</param>
+        /// <param name="w">Text rectangle width.</param>
+        /// <param name="h">Text rectangle height.</param>
+        public static void SetTextInput(bool enable, double x, double y, double w, double h)
         {
             Love2dDll.wrap_love_dll_keyboard_setTextInput_xywh(enable, x, y, w, h);
         }
+
+        /// <summary>
+        /// Gets whether key repeat is enabled.
+        /// </summary>
+        /// <returns>Whether key repeat is enabled.</returns>
         public static bool HasTextInput()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_keyboard_hasTextInput(out out_result);
             return out_result;
         }
+
+
         public static bool HasScreenKeyboard()
         {
             bool out_result = false;
@@ -1230,6 +1311,9 @@ namespace Love
 
     }
 
+    /// <summary>
+    /// <para>Manages events, like keypresses.</para>
+    /// </summary>
     public partial class Event
     {
         private enum WrapEventType
@@ -1267,9 +1351,15 @@ namespace Love
             WRAP_EVENT_TYPE_QUIT,
         };
 
+        /// <summary>
+        /// Exits the LÖVE program.
+        /// <para>Adds the quit event to the queue.</para>
+        /// <para>The quit event is a signal for the event handler to close LÖVE. It's possible to abort the exit process with the love.quit callback.</para>
+        /// </summary>
+        /// <param name="exitStatus">The program exit status to use when closing the application.</param>
         public static void Quit(int exitStatus = 0)
         {
-            System.Environment.Exit(exitStatus);
+            Environment.Exit(exitStatus);
         }
 
         public static void Init()
@@ -1404,7 +1494,12 @@ namespace Love
             }
         }
 
-        public static bool Poll(Scene scene)
+        /// <summary>
+        /// poll or wait a event
+        /// </summary>
+        /// <param name="poll_or_wait">True: poll; False: wait</param>
+        /// <returns></returns>
+        public static bool PollOrWait(Scene scene, bool poll_or_wait)
         {
             bool out_hasEvent;int out_event_type;bool out_down_or_up;bool out_bool;int out_idx;int out_enum1_type;int out_enum2_type;string out_string;Int4 out_int4;Float4 out_float4;float out_float_value;Joystick out_joystick;
             PollOrWait(true, out out_hasEvent, out out_event_type, out out_down_or_up, out out_bool, out out_idx, out out_enum1_type, out out_enum2_type, out out_string, out out_int4, out out_float4, out out_float_value, out out_joystick);
@@ -1417,14 +1512,38 @@ namespace Love
         }
     }
 
+    /// <summary>
+    /// <para>Provides an interface to the user's filesystem.</para>
+    /// <para>This module provides access to files in specific places:</para>
+    /// <para>1. The root folder of the source directory archive / 2. The root folder of the game's save directory.</para>
+    /// <para>Files that are opened for write or append will always be created in the save directory. The same goes for other operations that involve writing to the filesystem, like <see cref="FileSystem.CreateDirectory"/>.</para>
+    /// <para>It is recommended to set your game's identity first.  You can set it with <see cref="FileSystem.SetIdentity"/> as well.</para>
+    /// </summary>
     public partial class FileSystem
     {
         public class Info
         {
-            // Numbers will be -1 if they cannot be determined.
-            public int64 size;
-            public int64 modifyTime;
-            public FileType type;
+            /// <summary>
+            /// Numbers will be -1 if they cannot be determined.
+            /// </summary>
+            public readonly int64 Size;
+
+            /// <summary>
+            /// The file's last modification time in seconds since the unix epoch, or nil if it can't be determined.
+            /// </summary>
+            public readonly int64 ModifyTime;
+
+            /// <summary>
+            /// The type of the object at the path (file, directory, symlink, etc.)
+            /// </summary>
+            public readonly FileType Type;
+
+            public Info(int64 size, int64 modifyTime, FileType type)
+            {
+                Size = size;
+                ModifyTime = modifyTime;
+                Type = type;
+            }
 
             public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
             {
@@ -1436,8 +1555,8 @@ namespace Love
 
             public override string ToString()
             {
-                var time = UnixTimeStampToDateTime(modifyTime);
-                return $"size: {string.Format("{0:0,00}", size)}, modify-time: {time}, type: {type}";
+                var time = UnixTimeStampToDateTime(ModifyTime);
+                return $"size: {string.Format("{0:0,00}", Size)}, modify-time: {time}, type: {Type}";
             }
         };
 
@@ -1659,11 +1778,10 @@ namespace Love
         public static Info GetInfo(byte[] path)
         {
             int fileType_int = 0;
-            Info info = new Info();
+            int64 size, modifyTime;
             bool success;
-            Love2dDll.wrap_love_dll_filesystem_getInfo(path, out fileType_int, out info.size, out info.modifyTime, out success);
-            info.type = (FileType)fileType_int;
-            return success ? info : null;
+            Love2dDll.wrap_love_dll_filesystem_getInfo(path, out fileType_int, out size, out modifyTime, out success);
+            return success ? new Info(size, modifyTime, (FileType)fileType_int) : null;
         }
 
         /// <summary>
@@ -1801,33 +1919,62 @@ namespace Love
 
     public partial class Sound
     {
-        //// raw *new*
-        // filename -> file -> filedata -> decoder -> sounddata
+        /// <summary>
+        /// Attempts to find a decoder for the encoded sound data in the specified file.
+        /// </summary>
+        /// <param name="fdata">The file data with encoded sound data.</param>
+        /// <param name="buffersize">The size of each decoded chunk, in bytes.</param>
+        /// <returns></returns>
         public static Decoder NewDecoder(FileData fdata, int buffersize = Decoder.DEFAULT_BUFFER_SIZE)
         {
             IntPtr out_ptr;
             Love2dDll.wrap_love_dll_sound_newDecoder_filedata(fdata.p, buffersize, out out_ptr);
             return LoveObject.NewObject<Decoder>(out_ptr);
         }
+
+        /// <summary>
+        /// Attempts to find a decoder for the encoded sound data in the specified file.
+        /// </summary>
+        /// <param name="file">The file with encoded sound data.</param>
+        /// <param name="buffersize">The size of each decoded chunk, in bytes.</param>
+        /// <returns></returns>
         public static Decoder NewDecoder(File file, int buffersize = Decoder.DEFAULT_BUFFER_SIZE)
         {
             IntPtr out_ptr;
             Love2dDll.wrap_love_dll_sound_newDecoder_file(file.p, buffersize, out out_ptr);
             return LoveObject.NewObject<Decoder>(out_ptr);
         }
+
+        /// <summary>
+        /// <para>Creates a new SoundData.</para>
+        /// <para>It's also possible to create SoundData with a custom sample rate, channel and bit depth.</para>
+        /// <para>The sound data will be decoded to the memory in a raw format. It is recommended to create only short sounds like effects, as a 3 minute song uses 30 MB of memory this way.</para>
+        /// </summary>
+        /// <param name="decoder">Decode data from this Decoder until EOF.</param>
+        /// <returns>A new SoundData object.</returns>
         public static SoundData NewSoundData(Decoder decoder)
         {
             IntPtr out_soundData_ptr;
             Love2dDll.wrap_love_dll_sound_newSoundData_decoder(decoder.p, out out_soundData_ptr);
             return LoveObject.NewObject<SoundData>(out_soundData_ptr);
         }
+
+        /// <summary>
+        /// <para>Creates a new SoundData.</para>
+        /// <para>It's also possible to create SoundData with a custom sample rate, channel and bit depth.</para>
+        /// <para>The sound data will be decoded to the memory in a raw format. It is recommended to create only short sounds like effects, as a 3 minute song uses 30 MB of memory this way.</para>
+        /// </summary>
+        /// <param name="samples">Total number of samples.</param>
+        /// <param name="sampleRate">Number of samples per second</param>
+        /// <param name="bits">Bits per sample (8 or 16).</param>
+        /// <param name="channels">Either 1 for mono or 2 for stereo.</param>
+        /// <returns>A new SoundData object.</returns>
         public static SoundData NewSoundData(int samples, int sampleRate = Decoder.DEFAULT_SAMPLE_RATE, int bits = Decoder.DEFAULT_BIT_DEPTH, int channels = Decoder.DEFAULT_CHANNELS)
         {
             IntPtr out_soundData_ptr;
             Love2dDll.wrap_love_dll_sound_newSoundData(samples, sampleRate, bits, channels, out out_soundData_ptr);
             return LoveObject.NewObject<SoundData>(out_soundData_ptr);
         }
-        //// end *new*
 
         public static bool Init()
         {
@@ -2063,18 +2210,35 @@ namespace Love
 
     }
 
-    public partial class Image // this is part of love module
+    /// <summary>
+    /// Provides an interface to decode encoded image data.
+    /// </summary>
+    public partial class Image
     {
-        //// raw new
-        public static ImageData NewImageData(int w, int h, byte[] data)
+
+        /// <summary>
+        /// Creates a new ImageData object.
+        /// 
+        /// </summary>
+        /// <param name="w">The width of the ImageData.</param>
+        /// <param name="h">The height of the ImageData.</param>
+        /// <param name="format">The pixel format of the ImageData.</param>
+        /// <param name="data">Optional raw byte data to load into the ImageData, in the format specified by format.</param>
+        /// <returns></returns>
+        public static ImageData NewImageData(int w, int h, ImageDataPixelFormat format = ImageDataPixelFormat.RGBA8, byte[] data = null)
         {
             if (w <= 0 || h <= 0)
             {
                 throw new Exception("Invalid image size.");
             }
 
+            if (data == null)
+            {
+                data = new byte[0];
+            }
+
             IntPtr out_imagedata;
-            Love2dDll.wrap_love_dll_image_newImageData_wh_data(w, h, data, data.Length, out out_imagedata);
+            Love2dDll.wrap_love_dll_image_newImageData_wh_format_data(w, h, data, data.Length, (int)format, out out_imagedata);
             return LoveObject.NewObject<ImageData>(out_imagedata);
         }
         public static ImageData NewImageData(FileData data)
@@ -2089,7 +2253,7 @@ namespace Love
             var res = Love2dDll.wrap_love_dll_image_newCompressedData(data.p, out out_compressedimagedata);
             return LoveObject.NewObject<CompressedImageData>(out_compressedimagedata);
         }
-        //// end raw new
+
 
         public static bool Init()
         {
@@ -2105,9 +2269,8 @@ namespace Love
 
     }
 
-    public partial class Font // this is part of love module
+    public partial class Font
     {
-        //// raw new
         public static Rasterizer NewRasterizer(FileData fileData)
         {
             IntPtr out_reasterizer;
@@ -2140,19 +2303,27 @@ namespace Love
             Love2dDll.wrap_love_dll_font_newImageRasterizer(imageData.p, glyphs, extraspacing, out out_reasterizer);
             return LoveObject.NewObject<Rasterizer>(out_reasterizer);
         }
+
+
+        /// <summary>
+        /// Creates a new GlyphData.
+        /// </summary>
+        /// <param name="rasterizer">The Rasterizer containing the font.</param>
+        /// <param name="glyph">The character code of the glyph.</param>
+        /// <returns></returns>
         public static GlyphData NewGlyphData(Rasterizer rasterizer, byte[] glyph)
         {
             IntPtr out_GlyphData;
             Love2dDll.wrap_love_dll_font_newGlyphData_rasterizer_str(rasterizer.p, glyph, out out_GlyphData);
             return LoveObject.NewObject<GlyphData>(out_GlyphData);
         }
+
         public static GlyphData NewGlyphData(Rasterizer rasterizer, int glyphCode)
         {
             IntPtr out_GlyphData;
             Love2dDll.wrap_love_dll_font_newGlyphData_rasterizer_num(rasterizer.p, glyphCode, out out_GlyphData);
             return LoveObject.NewObject<GlyphData>(out_GlyphData);
         }
-        //// end raw new
         
         public static bool Init()
         {
@@ -2354,8 +2525,8 @@ namespace Love
 
         public class Settings
         {
-            public CanvasMipmapMode mipmaps = CanvasMipmapMode.MIPMAPS_NONE;
-            public PixelFormat format = PixelFormat.PIXELFORMAT_NORMAL;
+            public CanvasMipmapMode mipmaps = CanvasMipmapMode.None;
+            public PixelFormat format = PixelFormat.NORMAL;
             public TextureType type = TextureType.TEXTURE_2D;
             public float? dpiScale = null;
             public int msaa = 0;

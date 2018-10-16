@@ -1,6 +1,33 @@
 ﻿namespace Love
 {
     /// <summary>
+    /// Provide for custom image data, not all Pixel format support to create new custom imageData;
+    /// </summary>
+    public enum ImageDataPixelFormat : int
+    {
+        RGBA8 = PixelFormat.RGBA8,
+        RGBA16 = PixelFormat.RGBA16,
+        RGBA16F = PixelFormat.RGBA16F,
+        RGBA32F = PixelFormat.RGBA32F,
+    }
+
+    /// <summary>
+    /// Encoded image formats.
+    /// </summary>
+    public enum ImageFormat
+    {
+        /// <summary>
+        /// Targa image format.
+        /// </summary>
+        TGA,
+
+        /// <summary>
+        /// PNG image format.
+        /// </summary>
+        PNG,
+    };
+
+    /// <summary>
     /// The different modes you can open a File in.
     /// </summary>
     public enum FileMode : int
@@ -1123,81 +1150,81 @@
     /// </summary>
     public enum PixelFormat : int
     {
-        PIXELFORMAT_UNKNOWN,
+        UNKNOWN,
 
         // these are converted to an actual format by love
-        PIXELFORMAT_NORMAL,
-        PIXELFORMAT_HDR,
+        NORMAL,
+        HDR,
 
         // "regular" formats
-        PIXELFORMAT_R8,
-        PIXELFORMAT_RG8,
-        PIXELFORMAT_RGBA8,
-        PIXELFORMAT_sRGBA8,
-        PIXELFORMAT_R16,
-        PIXELFORMAT_RG16,
-        PIXELFORMAT_RGBA16,
-        PIXELFORMAT_R16F,
-        PIXELFORMAT_RG16F,
-        PIXELFORMAT_RGBA16F,
-        PIXELFORMAT_R32F,
-        PIXELFORMAT_RG32F,
-        PIXELFORMAT_RGBA32F,
+        R8,
+        RG8,
+        RGBA8,
+        sRGBA8,
+        R16,
+        RG16,
+        RGBA16,
+        R16F,
+        RG16F,
+        RGBA16F,
+        R32F,
+        RG32F,
+        RGBA32F,
 
-        PIXELFORMAT_LA8, // Same as RG8, but accessed as (L, L, L, A)
+        LA8, // Same as RG8, but accessed as (L, L, L, A)
 
         // packed formats
-        PIXELFORMAT_RGBA4,
-        PIXELFORMAT_RGB5A1,
-        PIXELFORMAT_RGB565,
-        PIXELFORMAT_RGB10A2,
-        PIXELFORMAT_RG11B10F,
+        RGBA4,
+        RGB5A1,
+        RGB565,
+        RGB10A2,
+        RG11B10F,
 
         // depth/stencil formats
-        PIXELFORMAT_STENCIL8,
-        PIXELFORMAT_DEPTH16,
-        PIXELFORMAT_DEPTH24,
-        PIXELFORMAT_DEPTH32F,
-        PIXELFORMAT_DEPTH24_STENCIL8,
-        PIXELFORMAT_DEPTH32F_STENCIL8,
+        STENCIL8,
+        DEPTH16,
+        DEPTH24,
+        DEPTH32F,
+        DEPTH24_STENCIL8,
+        DEPTH32F_STENCIL8,
 
         // compressed formats
-        PIXELFORMAT_DXT1,
-        PIXELFORMAT_DXT3,
-        PIXELFORMAT_DXT5,
-        PIXELFORMAT_BC4,
-        PIXELFORMAT_BC4s,
-        PIXELFORMAT_BC5,
-        PIXELFORMAT_BC5s,
-        PIXELFORMAT_BC6H,
-        PIXELFORMAT_BC6Hs,
-        PIXELFORMAT_BC7,
-        PIXELFORMAT_PVR1_RGB2,
-        PIXELFORMAT_PVR1_RGB4,
-        PIXELFORMAT_PVR1_RGBA2,
-        PIXELFORMAT_PVR1_RGBA4,
-        PIXELFORMAT_ETC1,
-        PIXELFORMAT_ETC2_RGB,
-        PIXELFORMAT_ETC2_RGBA,
-        PIXELFORMAT_ETC2_RGBA1,
-        PIXELFORMAT_EAC_R,
-        PIXELFORMAT_EAC_Rs,
-        PIXELFORMAT_EAC_RG,
-        PIXELFORMAT_EAC_RGs,
-        PIXELFORMAT_ASTC_4x4,
-        PIXELFORMAT_ASTC_5x4,
-        PIXELFORMAT_ASTC_5x5,
-        PIXELFORMAT_ASTC_6x5,
-        PIXELFORMAT_ASTC_6x6,
-        PIXELFORMAT_ASTC_8x5,
-        PIXELFORMAT_ASTC_8x6,
-        PIXELFORMAT_ASTC_8x8,
-        PIXELFORMAT_ASTC_10x5,
-        PIXELFORMAT_ASTC_10x6,
-        PIXELFORMAT_ASTC_10x8,
-        PIXELFORMAT_ASTC_10x10,
-        PIXELFORMAT_ASTC_12x10,
-        PIXELFORMAT_ASTC_12x12,
+        DXT1,
+        DXT3,
+        DXT5,
+        BC4,
+        BC4s,
+        BC5,
+        BC5s,
+        BC6H,
+        BC6Hs,
+        BC7,
+        PVR1_RGB2,
+        PVR1_RGB4,
+        PVR1_RGBA2,
+        PVR1_RGBA4,
+        ETC1,
+        ETC2_RGB,
+        ETC2_RGBA,
+        ETC2_RGBA1,
+        EAC_R,
+        EAC_Rs,
+        EAC_RG,
+        EAC_RGs,
+        ASTC_4x4,
+        ASTC_5x4,
+        ASTC_5x5,
+        ASTC_6x5,
+        ASTC_6x6,
+        ASTC_8x5,
+        ASTC_8x6,
+        ASTC_8x8,
+        ASTC_10x5,
+        ASTC_10x6,
+        ASTC_10x8,
+        ASTC_10x10,
+        ASTC_12x10,
+        ASTC_12x12,
     };
 
     /// <summary>
@@ -1208,17 +1235,17 @@
         /// <summary>
         /// Do not enable mipmap.
         /// </summary>
-        MIPMAPS_NONE,
+        None,
 
         /// <summary>
         /// Let user manually generate mipmap.
         /// </summary>
-        MIPMAPS_MANUAL,
+        Manual,
 
         /// <summary>
         /// Automatically generate mipmap.
         /// </summary>
-        MIPMAPS_AUTO,
+        Auto,
     }
 
     /// <summary>

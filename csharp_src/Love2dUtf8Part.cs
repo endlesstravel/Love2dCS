@@ -266,13 +266,16 @@ namespace Love
             return LoveObject.NewObject<Shader>(out_shader);
         }
     }
+
     public partial class Font
     {
-        Rasterizer newImageRasterizer(ImageData imageData, string glyphs, int extraspacing)
-        {
-            return NewImageRasterizer(imageData, DllTool.ToUTF8Bytes(glyphs), extraspacing);
-        }
-        GlyphData NewGlyphData(Rasterizer rasterizer, string glyph)
+        /// <summary>
+        /// Creates a new GlyphData.
+        /// </summary>
+        /// <param name="rasterizer">The Rasterizer containing the font.</param>
+        /// <param name="glyph">The character code of the glyph.</param>
+        /// <returns></returns>
+        public GlyphData NewGlyphData(Rasterizer rasterizer, string glyph)
         {
             return NewGlyphData(rasterizer, DllTool.ToUTF8Bytes(glyph));
         }
@@ -401,7 +404,7 @@ namespace Love
 
     public partial class ImageData
     {
-        public void Encode(FormatHandler.EncodedFormat format_type, string filename)
+        public void Encode(ImageFormat format_type, string filename)
         {
             Encode(format_type, DllTool.ToUTF8Bytes(filename));
         }

@@ -235,7 +235,7 @@ namespace wrap
 
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_mouse_newCursor(ImageData *imageData, int hotx, int hoty, Cursor** out_cursor);
 
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_image_newImageData_wh_data(int w, int h, const unsigned char* data, int dataLength, ImageData** out_imagedata);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_image_newImageData_wh_format_data(int w, int h, const unsigned char* data, int dataLength, int formatType, ImageData** out_imagedata);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_image_newImageData_filedata(FileData *fileData, ImageData** out_imagedata);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_image_newCompressedData(FileData *fileData, CompressedImageData** out_compressedimagedata);
     
@@ -268,6 +268,7 @@ namespace wrap
 #pragma endregion
 
 #pragma region window
+	extern "C" LOVE_EXPORT void inner_wrap_love_dll_windows_createSDL2WindowWithHandle();
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_windows_open_love_window();
     extern "C" LOVE_EXPORT void wrap_love_dll_windows_getDisplayCount(int *out_count);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_windows_getDisplayName(int displayindex, WrapString** out_name);
@@ -903,8 +904,12 @@ namespace wrap
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_ImageData_setPixel(ImageData *t, int x, int y, Pixel pixel);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_ImageData_paste(ImageData *t, ImageData* src, int dx, int dy, int sx, int sy, int sw, int sh);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_ImageData_encode(ImageData *t, int format_type, const char* filename);
-	typedef Pixel (__cdecl *ImageData_mapPixel_func)(int x, int y, Pixel p);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_ImageData_mapPixel(ImageData *t, int x, int y, int width, int height,ImageData_mapPixel_func func);
+	extern "C" LOVE_EXPORT void inner_wrap_love_dll_type_ImageData_getPixelSize(ImageData *t, int *out_pixelSize);
+	extern "C" LOVE_EXPORT void inner_wrap_love_dll_type_ImageData_lock(ImageData *t);
+	extern "C" LOVE_EXPORT void inner_wrap_love_dll_type_ImageData_unlock(ImageData *t);
+	extern "C" LOVE_EXPORT void inner_wrap_love_dll_type_ImageData_setPixels(ImageData *t, void* src, int bytesLength);
+	extern "C" LOVE_EXPORT void inner_wrap_love_dll_type_ImageData_setPixels_float4(ImageData *t, Float4* src);
+	extern "C" LOVE_EXPORT void inner_wrap_love_dll_type_ImageData_getPixels_float4(ImageData *t, Float4* dest);
 
 #pragma endregion
 
@@ -1007,7 +1012,8 @@ namespace wrap
 
 #pragma region type - Other
 
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Data_getSize(Data* data, uint32 *out_datasize);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Data_getSize(Data* data, uint32 *out_datasize);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Data_getPointer(Data* data, void **out_pointer);
 
 #pragma endregion
 

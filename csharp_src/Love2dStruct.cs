@@ -82,4 +82,53 @@ namespace Love
         /// </summary>
         public double refreshrate;
     }
+
+    /// <summary>
+    /// for Mesh function
+    /// </summary>
+    public struct Vertex
+    {
+        /// <summary>
+        /// The position of the vertex .
+        /// </summary>
+        public readonly Float2 pos;
+
+        /// <summary>
+        /// The u and v texture coordinate of the vertex. Texture coordinates are normally in the range of [0, 1], but can be greater or less (see WrapMode.)
+        /// </summary>
+        public readonly Float2 uv;
+
+        /// <summary>
+        /// The vertex color.
+        /// </summary>
+        public readonly Float4 color;
+
+
+        /// <summary>
+        /// Mesh vertex.
+        /// </summary>
+        /// <param name="pos">The position of the vertex.</param>
+        /// <param name="uv">The u and vtexture coordinate of the vertex. Texture coordinates are normally in the range of [0, 1], but can be greater or less (see <see cref="Texture.WrapMode"/>)  <para>https://love2d.org/wiki/WrapMode</para></param>
+        /// <param name="color">The vertex color.</param>
+        public Vertex(Float2 pos)
+        {
+            this.pos = pos;
+            uv = new Float2(0, 0);
+            color = new Float4(1, 1, 1, 1);
+        }
+
+        /// <summary>
+        /// Mesh vertex.
+        /// </summary>
+        /// <param name="pos">The position of the vertex.</param>
+        /// <param name="uv">The u and vtexture coordinate of the vertex. Texture coordinates are normally in the range of [0, 1], but can be greater or less (see <see cref="Texture.WrapMode"/>)  <para>https://love2d.org/wiki/WrapMode</para></param>
+        /// <param name="color">The vertex color.</param>
+        public Vertex(Float2 pos, Float2 uv, Float4 color)
+        {
+            this.pos = pos;
+            this.uv = uv;
+            this.color = color;
+        }
+    }
+
 }

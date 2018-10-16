@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -17,14 +18,14 @@ namespace Love
     public abstract partial class LoveObject : IDisposable
     {
         // use factory design pattern
-        public static T NewObject<T>(IntPtr ip) where T : LoveObject, new()
+        internal static T NewObject<T>(IntPtr ip) where T : LoveObject
         {
             if (IntPtr.Zero == ip)
             {
                 return null;
             }
 
-            var obj = new T();
+            var obj = (T)Activator.CreateInstance(typeof(T), BindingFlags.Instance | BindingFlags.NonPublic, null, null, null);
             obj.p = ip;
 
             // part of C resonse for retain
@@ -56,6 +57,10 @@ namespace Love
 
     public partial class Source : LoveObject
     {
+        /// <summary>
+        /// disable no-param construct
+        /// </summary>
+        protected Source() {}
 
         public Source Clone()
         {
@@ -221,6 +226,11 @@ namespace Love
 
     public partial class File : LoveObject
     {
+        /// <summary>
+        /// disable no-param construct
+        /// </summary>
+        protected File() {}
+
         public double GetSize()
         {
             double out_size = 0;
@@ -312,6 +322,11 @@ namespace Love
 
     public partial class FileData : Data
     {
+        /// <summary>
+        /// disable no-param construct
+        /// </summary>
+        protected FileData() {}
+
         public string GetFilename()
         {
             IntPtr out_filename = IntPtr.Zero;
@@ -328,6 +343,11 @@ namespace Love
 
     public partial class GlyphData : Data
     {
+        /// <summary>
+        /// disable no-param construct
+        /// </summary>
+        protected GlyphData() {}
+
         public enum Format : int
         {
             LuminanceAlpha,
@@ -382,6 +402,11 @@ namespace Love
 
     public partial class Rasterizer : LoveObject
     {
+        /// <summary>
+        /// disable no-param construct
+        /// </summary>
+        protected Rasterizer() {}
+
         public int GetHeight()
         {
             int out_heigth = 0;
@@ -446,10 +471,11 @@ namespace Love
 
     public partial class Canvas : Texture
     {
-        public enum Format
-        {
+        /// <summary>
+        /// disable no-param construct
+        /// </summary>
+        protected Canvas() {}
 
-        }
         /// <summary>
         /// 
         /// </summary>
@@ -479,11 +505,11 @@ namespace Love
             Love2dDll.wrap_love_dll_type_Canvas_newImageData_xywh(p, slice, mipmap, x, y, w, h, out out_imageData);
             return NewObject<ImageData>(out_imageData);
         }
-        public Format GetFormat()
+        public PixelFormat GetFormat()
         {
             int out_format_type = 0;
             Love2dDll.wrap_love_dll_type_Canvas_getFormat(p, out out_format_type);
-            return (Format)out_format_type;
+            return (PixelFormat)out_format_type;
         }
         public int GetMSAA()
         {
@@ -495,6 +521,11 @@ namespace Love
 
     public partial class Font : LoveObject
     {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected Font() {}
+
         public enum AlignMode
         {
             Left,
@@ -582,6 +613,11 @@ namespace Love
 
     public partial class Image : Texture
     {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected Image() {}
+
         public void SetMipmapFilter(FilterMode mipmap_type, float sharpness)
         {
             Love2dDll.wrap_love_dll_type_Image_setMipmapFilter(p, (int)mipmap_type, sharpness);
@@ -604,56 +640,16 @@ namespace Love
         }
     }
 
-    public struct Vertex
-    {
-        /// <summary>
-        /// The position of the vertex .
-        /// </summary>
-        public readonly Float2 pos;
-
-        /// <summary>
-        /// The u and v texture coordinate of the vertex. Texture coordinates are normally in the range of [0, 1], but can be greater or less (see WrapMode.)
-        /// </summary>
-        public readonly Float2 uv;
-
-        /// <summary>
-        /// The vertex color.
-        /// </summary>
-        public readonly Float4 color;
-
-
-        /// <summary>
-        /// Mesh vertex.
-        /// </summary>
-        /// <param name="pos">The position of the vertex.</param>
-        /// <param name="uv">The u and vtexture coordinate of the vertex. Texture coordinates are normally in the range of [0, 1], but can be greater or less (see <see cref="Texture.WrapMode"/>)  <para>https://love2d.org/wiki/WrapMode</para></param>
-        /// <param name="color">The vertex color.</param>
-        public Vertex(Float2 pos)
-        {
-            this.pos = pos;
-            uv = new Float2(0, 0);
-            color = new Float4(1, 1, 1, 1);
-        }
-
-        /// <summary>
-        /// Mesh vertex.
-        /// </summary>
-        /// <param name="pos">The position of the vertex.</param>
-        /// <param name="uv">The u and vtexture coordinate of the vertex. Texture coordinates are normally in the range of [0, 1], but can be greater or less (see <see cref="Texture.WrapMode"/>)  <para>https://love2d.org/wiki/WrapMode</para></param>
-        /// <param name="color">The vertex color.</param>
-        public Vertex(Float2 pos, Float2 uv, Float4 color)
-        {
-            this.pos = pos;
-            this.uv = uv;
-            this.color = color;
-        }
-    }
-
     /// <summary>
     /// Mesh in Love2d CS is different from  love2d lua.
     /// </summary>
     public partial class Mesh : Drawable
     {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected Mesh() {}
+
         // The type of data a vertex attribute can store.
         public enum DataType
         {
@@ -772,6 +768,11 @@ namespace Love
 
     public partial class ParticleSystem : Drawable
     {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected ParticleSystem() {}
+
         // Insertion modes of new particles in the list: top, bottom, random.
         public enum InsertMode
         {
@@ -1086,6 +1087,11 @@ namespace Love
 
     public partial class Quad : LoveObject
     {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected Quad() {}
+
         public void SetViewport(float x, float y, float w, float h)
         {
             Love2dDll.wrap_love_dll_type_Quad_setViewport(p, x, y, w, h);
@@ -1106,6 +1112,11 @@ namespace Love
 
     public partial class Shader : LoveObject
     {
+        /// <summary>
+        /// Use <see cref="Graphics.NewShader"/> to create Shader !
+        /// </summary>
+        protected Shader() {}
+
         // Types of potential uniform (extern) variables used in love's shaders.
         public enum UniformType
         {
@@ -1172,6 +1183,11 @@ namespace Love
 
     public partial class SpriteBatch : Drawable
     {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected SpriteBatch() {}
+
         public int Add(float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
             int out_index = 0;
@@ -1245,10 +1261,13 @@ namespace Love
         }
     }
 
-
-
     public partial class Text : Drawable
     {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected Text() {}
+
         public void Set(ColoredStringArray coloredStr)
         {
             coloredStr.ExecResource((tmp) =>{
@@ -1322,6 +1341,11 @@ namespace Love
 
     public partial class Texture : Drawable
     {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected Texture() {}
+
         public enum WrapMode
         {
             Clamp,
@@ -1397,6 +1421,11 @@ namespace Love
 
     public partial class Video : Drawable
     {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected Video() {}
+
         public VideoStream GetStream()
         {
             IntPtr out_videsStream = IntPtr.Zero;
@@ -1450,11 +1479,19 @@ namespace Love
 
     public partial class ImageDataBase : Data
     {
-
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected ImageDataBase() {}
     }
 
     public partial class CompressedImageData : ImageDataBase
     {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected CompressedImageData() { }
+
         public int GetWidth(int miplevel)
         {
             int out_w = 0;
@@ -1481,18 +1518,13 @@ namespace Love
         }
     }
 
-    public partial class FormatHandler
-    {
-        public enum EncodedFormat
-        {
-            ENCODED_TGA,
-            ENCODED_PNG,
-        };
-    }
-
-
     public partial class ImageData : ImageDataBase
     {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected ImageData() { }
+
         public int GetWidth()
         {
             int out_w = 0;
@@ -1525,23 +1557,21 @@ namespace Love
         public void Paste(ImageData src_imageData, int dx, int dy, int sx, int sy, int sw, int sh)
         {
             Love2dDll.wrap_love_dll_type_ImageData_paste(p, src_imageData.p, dx, dy, sx, sy, sw, sh);
-            return;
         }
-        public void Encode(FormatHandler.EncodedFormat format_type, byte[] filename)
+
+        public void Encode(ImageFormat format_type, byte[] filename)
         {
             Love2dDll.wrap_love_dll_type_ImageData_encode(p, (int)format_type, filename);
         }
-
-        public delegate Pixel MapPixelDelegate(int x, int y, Pixel p);
-        public void MapPixel(int x, int y, int w, int h, MapPixelDelegate func)
-        {
-            Love2dDll._wrap_love_dll_type_ImageData_mapPixel(p, x, y, w, h, func);
-        }
-
     }
 
     public partial class Cursor : LoveObject
     {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected Cursor() { }
+
         /// <summary>
         /// Gets the type of the Cursor.
         /// </summary>
@@ -1562,6 +1592,11 @@ namespace Love
 
     public partial class Decoder : LoveObject
     {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected Decoder() { }
+
         // Indicates how many bytes of raw data should be generated at each call to Decode.
         public const int DEFAULT_BUFFER_SIZE = 16384;
 
@@ -1603,6 +1638,11 @@ namespace Love
 
     public partial class SoundData : Data
     {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected SoundData() { }
+
         public int GetChannelCount()
         {
             int out_channels = 0;
@@ -1648,6 +1688,11 @@ namespace Love
 
     public partial class VideoStream : Stream
     {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected VideoStream() { }
+
         public string GetFilename()
         {
             IntPtr out_filename = IntPtr.Zero;
@@ -1686,6 +1731,11 @@ namespace Love
 
     public partial class BezierCurve : LoveObject
     {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected BezierCurve() { }
+
         public int GetDegree()
         {
             int out_degree = 0;
@@ -1764,6 +1814,11 @@ namespace Love
 
     public partial class RandomGenerator : LoveObject
     {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected RandomGenerator() { }
+
         public float Random()
         {
             double out_result = 0;
@@ -1796,20 +1851,15 @@ namespace Love
         }
     }
 
-    public partial class Compressor
-    {
-        public enum Format
-        {
-            LZ4,
-            ZLIB,
-            GZIP,
-        };
-    }
-
     public partial class Joystick : LoveObject
     {
-	    // Joystick hat values.
-	    public enum Hat
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected Joystick() { }
+
+        // Joystick hat values.
+        public enum Hat
         {
             Invalid,
             Centered,
@@ -2029,21 +2079,42 @@ namespace Love
         }
     }
 
-
     public partial class Data : LoveObject
     {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected Data() { }
+
         public uint GetSize()
         {
             uint datasize;
             Love2dDll.wrap_love_dll_type_Data_getSize(p, out datasize);
             return datasize;
         }
+
+        /// <summary>
+        /// Gets a pointer to the Data.
+        /// <para>Use at your own risk. Directly reading from and writing to the raw memory owned by the Data will bypass any safety checks and thread-safety the Data might normally have.</para>
+        /// </summary>
+        /// <returns></returns>
+        public IntPtr GetPointer()
+        {
+            IntPtr out_pointer;
+            Love2dDll.wrap_love_dll_type_Data_getPointer(p, out out_pointer);
+            return out_pointer;
+        }
     }
 
     public partial class TrueTypeRasterizer : LoveObject
     {
-	    // Types of hinting for TrueType font glyphs.
-	    public enum Hinting
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected TrueTypeRasterizer() { }
+
+        // Types of hinting for TrueType font glyphs.
+        public enum Hinting
         {
             Normal,
             Light,
@@ -2053,14 +2124,25 @@ namespace Love
     }
     public partial class Drawable : LoveObject
     {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected Drawable() { }
+
     }
     public partial class DroppedFile : File
     {
-
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected DroppedFile() { }
     }
     public partial class Stream : LoveObject
     {
-
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected Stream() { }
     }
 }
 

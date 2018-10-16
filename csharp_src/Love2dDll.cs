@@ -151,11 +151,11 @@ namespace Love
         {
             return CheckCAPIException(_wrap_love_dll_mouse_newCursor(imageData, hotx, hoty, out out_cursor));
         }
-        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_image_newImageData_wh_data")]
-        internal extern static bool _wrap_love_dll_image_newImageData_wh_data(int w, int h, byte[] data, int dataLength, out IntPtr out_imagedata);
-        internal static bool wrap_love_dll_image_newImageData_wh_data(int w, int h, byte[] data, int dataLength, out IntPtr out_imagedata)
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_image_newImageData_wh_format_data")]
+        internal extern static bool _wrap_love_dll_image_newImageData_wh_format_data(int w, int h, byte[] data, int dataLength, int format_type, out IntPtr out_imagedata);
+        internal static bool wrap_love_dll_image_newImageData_wh_format_data(int w, int h, byte[] data, int dataLength, int format_type, out IntPtr out_imagedata)
         {
-            return CheckCAPIException(_wrap_love_dll_image_newImageData_wh_data(w, h, data, dataLength, out out_imagedata));
+            return CheckCAPIException(_wrap_love_dll_image_newImageData_wh_format_data(w, h, data, dataLength, format_type, out out_imagedata));
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_image_newImageData_filedata")]
         internal extern static bool _wrap_love_dll_image_newImageData_filedata(IntPtr fileData, out IntPtr out_imagedata);
@@ -285,6 +285,10 @@ namespace Love
         #endregion
 
         #region window
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
+        internal extern static bool inner_wrap_love_dll_windows_updateSDL2WindowWithHandle(IntPtr p);
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_windows_open_love_window")]
         internal extern static bool _wrap_love_dll_windows_open_love_window();
         internal static bool wrap_love_dll_windows_open_love_window()
@@ -3173,14 +3177,24 @@ namespace Love
             _wrap_love_dll_type_ImageData_encode(p, format_type, filename);
         }
 
-        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_ImageData_mapPixel")]
-        internal extern static bool _wrap_love_dll_type_ImageData_mapPixel(IntPtr p, int x, int y, int w, int h, ImageData.MapPixelDelegate mapPixelFunc);
-        internal static bool wrap_love_dll_type_ImageData_mapPixel(IntPtr p, int x, int y, int w, int h, ImageData.MapPixelDelegate mapPixelFunc)
-        {
-            return CheckCAPIException(_wrap_love_dll_type_ImageData_mapPixel(p, x, y, w, h, mapPixelFunc));
-        }
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
+        internal extern static void inner_wrap_love_dll_type_ImageData_getPixelSize(IntPtr p, out int out_pixelSize);
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
+        internal extern static void inner_wrap_love_dll_type_ImageData_lock(IntPtr p);
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
+        internal extern static void inner_wrap_love_dll_type_ImageData_unlock(IntPtr p);
 
 
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
+        internal extern static void inner_wrap_love_dll_type_ImageData_setPixels(IntPtr p, IntPtr data, int byteLenght);
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
+        internal extern static void inner_wrap_love_dll_type_ImageData_setPixels_float4(IntPtr p, Float4[] src);
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
+        internal extern static void inner_wrap_love_dll_type_ImageData_getPixels_float4(IntPtr p, IntPtr dest);
 
         #endregion
         #region  type - Cursor
@@ -3587,6 +3601,14 @@ namespace Love
             _wrap_love_dll_type_Data_getSize(data, out out_datasize);
         }
 
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Data_getPointer")]
+        internal extern static void _wrap_love_dll_type_Data_getPointer(IntPtr data, out IntPtr out_pointer);
+        internal static void wrap_love_dll_type_Data_getPointer(IntPtr data, out IntPtr out_pointer)
+        {
+            _wrap_love_dll_type_Data_getPointer(data, out out_pointer);
+        }
+
         #endregion
 
     }
@@ -3725,6 +3747,24 @@ namespace Love
         [FieldOffset(0)] public RGBA16I rgba16;
         [FieldOffset(0)] public RGBA16F rgba16f;
         [FieldOffset(0)] public RGBA32F rgba32f;
+
+        [FieldOffset(0)] public int intValue0;
+        [FieldOffset(4)] public int intValue1;
+        [FieldOffset(8)] public int intValue2;
+        [FieldOffset(12)] public int intValue3;
+        [FieldOffset(0)] public long longValue0;
+        [FieldOffset(8)] public long longValue1;
+        [FieldOffset(0)] public double doubleValue0;
+        [FieldOffset(8)] public double doubleValue1;
+
+        public static string StrRGBA8(Pixel p)
+        {
+            return $"({p.rgba8.r},{p.rgba8.g},{p.rgba8.b},{p.rgba8.a})";
+        }
+        public static string StrRGBA32F(Pixel p)
+        {
+            return $"({p.rgba32f.r},{p.rgba32f.g},{p.rgba32f.b},{p.rgba32f.a})";
+        }
     }
 
 
@@ -3812,6 +3852,10 @@ namespace Love
     public struct Float4
     {
         public float x, y, z, w;
+        public float r { set { x = value; } get { return x; } }
+        public float g { set { y = value; } get { return y; } }
+        public float b { set { z = value; } get { return z; } }
+        public float a { set { w = value; } get { return w; } }
         public Float4(float x, float y, float z, float w)
         {
             this.x = x;
@@ -3837,47 +3881,47 @@ namespace Love
     [StructLayout(LayoutKind.Sequential)]
     public class Matrix22
     {
-        float m00 { set { data[0] = value; } get { return data[0]; } }
-        float m01 { set { data[1] = value; } get { return data[1]; } }
-        float m10 { set { data[2] = value; } get { return data[2]; } }
-        float m11 { set { data[3] = value; } get { return data[3]; } }
+        public float m00 { set { data[0] = value; } get { return data[0]; } }
+        public float m01 { set { data[1] = value; } get { return data[1]; } }
+        public float m10 { set { data[2] = value; } get { return data[2]; } }
+        public float m11 { set { data[3] = value; } get { return data[3]; } }
         internal readonly float[] data = new float[4];
     }
 
     [StructLayout(LayoutKind.Sequential)]
     public class Matrix33
     {
-        float m00 { set { data[0] = value; } get { return data[0]; } }
-        float m01 { set { data[1] = value; } get { return data[1]; } }
-        float m02 { set { data[2] = value; } get { return data[2]; } }
-        float m10 { set { data[3] = value; } get { return data[3]; } }
-        float m11 { set { data[4] = value; } get { return data[4]; } }
-        float m12 { set { data[5] = value; } get { return data[5]; } }
-        float m20 { set { data[6] = value; } get { return data[6]; } }
-        float m21 { set { data[7] = value; } get { return data[7]; } }
-        float m22 { set { data[8] = value; } get { return data[8]; } }
+        public float m00 { set { data[0] = value; } get { return data[0]; } }
+        public float m01 { set { data[1] = value; } get { return data[1]; } }
+        public float m02 { set { data[2] = value; } get { return data[2]; } }
+        public float m10 { set { data[3] = value; } get { return data[3]; } }
+        public float m11 { set { data[4] = value; } get { return data[4]; } }
+        public float m12 { set { data[5] = value; } get { return data[5]; } }
+        public float m20 { set { data[6] = value; } get { return data[6]; } }
+        public float m21 { set { data[7] = value; } get { return data[7]; } }
+        public float m22 { set { data[8] = value; } get { return data[8]; } }
         internal readonly float[] data = new float[9];
     }
 
     [StructLayout(LayoutKind.Sequential)]
     public class Matrix44
     {
-        float m00 { set { data[0] = value; } get { return data[0]; } }
-        float m01 { set { data[1] = value; } get { return data[1]; } }
-        float m02 { set { data[2] = value; } get { return data[2]; } }
-        float m03 { set { data[3] = value; } get { return data[3]; } }
-        float m10 { set { data[4] = value; } get { return data[4]; } }
-        float m11 { set { data[5] = value; } get { return data[5]; } }
-        float m12 { set { data[6] = value; } get { return data[6]; } }
-        float m13 { set { data[7] = value; } get { return data[7]; } }
-        float m20 { set { data[8] = value; } get { return data[8]; } }
-        float m21 { set { data[9] = value; } get { return data[9]; } }
-        float m22 { set { data[10] = value; } get { return data[10]; } }
-        float m23 { set { data[11] = value; } get { return data[11]; } }
-        float m30 { set { data[12] = value; } get { return data[12]; } }
-        float m31 { set { data[13] = value; } get { return data[13]; } }
-        float m32 { set { data[14] = value; } get { return data[14]; } }
-        float m33 { set { data[15] = value; } get { return data[15]; } }
+        public float m00 { set { data[0] = value; } get { return data[0]; } }
+        public float m01 { set { data[1] = value; } get { return data[1]; } }
+        public float m02 { set { data[2] = value; } get { return data[2]; } }
+        public float m03 { set { data[3] = value; } get { return data[3]; } }
+        public float m10 { set { data[4] = value; } get { return data[4]; } }
+        public float m11 { set { data[5] = value; } get { return data[5]; } }
+        public float m12 { set { data[6] = value; } get { return data[6]; } }
+        public float m13 { set { data[7] = value; } get { return data[7]; } }
+        public float m20 { set { data[8] = value; } get { return data[8]; } }
+        public float m21 { set { data[9] = value; } get { return data[9]; } }
+        public float m22 { set { data[10] = value; } get { return data[10]; } }
+        public float m23 { set { data[11] = value; } get { return data[11]; } }
+        public float m30 { set { data[12] = value; } get { return data[12]; } }
+        public float m31 { set { data[13] = value; } get { return data[13]; } }
+        public float m32 { set { data[14] = value; } get { return data[14]; } }
+        public float m33 { set { data[15] = value; } get { return data[15]; } }
         internal readonly float[] data = new float[16];
     }
 }
