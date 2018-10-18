@@ -66,15 +66,11 @@ namespace love
 {
 namespace wrap
 {
-    struct BytePtr
-    {
-        char *data;
-    };
-
 	struct WrapString
 	{
 		char *data;
 	};
+
 
 	WrapString* new_WrapString(const char* str)
 	{
@@ -140,7 +136,8 @@ namespace wrap
         };
     };
 
-    typedef char* pchar;
+	typedef char* pchar;
+	typedef char* pChar;
     typedef Int2* pInt2;
 	typedef int bool4;
     typedef ImageData* pImageData;
@@ -268,7 +265,7 @@ namespace wrap
 #pragma endregion
 
 #pragma region window
-	extern "C" LOVE_EXPORT void inner_wrap_love_dll_windows_createSDL2WindowWithHandle();
+	extern "C" LOVE_EXPORT void inner_wrap_love_dll_windows_updateSDL2WindowWithHandle(void* winPtr);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_windows_open_love_window();
     extern "C" LOVE_EXPORT void wrap_love_dll_windows_getDisplayCount(int *out_count);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_windows_getDisplayName(int displayindex, WrapString** out_name);
@@ -299,7 +296,7 @@ namespace wrap
     extern "C" LOVE_EXPORT void wrap_love_dll_windows_maximize();
     extern "C" LOVE_EXPORT void wrap_love_dll_windows_isMaximized(bool4* out_result);
     extern "C" LOVE_EXPORT void wrap_love_dll_windows_showMessageBox(const char *title, const char *message, int type, bool4 attachToWindow, bool4* out_result);
-	extern "C" LOVE_EXPORT void wrap_love_dll_windows_showMessageBox_list(const char *title, const char *message, BytePtr* buttons, int buttonsLength, int enterButtonIndex, int escapebuttonIndex, int type, bool4 attachToWindow, int* out_index_returned);
+	extern "C" LOVE_EXPORT void wrap_love_dll_windows_showMessageBox_list(const char *title, const char *message, pChar* buttons, int buttonsLength, int enterButtonIndex, int escapebuttonIndex, int type, bool4 attachToWindow, int* out_index_returned);
     extern "C" LOVE_EXPORT void wrap_love_dll_windows_requestAttention(bool4 continuous);
     extern "C" LOVE_EXPORT void wrap_love_dll_windows_windowToPixelCoords(double *out_x, double *out_y);
     extern "C" LOVE_EXPORT void wrap_love_dll_windows_pixelToWindowCoords(double *x, double *y);
@@ -484,7 +481,7 @@ namespace wrap
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newShader(const char* vertexCodeStr, const char* pixelCodeStr, Shader** out_shader);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newMesh_specifiedVertices(Float2 pos[], Float2 uv[], Float4 color[], int vertexCount, int drawMode_type, int usage_type, Mesh** out_mesh);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newMesh_count(int count, int drawMode_type, int usage_type, Mesh** out_mesh);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newText(love::graphics::Font *font, BytePtr coloredStringText[], Float4 coloredStringColor[], int coloredStringLength, Text** out_text);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newText(love::graphics::Font *font, pChar coloredStringText[], Float4 coloredStringColor[], int coloredStringLength, Text** out_text);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newVideo(VideoStream *videoStream, float dpiScale, graphics::Video** out_video);
 
 
@@ -555,8 +552,8 @@ namespace wrap
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_present();
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_draw_drawable(Drawable *drawable, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_draw_texture_quad(Quad *quad, Texture *texture, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_print(BytePtr coloredStringListStr[], Float4 coloredStringListColor[], int coloredStringListLength, float x, float y, float angle, float sx, float sy, float ox, float oy, float kx, float ky);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_printf(BytePtr coloredStringListStr[], Float4 coloredStringListColor[], int coloredStringListLength, float x, float y, float wrap, int align_type, float angle, float sx, float sy, float ox, float oy, float kx, float ky);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_print(char* coloredStringListStr[], Float4 coloredStringListColor[], int coloredStringListLength, float x, float y, float angle, float sx, float sy, float ox, float oy, float kx, float ky);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_printf(pChar coloredStringListStr[], Float4 coloredStringListColor[], int coloredStringListLength, float x, float y, float wrap, int align_type, float angle, float sx, float sy, float ox, float oy, float kx, float ky);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_rectangle(int mode_type, float x, float y, float w, float h);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_rectangle_with_rounded_corners(int mode_type, float x, float y, float w, float h, float rx, float ry, int points);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_circle(int mode_type, float x, float y, float radius, int points);
@@ -691,7 +688,7 @@ namespace wrap
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Font_getHeight(love::graphics::Font *t, int *out_height);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Font_getWidth(love::graphics::Font *t, const char *str, int *out_width);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Font_getWrap(love::graphics::Font *t,
-        BytePtr coloredStringText[], Float4 coloredStringColor[], int coloredStringLength, float wrap,
+        pChar coloredStringText[], Float4 coloredStringColor[], int coloredStringLength, float wrap,
         int *out_maxWidth, WrapSequenceString **out_pws);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Font_setLineHeight(love::graphics::Font *t, float h);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Font_getLineHeight(love::graphics::Font *t, float *out_h);
@@ -848,11 +845,11 @@ namespace wrap
 #pragma region type - Text
     using love::graphics::Text;
 
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Text_set_coloredstring(Text *t, BytePtr coloredStringText[], Float4 coloredStringColor[], int coloredStringLength);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Text_setf(Text *t, BytePtr coloredStringText[], Float4 coloredStringColor[], int coloredStringLength, float wraplimit, int align_type);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Text_add(Text *t, BytePtr coloredStringText[], Float4 coloredStringColor[], int coloredStringLength,
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Text_set_coloredstring(Text *t, pChar coloredStringText[], Float4 coloredStringColor[], int coloredStringLength);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Text_setf(Text *t, pChar coloredStringText[], Float4 coloredStringColor[], int coloredStringLength, float wraplimit, int align_type);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Text_add(Text *t, pChar coloredStringText[], Float4 coloredStringColor[], int coloredStringLength,
         float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, int *out_index);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Text_addf(Text *t, BytePtr coloredStringText[], Float4 coloredStringColor[], int coloredStringLength,
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Text_addf(Text *t, pChar coloredStringText[], Float4 coloredStringColor[], int coloredStringLength,
         float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, float wraplimit, int align_type, int *out_index);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Text_clear(Text *t);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Text_setFont(Text *t, love::graphics::Font *f);

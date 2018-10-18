@@ -49,6 +49,7 @@
 #include "common/version.h"
 #include "wrap_love_dll.h"
 
+
 #include <stdio.h>
 #include <iostream>
 #include <sstream>
@@ -445,7 +446,7 @@ namespace wrap
 #pragma region window
 
 
-	void inner_wrap_love_dll_windows_createSDL2WindowWithHandle()
+	void inner_wrap_love_dll_windows_updateSDL2WindowWithHandle(void* winPtr)
 	{
 		class HackSDL2Window : public love::window::Window
 		{
@@ -466,8 +467,6 @@ namespace wrap
 			SDL_Window *window;
 			SDL_GLContext context;
 
-
-
 			void create_SDL2_widow_context_with_win32_handle(void* handle)
 			{
 
@@ -483,16 +482,42 @@ namespace wrap
 					//SDL_FlushEvent(SDL_WINDOWEVENT);
 					window = nullptr;
 				}
+				
+				SDL_Window* pSampleWin = SDL_CreateWindow("", 0, 0, 1, 1, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
 
+				char sBuf[32];
+				sprintf_s<32>(sBuf, "%p", pSampleWin);
+
+				SDL_SetHint(SDL_HINT_VIDEO_WINDOW_SHARE_PIXEL_FORMAT, sBuf);
 				window = SDL_CreateWindowFrom(handle);
+				SDL_SetHint(SDL_HINT_VIDEO_WINDOW_SHARE_PIXEL_FORMAT, nullptr);
+
+				SDL_DestroyWindow(pSampleWin);
+
+
+				//window = SDL_CreateWindowFrom(handle);
 				context = SDL_GL_CreateContext(window);
 			}
+
+			int g_display_width = 800;
+			int g_display_height = 600;
+			int g_colorbits = 32;
+			int g_depthbits = 16;
+			int g_multisample = 8;
+			bool g_vsync = true;
+			bool g_fullscreen = true;
+			bool g_resize = false;
 		};
 
 		auto hack_ptr = reinterpret_cast<HackSDL2Window*>(windowInstance);
 
-		wrap_ee("%d", windowInstance);
+		wrap_ee("before %d", hack_ptr->window);
+		hack_ptr->create_SDL2_widow_context_with_win32_handle(winPtr);
+		wrap_ee("after %d", hack_ptr->window);
+
+		wrap_ee("win ptr ..%d", winPtr);
 	}
+
 
     bool4 wrap_love_dll_windows_open_love_window()
     {
@@ -721,7 +746,7 @@ namespace wrap
         *out_result = windowInstance->showMessageBox(title, message, (Window::MessageBoxType)type, attachToWindow);
     }
 
-	void wrap_love_dll_windows_showMessageBox_list(const char *title, const char *message, BytePtr* buttons, int buttonsLength, int enterButtonIndex, int escapebuttonIndex, int type, bool4 attachToWindow, int* out_index_returned)
+	void wrap_love_dll_windows_showMessageBox_list(const char *title, const char *message, pChar* buttons, int buttonsLength, int enterButtonIndex, int escapebuttonIndex, int type, bool4 attachToWindow, int* out_index_returned)
 	{
 		Window::MessageBoxData data = {};
 
@@ -730,7 +755,7 @@ namespace wrap
 
 		for (int i = 0; i < buttonsLength; i++)
 		{
-			data.buttons.push_back(buttons[i].data);
+			data.buttons.push_back(buttons[i]);
 		}
 
 		data.enterButtonIndex = enterButtonIndex;
@@ -2777,7 +2802,7 @@ namespace wrap
         return wrap_catchexcept([&]() { *out_mesh = graphicsInstance->newMesh(count, drawMode, usage); });
     }
 
-    bool4 wrap_love_dll_graphics_newText(love::graphics::Font *font, BytePtr coloredStringText[], Float4 coloredStringColor[],  int coloredStringLength, Text** out_text)
+    bool4 wrap_love_dll_graphics_newText(love::graphics::Font *font, pChar coloredStringText[], Float4 coloredStringColor[],  int coloredStringLength, Text** out_text)
     {
         std::vector<love::graphics::Font::ColoredString> strings;
         strings.reserve(coloredStringLength);
@@ -2789,7 +2814,7 @@ namespace wrap
             coloredstr.color.g = coloredStringColor[i].g;
             coloredstr.color.b = coloredStringColor[i].b;
             coloredstr.color.a = coloredStringColor[i].a;
-            coloredstr.str = coloredStringText[i].data;
+            coloredstr.str = coloredStringText[i];
 			strings.push_back(coloredstr);
         }
 
@@ -3221,7 +3246,7 @@ namespace wrap
             graphicsInstance->draw(texture, quad, Matrix4(x, y, a, sx, sy, ox, oy, kx, ky));
         });
     }
-    bool4 wrap_love_dll_graphics_print(BytePtr coloredStringListStr[], Float4 coloredStringListColor[], int coloredStringListLength, float x, float y, float angle, float sx, float sy, float ox, float oy, float kx, float ky)
+    bool4 wrap_love_dll_graphics_print(char* coloredStringListStr[], Float4 coloredStringListColor[], int coloredStringListLength, float x, float y, float angle, float sx, float sy, float ox, float oy, float kx, float ky)
     {
         std::vector<love::graphics::Font::ColoredString> coloredStrings;
         coloredStrings.reserve(coloredStringListLength);
@@ -3229,7 +3254,7 @@ namespace wrap
         for (int i = 0; i < coloredStringListLength; i++)
         {
             love::graphics::Font::ColoredString cs;
-            cs.str = coloredStringListStr[i].data;
+            cs.str = coloredStringListStr[i];
             cs.color.r = coloredStringListColor[i].r;
             cs.color.g = coloredStringListColor[i].g;
             cs.color.b = coloredStringListColor[i].b;
@@ -3239,7 +3264,7 @@ namespace wrap
 
         return wrap_catchexcept([&]() { graphicsInstance->print(coloredStrings, Matrix4(x, y, angle, sx, sy, ox, oy, kx, ky)); });
     }
-    bool4 wrap_love_dll_graphics_printf(BytePtr coloredStringListStr[], Float4 coloredStringListColor[], int coloredStringListLength, float x, float y, float wrap, int align_type, float angle, float sx, float sy, float ox, float oy, float kx, float ky)
+    bool4 wrap_love_dll_graphics_printf(pChar coloredStringListStr[], Float4 coloredStringListColor[], int coloredStringListLength, float x, float y, float wrap, int align_type, float angle, float sx, float sy, float ox, float oy, float kx, float ky)
     {
         std::vector<love::graphics::Font::ColoredString> coloredStrings;
         coloredStrings.reserve(coloredStringListLength);
@@ -3247,7 +3272,7 @@ namespace wrap
         for (int i = 0; i < coloredStringListLength; i++)
         {
             love::graphics::Font::ColoredString cs;
-            cs.str = coloredStringListStr[i].data;
+            cs.str = coloredStringListStr[i];
             cs.color.r = coloredStringListColor[i].r;
             cs.color.g = coloredStringListColor[i].g;
             cs.color.b = coloredStringListColor[i].b;
@@ -4023,7 +4048,7 @@ namespace wrap
     }
 
     bool4 wrap_love_dll_type_Font_getWrap(love::graphics::Font *t, 
-        BytePtr coloredStringText[], Float4 coloredStringColor[], int coloredStringLength, float wrap,
+        pChar coloredStringText[], Float4 coloredStringColor[], int coloredStringLength, float wrap,
         int *out_maxWidth, WrapSequenceString **out_pws)
     {
         std::vector<love::graphics::Font::ColoredString> strings;
@@ -4036,7 +4061,7 @@ namespace wrap
             coloredstr.color.g = coloredStringColor[i].g;
             coloredstr.color.b = coloredStringColor[i].b;
             coloredstr.color.a = coloredStringColor[i].a;
-            coloredstr.str = coloredStringText[i].data;
+            coloredstr.str = coloredStringText[i];
 			strings.push_back(coloredstr);
         }
 
@@ -5194,7 +5219,7 @@ namespace wrap
 
 #pragma region type - Text
 
-    bool4 wrap_love_dll_type_Text_set_coloredstring(Text *t, BytePtr coloredStringText[], Float4 coloredStringColor[], int coloredStringLength)
+    bool4 wrap_love_dll_type_Text_set_coloredstring(Text *t, pChar coloredStringText[], Float4 coloredStringColor[], int coloredStringLength)
     {
         // Single argument: unformatted text.
         std::vector<love::graphics::Font::ColoredString> strings;
@@ -5207,14 +5232,14 @@ namespace wrap
             coloredstr.color.g = coloredStringColor[i].g;
             coloredstr.color.b = coloredStringColor[i].b;
             coloredstr.color.a = coloredStringColor[i].a;
-            coloredstr.str = coloredStringText[i].data;
+            coloredstr.str = coloredStringText[i];
 			strings.push_back(coloredstr);
         }
 
         return wrap_catchexcept([&]() { t->set(strings); });
     }
 
-    bool4 wrap_love_dll_type_Text_setf(Text *t, BytePtr coloredStringText[], Float4 coloredStringColor[], int coloredStringLength, float wraplimit, int align_type)
+    bool4 wrap_love_dll_type_Text_setf(Text *t, pChar coloredStringText[], Float4 coloredStringColor[], int coloredStringLength, float wraplimit, int align_type)
     {
         std::vector<love::graphics::Font::ColoredString> strings;
         strings.reserve(coloredStringLength);
@@ -5226,7 +5251,7 @@ namespace wrap
             coloredstr.color.g = coloredStringColor[i].g;
             coloredstr.color.b = coloredStringColor[i].b;
             coloredstr.color.a = coloredStringColor[i].a;
-            coloredstr.str = coloredStringText[i].data;
+            coloredstr.str = coloredStringText[i];
 			strings.push_back(coloredstr);
         }
 
@@ -5234,7 +5259,7 @@ namespace wrap
         return wrap_catchexcept([&]() { t->set(strings, wraplimit, align); });
     }
 
-    bool4 wrap_love_dll_type_Text_add(Text *t, BytePtr coloredStringText[], Float4 coloredStringColor[], int coloredStringLength,
+    bool4 wrap_love_dll_type_Text_add(Text *t, pChar coloredStringText[], Float4 coloredStringColor[], int coloredStringLength,
         float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, int *out_index)
     {
         std::vector<love::graphics::Font::ColoredString> strings;
@@ -5247,14 +5272,14 @@ namespace wrap
             coloredstr.color.g = coloredStringColor[i].g;
             coloredstr.color.b = coloredStringColor[i].b;
             coloredstr.color.a = coloredStringColor[i].a;
-            coloredstr.str = coloredStringText[i].data;
+            coloredstr.str = coloredStringText[i];
 			strings.push_back(coloredstr);
         }
 		Matrix4 m(x, y, a, sx, sy, ox, oy, kx, ky);
         return wrap_catchexcept([&]() { *out_index = t->add(strings, m); });
     }
 
-    bool4 wrap_love_dll_type_Text_addf(Text *t, BytePtr coloredStringText[], Float4 coloredStringColor[], int coloredStringLength,
+    bool4 wrap_love_dll_type_Text_addf(Text *t, pChar coloredStringText[], Float4 coloredStringColor[], int coloredStringLength,
         float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, float wraplimit, int align_type, int *out_index)
     {
         std::vector<love::graphics::Font::ColoredString> strings;
@@ -5267,7 +5292,7 @@ namespace wrap
             coloredstr.color.g = coloredStringColor[i].g;
             coloredstr.color.b = coloredStringColor[i].b;
             coloredstr.color.a = coloredStringColor[i].a;
-            coloredstr.str = coloredStringText[i].data;
+            coloredstr.str = coloredStringText[i];
 			strings.push_back(coloredstr);
         }
         auto align = (love::graphics::Font::AlignMode)align_type;

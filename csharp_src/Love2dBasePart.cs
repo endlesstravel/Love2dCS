@@ -13,22 +13,22 @@ namespace Love
 
     static partial class DllTool
     {
-        const int intSize = 4;
-
         /// <summary>
         /// <para>from C# string[] pass as char** to c language</para>
         /// </summary>
-        public static void ExecuteStringArray(string[] arrayToPass, Action<BytePtr[]> func)
+        public static void ExecuteStringArray(string[] arrayToPass, Action<IntPtr[]> func)
         {
             GCHandle[] hObjects = new GCHandle[arrayToPass.Length];
-            var texts = new BytePtr[arrayToPass.Length];
+            var pointers = new IntPtr[arrayToPass.Length];
+            var textBytes = new byte[arrayToPass.Length][];
             for (int i = 0; i < arrayToPass.Length; i++)
             {
-                hObjects[i] = GCHandle.Alloc(ToUTF8Bytes(arrayToPass[i]), GCHandleType.Pinned);
-                texts[i] = new BytePtr(hObjects[i].AddrOfPinnedObject());
+                textBytes[i] = ToUTF8Bytes(arrayToPass[i]);
+                hObjects[i] = GCHandle.Alloc(textBytes[i], GCHandleType.Pinned);
+                pointers[i] = hObjects[i].AddrOfPinnedObject();
             }
 
-            func(texts);
+            func(pointers);
 
             foreach (var h in hObjects)
             {
@@ -134,7 +134,7 @@ namespace Love
 
             for (int i = 0; i < ws.len; i++)
             {
-                string item = PtrToStringUTF8(Marshal.ReadIntPtr(ws.data, 4 * i));
+                string item = PtrToStringUTF8(Marshal.ReadIntPtr(ws.data, IntPtr.Size * i));
                 buffer[i] = item;
             }
 
@@ -2590,7 +2590,7 @@ namespace Love
         {
             IntPtr out_text = IntPtr.Zero;
             coloredStr.ExecResource((tmp) => {
-                Love2dDll.wrap_love_dll_graphics_newText(font.p, tmp.Item1, tmp.Item2, coloredStr.items.Length, out out_text);
+                Love2dDll.wrap_love_dll_graphics_newText(font.p, tmp.Item1, tmp.Item2, coloredStr.Length, out out_text);
             });
             return LoveObject.NewObject<Text>(out_text);
         }

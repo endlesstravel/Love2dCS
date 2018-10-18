@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 using size_t = System.UInt32;
 using Int64 = System.Int64;
 using UInt8 = System.Byte;
-
+using BytePtr = System.IntPtr;
 
 namespace Love
 {
@@ -26,7 +26,7 @@ namespace Love
             return hasNoException;
         }
 
-        const string DllPath = @"love.dll";
+        const string DllPath = @"love";
 
         #region common
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_common_getVersion")]
@@ -470,8 +470,8 @@ namespace Love
             _wrap_love_dll_windows_showMessageBox(title, message, type, attachToWindow, out out_result);
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_windows_showMessageBox_list")]
-        internal extern static void _wrap_love_dll_windows_showMessageBox_list(byte[] title, byte[] message, BytePtr[] buttonName, int buttonsLength, int enterButtonIndex, int escapebuttonIndex, int type, bool attachToWindow, out int out_index_returned);
-        internal static void wrap_love_dll_windows_showMessageBox_list(byte[] title, byte[] message, BytePtr[] buttonName, int buttonsLength, int enterButtonIndex, int escapebuttonIndex, int type, bool attachToWindow, out int out_index_returned)
+        internal extern static void _wrap_love_dll_windows_showMessageBox_list(byte[] title, byte[] message, IntPtr[] buttonName, int buttonsLength, int enterButtonIndex, int escapebuttonIndex, int type, bool attachToWindow, out int out_index_returned);
+        internal static void wrap_love_dll_windows_showMessageBox_list(byte[] title, byte[] message, IntPtr[] buttonName, int buttonsLength, int enterButtonIndex, int escapebuttonIndex, int type, bool attachToWindow, out int out_index_returned)
         {
             _wrap_love_dll_windows_showMessageBox_list(title, message, buttonName, buttonsLength, enterButtonIndex, escapebuttonIndex, type, attachToWindow, out out_index_returned);
         }
@@ -1473,8 +1473,8 @@ namespace Love
 
 
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_setDefaultShaderCode")]
-        internal extern static void _wrap_love_dll_graphics_setDefaultShaderCode(BytePtr[] strPtr);
-        internal static void wrap_love_dll_graphics_setDefaultShaderCode(BytePtr[] strPtr)
+        internal extern static void _wrap_love_dll_graphics_setDefaultShaderCode(IntPtr[] strPtr);
+        internal static void wrap_love_dll_graphics_setDefaultShaderCode(IntPtr[] strPtr)
         {
             _wrap_love_dll_graphics_setDefaultShaderCode(strPtr);
         }
@@ -1581,8 +1581,8 @@ namespace Love
             return CheckCAPIException(_wrap_love_dll_graphics_draw_texture_quad(quad, texture, x, y, a, sx, sy, ox, oy, kx, ky));
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_print")]
-        internal extern static bool _wrap_love_dll_graphics_print(BytePtr[] coloredStringListStr, Float4[] coloredStringListColor, int coloredStringListLength, float x, float y, float angle, float sx, float sy, float ox, float oy, float kx, float ky);
-        internal static bool wrap_love_dll_graphics_print(BytePtr[] coloredStringListStr, Float4[] coloredStringListColor, int coloredStringListLength, float x, float y, float angle, float sx, float sy, float ox, float oy, float kx, float ky)
+        internal extern static bool _wrap_love_dll_graphics_print(IntPtr[] coloredStringListStr, Float4[] coloredStringListColor, int coloredStringListLength, float x, float y, float angle, float sx, float sy, float ox, float oy, float kx, float ky);
+        internal static bool wrap_love_dll_graphics_print(IntPtr[] coloredStringListStr, Float4[] coloredStringListColor, int coloredStringListLength, float x, float y, float angle, float sx, float sy, float ox, float oy, float kx, float ky)
         {
             return CheckCAPIException(_wrap_love_dll_graphics_print(coloredStringListStr, coloredStringListColor, coloredStringListLength, x, y, angle, sx, sy, ox, oy, kx, ky));
         }
@@ -3872,12 +3872,6 @@ namespace Love
         public float dx, dy, dz;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
-    public struct BytePtr
-    {
-        IntPtr bytes;
-        public BytePtr(IntPtr bytes) { this.bytes = bytes; }
-    }
     [StructLayout(LayoutKind.Sequential)]
     public class Matrix22
     {

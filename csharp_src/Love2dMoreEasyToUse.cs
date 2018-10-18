@@ -955,7 +955,6 @@ namespace Love
             Print(new ColoredStringArray(coloredStr), x, y, angle, sx, sy, ox, oy, kx, ky);
         }
 
-
         /// <summary>
         /// <para> Draws formatted text, with word wrap and alignment.</para>
         /// <para> See additional notes in love.graphics.print. </para>

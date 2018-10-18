@@ -2178,22 +2178,23 @@ namespace Love
             return new ColoredStringArray(ColoredString.Create(text, new Float4(1, 1, 1, 1)));
         }
 
-        public readonly ColoredString[] items;
+        public readonly string[] texts;
+        public readonly Float4[] colors;
 
         public int Length
         {
-            get { return items.Length; }
+            get { return texts.Length; }
         }
 
         public ColoredStringArray(params ColoredString[] inputItems)
         {
-            items = new ColoredString[inputItems.Length];
-            for (int i = 0; i < items.Length; i++)
+            texts = new string[inputItems.Length];
+            colors = new Float4[inputItems.Length];
+            for (int i = 0; i < inputItems.Length; i++)
             {
-                items[i] = new ColoredString(inputItems[i].text, inputItems[i].color);
+                texts[i] = inputItems[i].text;
+                colors[i] = inputItems[i].color;
             }
-
-            hObjects = new GCHandle[items.Length];
         }
 
         public ColoredStringArray(string[] texts, Float4[] colors)
@@ -2203,44 +2204,19 @@ namespace Love
                 throw new Exception("lenght of texts and colors must be same");
             }
 
-            items = new ColoredString[texts.Length];
-            for (int i = 0; i < items.Length; i++)
-            {
-                items[i] = new ColoredString(texts[i], colors[i]);
-            }
-
-            hObjects = new GCHandle[items.Length];
+            this.texts = texts;
+            this.colors = colors;
         }
 
-        public delegate void ColoredStringTempResDelegate(Tuple<BytePtr[], Float4[]> tmp);
-        public void ExecResource(ColoredStringTempResDelegate func)
+        public void ExecResource(Action<Tuple<IntPtr[], Float4[]>> func)
         {
-            var tmp = ToPart();
-            func?.Invoke(tmp);
-            Recycle();
-        }
-
-        GCHandle[] hObjects;
-        private Tuple<BytePtr[], Float4[]> ToPart()
-        {
-            var texts = new BytePtr[Length];
-            var colors = new Float4[Length];
-            for (int i = 0; i < Length; i++)
+            if (func != null)
             {
-                hObjects[i] = GCHandle.Alloc(DllTool.ToUTF8Bytes(items[i].text), GCHandleType.Pinned);
-                texts[i] = new BytePtr(hObjects[i].AddrOfPinnedObject());
-                colors[i] = items[i].color;
-            }
-
-            return Tuple.Create(texts, colors);
-        }
-
-        private void Recycle()
-        {
-            foreach (var h in hObjects)
-            {
-                if (h.IsAllocated)
-                    h.Free();
+                var that = this;
+                DllTool.ExecuteStringArray(texts, (pointers) =>
+                {
+                    func(Tuple.Create(pointers, that.colors));
+                });
             }
         }
     }

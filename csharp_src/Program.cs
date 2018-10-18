@@ -252,9 +252,6 @@ namespace Love
     }
 
 
-
-    
-
     class Button
     {
         public void Update(float dt)
