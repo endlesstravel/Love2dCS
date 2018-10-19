@@ -19,16 +19,11 @@ And click `Browse`, type `Love2dCS` in search box. And then you get result :
 
 Click `Install` to setup Love2dCS library.
 
-![005-enable-native-code-dubuging](https://github.com/endlesstravel/Love2dCS/raw/master/img/005-enable-native-code-dubuging.png "005-enable-native-code-dubuging")
-
-
 ### 2. Install from NuGet using command-line
 
 After installing the NuGet or if you are using the Visual Studio 2015, to open the `Package Manager Console`, click on Tools Menu and choose `NuGet Package Manager` and then choose Package Manager Console.
 
 Type : `Install-Package Love2dCS` , and, for a while, you will install Love2dCS library
-
-![005-enable-native-code-dubuging](https://github.com/endlesstravel/Love2dCS/raw/master/img/005-enable-native-code-dubuging.png "005-enable-native-code-dubuging")
 
 ### Reference : 
 * [Unmanaged Debugging vs. Managed Debugging vs. Mixed Debugging.](https://blogs.msdn.microsoft.com/stevejs/2004/05/05/unmanaged-debugging-vs-managed-debugging-vs-mixed-debugging/)
