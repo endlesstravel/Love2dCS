@@ -297,17 +297,47 @@ namespace Love
             return HasGlyphs(DllTool.ToUTF8Bytes(str));
         }
     }
+
     public partial class Font
     {
+        /// <summary>
+        /// Creates a new Rasterizer.
+        /// </summary>
+        /// <param name="filename">The font file.</param>
+        /// <returns>The rasterizer.</returns>
+        public static Rasterizer NewRasterizer(string filename)
+        {
+            var filedata = FileSystem.NewFileData(filename);
+            return NewRasterizer(filedata);
+        }
+
+        /// <summary>
+        /// Determines the width of the given text.
+        /// </summary>
+        /// <param name="str">A string.</param>
+        /// <returns>The width of the text.</returns>
         public int GetWidth(string str)
         {
             return GetWidth(DllTool.ToUTF8Bytes(str));
         }
+
+        /// <summary>
+        /// Gets whether the Font can render a character or string.
+        /// </summary>
+        /// <param name="str">A string.</param>
+        /// <returns>Whether the font can render all characters in the string.</returns>
         public bool HasGlyphs(string str)
         {
             return HasGlyphs(DllTool.ToUTF8Bytes(str));
         }
-        public Tuple<string[], int> GetWrap(string text, float wrap_limit)
+
+        /// <summary>
+        /// Gets formatting information for text, given a wrap limit.
+        /// </summary>
+        /// <param name="text">The text that will be wrapped.</param>
+        /// <param name="wrap_limit">The maximum width in pixels of each line that text is allowed before wrapping.</param>
+        /// <returns>(The maximum width of the wrapped text., A sequence containing each line of text that was wrapped.)</returns>
+        public Tuple<int, string[]> GetWrap(string text, float wrap_limit)
         {
             var coloredStr = ColoredStringArray.Create(text);
             IntPtr out_pws = IntPtr.Zero;
@@ -317,7 +347,7 @@ namespace Love
                 Love2dDll.wrap_love_dll_type_Font_getWrap(p, tmp.Item1, tmp.Item2, coloredStr.Length, wrap_limit, out out_maxWidth, out out_pws);
             });
             var lines = DllTool.WSSToStringListAndRelease(out_pws);
-            return new Tuple<string[], int>(lines, out_maxWidth);
+            return Tuple.Create(out_maxWidth, lines);
         }
     }
 

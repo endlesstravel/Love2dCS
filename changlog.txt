@@ -1,4 +1,11 @@
-﻿2018年10月12日
+﻿2018年10月20日
+
+1. 修复 Graphics GetBackgroundColor / SetBackgroundColor 错误
+2. 添加 Love.Mathf 注释
+3. 添加 Love.Font 模块的注释
+4. 添加 Love.Image 模块的注释
+
+2018年10月12日
 
 1. 禁止所有默认构造函数
 2. 修复 Canvas:GetFormat 错误

@@ -804,7 +804,7 @@ namespace Love
         }
 
         /// <summary>
-        /// Displays a simple message box with a single 'OK' button. (UTF-8 version)
+        /// Displays a simple message box with a single 'OK' button. (UTF-8 byte array version)
         /// <para>	This function will pause all execution of the main thread until the user has clicked a button to exit the message box. Calling the function from a different thread may cause love to crash.</para>
         /// </summary>
         /// <param name="title">The title of the message box. (UTF-8 byte array)</param>
@@ -1561,7 +1561,7 @@ namespace Love
         };
 
         /// <summary>
-        /// Creates a new File object. It needs to be opened before it can be accessed. (UTF-8 version)
+        /// Creates a new File object. It needs to be opened before it can be accessed. (UTF-8 byte array version)
         /// </summary>
         /// <param name="filename">The filename of the file.(UTF-8 byte array needed)</param>
         /// <param name="fmode_type">The mode to open the file in.</param>
@@ -1833,7 +1833,7 @@ namespace Love
         }
 
         /// <summary>
-        /// Append data to an existing file. (UTF-8 version)
+        /// Append data to an existing file. (UTF-8 byte array version)
         /// </summary>
         /// <param name="filename">The name (and path) of the file.</param>
         /// <param name="input">The data to append to the file.</param>
@@ -2217,8 +2217,7 @@ namespace Love
     {
 
         /// <summary>
-        /// Creates a new ImageData object.
-        /// 
+        /// Creates a new <see cref="ImageData"/> object.
         /// </summary>
         /// <param name="w">The width of the ImageData.</param>
         /// <param name="h">The height of the ImageData.</param>
@@ -2241,12 +2240,24 @@ namespace Love
             Love2dDll.wrap_love_dll_image_newImageData_wh_format_data(w, h, data, data.Length, (int)format, out out_imagedata);
             return LoveObject.NewObject<ImageData>(out_imagedata);
         }
+
+        /// <summary>
+        /// Creates a new <see cref="ImageData"/> object.
+        /// </summary>
+        /// <param name="data">The encoded file data to decode into image data.</param>
+        /// <returns></returns>
         public static ImageData NewImageData(FileData data)
         {
             IntPtr out_imagedata;
             Love2dDll.wrap_love_dll_image_newImageData_filedata(data.p, out out_imagedata);
             return LoveObject.NewObject<ImageData>(out_imagedata);
         }
+
+        /// <summary>
+        /// Create a new <see cref="CompressedImageData"/> object from a compressed image file. LÖVE supports several compressed texture formats, enumerated in the <see cref="PixelFormat"/> page.
+        /// </summary>
+        /// <param name="data">A FileData containing a compressed image.</param>
+        /// <returns>The new CompressedImageData object.</returns>
         public static CompressedImageData NewCompressedData(FileData data)
         {
             IntPtr out_compressedimagedata;
@@ -2255,11 +2266,11 @@ namespace Love
         }
 
 
-        public static bool Init()
-        {
-            return Love2dDll.wrap_love_dll_image_open_love_image();
-        }
-
+        /// <summary>
+        /// Determines whether a file can be loaded as <see cref="CompressedImageData"/>.
+        /// </summary>
+        /// <param name="data">A FileData potentially containing a compressed image.</param>
+        /// <returns>Whether the file can be loaded as <see cref="CompressedImageData"/> or not.</returns>
         public static bool IsCompressed(FileData data)
         {
             bool out_result;
@@ -2267,28 +2278,64 @@ namespace Love
             return out_result;
         }
 
+        public static bool Init()
+        {
+            return Love2dDll.wrap_love_dll_image_open_love_image();
+        }
+
     }
 
+    /// <summary>
+    /// Allows you to work with fonts.
+    /// <para>Defines the shape of characters that can be drawn onto the screen.</para>
+    /// </summary>
     public partial class Font
     {
+        /// <summary>
+        /// Creates a new Rasterizer.
+        /// </summary>
+        /// <param name="fileData">The FileData of the font file.</param>
+        /// <returns>The rasterizer.</returns>
         public static Rasterizer NewRasterizer(FileData fileData)
         {
             IntPtr out_reasterizer;
             Love2dDll.wrap_love_dll_font_newRasterizer(fileData.p, out out_reasterizer);
             return LoveObject.NewObject<Rasterizer>(out_reasterizer);
         }
+
+        /// <summary>
+        /// Create a TrueTypeRasterizer with the font data.
+        /// </summary>
+        /// <param name="data">The data of to the TrueType font.</param>
+        /// <param name="size">The font size.</param>
+        /// <param name="hinting">True Type hinting mode.</param>
+        /// <returns></returns>
         public static Rasterizer NewTrueTypeRasterizer(Data data, int size, TrueTypeRasterizer.Hinting hinting = TrueTypeRasterizer.Hinting.Normal)
         {
             IntPtr out_reasterizer;
             Love2dDll.wrap_love_dll_font_newTrueTypeRasterizer_data(data.p, size, (int)hinting, out out_reasterizer);
             return LoveObject.NewObject<Rasterizer>(out_reasterizer);
         }
+
+        /// <summary>
+        /// Create a TrueTypeRasterizer with the default font.
+        /// </summary>
+        /// <param name="size">The font size.</param>
+        /// <param name="hinting">True Type hinting mode.</param>
+        /// <returns></returns>
         public static Rasterizer NewTrueTypeRasterizer(int size, TrueTypeRasterizer.Hinting hinting = TrueTypeRasterizer.Hinting.Normal)
         {
             IntPtr out_reasterizer;
             Love2dDll.wrap_love_dll_font_newTrueTypeRasterizer(size, (int)hinting, out out_reasterizer);
             return LoveObject.NewObject<Rasterizer>(out_reasterizer);
         }
+
+        /// <summary>
+        /// Creates a new BMFont Rasterizer.
+        /// </summary>
+        /// <param name="fileData">The file data of the BMFont.</param>
+        /// <param name="imageDatas">The image data containing the drawable pictures of font glyphs.</param>
+        /// <returns></returns>
         public static Rasterizer NewBMFontRasterizer(FileData fileData, params ImageData[] imageDatas)
         {
             IntPtr out_reasterizer;
@@ -2297,13 +2344,13 @@ namespace Love
             Love2dDll.wrap_love_dll_font_newBMFontRasterizer(fileData.p, datas, datas.Length, out out_reasterizer);
             return LoveObject.NewObject<Rasterizer>(out_reasterizer);
         }
+
         public static Rasterizer NewImageRasterizer(ImageData imageData, byte[] glyphs, int extraspacing)
         {
             IntPtr out_reasterizer;
             Love2dDll.wrap_love_dll_font_newImageRasterizer(imageData.p, glyphs, extraspacing, out out_reasterizer);
             return LoveObject.NewObject<Rasterizer>(out_reasterizer);
         }
-
 
         /// <summary>
         /// Creates a new GlyphData.
@@ -2318,6 +2365,12 @@ namespace Love
             return LoveObject.NewObject<GlyphData>(out_GlyphData);
         }
 
+        /// <summary>
+        /// Creates a new GlyphData.
+        /// </summary>
+        /// <param name="rasterizer">The Rasterizer containing the font.</param>
+        /// <param name="glyphCode">The character code of the glyph.</param>
+        /// <returns></returns>
         public static GlyphData NewGlyphData(Rasterizer rasterizer, int glyphCode)
         {
             IntPtr out_GlyphData;
@@ -2369,18 +2422,36 @@ namespace Love
         {
             return rg;
         }
+
+        /// <summary>
+        /// Creates a new RandomGenerator object.
+        /// </summary>
+        /// <returns></returns>
         public static RandomGenerator NewRandomGenerator()
         {
             IntPtr out_RandomGenerator = IntPtr.Zero;
             Love2dDll.wrap_love_dll_math_newRandomGenerator(out out_RandomGenerator);
             return LoveObject.NewObject<RandomGenerator>(out_RandomGenerator);
         }
+
+        /// <summary>
+        /// Creates a new BezierCurve object.
+        /// <para>The number of vertices in the control polygon determines the degree of the curve, e.g. three vertices define a quadratic (degree 2) Bézier curve, four vertices define a cubic (degree 3) Bézier curve, etc.</para>
+        /// </summary>
+        /// <param name="points"></param>
+        /// <returns></returns>
         public static BezierCurve NewBezierCurve(Float2[] points)
         {
             IntPtr out_BezierCurve = IntPtr.Zero;
             Love2dDll.wrap_love_dll_math_newBezierCurve(points, points.Length, out out_BezierCurve);
             return LoveObject.NewObject<BezierCurve>(out_BezierCurve);
         }
+
+        /// <summary>
+        /// Decomposes a simple polygon into triangles.
+        /// </summary>
+        /// <param name="points">Polygon to triangulate. Must not intersect itself.</param>
+        /// <returns></returns>
         public static Triangle[] Triangulate(Float2[] points)
         {
             IntPtr out_triArray;
@@ -2399,42 +2470,112 @@ namespace Love
 
             return tri;
         }
+
+        /// <summary>
+        /// <para>Checks whether a polygon is convex.</para>
+        /// <para>PolygonShapes in love.physics, some forms of Meshes, and polygons drawn with love.graphics.polygon must be simple convex polygons.</para>
+        /// </summary>
+        /// <param name="points">The vertices of the polygon as a table in the form of {(x1, y1), (x2, y2), (x3, y3), ...}.</param>
+        /// <returns>Whether the given polygon is convex.</returns>
         public static bool IsConvex(Float2[] points)
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_math_isConvex(points, points.Length, out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// <para>Converts a color from gamma-space (sRGB) to linear-space (RGB).</para>
+        /// <para>This is useful when doing gamma-correct rendering and you need to do math in linear RGB in the few cases where LÖVE doesn't handle conversions automatically.</para>
+        /// <para>Read more about gamma-correct rendering here(https://developer.nvidia.com/gpugems/GPUGems3/gpugems3_ch24.html), here(http://filmicgames.com/archives/299), and here(http://renderwonk.com/blog/index.php/archive/adventures-with-gamma-correct-rendering/).</para>
+        /// </summary>
+        /// <param name="gama">The sRGB color to convert.</param>
+        /// <returns>The color in gamma RGB space.</returns>
         public static float GammaToLinear(float gama)
         {
             float out_liner = 0;
             Love2dDll.wrap_love_dll_math_gammaToLinear(gama, out out_liner);
             return out_liner;
         }
+
+        /// <summary>
+        /// <para>Converts a color from linear-space (RGB) to gamma-space (sRGB). This is useful when storing linear RGB color values in an image, because the linear RGB color space has less precision than sRGB for dark colors, which can result in noticeable color banding when drawing.</para>
+        /// <para>Read more about gamma-correct rendering here(https://developer.nvidia.com/gpugems/GPUGems3/gpugems3_ch24.html), here(http://filmicgames.com/archives/299), and here(http://renderwonk.com/blog/index.php/archive/adventures-with-gamma-correct-rendering/).</para>
+        /// </summary>
+        /// <param name="liner">The RGB color to convert.</param>
+        /// <returns>The color in gamma sRGB space.</returns>
         public static float LinearToGamma(float liner)
         {
             float out_gama = 0;
             Love2dDll.wrap_love_dll_math_linearToGamma(liner, out out_gama);
             return out_gama;
         }
+
+        /// <summary>
+        /// <para>Generates Simplex noise from 1 dimension.</para>
+        /// <para>Generates a Simplex or Perlin noise value in 1-4 dimensions. The return value will always be the same, given the same arguments.</para>
+        /// <para>Simplex noise(http://en.wikipedia.org/wiki/Simplex_noise) is closely related to Perlin noise(http://en.wikipedia.org/wiki/Perlin_noise). It is widely used for procedural content generation.</para>
+        /// <para>There are many webpages(http://libnoise.sourceforge.net/noisegen/) which discuss Perlin and Simplex noise in detail.</para>
+        /// <para>The return value might be constant if only integer arguments are used. Avoid solely passing in integers, to get varying return values.</para>
+        /// </summary>
+        /// <param name="x">The number used to generate the noise value.</param>
+        /// <returns>The noise value in the range of [0, 1].</returns>
         public static float Noise(float x)
         {
             float out_result = 0;
             Love2dDll.wrap_love_dll_math_noise_1(x, out out_result);
             return out_result;
         }
+
+
+        /// <summary>
+        /// <para>Generates Simplex noise from 2 dimension.</para>
+        /// <para>Generates a Simplex or Perlin noise value in 1-4 dimensions. The return value will always be the same, given the same arguments.</para>
+        /// <para>Simplex noise(http://en.wikipedia.org/wiki/Simplex_noise) is closely related to Perlin noise(http://en.wikipedia.org/wiki/Perlin_noise). It is widely used for procedural content generation.</para>
+        /// <para>There are many webpages(http://libnoise.sourceforge.net/noisegen/) which discuss Perlin and Simplex noise in detail.</para>
+        /// <para>The return value might be constant if only integer arguments are used. Avoid solely passing in integers, to get varying return values.</para>
+        /// </summary>
+        /// <param name="x">The first value of the 2-dimensional vector used to generate the noise value.</param>
+        /// <param name="y">The second value of the 2-dimensional vector used to generate the noise value.</param>
+        /// <returns>The noise value in the range of [0, 1].</returns>
         public static float Noise(float x, float y)
         {
             float out_result = 0;
             Love2dDll.wrap_love_dll_math_noise_2(x, y, out out_result);
             return out_result;
         }
+
+
+        /// <summary>
+        /// <para>Generates Simplex noise from 3 dimension.</para>
+        /// <para>Generates a Simplex or Perlin noise value in 1-4 dimensions. The return value will always be the same, given the same arguments.</para>
+        /// <para>Simplex noise(http://en.wikipedia.org/wiki/Simplex_noise) is closely related to Perlin noise(http://en.wikipedia.org/wiki/Perlin_noise). It is widely used for procedural content generation.</para>
+        /// <para>There are many webpages(http://libnoise.sourceforge.net/noisegen/) which discuss Perlin and Simplex noise in detail.</para>
+        /// <para>The return value might be constant if only integer arguments are used. Avoid solely passing in integers, to get varying return values.</para>
+        /// </summary>
+        /// <param name="x">The first value of the 3-dimensional vector used to generate the noise value.</param>
+        /// <param name="y">The second value of the 3-dimensional vector used to generate the noise value.</param>
+        /// <param name="z">The third value of the 3-dimensional vector used to generate the noise value.</param>
+        /// <returns>The noise value in the range of [0, 1].</returns>
         public static float Noise(float x, float y, float z)
         {
             float out_result = 0;
             Love2dDll.wrap_love_dll_math_noise_3(x, y, z, out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// <para>Generates Simplex noise from 4 dimension.</para>
+        /// <para>Generates a Simplex or Perlin noise value in 1-4 dimensions. The return value will always be the same, given the same arguments.</para>
+        /// <para>Simplex noise(http://en.wikipedia.org/wiki/Simplex_noise) is closely related to Perlin noise(http://en.wikipedia.org/wiki/Perlin_noise). It is widely used for procedural content generation.</para>
+        /// <para>There are many webpages(http://libnoise.sourceforge.net/noisegen/) which discuss Perlin and Simplex noise in detail.</para>
+        /// <para>The return value might be constant if only integer arguments are used. Avoid solely passing in integers, to get varying return values.</para>
+        /// </summary>
+        /// <param name="x">The first value of the 4-dimensional vector used to generate the noise value.</param>
+        /// <param name="y">The second value of the 4-dimensional vector used to generate the noise value.</param>
+        /// <param name="z">The third value of the 4-dimensional vector used to generate the noise value.</param>
+        /// <param name="w">The fourth value of the 4-dimensional vector used to generate the noise value.</param>
+        /// <returns>The noise value in the range of [0, 1].</returns>
         public static float Noise(float x, float y, float z, float w)
         {
             float out_result = 0;
@@ -2859,7 +3000,7 @@ namespace Love
         /// <param name="filterModeMagMin_type">Filter mode used when scaling the image down.</param>
         /// <param name="filterModeMag_type">Filter mode used when scaling the image up.</param>
         /// <param name="anisotropy">Maximum amount of Anisotropic Filtering used.</param>
-        public static void SetDefaultFilter(Texture.FilterMode filterModeMagMin_type, Texture.FilterMode filterModeMag_type, int anisotropy = 1)
+        public static void SetDefaultFilter(FilterMode filterModeMagMin_type, FilterMode filterModeMag_type, int anisotropy = 1)
         {
             Love2dDll.wrap_love_dll_graphics_setDefaultFilter((int)filterModeMagMin_type, (int)filterModeMag_type, anisotropy);
         }
@@ -2870,13 +3011,13 @@ namespace Love
         /// <param name="out_filterModeMagMin_type">Filter mode used when scaling the image down.</param>
         /// <param name="out_filterModeMag_type">Filter mode used when scaling the image up.</param>
         /// <param name="out_anisotropy">Maximum amount of Anisotropic Filtering used.</param>
-        public static void GetDefaultFilter(out Texture.FilterMode out_filterModeMagMin_type, out Texture.FilterMode out_filterModeMag_type, out int out_anisotropy)
+        public static void GetDefaultFilter(out FilterMode out_filterModeMagMin_type, out FilterMode out_filterModeMag_type, out int out_anisotropy)
         {
             int filterModeMagMin_type = 0;
             int filterModeMag_type = 0;
             Love2dDll.wrap_love_dll_graphics_getDefaultFilter(out filterModeMagMin_type, out filterModeMag_type, out out_anisotropy);
-            out_filterModeMagMin_type = (Texture.FilterMode)filterModeMagMin_type;
-            out_filterModeMag_type = (Texture.FilterMode)filterModeMag_type;
+            out_filterModeMagMin_type = (FilterMode)filterModeMagMin_type;
+            out_filterModeMag_type = (FilterMode)filterModeMag_type;
         }
 
         /// <summary>
@@ -3248,7 +3389,7 @@ namespace Love
             });
         }
 
-        public static void Printf(ColoredStringArray coloredStr, float x, float y, float wrap, Font.AlignMode align_type, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public static void Printf(ColoredStringArray coloredStr, float x, float y, float wrap, AlignMode align_type, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
             coloredStr.ExecResource((tmp) =>{
                 Love2dDll.wrap_love_dll_graphics_printf(tmp.Item1, tmp.Item2, coloredStr.Length, x, y, wrap, (int)align_type, angle, sx, sy, ox, oy, kx, ky);
