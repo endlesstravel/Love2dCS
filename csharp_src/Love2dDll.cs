@@ -28,6 +28,11 @@ namespace Love
 
         const string DllPath = @"love";
 
+        #region platform
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
+        internal extern static void inner_wrap_love_dll_get_win32_handle(out IntPtr out_str);
+        #endregion
+
         #region common
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_common_getVersion")]
         internal extern static void _wrap_love_dll_common_getVersion(out IntPtr out_str);
@@ -285,9 +290,6 @@ namespace Love
         #endregion
 
         #region window
-
-        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
-        internal extern static bool inner_wrap_love_dll_windows_updateSDL2WindowWithHandle(IntPtr p);
 
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_windows_open_love_window")]
         internal extern static bool _wrap_love_dll_windows_open_love_window();
@@ -1327,14 +1329,14 @@ namespace Love
             _wrap_love_dll_graphics_getColor(out out_r, out out_g, out out_b, out out_a);
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_setBackgroundColor")]
-        internal extern static void _wrap_love_dll_graphics_setBackgroundColor(int r, int g, int b, int a);
-        internal static void wrap_love_dll_graphics_setBackgroundColor(int r, int g, int b, int a)
+        internal extern static void _wrap_love_dll_graphics_setBackgroundColor(float r, float g, float b, float a);
+        internal static void wrap_love_dll_graphics_setBackgroundColor(float r, float g, float b, float a)
         {
             _wrap_love_dll_graphics_setBackgroundColor(r, g, b, a);
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_getBackgroundColor")]
-        internal extern static void _wrap_love_dll_graphics_getBackgroundColor(out int out_r, out int out_g, out int out_b, out int out_a);
-        internal static void wrap_love_dll_graphics_getBackgroundColor(out int out_r, out int out_g, out int out_b, out int out_a)
+        internal extern static void _wrap_love_dll_graphics_getBackgroundColor(out float out_r, out float out_g, out float out_b, out float out_a);
+        internal static void wrap_love_dll_graphics_getBackgroundColor(out float out_r, out float out_g, out float out_b, out float out_a)
         {
             _wrap_love_dll_graphics_getBackgroundColor(out out_r, out out_g, out out_b, out out_a);
         }

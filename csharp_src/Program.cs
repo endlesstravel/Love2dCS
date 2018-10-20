@@ -1089,11 +1089,6 @@ namespace Love
         {
             Boot.Run(new Program());
         }
-
-        static void SetWindowHandle(IntPtr p)
-        {
-            Love2dDll.inner_wrap_love_dll_windows_updateSDL2WindowWithHandle(p);
-        }
     }
 
 

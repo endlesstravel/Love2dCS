@@ -112,6 +112,75 @@ namespace wrap
 #pragma endregion
 
 
+
+#pragma region 
+	Timer *timerInstance = nullptr;
+	Window *windowInstance = nullptr;
+	Mouse *mouseInstance = nullptr;
+	Keyboard *keyboardInstance = nullptr;
+	touch::sdl::Touch *touchInstance = nullptr;
+	joystick::sdl::JoystickModule *joystickInstance = nullptr;
+	Event *eventInstance = nullptr;
+	Filesystem *fsInstance = nullptr;
+	Sound* soundInstance = nullptr;
+	Audio *audioInstance = nullptr;
+	image::Image *imageInstance = nullptr;
+	font::Font *fontInstance = nullptr;
+	video::Video *videoInstance = nullptr;
+	graphics::Graphics *graphicsInstance = nullptr;
+#pragma endregion
+
+#pragma region platform
+#include "SDL_syswm.h"
+	void inner_wrap_love_dll_get_win32_handle(void** out_handle)
+	{
+		class HackSDL2Window : public love::window::Window
+		{
+		public:
+			std::string title;
+
+			int windowWidth = 800;
+			int windowHeight = 600;
+			int pixelWidth = 800;
+			int pixelHeight = 600;
+			WindowSettings settings;
+			StrongRef<love::image::ImageData> icon;
+
+			bool open;
+
+			bool mouseGrabbed;
+
+			SDL_Window *window;
+			SDL_GLContext context;
+
+			void* get_win32_handle()
+			{
+#ifdef LOVE_WINDOWS
+				SDL_SysWMinfo wmInfo;
+				SDL_VERSION(&wmInfo.version);
+				SDL_GetWindowWMInfo(window, &wmInfo);
+				HWND hwnd = wmInfo.info.win.window;
+				return hwnd;
+#endif
+				return 0;
+			}
+
+			int g_display_width = 800;
+			int g_display_height = 600;
+			int g_colorbits = 32;
+			int g_depthbits = 16;
+			int g_multisample = 8;
+			bool g_vsync = true;
+			bool g_fullscreen = true;
+			bool g_resize = false;
+		};
+
+		auto hack_ptr = reinterpret_cast<HackSDL2Window*>(windowInstance);
+		*out_handle = hack_ptr->get_win32_handle();
+	}
+#pragma endregion
+
+
 #pragma region common region
 
     void wrap_love_dll_common_getVersion(WrapString **out_str)
@@ -175,21 +244,6 @@ namespace wrap
 #pragma endregion
 
 #pragma region *new* region
-
-    Timer *timerInstance = nullptr;
-    Window *windowInstance = nullptr;
-    Mouse *mouseInstance = nullptr;
-    Keyboard *keyboardInstance = nullptr;
-    touch::sdl::Touch *touchInstance = nullptr;
-    joystick::sdl::JoystickModule *joystickInstance = nullptr;
-    Event *eventInstance = nullptr;
-    Filesystem *fsInstance = nullptr;
-    Sound* soundInstance = nullptr;
-    Audio *audioInstance = nullptr;
-    image::Image *imageInstance = nullptr;
-    font::Font *fontInstance = nullptr;
-    video::Video *videoInstance = nullptr;
-    graphics::Graphics *graphicsInstance = nullptr;
 
     bool4 wrap_love_dll_filesystem_newFile(const char *filename, int fmode, File** out_file)
     {
@@ -445,78 +499,6 @@ namespace wrap
 
 #pragma region window
 
-
-	void inner_wrap_love_dll_windows_updateSDL2WindowWithHandle(void* winPtr)
-	{
-		class HackSDL2Window : public love::window::Window
-		{
-		public:
-			std::string title;
-
-			int windowWidth = 800;
-			int windowHeight = 600;
-			int pixelWidth = 800;
-			int pixelHeight = 600;
-			WindowSettings settings;
-			StrongRef<love::image::ImageData> icon;
-
-			bool open;
-
-			bool mouseGrabbed;
-
-			SDL_Window *window;
-			SDL_GLContext context;
-
-			void create_SDL2_widow_context_with_win32_handle(void* handle)
-			{
-
-				if (context)
-				{
-					SDL_GL_DeleteContext(context);
-					context = nullptr;
-				}
-
-				if (window)
-				{
-					SDL_DestroyWindow(window);
-					//SDL_FlushEvent(SDL_WINDOWEVENT);
-					window = nullptr;
-				}
-				
-				SDL_Window* pSampleWin = SDL_CreateWindow("", 0, 0, 1, 1, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
-
-				char sBuf[32];
-				sprintf_s<32>(sBuf, "%p", pSampleWin);
-
-				SDL_SetHint(SDL_HINT_VIDEO_WINDOW_SHARE_PIXEL_FORMAT, sBuf);
-				window = SDL_CreateWindowFrom(handle);
-				SDL_SetHint(SDL_HINT_VIDEO_WINDOW_SHARE_PIXEL_FORMAT, nullptr);
-
-				SDL_DestroyWindow(pSampleWin);
-
-
-				//window = SDL_CreateWindowFrom(handle);
-				context = SDL_GL_CreateContext(window);
-			}
-
-			int g_display_width = 800;
-			int g_display_height = 600;
-			int g_colorbits = 32;
-			int g_depthbits = 16;
-			int g_multisample = 8;
-			bool g_vsync = true;
-			bool g_fullscreen = true;
-			bool g_resize = false;
-		};
-
-		auto hack_ptr = reinterpret_cast<HackSDL2Window*>(windowInstance);
-
-		wrap_ee("before %d", hack_ptr->window);
-		hack_ptr->create_SDL2_widow_context_with_win32_handle(winPtr);
-		wrap_ee("after %d", hack_ptr->window);
-
-		wrap_ee("win ptr ..%d", winPtr);
-	}
 
 
     bool4 wrap_love_dll_windows_open_love_window()
@@ -2905,12 +2887,12 @@ namespace wrap
         *out_b = c.b;
         *out_a = c.a;
     }
-    void wrap_love_dll_graphics_setBackgroundColor(int r, int g, int b, int a)
+    void wrap_love_dll_graphics_setBackgroundColor(float r, float g, float b, float a)
     {
         Colorf c(r, g, b, a);
         graphicsInstance->setBackgroundColor(c);
     }
-    void wrap_love_dll_graphics_getBackgroundColor(int *out_r, int *out_g, int *out_b, int *out_a)
+    void wrap_love_dll_graphics_getBackgroundColor(float *out_r, float *out_g, float *out_b, float *out_a)
     {
         Colorf c = graphicsInstance->getBackgroundColor();
         *out_r = c.r;

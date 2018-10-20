@@ -201,6 +201,10 @@ namespace wrap
 	}
 #pragma endregion
 
+#pragma region platform
+	extern "C" LOVE_EXPORT void inner_wrap_love_dll_get_win32_handle(void** out_handle);
+#pragma endregion
+
 #pragma region common region
     extern "C" LOVE_EXPORT void wrap_love_dll_common_getVersion(WrapString **out_str);
     extern "C" LOVE_EXPORT void wrap_love_dll_common_getVersionCodeName(WrapString **out_str);
@@ -265,7 +269,6 @@ namespace wrap
 #pragma endregion
 
 #pragma region window
-	extern "C" LOVE_EXPORT void inner_wrap_love_dll_windows_updateSDL2WindowWithHandle(void* winPtr);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_windows_open_love_window();
     extern "C" LOVE_EXPORT void wrap_love_dll_windows_getDisplayCount(int *out_count);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_windows_getDisplayName(int displayindex, WrapString** out_name);
@@ -501,8 +504,8 @@ namespace wrap
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getStencilTest(int *out_compare_type, int *out_compareValue);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_setColor(float r, float g, float b, float a);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getColor(float *out_r, float *out_g, float *out_b, float *out_a);
-    extern "C" LOVE_EXPORT void wrap_love_dll_graphics_setBackgroundColor(int r, int g, int b, int a);
-    extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getBackgroundColor(int *out_r, int *out_g, int *out_b, int *out_a);
+    extern "C" LOVE_EXPORT void wrap_love_dll_graphics_setBackgroundColor(float r, float g, float b, float a);
+    extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getBackgroundColor(float *out_r, float *out_g, float *out_b, float *out_a);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_setFont(love::graphics::Font *font);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_getFont(love::graphics::Font** out_font);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_setColorMask(bool4 r, bool4 g, bool4 b, bool4 a);

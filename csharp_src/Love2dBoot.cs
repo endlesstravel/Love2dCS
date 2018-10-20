@@ -312,7 +312,7 @@ namespace Love
     /// </summary>
     static public partial class Boot
     {
-        static void Init(BootConfig bootConfig)
+        static public void Init(BootConfig bootConfig)
         {
             // init to load native library
             InitNativeLibrary();

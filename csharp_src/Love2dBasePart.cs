@@ -2770,11 +2770,11 @@ namespace Love
         /// <summary>
         /// Gets the current background color.
         /// </summary>
-        public static Int4 GetBackgroundColor()
+        public static Float4 GetBackgroundColor()
         {
-            int out_r, out_g, out_b, out_a;
+            float out_r, out_g, out_b, out_a;
             Love2dDll.wrap_love_dll_graphics_getBackgroundColor(out out_r, out out_g, out out_b, out out_a);
-            return new Int4(out_r, out_g, out_b, out_a);
+            return new Float4(out_r, out_g, out_b, out_a);
         }
 
         /// <summary>
