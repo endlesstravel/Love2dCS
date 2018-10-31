@@ -17,9 +17,17 @@ namespace Love
 
         static void LoadUnixLibrary()
         {
-            if (dlopen($"{Environment.CurrentDirectory}/liblove.so", RTLD_NOW) == IntPtr.Zero)
+            var libFileName = new string[]
             {
-                Console.WriteLine($"load library error: {dlerror()}");
+                "liblove.so",
+            };
+
+            foreach (var name in libFileName)
+            {
+                if (dlopen($"{Environment.CurrentDirectory}/{name}", RTLD_NOW) == IntPtr.Zero)
+                {
+                    Console.WriteLine($"load library '{name}' error: {dlerror()}");
+                }
             }
         }
 

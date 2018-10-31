@@ -14,6 +14,14 @@
 #ifndef LOVE_LOVE_WRAP_LOVE_DLL_H
 #define LOVE_LOVE_WRAP_LOVE_DLL_H
 
+#include "modules/mouse/sdl/Mouse.h"
+#include "modules/video/theora/Video.h"
+#include "modules/graphics/opengl/Graphics.h"
+#include "modules/joystick/sdl/Joystick.h"
+#include "modules/math/RandomGenerator.h"
+#include "modules/window/sdl/Window.h"
+#include "modules/mouse/Cursor.h"
+
 #include "modules/filesystem/physfs/Filesystem.h"
 #include "modules/filesystem/physfs/File.h"
 #include "modules/filesystem/DroppedFile.h"
@@ -201,6 +209,8 @@ namespace wrap
 	}
 #pragma endregion
 
+	extern "C" LOVE_EXPORT void inner_wrap_love_dll_type_c_size_info();
+
 #pragma region platform
 	extern "C" LOVE_EXPORT void inner_wrap_love_dll_get_win32_handle(void** out_handle);
 #pragma endregion
@@ -234,7 +244,7 @@ namespace wrap
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_audio_newSource_decoder(Decoder *decoder, int type, Source** out_source);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_audio_newSource_sounddata(SoundData *sd, int type, Source** out_source);
 
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_mouse_newCursor(ImageData *imageData, int hotx, int hoty, Cursor** out_cursor);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_mouse_newCursor(ImageData *imageData, int hotx, int hoty, mouse::Cursor** out_cursor);
 
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_image_newImageData_wh_format_data(int w, int h, const unsigned char* data, int dataLength, int formatType, ImageData** out_imagedata);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_image_newImageData_filedata(FileData *fileData, ImageData** out_imagedata);
@@ -309,9 +319,9 @@ namespace wrap
 #pragma region mouse
 
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_open_love_mouse();
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_mouse_getSystemCursor(int sysctype, Cursor** out_cursor);
-    extern "C" LOVE_EXPORT void wrap_love_dll_mouse_setCursor(Cursor *cursor);
-    extern "C" LOVE_EXPORT void wrap_love_dll_mouse_getCursor(Cursor** out_cursor);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_mouse_getSystemCursor(int sysctype, mouse::Cursor** out_cursor);
+    extern "C" LOVE_EXPORT void wrap_love_dll_mouse_setCursor(mouse::Cursor *cursor);
+    extern "C" LOVE_EXPORT void wrap_love_dll_mouse_getCursor(mouse::Cursor** out_cursor);
     extern "C" LOVE_EXPORT void wrap_love_dll_mouse_isCursorSupported(bool4 *out_result);
     extern "C" LOVE_EXPORT void wrap_love_dll_mouse_getX(double *out_x);
     extern "C" LOVE_EXPORT void wrap_love_dll_mouse_getY(double *out_y);
@@ -553,7 +563,7 @@ namespace wrap
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_clear_rgbalist(Float4 colorList[], bool4 enableList[], int listLength, float stencil, bool4 enable_stencil, float depth, bool4 enable_depth);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_discard(bool4 discardColors[], int discardColorsLength, bool4 discardStencil);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_present();
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_draw_drawable(Drawable *drawable, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_draw_drawable(graphics::Drawable *drawable, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_draw_texture_quad(Quad *quad, Texture *texture, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_print(char* coloredStringListStr[], Float4 coloredStringListColor[], int coloredStringListLength, float x, float y, float angle, float sx, float sy, float ox, float oy, float kx, float ky);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_printf(pChar coloredStringListStr[], Float4 coloredStringListColor[], int coloredStringListLength, float x, float y, float wrap, int align_type, float angle, float sx, float sy, float ox, float oy, float kx, float ky);
@@ -915,7 +925,7 @@ namespace wrap
 
 #pragma region type - Cursor
     
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Cursor_getType(Cursor *cursor, int *out_cursortype_type, bool4* out_custom);
+    extern "C" LOVE_EXPORT void wrap_love_dll_type_Cursor_getType(mouse::Cursor *cursor, int *out_cursortype_type, bool4* out_custom);
 
 #pragma endregion
 

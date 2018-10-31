@@ -515,7 +515,9 @@ namespace Love
             sb.Add($"exist : {info != null}");
             if (info != null)
             {
-                string content = System.Text.Encoding.UTF8.GetString(FileSystem.Read(TEST_FILE_PATH));
+                string content = System.Text.Encoding.UTF8
+                    .GetString(FileSystem.Read(TEST_FILE_PATH))
+                    .Replace(Convert.ToChar(0x0).ToString(), " ");
 
                 sb.Add($"info : {info}");
                 sb.Add($"realpath : {FileSystem.GetRealDirectory(TEST_FILE_PATH)}");
@@ -782,6 +784,7 @@ namespace Love
         {
             Graphics.SetColor(1, 1, 1);
             Graphics.Draw(text, (int)x, (int)y);
+            Graphics.Print($"text width : {text.GetWidth()}", 0, 0);
         }
     }
 

@@ -77,8 +77,11 @@ using love::graphics::Text;
 using love::graphics::opengl::Canvas;
 using love::graphics::Mesh;
 using love::graphics::Image;
+using love::graphics::Drawable;
 
 using love::math::BezierCurve;
+using love::mouse::Cursor;
+
 
 //#define bool // 禁止使用 bool，只能使用 bool4
 
@@ -110,6 +113,17 @@ namespace wrap
 		return ret;
 	}
 #pragma endregion
+
+	void inner_wrap_love_dll_type_c_size_info()
+	{
+		printf("sizeof(char): %d\n", sizeof(char));
+		printf("sizeof(int): %d\n", sizeof(int));
+		printf("sizeof(long): %d\n", sizeof(long));
+		printf("sizeof(float): %d\n", sizeof(float));
+		printf("sizeof(double): %d\n", sizeof(double));
+		printf("sizeof(char*): %d\n", sizeof(char*));
+		printf("sizeof(void*): %d\n", sizeof(void*));
+	}
 
 
 
@@ -333,7 +347,7 @@ namespace wrap
         });
     }
 
-    bool4 wrap_love_dll_mouse_newCursor(ImageData *imageData, int hotx, int hoty, Cursor** out_cursor)
+    bool4 wrap_love_dll_mouse_newCursor(ImageData *imageData, int hotx, int hoty, mouse::Cursor** out_cursor)
     {
         return wrap_catchexcept([&]() { *out_cursor = mouseInstance->newCursor(imageData, hotx, hoty); });
     }
@@ -503,7 +517,7 @@ namespace wrap
 
     bool4 wrap_love_dll_windows_open_love_window()
     {
-        windowInstance = Module::getInstance<Window>(Module::M_WINDOW);
+        windowInstance = Module::getInstance<window::Window>(Module::M_WINDOW);
         if (windowInstance == nullptr)
         {
             return wrap_catchexcept([&]() {
@@ -540,7 +554,7 @@ namespace wrap
         WindowSettings settings;
 
         settings.fullscreen = fullscreen;
-        settings.fstype = (Window::FullscreenType)fstype; // default is Window::FULLSCREEN_DESKTOP
+        settings.fstype = (window::Window::FullscreenType)fstype; // default is Window::FULLSCREEN_DESKTOP
         settings.vsync = vsync;
 		settings.msaa = msaa;
 		settings.depth = depth;
@@ -588,7 +602,7 @@ namespace wrap
 
     void wrap_love_dll_windows_getFullscreenModes(int displayindex, Int2*** out_modes, int *out_modes_length)
     {
-        std::vector<Window::WindowSize> modes = windowInstance->getFullscreenSizes(displayindex);
+        std::vector<window::Window::WindowSize> modes = windowInstance->getFullscreenSizes(displayindex);
         *out_modes_length = modes.size();
         *out_modes = new Int2*[modes.size()];
         for (size_t i = 0; i <  modes.size(); i++)
@@ -602,10 +616,10 @@ namespace wrap
     void wrap_love_dll_windows_setFullscreen(bool4 fullscreen, int fstype, bool4 *out_success)
     {
         // fstype default is Window::FullscreenType fstype
-        if (fstype == Window::FULLSCREEN_MAX_ENUM)
+        if (fstype == window::Window::FULLSCREEN_MAX_ENUM)
             *out_success = windowInstance->setFullscreen(fullscreen);
         else
-            *out_success = windowInstance->setFullscreen(fullscreen, (Window::FullscreenType)fstype);
+            *out_success = windowInstance->setFullscreen(fullscreen, (window::Window::FullscreenType)fstype);
     }
 
     void wrap_love_dll_windows_getFullscreen(bool4 *out_fullscreen, int *out_fstype)
@@ -725,12 +739,12 @@ namespace wrap
 
     void wrap_love_dll_windows_showMessageBox(const char *title, const char *message, int type, bool4 attachToWindow, bool4* out_result)
     {
-        *out_result = windowInstance->showMessageBox(title, message, (Window::MessageBoxType)type, attachToWindow);
+        *out_result = windowInstance->showMessageBox(title, message, (window::Window::MessageBoxType)type, attachToWindow);
     }
 
 	void wrap_love_dll_windows_showMessageBox_list(const char *title, const char *message, pChar* buttons, int buttonsLength, int enterButtonIndex, int escapebuttonIndex, int type, bool4 attachToWindow, int* out_index_returned)
 	{
-		Window::MessageBoxData data = {};
+		window::Window::MessageBoxData data = {};
 
 		data.title = title;
 		data.message = message;
@@ -742,7 +756,7 @@ namespace wrap
 
 		data.enterButtonIndex = enterButtonIndex;
 		data.escapeButtonIndex = escapebuttonIndex;
-		data.type = (Window::MessageBoxType)type;
+		data.type = (window::Window::MessageBoxType)type;
 		data.attachToWindow = attachToWindow;
 
 		*out_index_returned = windowInstance->showMessageBox(data);
@@ -780,16 +794,16 @@ namespace wrap
         return mouseInstance != nullptr;
     }
 
-    bool4 wrap_love_dll_mouse_getSystemCursor(int sysctype, Cursor** out_cursor)
+    bool4 wrap_love_dll_mouse_getSystemCursor(int sysctype, mouse::Cursor** out_cursor)
     {
 
         return wrap_catchexcept([&]() {
-            Cursor::SystemCursor systemCursor = (Cursor::SystemCursor)sysctype;
+			mouse::Cursor::SystemCursor systemCursor = (mouse::Cursor::SystemCursor)sysctype;
             *out_cursor = mouseInstance->getSystemCursor(systemCursor);
         });
     }
 
-    void wrap_love_dll_mouse_setCursor(Cursor *cursor)
+    void wrap_love_dll_mouse_setCursor(mouse::Cursor *cursor)
     {
         // Revert to the default system cursor if no argument is given.
         if (cursor == nullptr)
@@ -801,7 +815,7 @@ namespace wrap
         mouseInstance->setCursor(cursor);
     }
 
-    void wrap_love_dll_mouse_getCursor(Cursor** out_cursor)
+    void wrap_love_dll_mouse_getCursor(mouse::Cursor** out_cursor)
     {
         *out_cursor = mouseInstance->getCursor();
 		if (*out_cursor != nullptr)
@@ -3216,7 +3230,7 @@ namespace wrap
         graphicsInstance->present(nullptr);
     }
 
-    bool4 wrap_love_dll_graphics_draw_drawable(Drawable *drawable, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky)
+    bool4 wrap_love_dll_graphics_draw_drawable(graphics::Drawable *drawable, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky)
     {
         return wrap_catchexcept([&]() {
             graphicsInstance->draw(drawable, Matrix4(x, y, a, sx, sy, ox, oy, kx, ky));
@@ -5634,10 +5648,10 @@ namespace wrap
 
 #pragma region type - Cursor
 
-    void wrap_love_dll_type_Cursor_getType(Cursor *cursor, int *out_cursortype_type, bool4 *out_custom)
+    void wrap_love_dll_type_Cursor_getType(mouse::Cursor *cursor, int *out_cursortype_type, bool4 *out_custom)
     {
-        Cursor::CursorType ctype = cursor->getType();
-		if (ctype == Cursor::CursorType::CURSORTYPE_IMAGE)
+		mouse::Cursor::CursorType ctype = cursor->getType();
+		if (ctype == mouse::Cursor::CursorType::CURSORTYPE_IMAGE)
 		{
 			*out_custom = true;
 			*out_cursortype_type = 0;

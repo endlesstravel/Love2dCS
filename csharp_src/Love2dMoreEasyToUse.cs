@@ -852,7 +852,7 @@ namespace Love
         public static Font NewImageFont(string filename, string glyphs, int extraspacing = 0)
         {
             var imageData = Image.NewImageData(filename);
-            var glyphsBytes = DllTool.ToUTF8Bytes(glyphs);
+            var glyphsBytes = DllTool.GetNullTailUTF8Bytes(glyphs);
             var rasterizerImage = Font.NewImageRasterizer(imageData, glyphsBytes, extraspacing);
             return NewFont(rasterizerImage);
         }

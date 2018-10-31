@@ -16,26 +16,72 @@ namespace Love
         /// <summary>
         /// <para>from C# string[] pass as char** to c language</para>
         /// </summary>
-        public static void ExecuteStringArray(string[] arrayToPass, Action<IntPtr[]> func)
+        //public static void ExecuteStringArray(string[] arrayToPass, Action<IntPtr[]> func)
+        //{
+        //    GCHandle[] hObjects = new GCHandle[arrayToPass.Length];
+        //    var pointers = new IntPtr[arrayToPass.Length];
+        //    var textBytes = new byte[arrayToPass.Length][];
+        //    for (int i = 0; i < arrayToPass.Length; i++)
+        //    {
+        //        textBytes[i] = ToUTF8Bytes(arrayToPass[i]);
+        //        hObjects[i] = GCHandle.Alloc(textBytes[i], GCHandleType.Pinned);
+        //        pointers[i] = hObjects[i].AddrOfPinnedObject();
+        //    }
+
+        //    func(pointers);
+
+        //    foreach (var h in hObjects)
+        //    {
+        //        if (h.IsAllocated)
+        //            h.Free();
+        //    }
+        //}
+
+
+        //static byte[] EmptyStringByteArray = new byte[1] { 0 };
+        public static byte[] GetUTF8Bytes(this string str)
         {
-            GCHandle[] hObjects = new GCHandle[arrayToPass.Length];
+            if (str == null)
+            {
+                return EmptyStringByteArray;
+            }
+            return utf8.GetBytes(str);
+        }
+
+        public static void ExecuteNullTailStringArray(string[] arrayToPass, Action<IntPtr[]> func)
+        {
             var pointers = new IntPtr[arrayToPass.Length];
-            var textBytes = new byte[arrayToPass.Length][];
             for (int i = 0; i < arrayToPass.Length; i++)
             {
-                textBytes[i] = ToUTF8Bytes(arrayToPass[i]);
-                hObjects[i] = GCHandle.Alloc(textBytes[i], GCHandleType.Pinned);
-                pointers[i] = hObjects[i].AddrOfPinnedObject();
+                var bytes = GetNullTailUTF8Bytes(arrayToPass[i]);
+                var unmanagedPointer = Marshal.AllocHGlobal(bytes.Length);
+                Marshal.Copy(bytes, 0, unmanagedPointer, bytes.Length);
+                pointers[i] = unmanagedPointer;
             }
 
             func(pointers);
 
-            foreach (var h in hObjects)
+            foreach (var unmanagedPointer in pointers)
             {
-                if (h.IsAllocated)
-                    h.Free();
+                Marshal.FreeHGlobal(unmanagedPointer);
             }
         }
+
+        static byte[] EmptyStringByteArray = new byte[1] { 0 };
+        public static byte[] GetNullTailUTF8Bytes(this string str)
+        {
+            if (str == null)
+            {
+                return EmptyStringByteArray;
+            }
+
+            var bytes = utf8.GetBytes(str);
+            var output = new byte[bytes.Length + 1];
+            Array.Copy(bytes, output, bytes.Length);
+            output[output.Length - 1] = 0;
+            return output;
+        }
+
 
         public static void ExecuteAsIntprt(object obj, Action<IntPtr> func)
         {
@@ -64,13 +110,6 @@ namespace Love
             return t;
         }
 
-        static byte[] EmptyStringByteArray = new byte[1] { 0 };
-        public static byte[] ToUTF8Bytes(this string str)
-        {
-            return str != null ? utf8.GetBytes(str) : EmptyStringByteArray;
-        }
-
-
         public static string GetLoveLastError()
         {
             // 这里不能直接调用 WSToString(Love2dDll.wrap_love_dll_last_error());
@@ -93,7 +132,7 @@ namespace Love
             return f;
         }
 
-        static System.Text.Encoding utf8 = System.Text.Encoding.GetEncoding("utf-8");
+        static System.Text.Encoding utf8 = System.Text.Encoding.UTF8;
         public static string PtrToStringUTF8(IntPtr ip)
         {
             List<byte> list = new List<byte>();
@@ -106,14 +145,7 @@ namespace Love
             }
             return utf8.GetString(list.ToArray());
         }
-        //public static string WSToStringAndRelease(IntPtr ip)
-        //{
-        //    WrapString ws = (WrapString)Marshal.PtrToStructure(ip, typeof(WrapString));
-        //    // return PtrToStringUTF8(ws.data);
-        //    var str = Marshal.PtrToStringAnsi(ws.data);
-        //    Love2dDll.wrap_love_dll_delete_WrapString(ip);
-        //    return str;
-        //}
+
         public static string WSToStringAndRelease(IntPtr ip)
         {
             if (ip == IntPtr.Zero)
@@ -834,9 +866,9 @@ namespace Love
         public static int ShowMessageBox(string title, string message, string[] buttonName, int enterButtonIndex, int escapebuttonIndex, MessageBoxType msgbox_type = MessageBoxType.Info, bool attachToWindow = true)
         {
             int out_index_returned = 0;
-            DllTool.ExecuteStringArray(buttonName, (temp) => {
+            DllTool.ExecuteNullTailStringArray(buttonName, (temp) => {
                 Love2dDll.wrap_love_dll_windows_showMessageBox_list(
-                    DllTool.ToUTF8Bytes(title), DllTool.ToUTF8Bytes(message),
+                    DllTool.GetNullTailUTF8Bytes(title), DllTool.GetNullTailUTF8Bytes(message),
                     temp, temp.Length, enterButtonIndex, escapebuttonIndex,
                     (int)msgbox_type, attachToWindow, out out_index_returned);
             });

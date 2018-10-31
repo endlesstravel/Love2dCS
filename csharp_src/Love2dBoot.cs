@@ -390,7 +390,6 @@ namespace Love
         /// <param name="bootConfig">LÖVE engine boot config</param>
         static public void Run(Scene scene = null, BootConfig bootConfig = null)
         {
-
             try
             {
                 Init(bootConfig);
@@ -399,14 +398,6 @@ namespace Love
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
-                try
-                {
-                    Window.ShowMessageBox("error", e.ToString(), MessageBoxType.Error);
-                }
-                catch (Exception)
-                {
-                    throw e;
-                }
             }
         }
     }

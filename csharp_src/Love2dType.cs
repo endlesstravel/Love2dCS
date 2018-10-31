@@ -2259,7 +2259,7 @@ namespace Love
             if (func != null)
             {
                 var that = this;
-                DllTool.ExecuteStringArray(texts, (pointers) =>
+                DllTool.ExecuteNullTailStringArray(texts, (pointers) =>
                 {
                     func(Tuple.Create(pointers, that.colors));
                 });

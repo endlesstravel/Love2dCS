@@ -28,6 +28,10 @@ namespace Love
 
         const string DllPath = @"love";
 
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
+        internal extern static void inner_wrap_love_dll_type_c_size_info();
+
         #region platform
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
         internal extern static void inner_wrap_love_dll_get_win32_handle(out IntPtr out_str);
