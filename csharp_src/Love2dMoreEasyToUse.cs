@@ -155,53 +155,61 @@ namespace Love
 
     public partial class Image  // this is part of love module
     {
+        /// <summary>
+        /// Creates a new <see cref="ImageData"/> object.
+        /// </summary>
+        /// <param name="filename">The filename of the image file.</param>
+        /// <returns>The new ImageData object.</returns>
         public static ImageData NewImageData(string filename)
         {
             var filedata = FileSystem.NewFileData(filename);
             return NewImageData(filedata);
         }
+
+        /// <summary>
+        /// Create a new <see cref="CompressedImageData"/> object from a compressed image file. LÖVE supports several compressed texture formats, enumerated in the <see cref="PixelFormat"/> page.
+        /// </summary>
+        /// <param name="filename">The filename of the compressed image file.</param>
+        /// <returns>The new CompressedImageData object.</returns>
         public static CompressedImageData NewCompressedData(string filename)
         {
             var filedata = FileSystem.NewFileData(filename);
             return NewCompressedData(filedata);
         }
 
-
-        public static ImageData NewImageData(float[,] rawData, ImageDataPixelFormat format)
+        /// <summary>
+        /// Creates a new ImageData object.
+        /// </summary>
+        /// <param name="rawData">color data to set</param>
+        /// <param name="format">The pixel format of the ImageData.</param>
+        /// <returns></returns>
+        public static ImageData NewImageData(Float4[,] rawData, ImageDataPixelFormat format)
         {
-            Check.ArgumentNull(rawData, "data");
+            Check.ArgumentNull(rawData, "rawData");
             int w = rawData.GetLength(0);
             int h = rawData.GetLength(1);
-            float[][] data = new float[w][];
+            Float4[] data = new Float4[w * h];
 
-            for (int x = 0; x < w; x++)
+            for (int y = 0; y < h; y++)
             {
-                for (int y = 0; y < h; y++)
+                for (int x = 0; x < w; x++)
                 {
-                    data[x][y] = rawData[x, y];
+                    data[x + y * w] = rawData[x, y];
                 }
             }
-            
-            return NewImageData(false, data, format);
+            var imageData = NewImageData(w, h, format);
+            imageData.SetPixelsFloat(data);
+            return imageData;
         }
 
 
         /// <summary>
         /// Creates a new ImageData object.
-        /// <code>
-        /// [0,0] [0,1] [0,2] .. [0,]
-        /// </code>
-        /// <para> </para>
         /// </summary>
-        /// <param name="rawData"></param>
-        /// <param name="format"></param>
+        /// <param name="rawData">Optional raw byte data to load into the ImageData, in the format specified by format.</param>
+        /// <param name="format">The pixel format of the ImageData.</param>
         /// <returns></returns>
-        public static ImageData NewImageData(float[][] rawData, ImageDataPixelFormat format)
-        {
-            return NewImageData(true, rawData, format);
-        }
-
-        private static ImageData NewImageData(bool nullCheck, float[][] rawData, ImageDataPixelFormat format)
+        public static ImageData NewImageData(Float4[][] rawData, ImageDataPixelFormat format)
         {
             Check.ArgumentNull(rawData, "data");
             int w = 0;
@@ -216,7 +224,7 @@ namespace Love
 
                 for (int i = 1; i < rawData.Length; i++)
                 {
-                    float[] row = rawData[i];
+                    var row = rawData[i];
                     if (row == null)
                     {
                         throw new Exception($"col[{i}] was null !");
@@ -228,27 +236,31 @@ namespace Love
                     }
                 }
             }
-            
 
-            byte[] data = new byte[1];
-            if (format == ImageDataPixelFormat.RGBA8)
+            // copy data
+            Float4[] data = new Float4[w * h];
+            for (int y = 0; y < h; y++)
             {
-
-            }
-            else if (format == ImageDataPixelFormat.RGBA16)
-            {
-
-            }
-            else if (format == ImageDataPixelFormat.RGBA16F)
-            {
-
-            }
-            else if (format == ImageDataPixelFormat.RGBA32F)
-            {
-
+                for (int x = 0; x < w; x++)
+                {
+                    data[x + y * w] = rawData[x][y];
+                }
             }
 
-            return NewImageData(w, h, format, data);
+            var imageData = NewImageData(w, h, format);
+            imageData.SetPixelsFloat(data);
+            return imageData;
+        }
+
+
+        /// <summary>
+        /// Determines whether a file can be loaded as <see cref="CompressedImageData"/>.
+        /// </summary>
+        /// <param name="filename">The filename of the potentially compressed image file.</param>
+        /// <returns>Whether the file can be loaded as <see cref="CompressedImageData"/> or not.</returns>
+        public static bool IsCompressed(string filename)
+        {
+            return IsCompressed(FileSystem.NewFileData(filename));
         }
     }
     public partial class ImageData
@@ -641,7 +653,7 @@ namespace Love
         /// <summary>
         /// set every pixel with given data, function will convert Float4 to correct pixel format automatically
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data">color data to set</param>
         public void SetPixelsFloat(Float4[] data)
         {
             Check.ArgumentNull(data);
@@ -678,18 +690,6 @@ namespace Love
             double out_x, out_y;
             Love2dDll.wrap_love_dll_mouse_getPosition(out out_x, out out_y);
             return new Float2((float)out_x, (float)out_y);
-        }
-    }
-
-    /// <summary>
-    /// Allows you to work with fonts.
-    /// </summary>
-    public partial class Font
-    {
-        public static Rasterizer NewRasterizer(string filename)
-        {
-            var filedata = FileSystem.NewFileData(filename);
-            return NewRasterizer(filedata);
         }
     }
 
@@ -852,7 +852,7 @@ namespace Love
         public static Font NewImageFont(string filename, string glyphs, int extraspacing = 0)
         {
             var imageData = Image.NewImageData(filename);
-            var glyphsBytes = DllTool.ToUTF8Bytes(glyphs);
+            var glyphsBytes = DllTool.GetNullTailUTF8Bytes(glyphs);
             var rasterizerImage = Font.NewImageRasterizer(imageData, glyphsBytes, extraspacing);
             return NewFont(rasterizerImage);
         }
@@ -955,7 +955,6 @@ namespace Love
             Print(new ColoredStringArray(coloredStr), x, y, angle, sx, sy, ox, oy, kx, ky);
         }
 
-
         /// <summary>
         /// <para> Draws formatted text, with word wrap and alignment.</para>
         /// <para> See additional notes in love.graphics.print. </para>
@@ -975,7 +974,7 @@ namespace Love
         /// <param name="oy">Origin offset (y-axis).</param>
         /// <param name="kx">Shearing factor (x-axis).</param>
         /// <param name="ky">Shearing factor (y-axis).</param>
-        public static void Printf(string text, float x, float y, float wrap, Font.AlignMode align_type = Font.AlignMode.Left, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public static void Printf(string text, float x, float y, float wrap, AlignMode align_type = AlignMode.Left, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
             Printf(ColoredStringArray.Create(text), x, y, wrap, align_type, angle, sx, sy, ox, oy, kx, ky);
         }
@@ -1022,7 +1021,7 @@ namespace Love
         {
             return Add(ColoredStringArray.Create(text), x, y, angle, sx, sy, ox, oy, kx, ky);
         }
-        public int add(string text, float wraplimit, Font.AlignMode align_type, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public int add(string text, float wraplimit, AlignMode align_type, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
             return Addf(ColoredStringArray.Create(text), wraplimit, align_type, x, y, angle, sx, sy, ox, oy, kx, ky);
         }

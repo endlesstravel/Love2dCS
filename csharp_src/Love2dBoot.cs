@@ -310,10 +310,13 @@ namespace Love
     /// LÖVE engine entrance class
     /// <para>LÖVE 引擎入口类</para> 
     /// </summary>
-    static public class Boot
+    static public partial class Boot
     {
-        static void Init(BootConfig bootConfig)
+        static public void Init(BootConfig bootConfig)
         {
+            // init to load native library
+            InitNativeLibrary();
+
             Mathf.Init();
             FileSystem.Init("");
 
@@ -357,13 +360,8 @@ namespace Love
             settings.y = bootConfig.WindowY != null ? (int)bootConfig.WindowY : 0;
             Window.SetMode(bootConfig.WindowWidth, bootConfig.WindowHeight, settings);
 
-            string executablePath = FileSystem.GetExecutablePath();
-            int index = executablePath.LastIndexOf(@"\");
-            if (index == -1)
-                index = executablePath.LastIndexOf(@"/");
-            string path = executablePath.Substring(0, index);
-            Console.WriteLine($"FileSystem set source with path : {path}");
-            FileSystem.SetSource(path);
+            FileSystem.SetSource(Environment.CurrentDirectory);
+            Console.WriteLine($"FileSystem set source with path : {FileSystem.GetSource()}");
         }
 
         static void Loop(Scene scene)
@@ -392,7 +390,6 @@ namespace Love
         /// <param name="bootConfig">LÖVE engine boot config</param>
         static public void Run(Scene scene = null, BootConfig bootConfig = null)
         {
-
             try
             {
                 Init(bootConfig);
@@ -401,14 +398,6 @@ namespace Love
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
-                try
-                {
-                    Window.ShowMessageBox("error", e.ToString(), MessageBoxType.Error);
-                }
-                catch (Exception)
-                {
-                    throw e;
-                }
             }
         }
     }

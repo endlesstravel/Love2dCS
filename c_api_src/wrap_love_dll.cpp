@@ -49,6 +49,7 @@
 #include "common/version.h"
 #include "wrap_love_dll.h"
 
+
 #include <stdio.h>
 #include <iostream>
 #include <sstream>
@@ -76,8 +77,11 @@ using love::graphics::Text;
 using love::graphics::opengl::Canvas;
 using love::graphics::Mesh;
 using love::graphics::Image;
+using love::graphics::Drawable;
 
 using love::math::BezierCurve;
+using love::mouse::Cursor;
+
 
 //#define bool // 禁止使用 bool，只能使用 bool4
 
@@ -107,6 +111,86 @@ namespace wrap
 
 		printf("\n");
 		return ret;
+	}
+#pragma endregion
+
+	void inner_wrap_love_dll_type_c_size_info()
+	{
+		printf("sizeof(char): %d\n", sizeof(char));
+		printf("sizeof(int): %d\n", sizeof(int));
+		printf("sizeof(long): %d\n", sizeof(long));
+		printf("sizeof(float): %d\n", sizeof(float));
+		printf("sizeof(double): %d\n", sizeof(double));
+		printf("sizeof(char*): %d\n", sizeof(char*));
+		printf("sizeof(void*): %d\n", sizeof(void*));
+	}
+
+
+
+#pragma region 
+	Timer *timerInstance = nullptr;
+	Window *windowInstance = nullptr;
+	Mouse *mouseInstance = nullptr;
+	Keyboard *keyboardInstance = nullptr;
+	touch::sdl::Touch *touchInstance = nullptr;
+	joystick::sdl::JoystickModule *joystickInstance = nullptr;
+	Event *eventInstance = nullptr;
+	Filesystem *fsInstance = nullptr;
+	Sound* soundInstance = nullptr;
+	Audio *audioInstance = nullptr;
+	image::Image *imageInstance = nullptr;
+	font::Font *fontInstance = nullptr;
+	video::Video *videoInstance = nullptr;
+	graphics::Graphics *graphicsInstance = nullptr;
+#pragma endregion
+
+#pragma region platform
+#include "SDL_syswm.h"
+	void inner_wrap_love_dll_get_win32_handle(void** out_handle)
+	{
+		class HackSDL2Window : public love::window::Window
+		{
+		public:
+			std::string title;
+
+			int windowWidth = 800;
+			int windowHeight = 600;
+			int pixelWidth = 800;
+			int pixelHeight = 600;
+			WindowSettings settings;
+			StrongRef<love::image::ImageData> icon;
+
+			bool open;
+
+			bool mouseGrabbed;
+
+			SDL_Window *window;
+			SDL_GLContext context;
+
+			void* get_win32_handle()
+			{
+#ifdef LOVE_WINDOWS
+				SDL_SysWMinfo wmInfo;
+				SDL_VERSION(&wmInfo.version);
+				SDL_GetWindowWMInfo(window, &wmInfo);
+				HWND hwnd = wmInfo.info.win.window;
+				return hwnd;
+#endif
+				return 0;
+			}
+
+			int g_display_width = 800;
+			int g_display_height = 600;
+			int g_colorbits = 32;
+			int g_depthbits = 16;
+			int g_multisample = 8;
+			bool g_vsync = true;
+			bool g_fullscreen = true;
+			bool g_resize = false;
+		};
+
+		auto hack_ptr = reinterpret_cast<HackSDL2Window*>(windowInstance);
+		*out_handle = hack_ptr->get_win32_handle();
 	}
 #pragma endregion
 
@@ -174,21 +258,6 @@ namespace wrap
 #pragma endregion
 
 #pragma region *new* region
-
-    Timer *timerInstance = nullptr;
-    Window *windowInstance = nullptr;
-    Mouse *mouseInstance = nullptr;
-    Keyboard *keyboardInstance = nullptr;
-    touch::sdl::Touch *touchInstance = nullptr;
-    joystick::sdl::JoystickModule *joystickInstance = nullptr;
-    Event *eventInstance = nullptr;
-    Filesystem *fsInstance = nullptr;
-    Sound* soundInstance = nullptr;
-    Audio *audioInstance = nullptr;
-    image::Image *imageInstance = nullptr;
-    font::Font *fontInstance = nullptr;
-    video::Video *videoInstance = nullptr;
-    graphics::Graphics *graphicsInstance = nullptr;
 
     bool4 wrap_love_dll_filesystem_newFile(const char *filename, int fmode, File** out_file)
     {
@@ -278,7 +347,7 @@ namespace wrap
         });
     }
 
-    bool4 wrap_love_dll_mouse_newCursor(ImageData *imageData, int hotx, int hoty, Cursor** out_cursor)
+    bool4 wrap_love_dll_mouse_newCursor(ImageData *imageData, int hotx, int hoty, mouse::Cursor** out_cursor)
     {
         return wrap_catchexcept([&]() { *out_cursor = mouseInstance->newCursor(imageData, hotx, hoty); });
     }
@@ -445,58 +514,10 @@ namespace wrap
 #pragma region window
 
 
-	void inner_wrap_love_dll_windows_createSDL2WindowWithHandle()
-	{
-		class HackSDL2Window : public love::window::Window
-		{
-		public:
-			std::string title;
-
-			int windowWidth = 800;
-			int windowHeight = 600;
-			int pixelWidth = 800;
-			int pixelHeight = 600;
-			WindowSettings settings;
-			StrongRef<love::image::ImageData> icon;
-
-			bool open;
-
-			bool mouseGrabbed;
-
-			SDL_Window *window;
-			SDL_GLContext context;
-
-
-
-			void create_SDL2_widow_context_with_win32_handle(void* handle)
-			{
-
-				if (context)
-				{
-					SDL_GL_DeleteContext(context);
-					context = nullptr;
-				}
-
-				if (window)
-				{
-					SDL_DestroyWindow(window);
-					//SDL_FlushEvent(SDL_WINDOWEVENT);
-					window = nullptr;
-				}
-
-				window = SDL_CreateWindowFrom(handle);
-				context = SDL_GL_CreateContext(window);
-			}
-		};
-
-		auto hack_ptr = reinterpret_cast<HackSDL2Window*>(windowInstance);
-
-		wrap_ee("%d", windowInstance);
-	}
 
     bool4 wrap_love_dll_windows_open_love_window()
     {
-        windowInstance = Module::getInstance<Window>(Module::M_WINDOW);
+        windowInstance = Module::getInstance<window::Window>(Module::M_WINDOW);
         if (windowInstance == nullptr)
         {
             return wrap_catchexcept([&]() {
@@ -533,7 +554,7 @@ namespace wrap
         WindowSettings settings;
 
         settings.fullscreen = fullscreen;
-        settings.fstype = (Window::FullscreenType)fstype; // default is Window::FULLSCREEN_DESKTOP
+        settings.fstype = (window::Window::FullscreenType)fstype; // default is Window::FULLSCREEN_DESKTOP
         settings.vsync = vsync;
 		settings.msaa = msaa;
 		settings.depth = depth;
@@ -581,7 +602,7 @@ namespace wrap
 
     void wrap_love_dll_windows_getFullscreenModes(int displayindex, Int2*** out_modes, int *out_modes_length)
     {
-        std::vector<Window::WindowSize> modes = windowInstance->getFullscreenSizes(displayindex);
+        std::vector<window::Window::WindowSize> modes = windowInstance->getFullscreenSizes(displayindex);
         *out_modes_length = modes.size();
         *out_modes = new Int2*[modes.size()];
         for (size_t i = 0; i <  modes.size(); i++)
@@ -595,10 +616,10 @@ namespace wrap
     void wrap_love_dll_windows_setFullscreen(bool4 fullscreen, int fstype, bool4 *out_success)
     {
         // fstype default is Window::FullscreenType fstype
-        if (fstype == Window::FULLSCREEN_MAX_ENUM)
+        if (fstype == window::Window::FULLSCREEN_MAX_ENUM)
             *out_success = windowInstance->setFullscreen(fullscreen);
         else
-            *out_success = windowInstance->setFullscreen(fullscreen, (Window::FullscreenType)fstype);
+            *out_success = windowInstance->setFullscreen(fullscreen, (window::Window::FullscreenType)fstype);
     }
 
     void wrap_love_dll_windows_getFullscreen(bool4 *out_fullscreen, int *out_fstype)
@@ -718,24 +739,24 @@ namespace wrap
 
     void wrap_love_dll_windows_showMessageBox(const char *title, const char *message, int type, bool4 attachToWindow, bool4* out_result)
     {
-        *out_result = windowInstance->showMessageBox(title, message, (Window::MessageBoxType)type, attachToWindow);
+        *out_result = windowInstance->showMessageBox(title, message, (window::Window::MessageBoxType)type, attachToWindow);
     }
 
-	void wrap_love_dll_windows_showMessageBox_list(const char *title, const char *message, BytePtr* buttons, int buttonsLength, int enterButtonIndex, int escapebuttonIndex, int type, bool4 attachToWindow, int* out_index_returned)
+	void wrap_love_dll_windows_showMessageBox_list(const char *title, const char *message, pChar* buttons, int buttonsLength, int enterButtonIndex, int escapebuttonIndex, int type, bool4 attachToWindow, int* out_index_returned)
 	{
-		Window::MessageBoxData data = {};
+		window::Window::MessageBoxData data = {};
 
 		data.title = title;
 		data.message = message;
 
 		for (int i = 0; i < buttonsLength; i++)
 		{
-			data.buttons.push_back(buttons[i].data);
+			data.buttons.push_back(buttons[i]);
 		}
 
 		data.enterButtonIndex = enterButtonIndex;
 		data.escapeButtonIndex = escapebuttonIndex;
-		data.type = (Window::MessageBoxType)type;
+		data.type = (window::Window::MessageBoxType)type;
 		data.attachToWindow = attachToWindow;
 
 		*out_index_returned = windowInstance->showMessageBox(data);
@@ -773,16 +794,16 @@ namespace wrap
         return mouseInstance != nullptr;
     }
 
-    bool4 wrap_love_dll_mouse_getSystemCursor(int sysctype, Cursor** out_cursor)
+    bool4 wrap_love_dll_mouse_getSystemCursor(int sysctype, mouse::Cursor** out_cursor)
     {
 
         return wrap_catchexcept([&]() {
-            Cursor::SystemCursor systemCursor = (Cursor::SystemCursor)sysctype;
+			mouse::Cursor::SystemCursor systemCursor = (mouse::Cursor::SystemCursor)sysctype;
             *out_cursor = mouseInstance->getSystemCursor(systemCursor);
         });
     }
 
-    void wrap_love_dll_mouse_setCursor(Cursor *cursor)
+    void wrap_love_dll_mouse_setCursor(mouse::Cursor *cursor)
     {
         // Revert to the default system cursor if no argument is given.
         if (cursor == nullptr)
@@ -794,7 +815,7 @@ namespace wrap
         mouseInstance->setCursor(cursor);
     }
 
-    void wrap_love_dll_mouse_getCursor(Cursor** out_cursor)
+    void wrap_love_dll_mouse_getCursor(mouse::Cursor** out_cursor)
     {
         *out_cursor = mouseInstance->getCursor();
 		if (*out_cursor != nullptr)
@@ -2777,7 +2798,7 @@ namespace wrap
         return wrap_catchexcept([&]() { *out_mesh = graphicsInstance->newMesh(count, drawMode, usage); });
     }
 
-    bool4 wrap_love_dll_graphics_newText(love::graphics::Font *font, BytePtr coloredStringText[], Float4 coloredStringColor[],  int coloredStringLength, Text** out_text)
+    bool4 wrap_love_dll_graphics_newText(love::graphics::Font *font, pChar coloredStringText[], Float4 coloredStringColor[],  int coloredStringLength, Text** out_text)
     {
         std::vector<love::graphics::Font::ColoredString> strings;
         strings.reserve(coloredStringLength);
@@ -2789,7 +2810,7 @@ namespace wrap
             coloredstr.color.g = coloredStringColor[i].g;
             coloredstr.color.b = coloredStringColor[i].b;
             coloredstr.color.a = coloredStringColor[i].a;
-            coloredstr.str = coloredStringText[i].data;
+            coloredstr.str = coloredStringText[i];
 			strings.push_back(coloredstr);
         }
 
@@ -2880,12 +2901,12 @@ namespace wrap
         *out_b = c.b;
         *out_a = c.a;
     }
-    void wrap_love_dll_graphics_setBackgroundColor(int r, int g, int b, int a)
+    void wrap_love_dll_graphics_setBackgroundColor(float r, float g, float b, float a)
     {
         Colorf c(r, g, b, a);
         graphicsInstance->setBackgroundColor(c);
     }
-    void wrap_love_dll_graphics_getBackgroundColor(int *out_r, int *out_g, int *out_b, int *out_a)
+    void wrap_love_dll_graphics_getBackgroundColor(float *out_r, float *out_g, float *out_b, float *out_a)
     {
         Colorf c = graphicsInstance->getBackgroundColor();
         *out_r = c.r;
@@ -3209,7 +3230,7 @@ namespace wrap
         graphicsInstance->present(nullptr);
     }
 
-    bool4 wrap_love_dll_graphics_draw_drawable(Drawable *drawable, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky)
+    bool4 wrap_love_dll_graphics_draw_drawable(graphics::Drawable *drawable, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky)
     {
         return wrap_catchexcept([&]() {
             graphicsInstance->draw(drawable, Matrix4(x, y, a, sx, sy, ox, oy, kx, ky));
@@ -3221,7 +3242,7 @@ namespace wrap
             graphicsInstance->draw(texture, quad, Matrix4(x, y, a, sx, sy, ox, oy, kx, ky));
         });
     }
-    bool4 wrap_love_dll_graphics_print(BytePtr coloredStringListStr[], Float4 coloredStringListColor[], int coloredStringListLength, float x, float y, float angle, float sx, float sy, float ox, float oy, float kx, float ky)
+    bool4 wrap_love_dll_graphics_print(char* coloredStringListStr[], Float4 coloredStringListColor[], int coloredStringListLength, float x, float y, float angle, float sx, float sy, float ox, float oy, float kx, float ky)
     {
         std::vector<love::graphics::Font::ColoredString> coloredStrings;
         coloredStrings.reserve(coloredStringListLength);
@@ -3229,7 +3250,7 @@ namespace wrap
         for (int i = 0; i < coloredStringListLength; i++)
         {
             love::graphics::Font::ColoredString cs;
-            cs.str = coloredStringListStr[i].data;
+            cs.str = coloredStringListStr[i];
             cs.color.r = coloredStringListColor[i].r;
             cs.color.g = coloredStringListColor[i].g;
             cs.color.b = coloredStringListColor[i].b;
@@ -3239,7 +3260,7 @@ namespace wrap
 
         return wrap_catchexcept([&]() { graphicsInstance->print(coloredStrings, Matrix4(x, y, angle, sx, sy, ox, oy, kx, ky)); });
     }
-    bool4 wrap_love_dll_graphics_printf(BytePtr coloredStringListStr[], Float4 coloredStringListColor[], int coloredStringListLength, float x, float y, float wrap, int align_type, float angle, float sx, float sy, float ox, float oy, float kx, float ky)
+    bool4 wrap_love_dll_graphics_printf(pChar coloredStringListStr[], Float4 coloredStringListColor[], int coloredStringListLength, float x, float y, float wrap, int align_type, float angle, float sx, float sy, float ox, float oy, float kx, float ky)
     {
         std::vector<love::graphics::Font::ColoredString> coloredStrings;
         coloredStrings.reserve(coloredStringListLength);
@@ -3247,7 +3268,7 @@ namespace wrap
         for (int i = 0; i < coloredStringListLength; i++)
         {
             love::graphics::Font::ColoredString cs;
-            cs.str = coloredStringListStr[i].data;
+            cs.str = coloredStringListStr[i];
             cs.color.r = coloredStringListColor[i].r;
             cs.color.g = coloredStringListColor[i].g;
             cs.color.b = coloredStringListColor[i].b;
@@ -4023,7 +4044,7 @@ namespace wrap
     }
 
     bool4 wrap_love_dll_type_Font_getWrap(love::graphics::Font *t, 
-        BytePtr coloredStringText[], Float4 coloredStringColor[], int coloredStringLength, float wrap,
+        pChar coloredStringText[], Float4 coloredStringColor[], int coloredStringLength, float wrap,
         int *out_maxWidth, WrapSequenceString **out_pws)
     {
         std::vector<love::graphics::Font::ColoredString> strings;
@@ -4036,7 +4057,7 @@ namespace wrap
             coloredstr.color.g = coloredStringColor[i].g;
             coloredstr.color.b = coloredStringColor[i].b;
             coloredstr.color.a = coloredStringColor[i].a;
-            coloredstr.str = coloredStringText[i].data;
+            coloredstr.str = coloredStringText[i];
 			strings.push_back(coloredstr);
         }
 
@@ -5194,7 +5215,7 @@ namespace wrap
 
 #pragma region type - Text
 
-    bool4 wrap_love_dll_type_Text_set_coloredstring(Text *t, BytePtr coloredStringText[], Float4 coloredStringColor[], int coloredStringLength)
+    bool4 wrap_love_dll_type_Text_set_coloredstring(Text *t, pChar coloredStringText[], Float4 coloredStringColor[], int coloredStringLength)
     {
         // Single argument: unformatted text.
         std::vector<love::graphics::Font::ColoredString> strings;
@@ -5207,14 +5228,14 @@ namespace wrap
             coloredstr.color.g = coloredStringColor[i].g;
             coloredstr.color.b = coloredStringColor[i].b;
             coloredstr.color.a = coloredStringColor[i].a;
-            coloredstr.str = coloredStringText[i].data;
+            coloredstr.str = coloredStringText[i];
 			strings.push_back(coloredstr);
         }
 
         return wrap_catchexcept([&]() { t->set(strings); });
     }
 
-    bool4 wrap_love_dll_type_Text_setf(Text *t, BytePtr coloredStringText[], Float4 coloredStringColor[], int coloredStringLength, float wraplimit, int align_type)
+    bool4 wrap_love_dll_type_Text_setf(Text *t, pChar coloredStringText[], Float4 coloredStringColor[], int coloredStringLength, float wraplimit, int align_type)
     {
         std::vector<love::graphics::Font::ColoredString> strings;
         strings.reserve(coloredStringLength);
@@ -5226,7 +5247,7 @@ namespace wrap
             coloredstr.color.g = coloredStringColor[i].g;
             coloredstr.color.b = coloredStringColor[i].b;
             coloredstr.color.a = coloredStringColor[i].a;
-            coloredstr.str = coloredStringText[i].data;
+            coloredstr.str = coloredStringText[i];
 			strings.push_back(coloredstr);
         }
 
@@ -5234,7 +5255,7 @@ namespace wrap
         return wrap_catchexcept([&]() { t->set(strings, wraplimit, align); });
     }
 
-    bool4 wrap_love_dll_type_Text_add(Text *t, BytePtr coloredStringText[], Float4 coloredStringColor[], int coloredStringLength,
+    bool4 wrap_love_dll_type_Text_add(Text *t, pChar coloredStringText[], Float4 coloredStringColor[], int coloredStringLength,
         float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, int *out_index)
     {
         std::vector<love::graphics::Font::ColoredString> strings;
@@ -5247,14 +5268,14 @@ namespace wrap
             coloredstr.color.g = coloredStringColor[i].g;
             coloredstr.color.b = coloredStringColor[i].b;
             coloredstr.color.a = coloredStringColor[i].a;
-            coloredstr.str = coloredStringText[i].data;
+            coloredstr.str = coloredStringText[i];
 			strings.push_back(coloredstr);
         }
 		Matrix4 m(x, y, a, sx, sy, ox, oy, kx, ky);
         return wrap_catchexcept([&]() { *out_index = t->add(strings, m); });
     }
 
-    bool4 wrap_love_dll_type_Text_addf(Text *t, BytePtr coloredStringText[], Float4 coloredStringColor[], int coloredStringLength,
+    bool4 wrap_love_dll_type_Text_addf(Text *t, pChar coloredStringText[], Float4 coloredStringColor[], int coloredStringLength,
         float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, float wraplimit, int align_type, int *out_index)
     {
         std::vector<love::graphics::Font::ColoredString> strings;
@@ -5267,7 +5288,7 @@ namespace wrap
             coloredstr.color.g = coloredStringColor[i].g;
             coloredstr.color.b = coloredStringColor[i].b;
             coloredstr.color.a = coloredStringColor[i].a;
-            coloredstr.str = coloredStringText[i].data;
+            coloredstr.str = coloredStringText[i];
 			strings.push_back(coloredstr);
         }
         auto align = (love::graphics::Font::AlignMode)align_type;
@@ -5627,10 +5648,10 @@ namespace wrap
 
 #pragma region type - Cursor
 
-    void wrap_love_dll_type_Cursor_getType(Cursor *cursor, int *out_cursortype_type, bool4 *out_custom)
+    void wrap_love_dll_type_Cursor_getType(mouse::Cursor *cursor, int *out_cursortype_type, bool4 *out_custom)
     {
-        Cursor::CursorType ctype = cursor->getType();
-		if (ctype == Cursor::CursorType::CURSORTYPE_IMAGE)
+		mouse::Cursor::CursorType ctype = cursor->getType();
+		if (ctype == mouse::Cursor::CursorType::CURSORTYPE_IMAGE)
 		{
 			*out_custom = true;
 			*out_cursortype_type = 0;

@@ -526,60 +526,99 @@ namespace Love
         /// </summary>
         protected Font() {}
 
-        public enum AlignMode
-        {
-            Left,
-            Center,
-            Right,
-            Justify,
-        };
-
+        /// <summary>
+        /// Gets the height of the Font in pixels.
+        /// </summary>
+        /// <returns>The height of the Font in pixels.</returns>
         public int GetHeight()
         {
             int out_height = 0;
             Love2dDll.wrap_love_dll_type_Font_getHeight(p, out out_height);
             return out_height;
         }
+
+        /// <summary>
+        /// Determines the width of the given text. (UTF-8 byte array version)
+        /// </summary>
+        /// <param name="str">A string. (UTF-8 byte array needed)</param>
+        /// <returns>The width of the text.</returns>
         public int GetWidth(byte[] str)
         {
             int out_width = 0;
             Love2dDll.wrap_love_dll_type_Font_getWidth(p, str, out out_width);
             return out_width;
         }
+
+        /// <summary>
+        /// Sets the line height. When rendering the font in lines the actual height will be determined by the line height multiplied by the height of the font. The default is 1.0.
+        /// </summary>
+        /// <param name="h">The new line height.</param>
         public void SetLineHeight(float h)
         {
             Love2dDll.wrap_love_dll_type_Font_setLineHeight(p, h);
             return;
         }
+
+        /// <summary>
+        /// Gets the line height. This will be the value previously set by <see cref="SetLineHeight(float)"/>, or 1.0 by default.
+        /// </summary>
+        /// <returns>The current line height.</returns>
         public float GetLineHeight()
         {
             float out_h = 0;
             Love2dDll.wrap_love_dll_type_Font_getLineHeight(p, out out_h);
             return out_h;
         }
-        public void SetFilter(Texture.FilterMode min_type, Texture.FilterMode mag_type, float anisotropy)
+
+        /// <summary>
+        /// Sets the filter mode for a font.
+        /// </summary>
+        /// <param name="min_type">How to scale a font down.</param>
+        /// <param name="mag_type">How to scale a font up.</param>
+        /// <param name="anisotropy">Maximum amount of anisotropic filtering used.</param>
+        public void SetFilter(FilterMode min_type, FilterMode mag_type, float anisotropy = 1)
         {
             Love2dDll.wrap_love_dll_type_Font_setFilter(p, (int)min_type, (int)mag_type, anisotropy);
             return;
         }
+
+        /// <summary>
+        /// Gets the filter mode for a font.
+        /// </summary>
+        /// <returns></returns>
         public Texture.Filter getFilter()
         {
             int out_min_type, out_mag_type; float out_anisotropy;
             Love2dDll.wrap_love_dll_type_Font_getFilter(p, out out_min_type, out out_mag_type, out out_anisotropy);
-            return new Texture.Filter((Texture.FilterMode)out_min_type, (Texture.FilterMode)out_mag_type, out_anisotropy);
+            return new Texture.Filter((FilterMode)out_min_type, (FilterMode)out_mag_type, out_anisotropy);
         }
+
+        /// <summary>
+        /// Gets the ascent of the Font. The ascent spans the distance between the baseline and the top of the glyph that reaches farthest from the baseline.
+        /// </summary>
+        /// <returns></returns>
         public int GetAscent()
         {
             int out_ascent = 0;
             Love2dDll.wrap_love_dll_type_Font_getAscent(p, out out_ascent);
             return out_ascent;
         }
+
+        /// <summary>
+        /// Gets the descent of the Font. The descent spans the distance between the baseline and the lowest descending glyph in a typeface.
+        /// </summary>
+        /// <returns></returns>
         public int GetDescent()
         {
             int out_descent = 0;
             Love2dDll.wrap_love_dll_type_Font_getDescent(p, out out_descent);
             return out_descent;
         }
+
+        /// <summary>
+        /// Gets the baseline of the Font. Most scripts share the notion of a baseline: an imaginary horizontal line on which characters rest. In some scripts, parts of glyphs lie below the baseline.
+        /// </summary>
+        /// <returns></returns>
         public float GetBaseline()
         {
             float out_baseline = 0;
@@ -592,13 +631,24 @@ namespace Love
             Love2dDll.wrap_love_dll_type_Font_hasGlyphs_uint32(p, chr, out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// Gets whether the Font can render a character or string. (UTF-8 byte array version)
+        /// </summary>
+        /// <param name="str">A string. (UTF-8 byte array needed)</param>
+        /// <returns>Whether the font can render all characters in the string.</returns>
         public bool HasGlyphs(byte[] str)
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_Font_hasGlyphs_string(p, str, out out_result);
             return out_result;
         }
-        public void SetFallbacks(Font[] fallback)
+
+        /// <summary>
+        /// Sets the fallback fonts. When the Font doesn't contain a glyph, it will substitute the glyph from the next subsequent fallback Fonts. This is akin to setting a "font stack" in Cascading Style Sheets (CSS).
+        /// </summary>
+        /// <param name="fallback">[The first fallback Font to use, ...Additional fallback Fonts.]</param>
+        public void SetFallbacks(params Font[] fallback)
         {
             IntPtr[] fallbackarray = new IntPtr[fallback.Length];
             for (int i = 0; i < fallbackarray.Length; i++)
@@ -1274,7 +1324,7 @@ namespace Love
                 Love2dDll.wrap_love_dll_type_Text_set_coloredstring(p, tmp.Item1, tmp.Item2, coloredStr.Length);
             });
         }
-        public void Setf(ColoredStringArray coloredStr, float wraplimit, Font.AlignMode align_type)
+        public void Setf(ColoredStringArray coloredStr, float wraplimit, AlignMode align_type)
         {
             coloredStr.ExecResource((tmp) =>{
                 Love2dDll.wrap_love_dll_type_Text_setf(p, tmp.Item1, tmp.Item2, coloredStr.Length, wraplimit, (int)align_type);
@@ -1288,7 +1338,7 @@ namespace Love
             });
             return out_index;
         }
-        public int Addf(ColoredStringArray coloredStr, float wraplimit, Font.AlignMode align_type, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public int Addf(ColoredStringArray coloredStr, float wraplimit, AlignMode align_type, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
             int out_index = 0;
             coloredStr.ExecResource((tmp) => {
@@ -1354,31 +1404,27 @@ namespace Love
             MirroredRepeat,
         };
 
-        public enum FilterMode
-        {
-            // None,
-
-            /// <summary>
-            /// Scale image with linear interpolation. (default)
-            /// </summary>
-            Linear,
-
-            /// <summary>
-            /// Scale image with nearest neighbor interpolation.
-            /// </summary>
-            Nearest,
-        };
-
         public class Filter
         {
-            public readonly FilterMode min = FilterMode.Linear;
-            public readonly FilterMode mag = FilterMode.Linear;
-            public readonly float anisotropy = 1.0f;
+            /// <summary>
+            /// Filter mode used when minifying the font.
+            /// </summary>
+            public readonly FilterMode Min = FilterMode.Linear;
+
+            /// <summary>
+            /// Filter mode used when magnifying the font.
+            /// </summary>
+            public readonly FilterMode Mag = FilterMode.Linear;
+
+            /// <summary>
+            /// Maximum amount of anisotropic filtering used.
+            /// </summary>
+            public readonly float Anisotropy = 1.0f;
             public Filter(FilterMode min, FilterMode mag, float anisotropy)
             {
-                this.min = min;
-                this.mag = mag;
-                this.anisotropy = anisotropy;
+                this.Min = min;
+                this.Mag = mag;
+                this.Anisotropy = anisotropy;
             }
         };
 
@@ -1464,16 +1510,16 @@ namespace Love
             Love2dDll.wrap_love_dll_type_Video_getHeight(p, out out_h);
             return out_h;
         }
-        public void SetFilter(Texture.FilterMode filtermin_type, Texture.FilterMode filtermag_type, float anisotropy)
+        public void SetFilter(FilterMode filtermin_type, FilterMode filtermag_type, float anisotropy)
         {
             Love2dDll.wrap_love_dll_type_Video_setFilter(p, (int)filtermin_type, (int)filtermag_type, anisotropy);
         }
-        public void GetFilter(out Texture.FilterMode out_filtermin_type, out Texture.FilterMode out_filtermag_type, out float out_anisotropy)
+        public void GetFilter(out FilterMode out_filtermin_type, out FilterMode out_filtermag_type, out float out_anisotropy)
         {
             int out_filtermin = 0, out_filtermag = 0;
             Love2dDll.wrap_love_dll_type_Video_getFilter(p, out out_filtermin, out out_filtermag, out out_anisotropy);
-            out_filtermin_type = (Texture.FilterMode)out_filtermin;
-            out_filtermag_type = (Texture.FilterMode)out_filtermag;
+            out_filtermin_type = (FilterMode)out_filtermin;
+            out_filtermag_type = (FilterMode)out_filtermag;
         }
     }
 
@@ -2178,22 +2224,23 @@ namespace Love
             return new ColoredStringArray(ColoredString.Create(text, new Float4(1, 1, 1, 1)));
         }
 
-        public readonly ColoredString[] items;
+        public readonly string[] texts;
+        public readonly Float4[] colors;
 
         public int Length
         {
-            get { return items.Length; }
+            get { return texts.Length; }
         }
 
         public ColoredStringArray(params ColoredString[] inputItems)
         {
-            items = new ColoredString[inputItems.Length];
-            for (int i = 0; i < items.Length; i++)
+            texts = new string[inputItems.Length];
+            colors = new Float4[inputItems.Length];
+            for (int i = 0; i < inputItems.Length; i++)
             {
-                items[i] = new ColoredString(inputItems[i].text, inputItems[i].color);
+                texts[i] = inputItems[i].text;
+                colors[i] = inputItems[i].color;
             }
-
-            hObjects = new GCHandle[items.Length];
         }
 
         public ColoredStringArray(string[] texts, Float4[] colors)
@@ -2203,44 +2250,19 @@ namespace Love
                 throw new Exception("lenght of texts and colors must be same");
             }
 
-            items = new ColoredString[texts.Length];
-            for (int i = 0; i < items.Length; i++)
-            {
-                items[i] = new ColoredString(texts[i], colors[i]);
-            }
-
-            hObjects = new GCHandle[items.Length];
+            this.texts = texts;
+            this.colors = colors;
         }
 
-        public delegate void ColoredStringTempResDelegate(Tuple<BytePtr[], Float4[]> tmp);
-        public void ExecResource(ColoredStringTempResDelegate func)
+        public void ExecResource(Action<Tuple<IntPtr[], Float4[]>> func)
         {
-            var tmp = ToPart();
-            func?.Invoke(tmp);
-            Recycle();
-        }
-
-        GCHandle[] hObjects;
-        private Tuple<BytePtr[], Float4[]> ToPart()
-        {
-            var texts = new BytePtr[Length];
-            var colors = new Float4[Length];
-            for (int i = 0; i < Length; i++)
+            if (func != null)
             {
-                hObjects[i] = GCHandle.Alloc(DllTool.ToUTF8Bytes(items[i].text), GCHandleType.Pinned);
-                texts[i] = new BytePtr(hObjects[i].AddrOfPinnedObject());
-                colors[i] = items[i].color;
-            }
-
-            return Tuple.Create(texts, colors);
-        }
-
-        private void Recycle()
-        {
-            foreach (var h in hObjects)
-            {
-                if (h.IsAllocated)
-                    h.Free();
+                var that = this;
+                DllTool.ExecuteNullTailStringArray(texts, (pointers) =>
+                {
+                    func(Tuple.Create(pointers, that.colors));
+                });
             }
         }
     }

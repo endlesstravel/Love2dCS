@@ -22,13 +22,13 @@ Physics module temporarily not support.
 Feature
 ---
 
-* [Easy to install with Visual Studio (install introduce)](README-Install.md)
-* [Easy to use (wiki)](https://github.com/endlesstravel/Love2dCS/wiki)
+* [Easy to install with Visual Studio (install introduce)](README-Install.md) / 
+* Easy to use [Getting Start](README-getting-started.md) / [wiki](https://github.com/endlesstravel/Love2dCS/wiki)
 
 Other
 ---
 
-* Available on NuGet: https://www.nuget.org/packages/Love2dCS/ . Please read [README-getting-started.md](README-getting-started.md) for more detail.
+* [work with ubuntu + mono-develop](develop.md)
 
 Examples
 ---
@@ -56,34 +56,35 @@ namespace Example
 
 Next to development
 ---
- - [ ] Support Love 11.0
- - [ ] Improve the document
- - [ ] Add support for Physics 
- - [ ] Add support for win-x64 platform
+ - Support Love 11.0 : in development
+ - Improve the document : in development
+ - Add support for win-x64 platform
+ - Support Ubuntu : in development
+ - Add support for Physics
 
-| Module        | Process | code comment | Test   | Remark         |
-| ------------- |--------:|--------------:| ------:| --------------:|
-| Audio         | 80%     |      80%       |  50% passed      |                |
-| Data          | 00%     |      00%       |                  | Need to binding               |
-| Event         | 50%     |      00%       |                  |                |
-| FileSystem    | 80%     |      80%       |   90%  passed    | [detail](Model-devlop-log.md#filesystem)           |
-| Font          | 80%     |      00%       |                  |                |
-| Graphics      | 80%     |      00%       |                  |                |
-| Image         | 80%     |      00%       |                  |                |
-| Joystick      | 80%     |      00%       |                  |                |
-| Keyborad      | 95%     |      50%       |   95% Passed     | [detail](Model-devlop-log.md#keyboard)               |
-| Math          | 80%     |      00%       |                  |                |
-| Mouse         | 90%     |      90%       |   90% Passed     |   `Mouse.SetRelativeMode` will crash, need to repair               |
-| Physics       |  /      |      /         |                  | Not supported               |
-| Sound         | 90%     |      90%       |                  |                |
-| System        | 00%     |      00%       |                  | Need to binding               |
-| Thread        |   /     |        /       |                  | Not supported               |
-| Timer         | 95%     |      95%       |                  |                |
-| Touch         | 80%     |      00%       |                  |                |
-| Video         | 80%     |      80%       |   90% passed     |                |
-| Window        | 80%     |      80%       |                  |                |
+| Module        | Process | code comment   |     Test      |   ubuntu Test    | Remark         |
+| ------------- |--------:|---------------:|--------------:|----------------:| --------------:|
+| Audio         | 80%     |      80%       |  50% passed   |                 |                |
+| Data          | 00%     |      00%       |               |                 | Need to binding               |
+| Event         | 50%     |      00%       |               |                 |                |
+| FileSystem    | 80%     |      80%       |  90% passed   |                 | [detail](Module-devlop-log.md#filesystem)           |
+| Font          | 80%     |      90%       |               |                 |                |
+| Graphics      | 80%     |      00%       |               |                 |                |
+| Image         | 80%     |      90%       |               |                 |                |
+| Joystick      | 80%     |      00%       |               |                 |                |
+| Keyborad      | 95%     |      50%       |   95% Passed  |                 | [detail](Module-devlop-log.md#keyboard)               |
+| Mathf         | 80%     |      90%       |               |                 |                |
+| Mouse         | 90%     |      90%       |   90% Passed  |                 |   `Mouse.SetRelativeMode` will crash, need to repair               |
+| Physics       |  /      |      /         |               |                 | Not supported               |
+| Sound         | 90%     |      90%       |               |                 |                |
+| System        | 00%     |      00%       |               |                 | Need to binding               |
+| Thread        |   /     |        /       |               |                 | Not supported               |
+| Timer         | 95%     |      95%       |               |                 |                |
+| Touch         | 80%     |      00%       |               |                 |                |
+| Video         | 80%     |      80%       |   90% passed  |                 |                |
+| Window        | 80%     |      80%       |               |                 |                |
 
-[develop log](Model-devlop-log.md)
+[develop log](Module-devlop-log.md)
 
 Documentation
 ---
@@ -95,21 +96,6 @@ Distribute
 ---
 *In development ...*
 
-Develpoment
+Development
 ---
-
-1. clone repository `git clone https://github.com/endlesstravel/Love2dCS`
-
-2. Build C part :
-
-* Follow the instructions at the [megasource](https://bitbucket.org/rude/megasource) repository page to build LÖVE 11.0+.
-* Add files `c_api_src/wrap_love_dll.cpp ` and `c_api_src/wrap_love_dll.h` to your LÖVE project in `liblove`.
-
-![liblove-src](https://github.com/endlesstravel/Love2dCS/raw/master/img/006-liblove-src.png "liblove-src")
-
-3. Build C# part :
-
-* Create a C# library project
-* Add all `cshapr_src/*.cs` to your C# library project.
-
-*In development ...*
+[Develop document](develop.md)

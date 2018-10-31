@@ -389,7 +389,7 @@ namespace Love
                 }
             }
 
-            DllTool.ExecuteStringArray(codeStr, (tmp) =>
+            DllTool.ExecuteNullTailStringArray(codeStr, (tmp) =>
             {
                 Love2dDll.wrap_love_dll_graphics_setDefaultShaderCode(tmp);
             });

@@ -17,7 +17,7 @@ namespace Love
         /// <returns></returns>
         public static File NewFile(string filename, FileMode fmode_type = FileMode.Read)
         {
-            return NewFile(DllTool.ToUTF8Bytes(filename), fmode_type);
+            return NewFile(DllTool.GetNullTailUTF8Bytes(filename), fmode_type);
         }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace Love
         /// <returns></returns>
         public static FileData NewFileData(string contents, string filename)
         {
-            return NewFileData(DllTool.ToUTF8Bytes(contents), DllTool.ToUTF8Bytes(filename));
+            return NewFileData(DllTool.GetUTF8Bytes(contents), DllTool.GetNullTailUTF8Bytes(filename));
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace Love
         /// <returns></returns>
         public static FileData NewFileData(byte[] contents, string filename)
         {
-            return NewFileData(contents, DllTool.ToUTF8Bytes(filename));
+            return NewFileData(contents, DllTool.GetNullTailUTF8Bytes(filename));
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace Love
         /// <returns></returns>
         public static bool Init(string args)
         {
-            return Init(DllTool.ToUTF8Bytes(args));
+            return Init(DllTool.GetNullTailUTF8Bytes(args));
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace Love
         /// <returns></returns>
         public static Info GetInfo(string path)
         {
-            return GetInfo(DllTool.ToUTF8Bytes(path));
+            return GetInfo(DllTool.GetNullTailUTF8Bytes(path));
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace Love
         /// TRUE: results in searching source before searching save directory; FALSE: results in searching game save directory before searching source directorymounted archives.</param>
         public static void SetIdentity(string path, bool append = false)
         {
-            SetIdentity(DllTool.ToUTF8Bytes(path), append);
+            SetIdentity(DllTool.GetNullTailUTF8Bytes(path), append);
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace Love
         /// <param name="path">Absolute path to the game's source folder.</param>
         public static void SetSource(string path)
         {
-            SetSource(DllTool.ToUTF8Bytes(path));
+            SetSource(DllTool.GetNullTailUTF8Bytes(path));
         }
 
         /// <summary>
@@ -91,11 +91,11 @@ namespace Love
         /// <returns></returns>
         public static bool Mount(string archive, string mountpoint, bool appendToPath = false)
         {
-            return Mount(DllTool.ToUTF8Bytes(archive), DllTool.ToUTF8Bytes(mountpoint), appendToPath);
+            return Mount(DllTool.GetNullTailUTF8Bytes(archive), DllTool.GetNullTailUTF8Bytes(mountpoint), appendToPath);
         }
         public static bool Unmount(string archive)
         {
-            return Unmount(DllTool.ToUTF8Bytes(archive));
+            return Unmount(DllTool.GetNullTailUTF8Bytes(archive));
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace Love
         /// <returns>The platform-specific full path of the directory containing the filepath.</returns>
         public static string GetRealDirectory(string filename)
         {
-            return GetRealDirectory(DllTool.ToUTF8Bytes(filename));
+            return GetRealDirectory(DllTool.GetNullTailUTF8Bytes(filename));
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace Love
         /// <returns>True if the directory was created, false if not.</returns>
         public static bool CreateDirectory(string name)
         {
-            return CreateDirectory(DllTool.ToUTF8Bytes(name));
+            return CreateDirectory(DllTool.GetNullTailUTF8Bytes(name));
         }
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace Love
         /// <param name="path">The file or directory to remove.</param>
         public static bool Remove(string path)
         {
-            return Remove(DllTool.ToUTF8Bytes(path));
+            return Remove(DllTool.GetNullTailUTF8Bytes(path));
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace Love
         /// <returns></returns>
         public static byte[] Read(string filename, long len = -1)
         {
-            return Read(DllTool.ToUTF8Bytes(filename), len);
+            return Read(DllTool.GetNullTailUTF8Bytes(filename), len);
         }
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace Love
         /// <param name="input">The data to write to the file.</param>
         public static void Write(string filename, byte[] input)
         {
-            Write(DllTool.ToUTF8Bytes(filename), input);
+            Write(DllTool.GetNullTailUTF8Bytes(filename), input);
         }
 
 
@@ -158,7 +158,7 @@ namespace Love
         /// <param name="input">The string data to write to the file.</param>
         public static void Write(string filename, string input)
         {
-            Write(DllTool.ToUTF8Bytes(filename), DllTool.ToUTF8Bytes(input));
+            Write(DllTool.GetNullTailUTF8Bytes(filename), DllTool.GetUTF8Bytes(input));
         }
 
         /// <summary>
@@ -168,7 +168,7 @@ namespace Love
         /// <param name="input">The data to append to the file.</param>
         public static void Append(string filename, byte[] input)
         {
-            Append(DllTool.ToUTF8Bytes(filename), input);
+            Append(DllTool.GetNullTailUTF8Bytes(filename), input);
         }
 
         /// <summary>
@@ -178,7 +178,7 @@ namespace Love
         /// <param name="txt">string to append</param>
         public static void Append(string filename, string txt)
         {
-            Append(DllTool.ToUTF8Bytes(filename), DllTool.ToUTF8Bytes(txt));
+            Append(DllTool.GetNullTailUTF8Bytes(filename), DllTool.GetUTF8Bytes(txt));
         }
 
         /// <summary>
@@ -189,18 +189,18 @@ namespace Love
         /// <returns></returns>
         public static string[] GetDirectoryItems(string dir)
         {
-            return GetDirectoryItems(DllTool.ToUTF8Bytes(dir));
+            return GetDirectoryItems(DllTool.GetNullTailUTF8Bytes(dir));
         }
 
 
         public static long _GetLastModified(string filename)
         {
-            return _GetLastModified(DllTool.ToUTF8Bytes(filename));
+            return _GetLastModified(DllTool.GetNullTailUTF8Bytes(filename));
         }
 
         public static void _SetRequirePath(string paths)
         {
-            _SetRequirePath(DllTool.ToUTF8Bytes(paths));
+            _SetRequirePath(DllTool.GetNullTailUTF8Bytes(paths));
         }
     }
 
@@ -213,7 +213,7 @@ namespace Love
         /// <param name="titleStr">The new window title.</param>
         public static void SetTitle(string titleStr)
         {
-            SetTitle(DllTool.ToUTF8Bytes(titleStr));
+            SetTitle(DllTool.GetNullTailUTF8Bytes(titleStr));
         }
 
         /// <summary>
@@ -227,7 +227,7 @@ namespace Love
         /// <returns>Whether the message box was successfully displayed.</returns>
         public static bool ShowMessageBox(string title, string message, MessageBoxType msgbox_type = MessageBoxType.Info, bool attachToWindow = true)
         {
-            return ShowMessageBox(DllTool.ToUTF8Bytes(title), DllTool.ToUTF8Bytes(message), msgbox_type, attachToWindow);
+            return ShowMessageBox(DllTool.GetNullTailUTF8Bytes(title), DllTool.GetNullTailUTF8Bytes(message), msgbox_type, attachToWindow);
         }
     }
 
@@ -235,11 +235,11 @@ namespace Love
     {
         public static bool SetGamepadMapping(string guid, Joystick.InputType gp_inputType_type, Joystick.InputType j_inputType_type, int inputIndex, Joystick.Hat hat_type)
         {
-            return SetGamepadMapping(DllTool.ToUTF8Bytes(guid), gp_inputType_type, j_inputType_type, inputIndex, hat_type);
+            return SetGamepadMapping(DllTool.GetNullTailUTF8Bytes(guid), gp_inputType_type, j_inputType_type, inputIndex, hat_type);
         }
         public static bool LoadGamepadMappings(string str)
         {
-            return LoadGamepadMappings(DllTool.ToUTF8Bytes(str));
+            return LoadGamepadMappings(DllTool.GetNullTailUTF8Bytes(str));
         }
     }
 
@@ -262,7 +262,7 @@ namespace Love
             IntPtr out_shader = IntPtr.Zero;
             string vertexCode, pixelCode;
             Love2dGraphicsShaderBoot.shaderCodeToGLSL(gles, vertexCodeStr, pixelCodeStr, out vertexCode, out pixelCode);
-            Love2dDll.wrap_love_dll_graphics_newShader(DllTool.ToUTF8Bytes(vertexCode), DllTool.ToUTF8Bytes(pixelCode), out out_shader);
+            Love2dDll.wrap_love_dll_graphics_newShader(DllTool.GetNullTailUTF8Bytes(vertexCode), DllTool.GetNullTailUTF8Bytes(pixelCode), out out_shader);
             return LoveObject.NewObject<Shader>(out_shader);
         }
     }
@@ -277,7 +277,7 @@ namespace Love
         /// <returns></returns>
         public GlyphData NewGlyphData(Rasterizer rasterizer, string glyph)
         {
-            return NewGlyphData(rasterizer, DllTool.ToUTF8Bytes(glyph));
+            return NewGlyphData(rasterizer, DllTool.GetNullTailUTF8Bytes(glyph));
         }
     }
 
@@ -290,24 +290,54 @@ namespace Love
     {
         public GlyphData GetGlyphData(string str)
         {
-            return GetGlyphData(DllTool.ToUTF8Bytes(str));
+            return GetGlyphData(DllTool.GetNullTailUTF8Bytes(str));
         }
         public bool HasGlyphs(string str)
         {
-            return HasGlyphs(DllTool.ToUTF8Bytes(str));
+            return HasGlyphs(DllTool.GetNullTailUTF8Bytes(str));
         }
     }
+
     public partial class Font
     {
+        /// <summary>
+        /// Creates a new Rasterizer.
+        /// </summary>
+        /// <param name="filename">The font file.</param>
+        /// <returns>The rasterizer.</returns>
+        public static Rasterizer NewRasterizer(string filename)
+        {
+            var filedata = FileSystem.NewFileData(filename);
+            return NewRasterizer(filedata);
+        }
+
+        /// <summary>
+        /// Determines the width of the given text.
+        /// </summary>
+        /// <param name="str">A string.</param>
+        /// <returns>The width of the text.</returns>
         public int GetWidth(string str)
         {
-            return GetWidth(DllTool.ToUTF8Bytes(str));
+            return GetWidth(DllTool.GetNullTailUTF8Bytes(str));
         }
+
+        /// <summary>
+        /// Gets whether the Font can render a character or string.
+        /// </summary>
+        /// <param name="str">A string.</param>
+        /// <returns>Whether the font can render all characters in the string.</returns>
         public bool HasGlyphs(string str)
         {
-            return HasGlyphs(DllTool.ToUTF8Bytes(str));
+            return HasGlyphs(DllTool.GetNullTailUTF8Bytes(str));
         }
-        public Tuple<string[], int> GetWrap(string text, float wrap_limit)
+
+        /// <summary>
+        /// Gets formatting information for text, given a wrap limit.
+        /// </summary>
+        /// <param name="text">The text that will be wrapped.</param>
+        /// <param name="wrap_limit">The maximum width in pixels of each line that text is allowed before wrapping.</param>
+        /// <returns>(The maximum width of the wrapped text., A sequence containing each line of text that was wrapped.)</returns>
+        public Tuple<int, string[]> GetWrap(string text, float wrap_limit)
         {
             var coloredStr = ColoredStringArray.Create(text);
             IntPtr out_pws = IntPtr.Zero;
@@ -317,7 +347,7 @@ namespace Love
                 Love2dDll.wrap_love_dll_type_Font_getWrap(p, tmp.Item1, tmp.Item2, coloredStr.Length, wrap_limit, out out_maxWidth, out out_pws);
             });
             var lines = DllTool.WSSToStringListAndRelease(out_pws);
-            return new Tuple<string[], int>(lines, out_maxWidth);
+            return Tuple.Create(out_maxWidth, lines);
         }
     }
 
@@ -328,23 +358,23 @@ namespace Love
     {
         public void SendColors(string name, params Float4[] valuearray)
         {
-            SendColors(DllTool.ToUTF8Bytes(name), valuearray);
+            SendColors(DllTool.GetNullTailUTF8Bytes(name), valuearray);
         }
         public void SendFloats(string name, params float[] valuearray)
         {
-            SendFloats(DllTool.ToUTF8Bytes(name), valuearray);
+            SendFloats(DllTool.GetNullTailUTF8Bytes(name), valuearray);
         }
         public void SendInts(string name, params int[] valuearray)
         {
-            SendInts(DllTool.ToUTF8Bytes(name), valuearray);
+            SendInts(DllTool.GetNullTailUTF8Bytes(name), valuearray);
         }
         public void SendBooleans(string name, params bool[] valuearray)
         {
-            SendBooleans(DllTool.ToUTF8Bytes(name), valuearray);
+            SendBooleans(DllTool.GetNullTailUTF8Bytes(name), valuearray);
         }
         public void SendMatrix(string name, float[] valuearray, int columns, int rows, int count)
         {
-            SendMatrix(DllTool.ToUTF8Bytes(name), valuearray, columns, rows, count);
+            SendMatrix(DllTool.GetNullTailUTF8Bytes(name), valuearray, columns, rows, count);
         }
         public void SendMatrix(string name, params Matrix22[] valueArray)
         {
@@ -381,7 +411,7 @@ namespace Love
         }
         public void SendTexture(string name, Texture texture)
         {
-            SendTexture(DllTool.ToUTF8Bytes(name), texture);
+            SendTexture(DllTool.GetNullTailUTF8Bytes(name), texture);
         }
     }
 
@@ -389,7 +419,7 @@ namespace Love
     {
         public void AttachAttribute(string name, Mesh mesh)
         {
-            AttachAttribute(DllTool.ToUTF8Bytes(name), mesh);
+            AttachAttribute(DllTool.GetNullTailUTF8Bytes(name), mesh);
         }
 
     }
@@ -398,7 +428,7 @@ namespace Love
     {
         public void SetState(string state)
         {
-            SetState(DllTool.ToUTF8Bytes(state));
+            SetState(DllTool.GetNullTailUTF8Bytes(state));
         }
     }
 
@@ -406,7 +436,7 @@ namespace Love
     {
         public void Encode(ImageFormat format_type, string filename)
         {
-            Encode(format_type, DllTool.ToUTF8Bytes(filename));
+            Encode(format_type, DllTool.GetNullTailUTF8Bytes(filename));
         }
     }
 

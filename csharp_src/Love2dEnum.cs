@@ -1,6 +1,50 @@
 ﻿namespace Love
 {
     /// <summary>
+    /// How the image is filtered when scaling.
+    /// </summary>
+    public enum FilterMode
+    {
+        None,
+
+        /// <summary>
+        /// Scale image with linear interpolation. (default)
+        /// </summary>
+        Linear,
+
+        /// <summary>
+        /// Scale image with nearest neighbor interpolation.
+        /// </summary>
+        Nearest,
+    };
+
+    /// <summary>
+    /// Text alignment.
+    /// </summary>
+    public enum AlignMode
+    {
+        /// <summary>
+        /// Align text left.
+        /// </summary>
+        Left,
+
+        /// <summary>
+        /// Align text center.
+        /// </summary>
+        Center,
+
+        /// <summary>
+        /// Align text right.
+        /// </summary>
+        Right,
+
+        /// <summary>
+        /// Align text both left and right.
+        /// </summary>
+        Justify,
+    };
+
+    /// <summary>
     /// Provide for custom image data, not all Pixel format support to create new custom imageData;
     /// </summary>
     public enum ImageDataPixelFormat : int
