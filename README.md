@@ -22,8 +22,8 @@ Physics module temporarily not support.
 Feature
 ---
 
-* [Easy to install with Visual Studio (install introduce)](README-Install.md) / 
-* Easy to use [Getting Start](README-getting-started.md) / [wiki](https://github.com/endlesstravel/Love2dCS/wiki)
+* [Easy to install with Visual Studio (install introduce)](README-Install.md)
+* Easy to use [Getting Start](README-getting-started.md) / [Wiki](https://github.com/endlesstravel/Love2dCS/wiki)
 
 Other
 ---
