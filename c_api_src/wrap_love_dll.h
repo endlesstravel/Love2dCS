@@ -913,7 +913,7 @@ namespace wrap
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_ImageData_getPixel(ImageData *t, int x, int y, Pixel *out_pixel);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_ImageData_setPixel(ImageData *t, int x, int y, Pixel pixel);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_ImageData_paste(ImageData *t, ImageData* src, int dx, int dy, int sx, int sy, int sw, int sh);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_ImageData_encode(ImageData *t, int format_type, const char* filename);
+    extern "C" LOVE_EXPORT void wrap_love_dll_type_ImageData_encode(ImageData *t, int format_type, bool4 writeToFile, const char* filename, FileData** out_fileData);
 	extern "C" LOVE_EXPORT void inner_wrap_love_dll_type_ImageData_getPixelSize(ImageData *t, int *out_pixelSize);
 	extern "C" LOVE_EXPORT void inner_wrap_love_dll_type_ImageData_lock(ImageData *t);
 	extern "C" LOVE_EXPORT void inner_wrap_love_dll_type_ImageData_unlock(ImageData *t);

@@ -3177,10 +3177,10 @@ namespace Love
             _wrap_love_dll_type_ImageData_paste(p, src_imageData, dx, dy, sx, sy, sw, sh);
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_ImageData_encode")]
-        internal extern static void _wrap_love_dll_type_ImageData_encode(IntPtr p, int format_type, byte[] filename);
-        internal static void wrap_love_dll_type_ImageData_encode(IntPtr p, int format_type, byte[] filename)
+        internal extern static void _wrap_love_dll_type_ImageData_encode(IntPtr p, int format_type, bool writeToFile, byte[] filename, out IntPtr out_fileData);
+        internal static void wrap_love_dll_type_ImageData_encode(IntPtr p, int format_type, bool writeToFile, byte[] filename, out IntPtr out_fileData)
         {
-            _wrap_love_dll_type_ImageData_encode(p, format_type, filename);
+            _wrap_love_dll_type_ImageData_encode(p, format_type, writeToFile, filename, out out_fileData);
         }
 
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
@@ -3834,6 +3834,23 @@ namespace Love
         public override string ToString()
         {
             return $"({x},{y})";
+        }
+
+        public static Float2[] FromFloats(params float[] points)
+        {
+            Check.ArgumentNull(points, "points");
+            if (points.Length % 2 == 1)
+            {
+                throw new Exception("points must be an integer multiple of 2.");
+            }
+
+            var result = new Float2[points.Length / 2];
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i].x = points[2 * i];
+                result[i].y = points[2 * i + 1];
+            }
+            return result;
         }
     };
 

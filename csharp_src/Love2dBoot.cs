@@ -235,6 +235,15 @@ namespace Love
         /// Callback function used to draw on the screen every frame.
         /// </summary>
         public virtual void Draw() {}
+
+
+        /// <summary>
+        /// Callback function when exception occur.
+        /// </summary>
+        public virtual void ErrorHandler(Exception e)
+        {
+
+        }
     }
 
     /// <summary>
@@ -397,6 +406,10 @@ namespace Love
             }
             catch (Exception e)
             {
+                if(scene != null)
+                {
+                    scene.ErrorHandler(e);
+                }
                 Console.WriteLine(e.ToString());
             }
         }

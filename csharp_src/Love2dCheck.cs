@@ -2,7 +2,7 @@
 
 namespace Love
 {
-    static class Check
+    public static class Check
     {
         public static void ArgumentNull(object obj, string argumentName)
         {

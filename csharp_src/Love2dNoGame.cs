@@ -383,7 +383,7 @@ namespace Love
         {
             Window.SetTitle("LÖVE " + Common.GetVersion() + " (" + Common.GetVersionCodeName() + ")");
 
-            Graphics.SetBackgroundColor(136, 193, 206);
+            Graphics.SetBackgroundColor(136f / 255f, 193f / 255f, 206f / 255f);
             g_images_toast_back = load_image(toast_back_png, "toast_back.png");
 		    g_images_toast_front = load_image(toast_front_png, "toast_front.png");
             g_images_toast_eyes_open = load_image(toast_eyes_open_png, "toast_eyes_open.png");
@@ -408,7 +408,6 @@ namespace Love
             Graphics.Push();
             float scale = (float)Window.GetDPIScale();
             Graphics.Scale(scale, scale);
-            Graphics.Clear(136 / 255f, 193 / 255f, 206 / 255f, 1);
             g_toast.Draw();
             g_mosaic.Draw();
             Graphics.Pop();

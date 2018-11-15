@@ -434,9 +434,15 @@ namespace Love
 
     public partial class ImageData
     {
-        public void Encode(ImageFormat format_type, string filename)
+        /// <summary>
+        /// Encodes the ImageData and optionally writes it to the save directory.
+        /// </summary>
+        /// <param name="format_type">The format to encode the image as.</param>
+        /// <param name="filename">The filename to write the file to. If null, no file will be written but the FileData will still be returned.</param>
+        /// <returns></returns>
+        public FileData Encode(ImageFormat format_type, string filename = null)
         {
-            Encode(format_type, DllTool.GetNullTailUTF8Bytes(filename));
+            return Encode(format_type, filename != null, DllTool.GetNullTailUTF8Bytes(filename));
         }
     }
 
