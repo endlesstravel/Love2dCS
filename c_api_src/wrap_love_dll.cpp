@@ -5498,13 +5498,15 @@ namespace wrap
         t->paste((love::image::ImageData *)src, dx, dy, sx, sy, sw, sh);
     }
 
-    void wrap_love_dll_type_ImageData_encode(ImageData *t, int format_type, const char* filename)
+    void wrap_love_dll_type_ImageData_encode(ImageData *t, int format_type, bool4 writeToFile, const char* filename, FileData** out_fileData)
     {
         auto format = (FormatHandler::EncodedFormat)format_type;
         wrap_catchexcept([&]() { 
             love::filesystem::FileData *filedata = t->encode(format, filename, false);
-            
-            wrap_love_dll_filesystem_write(filename, filedata->getData(), filedata->getSize());
+			if (writeToFile) {
+	           wrap_love_dll_filesystem_write(filename, filedata->getData(), filedata->getSize());
+			}
+			*out_fileData = filedata;
         });
     }
 

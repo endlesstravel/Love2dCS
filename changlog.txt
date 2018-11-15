@@ -1,4 +1,17 @@
-﻿2018年10月20日
+﻿2018年11月15日
+1. 修复 ImageData.Encode 函数的返回值为 fileData
+2. 添加 ImageData / Data 注释
+3. 修复 Graphics.newCanvas 错误
+4. 添加 Data.GetGbytes 方法
+
+
+2018年11月08日
+1. 修改 Graphics.GetDimensions 错误
+2. 修复 Graphics GetBackgroundColor / SetBackgroundColor 错误，之前忘记修复了……
+3. 添加 Graphics.Line / Points / Polygon 的 params float[] 重载
+4. 改进 Mathf.Random 的使用方式和注释
+
+2018年10月20日
 
 1. 修复 Graphics GetBackgroundColor / SetBackgroundColor 错误
 2. 添加 Love.Mathf 注释

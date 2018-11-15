@@ -2247,6 +2247,18 @@ namespace Love
     /// </summary>
     public partial class Image
     {
+        /// <summary>
+        /// Creates a new <see cref="ImageData"/> object.
+        /// </summary>
+        /// <param name="w">The width of the ImageData.</param>
+        /// <param name="h">The height of the ImageData.</param>
+        /// <param name="format">The pixel format of the ImageData.</param>
+        /// <param name="data">Optional raw byte data to load into the ImageData, in the format specified by format.</param>
+        /// <returns></returns>
+        public static ImageData NewImageData(uint w, uint h, ImageDataPixelFormat format = ImageDataPixelFormat.RGBA8, byte[] data = null)
+        {
+            return NewImageData(w, h, format, data);
+        }
 
         /// <summary>
         /// Creates a new <see cref="ImageData"/> object.
@@ -2445,11 +2457,28 @@ namespace Love
             Love2dDll.wrap_love_dll_open_love_math();
             rg = NewRandomGenerator();
         }
-        public static float Random(int l, int u)
+
+        /// <summary>
+        /// Get uniformly distributed pseudo-random integer within [min, max].
+        /// </summary>
+        /// <param name="min">The minimum possible value it should return.</param>
+        /// <param name="max">The maximum possible value it should return.</param>
+        /// <returns></returns>
+        public static float Random(float min, float max)
         {
             double random = rg.Random();
-            return (float)(Math.Floor(random * (u - l + 1) + l));
+            return (float)(Math.Floor(random * (max - min + 1) + min));
         }
+
+        /// <summary>
+        /// Get uniformly distributed pseudo-random real number within [0, 1].
+        /// </summary>
+        /// <returns></returns>
+        public static float Random()
+        {
+            return Random(0, 1);
+        }
+
         public static RandomGenerator Ext_getRandomGenerator()
         {
             return rg;
@@ -2722,7 +2751,7 @@ namespace Love
                 settings = new Settings();
             }
 
-            if (settings.dpiScale != null)
+            if (settings.dpiScale == null)
             {
                 settings.dpiScale = GetDPIScale();
             }
@@ -2931,11 +2960,11 @@ namespace Love
         /// <summary>
         /// Sets the background color.
         /// </summary>
-        /// <param name="r"></param>
-        /// <param name="g"></param>
-        /// <param name="b"></param>
-        /// <param name="a"></param>
-        public static void SetBackgroundColor(int r, int g, int b, int a = 255)
+        /// <param name="r">The red component (0-1).</param>
+        /// <param name="g">The green component (0-1).</param>
+        /// <param name="b">The blue component (0-1).</param>
+        /// <param name="a">The alpha component (0-1).</param>
+        public static void SetBackgroundColor(float r, float g, float b, float a = 1)
         {
             Love2dDll.wrap_love_dll_graphics_setBackgroundColor(r, g, b, a);
         }

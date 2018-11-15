@@ -476,8 +476,19 @@ namespace Love
         /// </summary>
         protected Canvas() {}
 
+
         /// <summary>
-        /// 
+        /// Generates ImageData from the contents of the Canvas.
+        /// </summary>
+        /// <returns></returns>
+        public ImageData NewImageData()
+        {
+            return NewImageData(0, 0, 0, 0, GetWidth(), GetHeight());
+        }
+
+
+        /// <summary>
+        /// Generates ImageData from the contents of the Canvas.
         /// </summary>
         /// <param name="slice">The cubemap face index, array index, or depth layer for cubemap, array, or volume type Canvases, respectively. This argument is ignored for regular 2D canvases.</param>
         /// <param name="mipmap">he mipmap index to use, for Canvases with mipmaps. https://love2d.org/wiki/CanvasMipmapMode </param>
@@ -505,6 +516,7 @@ namespace Love
             Love2dDll.wrap_love_dll_type_Canvas_newImageData_xywh(p, slice, mipmap, x, y, w, h, out out_imageData);
             return NewObject<ImageData>(out_imageData);
         }
+
         public PixelFormat GetFormat()
         {
             int out_format_type = 0;
@@ -1571,28 +1583,56 @@ namespace Love
         /// </summary>
         protected ImageData() { }
 
+        /// <summary>
+        /// Gets the width of the ImageData in pixels.	
+        /// </summary>
+        /// <returns></returns>
         public int GetWidth()
         {
             int out_w = 0;
             Love2dDll.wrap_love_dll_type_ImageData_getWidth(p, out out_w);
             return out_w;
         }
+
+        /// <summary>
+        /// Gets the height of the ImageData in pixels.	
+        /// </summary>
+        /// <returns></returns>
         public int GetHeight()
         {
             int out_h = 0;
             Love2dDll.wrap_love_dll_type_ImageData_getHeight(p, out out_h);
             return out_h;
         }
+
+        /// <summary>
+        /// <para>Gets the color of a pixel at a specific position in the image.</para>
+        /// </summary>
+        /// <param name="x">The position of the pixel on the x-axis.</param>
+        /// <param name="y">The position of the pixel on the y-axis.</param>
+        /// <returns></returns>
         public Pixel GetPixel(int x, int y)
         {
             Pixel out_pixel;
             Love2dDll.wrap_love_dll_type_ImageData_getPixel(p, x, y, out out_pixel);
             return out_pixel;
         }
+
+        /// <summary>
+        /// <para>Sets the color of a pixel at a specific position in the image. </para>
+        /// </summary>
+        /// <param name="x">The position of the pixel on the x-axis.</param>
+        /// <param name="y">The position of the pixel on the y-axis.</param>
+        /// <param name="pixel"></param>
         public void SetPixel(int x, int y, Pixel pixel)
         {
             Love2dDll.wrap_love_dll_type_ImageData_setPixel(p, x, y, pixel);
         }
+
+        /// <summary>
+        /// Gets the pixel format of the ImageData.
+        /// </summary>
+        /// <returns></returns>
         public PixelFormat GetFormat()
         {
             int format;
@@ -1600,14 +1640,32 @@ namespace Love
             return (PixelFormat)format;
         }
 
+        /// <summary>
+        /// Paste into ImageData from another source ImageData.
+        /// </summary>
+        /// <param name="src_imageData">Source ImageData from which to copy.</param>
+        /// <param name="dx">Destination top-left position on x-axis.</param>
+        /// <param name="dy">Destination top-left position on y-axis.</param>
+        /// <param name="sx">Source top-left position on x-axis.</param>
+        /// <param name="sy">Source top-left position on y-axis.</param>
+        /// <param name="sw">Source width.</param>
+        /// <param name="sh">Source height.</param>
         public void Paste(ImageData src_imageData, int dx, int dy, int sx, int sy, int sw, int sh)
         {
             Love2dDll.wrap_love_dll_type_ImageData_paste(p, src_imageData.p, dx, dy, sx, sy, sw, sh);
         }
 
-        public void Encode(ImageFormat format_type, byte[] filename)
+        /// <summary>
+        /// Encodes the ImageData and optionally writes it to the save directory.
+        /// </summary>
+        /// <param name="format_type">The format to encode the image as.</param>
+        /// <param name="filename">The filename to write the file to. If null, no file will be written but the FileData will still be returned.</param>
+        /// <returns></returns>
+        public FileData Encode(ImageFormat format_type, bool writeToFile, byte[] filename)
         {
-            Love2dDll.wrap_love_dll_type_ImageData_encode(p, (int)format_type, filename);
+            IntPtr out_fileData = IntPtr.Zero;
+            Love2dDll.wrap_love_dll_type_ImageData_encode(p, (int)format_type, writeToFile, filename, out out_fileData);
+            return NewObject<FileData>(out_fileData);
         }
     }
 
@@ -2132,6 +2190,10 @@ namespace Love
         /// </summary>
         protected Data() { }
 
+        /// <summary>
+        /// Gets the Data's size in bytes.
+        /// </summary>
+        /// <returns></returns>
         public uint GetSize()
         {
             uint datasize;
@@ -2149,6 +2211,21 @@ namespace Love
             IntPtr out_pointer;
             Love2dDll.wrap_love_dll_type_Data_getPointer(p, out out_pointer);
             return out_pointer;
+        }
+
+
+        /// <summary>
+        /// Get file data full byte[]
+        /// <para>This function can be slow if it is called repeatedly, such as from <see cref="Scene.Update(float)"/> or <see cref="Scene.Draw"/> . If you need to use a specific resource often, create it once and store it somewhere it can be reused!</para>
+        /// </summary>
+        /// <returns></returns>
+        public byte[] GetBytes()
+        {
+            var byteSize = (int)GetSize();
+            byte[] data = new byte[byteSize];
+            IntPtr pointer = GetPointer();
+            Marshal.Copy(pointer, data, 0, byteSize);
+            return data;
         }
     }
 

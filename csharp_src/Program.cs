@@ -575,6 +575,9 @@ namespace Love
                 new Float2(40, 40),
             };
             Graphics.Line(list);
+
+
+            Graphics.Rectangle(DrawMode.Fill, 10, 10, 200, 200);
         }
     }
 

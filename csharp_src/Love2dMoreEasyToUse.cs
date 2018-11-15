@@ -179,6 +179,7 @@ namespace Love
 
         /// <summary>
         /// Creates a new ImageData object.
+        /// <para> Float4[x, y] <== new Float(0.1f, 0.2f, 0.3f, 0.4f) </para>
         /// </summary>
         /// <param name="rawData">color data to set</param>
         /// <param name="format">The pixel format of the ImageData.</param>
@@ -991,9 +992,36 @@ namespace Love
         /// Gets the width and height of the window.
         /// </summary>
         /// <returns></returns>
-        public Int2 GetDimensions()
+        public static Int2 GetDimensions()
         {
             return new Int2(GetWidth(), GetHeight());
+        }
+
+        /// <summary>
+        /// Draws lines between points.
+        /// </summary>
+        /// <param name="points">must be an integer multiple of 2. [first(x, y), second(x, y) ....]</param>
+        public static void Line(params float[] points)
+        {
+            Line(Float2.FromFloats(points));
+        }
+
+        /// <summary>
+        /// Draws one or more points.
+        /// </summary>
+        /// <param name="points">must be an integer multiple of 2. [first(x, y), second(x, y) ....]</param>
+        public static void Points(params float[] points)
+        {
+            Points(Float2.FromFloats(points));
+        }
+
+        /// <summary>
+        /// Draw a polygon.
+        /// </summary>
+        /// <param name="points">must be an integer multiple of 2. [first(x, y), second(x, y) ....]</param>
+        public static void Polygon(DrawMode mode, params float[] points)
+        {
+            Polygon(mode, Float2.FromFloats(points));
         }
     }
 
