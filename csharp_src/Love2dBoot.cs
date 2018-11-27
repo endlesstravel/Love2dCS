@@ -95,21 +95,21 @@ namespace Love
         /// <param name="joystick">The joystick object.</param>
         /// <param name="hat">The hat number.</param>
         /// <param name="direction">The new hat direction.</param>
-        public virtual void JoystickHat(Joystick joystick, int hat, Joystick.Hat direction) { }
+        public virtual void JoystickHat(Joystick joystick, int hat, JoystickHat direction) { }
 
         /// <summary>
         /// Called when a Joystick's virtual gamepad button is pressed.
         /// </summary>
         /// <param name="joystick">The joystick object.</param>
         /// <param name="button">The virtual gamepad button.</param>
-        public virtual void JoystickGamepadPressed(Joystick joystick, Joystick.GamepadButton button) { }
+        public virtual void JoystickGamepadPressed(Joystick joystick, GamepadButton button) { }
 
         /// <summary>
         /// Called when a Joystick's virtual gamepad button is released.
         /// </summary>
         /// <param name="joystick">The joystick object.</param>
         /// <param name="button">The virtual gamepad button.</param>
-        public virtual void JoystickGamepadReleased(Joystick joystick, Joystick.GamepadButton button) { }
+        public virtual void JoystickGamepadReleased(Joystick joystick, GamepadButton button) { }
 
         /// <summary>
         /// Called when a Joystick's virtual gamepad axis is moved.
@@ -117,7 +117,7 @@ namespace Love
         /// <param name="joystick">The joystick object.</param>
         /// <param name="axis">The virtual gamepad axis.</param>
         /// <param name="value">The new axis value.</param>
-        public virtual void JoystickGamepadAxis(Joystick joystick, Joystick.GamepadAxis axis, float value) { }
+        public virtual void JoystickGamepadAxis(Joystick joystick, GamepadAxis axis, float value) { }
 
         /// <summary>
         /// Called when a Joystick is connected.

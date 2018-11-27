@@ -55,6 +55,9 @@ namespace Love
         // time of release chance between openGL and opengGL resource (for example Texture)
     }
 
+    /// <summary>
+    /// <para>A Source represents audio you can play back. You can do interesting things with Sources, like set the volume, pitch, and its position relative to the listener. Please note that positional audio only works for mono (i.e. non-stereo) sources.</para>
+    /// </summary>
     public partial class Source : LoveObject
     {
         /// <summary>
@@ -62,160 +65,338 @@ namespace Love
         /// </summary>
         protected Source() {}
 
+        /// <summary>
+        /// Creates an identical copy of the Source in the stopped state.
+        /// <para>Static Sources will use significantly less memory and take much less time to be created if <see cref="Clone"/> is used to create them instead of <see cref="Audio.NewSource"/>, so this method should be preferred when making multiple Sources which play the same sound.</para>
+        /// </summary>
+        /// <returns></returns>
         public Source Clone()
         {
             IntPtr out_clone = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_Source_clone(p, out out_clone);
             return LoveObject.NewObject<Source>(out_clone);
         }
+        /// <summary>
+        /// Plays a source.
+        /// </summary>
+        /// <returns>Whether the Source was able to successfully start playing.</returns>
         public bool Play()
         {
             bool out_success = false;
             Love2dDll.wrap_love_dll_type_Source_play(p, out out_success);
             return out_success;
         }
+
+        /// <summary>
+        /// Stops a source.
+        /// </summary>
         public void Stop()
         {
             Love2dDll.wrap_love_dll_type_Source_stop(p);
         }
+
+        /// <summary>
+        /// Pauses the Source.
+        /// </summary>
         public void Pause()
         {
             Love2dDll.wrap_love_dll_type_Source_pause(p);
         }
+
+        /// <summary>
+        /// Sets the pitch of the Source.
+        /// </summary>
+        /// <param name="pitch">Calculated with regard to 1 being the base pitch. Each reduction by 50 percent equals a pitch shift of -12 semitones (one octave reduction). Each doubling equals a pitch shift of 12 semitones (one octave increase). Zero is not a legal value.</param>
         public void SetPitch(float pitch)
         {
             Love2dDll.wrap_love_dll_type_Source_setPitch(p, pitch);
             return;
         }
+
+        /// <summary>
+        /// Gets the current pitch of the Source.
+        /// </summary>
+        /// <returns>The pitch, where 1.0 is normal.</returns>
         public float GetPitch()
         {
             float out_pitch = 0;
             Love2dDll.wrap_love_dll_type_Source_getPitch(p, out out_pitch);
             return out_pitch;
         }
+
+        /// <summary>
+        /// Sets the current volume of the Source.
+        /// </summary>
+        /// <param name="volume">The volume for a Source, where 1.0 is normal volume. Volume cannot be raised above 1.0.</param>
         public void SetVolume(float volume)
         {
             Love2dDll.wrap_love_dll_type_Source_setVolume(p, volume);
         }
+
+        /// <summary>
+        /// Gets the current volume of the Source.
+        /// </summary>
+        /// <returns>The volume of the Source, where 1.0 is normal volume.</returns>
         public float GetVolume()
         {
             float out_volume = 0;
             Love2dDll.wrap_love_dll_type_Source_getVolume(p, out out_volume);
             return out_volume;
         }
-        public void Seek(float offset, TimeUnit unit_type)
+
+        /// <summary>
+        /// Sets the currently playing position of the Source.
+        /// </summary>
+        /// <param name="offset">The position to seek to.</param>
+        /// <param name="unit_type">The unit of the position value.</param>
+        public void Seek(float offset, TimeUnit unit_type = TimeUnit.Seconds)
         {
             Love2dDll.wrap_love_dll_type_Source_seek(p, offset, (int)unit_type);
         }
-        public float Tell(TimeUnit unit_type)
+
+        /// <summary>
+        /// Gets the currently playing position of the Source.
+        /// </summary>
+        /// <param name="unit_type">The type of unit for the return value.</param>
+        /// <returns>The currently playing position of the Source.</returns>
+        public float Tell(TimeUnit unit_type = TimeUnit.Seconds)
         {
             float out_position = 0;
             Love2dDll.wrap_love_dll_type_Source_tell(p, (int)unit_type, out out_position);
             return out_position;
         }
-        public float GetDuration(TimeUnit unit_type)
+
+        /// <summary>
+        /// Gets the duration of the Source.
+        /// </summary>
+        /// <param name="unit_type">The time unit for the return value.</param>
+        /// <returns>The duration of the Source, or -1 if it cannot be determined.</returns>
+        public float GetDuration(TimeUnit unit_type = TimeUnit.Seconds)
         {
             float out_duration = 0;
             Love2dDll.wrap_love_dll_type_Source_getDuration(p, (int)unit_type, out out_duration);
             return out_duration;
         }
+
+        /// <summary>
+        /// Sets the position of the Source.
+        /// </summary>
+        /// <param name="x">The X position of the Source.</param>
+        /// <param name="y">The Y position of the Source.</param>
+        /// <param name="z">The Z position of the Source.</param>
         public void SetPosition(float x, float y, float z)
         {
             Love2dDll.wrap_love_dll_type_Source_setPosition(p, x, y, z);
         }
+
+        /// <summary>
+        /// Gets the position of the Source.
+        /// </summary>
+        /// <returns></returns>
         public Float3 GetPosition()
         {
             float out_x = 0, out_y = 0, out_z = 0;
             Love2dDll.wrap_love_dll_type_Source_getPosition(p, out out_x, out out_y, out out_z);
             return new Float3(out_x, out_y, out_z);
         }
+
+        /// <summary>
+        /// Sets the velocity of the Source.
+        /// </summary>
+        /// <param name="x">The X part of the velocity vector.</param>
+        /// <param name="y">The Y part of the velocity vector.</param>
+        /// <param name="z">The Z part of the velocity vector.</param>
         public void SetVelocity(float x, float y, float z)
         {
             Love2dDll.wrap_love_dll_type_Source_setVelocity(p, x, y, z);
         }
+
+        /// <summary>
+        /// Gets the velocity of the Source.
+        /// </summary>
+        /// <returns></returns>
         public Float3 GetVelocity()
         {
             float out_x = 0, out_y = 0, out_z = 0;
             Love2dDll.wrap_love_dll_type_Source_getVelocity(p, out out_x, out out_y, out out_z);
             return new Float3(out_x, out_y, out_z);
         }
+
+        /// <summary>
+        /// Sets the direction of the Source.
+        /// </summary>
+        /// <param name="x">The X part of the direction vector.</param>
+        /// <param name="y">The Y part of the direction vector.</param>
+        /// <param name="z">The Z part of the direction vector.</param>
         public void SetDirection(float x, float y, float z)
         {
             Love2dDll.wrap_love_dll_type_Source_setDirection(p, x, y, z);
             return;
         }
+
+        /// <summary>
+        /// Gets the direction of the Source.
+        /// </summary>
+        /// <returns></returns>
         public Float3 GetDirection()
         {
             float out_x = 0, out_y = 0, out_z = 0;
             Love2dDll.wrap_love_dll_type_Source_getDirection(p, out out_x, out out_y, out out_z);
             return new Float3(out_x, out_y, out_z);
         }
-        public void SetCone(float innerAngle, float outerAngle, float outerVolume)
+
+        /// <summary>
+        /// Sets the Source's directional volume cones.
+        /// </summary>
+        /// <param name="innerAngle">The inner angle from the Source's direction, in radians. The Source will play at normal volume if the listener is inside the cone defined by this angle.</param>
+        /// <param name="outerAngle">The outer angle from the Source's direction, in radians. The Source will play at a volume between the normal and outer volumes, if the listener is in between the cones defined by the inner and outer angles.</param>
+        /// <param name="outerVolume">The Source's volume when the listener is outside both the inner and outer cone angles.</param>
+        public void SetCone(float innerAngle, float outerAngle, float outerVolume = 0)
         {
             Love2dDll.wrap_love_dll_type_Source_setCone(p, innerAngle, outerAngle, outerVolume);
         }
+
+        /// <summary>
+        /// Gets the Source's directional volume cones.
+        /// </summary>
+        /// <param name="out_innerAngle"></param>
+        /// <param name="out_outerAngle"></param>
+        /// <param name="out_outerVolume"></param>
         public void GetCone(out float out_innerAngle, out float out_outerAngle, out float out_outerVolume)
         {
             Love2dDll.wrap_love_dll_type_Source_getCone(p, out out_innerAngle, out out_outerAngle, out out_outerVolume);
         }
+
+        /// <summary>
+        /// Sets whether the Source's position and direction are relative to the listener.
+        /// <para>By default, all sources are absolute and therefore relative to the origin of love's coordinate system [0, 0, 0]. Only absolute sources are affected by the position of the listener. Please note that positional audio only works for mono (i.e. non-stereo) sources.</para>
+        /// </summary>
+        /// <param name="relative">True to make the position, velocity, direction and cone angles relative to the listener, false to make them absolute.</param>
         public void SetRelative(bool relative)
         {
             Love2dDll.wrap_love_dll_type_Source_setRelative(p, relative);
         }
+
+        /// <summary>
+        /// Gets whether the Source's position and direction are relative to the listener.
+        /// </summary>
+        /// <returns>True if the position, velocity, direction and cone angles are relative to the listener, false if they're absolute.</returns>
         public bool IsRelative()
         {
             bool out_relative = false;
             Love2dDll.wrap_love_dll_type_Source_isRelative(p, out out_relative);
             return out_relative;
         }
+
+        /// <summary>
+        /// Sets whether the Source should loop.
+        /// </summary>
+        /// <param name="looping">True if the source should loop, false otherwise.</param>
         public void SetLooping(bool looping)
         {
             Love2dDll.wrap_love_dll_type_Source_setLooping(p, looping);
         }
+
+        /// <summary>
+        /// Returns whether the Source will loop.
+        /// </summary>
+        /// <returns>True if the Source will loop, false otherwise.</returns>
         public bool IsLooping()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_Source_isLooping(p, out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// Returns whether the Source is playing.
+        /// </summary>
+        /// <returns>True if the Source is playing, false otherwise.</returns>
         public bool IsPlaying()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_Source_isPlaying(p, out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// Sets the volume limits of the source.
+        /// </summary>
+        /// <param name="vmin">The minimum volume.</param>
+        /// <param name="vmax">The maximum volume.</param>
         public void SetVolumeLimits(float vmin, float vmax)
         {
             Love2dDll.wrap_love_dll_type_Source_setVolumeLimits(p, vmin, vmax);
         }
+
+        /// <summary>
+        /// Returns the volume limits of the source.
+        /// </summary>
+        /// <param name="out_vmin">The minimum volume.</param>
+        /// <param name="out_vmax">The minimum volume.</param>
         public void GetVolumeLimits(out float out_vmin, out float out_vmax)
         {
             Love2dDll.wrap_love_dll_type_Source_getVolumeLimits(p, out out_vmin, out out_vmax);
         }
+
+        /// <summary>
+        /// Sets the reference and maximum attenuation distances of the Source.
+        /// <para>The parameters, combined with the current DistanceModel, affect how the Source's volume attenuates based on distance. Distance attenuation is only applicable to Sources based on mono (rather than stereo) audio.</para>
+        /// </summary>
+        /// <param name="dref">The new reference attenuation distance. If the current <see cref="DistanceModel"/> is clamped, this is the minimum attenuation distance.</param>
+        /// <param name="dmax"></param>
         public void SetAttenuationDistances(float dref, float dmax)
         {
             Love2dDll.wrap_love_dll_type_Source_setAttenuationDistances(p, dref, dmax);
         }
+
+        /// <summary>
+        /// Gets the reference and maximum attenuation distances of the Source.
+        /// <para>The values, combined with the current DistanceModel, affect how the Source's volume attenuates based on distance from the listener.</para>
+        /// </summary>
+        /// <param name="out_dref">The current reference attenuation distance. If the current <see cref="DistanceModel"/> is clamped, this is the minimum distance before the Source is no longer attenuated.</param>
+        /// <param name="out_dmax">The current maximum attenuation distance.</param>
         public void GetAttenuationDistances(out float out_dref, out float out_dmax)
         {
             Love2dDll.wrap_love_dll_type_Source_getAttenuationDistances(p, out out_dref, out out_dmax);
         }
+
+        /// <summary>
+        /// Sets the rolloff factor which affects the strength of the used distance attenuation. see <see cref="DistanceModel"/>
+        /// <para>Extended information and detailed formulas can be found in the chapter "3.4. Attenuation By Distance" of OpenAL 1.1 specification(https://www.openal.org/documentation/openal-1.1-specification.pdf).</para>
+        /// </summary>
+        /// <param name="rolloff">The new rolloff factor.</param>
         public void SetRolloff(float rolloff)
         {
             Love2dDll.wrap_love_dll_type_Source_setRolloff(p, rolloff);
         }
+
+        /// <summary>
+        /// Returns the rolloff factor of the source.
+        /// </summary>
+        /// <returns>The rolloff factor.</returns>
         public float GetRolloff()
         {
             float out_rolloff = 0;
             Love2dDll.wrap_love_dll_type_Source_getRolloff(p, out out_rolloff);
             return out_rolloff;
         }
+
+        /// <summary>
+        /// Gets the number of channels in the Source. Only 1-channel (mono) Sources can use directional and positional effects.
+        /// </summary>
+        /// <returns>1 for mono, 2 for stereo.</returns>
         public int GetChannelCount()
         {
             int out_chanels = 0;
             Love2dDll.wrap_love_dll_type_Source_getChannelCount(p, out out_chanels);
             return out_chanels;
         }
+
+        /// <summary>
+        /// Gets the type of the Source.
+        /// </summary>
+        /// <returns>The type of the source.</returns>
         public SourceType GetSourceType()
         {
             int out_type = 0;
@@ -224,6 +405,9 @@ namespace Love
         }
     }
 
+    /// <summary>
+    /// <para>Represents a file on the filesystem. A function that takes a file path can also take a <see cref="File"/>.</para>
+    /// </summary>
     public partial class File : LoveObject
     {
         /// <summary>
@@ -231,29 +415,54 @@ namespace Love
         /// </summary>
         protected File() {}
 
+        /// <summary>
+        /// Returns the file size(in byte).
+        /// </summary>
+        /// <returns></returns>
         public double GetSize()
         {
             double out_size = 0;
             Love2dDll.wrap_love_dll_type_File_getSize(p, out out_size);
             return out_size;
         }
-        public void Open(FileMode mode_type)
+
+        /// <summary>
+        /// Open the file for write, read or append.
+        /// </summary>
+        /// <param name="mode_type">The mode to open the file in.</param>
+        public bool Open(FileMode mode_type)
         {
-            Love2dDll.wrap_love_dll_type_File_open(p, (int)mode_type);
+            return Love2dDll.wrap_love_dll_type_File_open(p, (int)mode_type);
         }
+
+        /// <summary>
+        /// Closes a File.
+        /// </summary>
+        /// <returns>Whether closing was successful.</returns>
         public bool Close()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_File_close(p, out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// Gets whether the file is open.
+        /// </summary>
+        /// <returns>True if the file is currently open, false otherwise.</returns>
         public bool IsOpen()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_File_isOpen(p, out out_result);
             return out_result;
         }
-        public byte[] read(long size)
+
+        /// <summary>
+        /// Read a number of bytes from a file
+        /// </summary>
+        /// <param name="size">The number of bytes to read.</param>
+        /// <returns></returns>
+        public byte[] Read(long size)
         {
             IntPtr out_data = IntPtr.Zero;
             long out_readedSize = 0;
@@ -261,65 +470,120 @@ namespace Love
 
             return DllTool.readBytesAndRelease(out_data, out_readedSize);
         }
-        public void Write(byte[] data, long datasize)
+
+        /// <summary>
+        /// Write data to a file.
+        /// </summary>
+        /// <param name="data">The byte data to write.</param>
+        /// <param name="datasize">How many bytes to write.</param>
+        /// <returns>Whether the operation was successful.</returns>
+        public bool Write(byte[] data, long datasize)
         {
-            Love2dDll.wrap_love_dll_type_File_write_String(p, data, datasize);
+            return Love2dDll.wrap_love_dll_type_File_write_String(p, data, datasize);
         }
-        public void Write(Data data, long datasize)
+
+        /// <summary>
+        /// Write data to a file.
+        /// </summary>
+        /// <param name="data">The Data object to write.</param>
+        /// <param name="datasize">How many bytes to write.</param>
+        /// <returns>Whether the operation was successful.</returns>
+        public bool Write(Data data, long datasize)
         {
-            Love2dDll.wrap_love_dll_type_File_write_Data_datasize(p, data.p, datasize);
+            return Love2dDll.wrap_love_dll_type_File_write_Data_datasize(p, data.p, datasize);
         }
+
+        /// <summary>
+        /// Flushes any buffered written data in the file to disk.
+        /// </summary>
         public void Flush()
         {
             Love2dDll.wrap_love_dll_type_File_flush(p);
         }
+
+        /// <summary>
+        /// Gets whether end-of-file has been reached.
+        /// </summary>
+        /// <returns>Whether EOF has been reached.</returns>
         public bool IsEOF()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_File_isEOF(p, out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// Returns the position in the file.
+        /// </summary>
+        /// <returns>The current position.</returns>
         public long Tell()
         {
             long out_pos = 0;
             Love2dDll.wrap_love_dll_type_File_tell(p, out out_pos);
             return out_pos;
         }
-        public void Seek(long pos)
+
+        /// <summary>
+        /// Seek to a position in a file
+        /// </summary>
+        /// <param name="pos">The position to seek to</param>
+        /// <returns>Whether the operation was successful</returns>
+        public bool Seek(long pos)
         {
-            Love2dDll.wrap_love_dll_type_File_seek(p, pos);
+            return Love2dDll.wrap_love_dll_type_File_seek(p, pos);
         }
-        public void SetBuffer(BufferMode bufmode_type, long size)
+
+        /// <summary>
+        /// <para>Sets the buffer mode for a file opened for writing or appending. Files with buffering enabled will not write data to the disk until the buffer size limit is reached, depending on the buffer mode.</para>
+        /// <para><see cref="Flush"/> will force any buffered data to be written to the disk.</para>
+        /// </summary>
+        /// <param name="bufmode_type">The buffer mode to use.</param>
+        /// <param name="size">The maximum size in bytes of the file's buffer.</param>
+        /// <returns>Whether the buffer mode was successfully set.</returns>
+        public bool SetBuffer(BufferMode bufmode_type, long size = 0)
         {
-            Love2dDll.wrap_love_dll_type_File_setBuffer(p, (int)bufmode_type, size);
+            return Love2dDll.wrap_love_dll_type_File_setBuffer(p, (int)bufmode_type, size);
         }
+
+        /// <summary>
+        /// Gets the buffer mode of a file.
+        /// </summary>
+        /// <param name="out_bufmode_type">The current buffer mode of the file.</param>
+        /// <param name="out_size">The maximum size in bytes of the file's buffer.</param>
         public void GetBuffer(out BufferMode out_bufmode_type, out long out_size)
         {
             int bufmode_type = 0;
             Love2dDll.wrap_love_dll_type_File_getBuffer(p, out bufmode_type, out out_size);
             out_bufmode_type = (BufferMode)bufmode_type;
         }
+
+        /// <summary>
+        /// Gets the <see cref="FileMode"/> the file has been opened with.
+        /// </summary>
+        /// <returns>The mode this file has been opened with.</returns>
         public FileMode GetMode()
         {
             int mode_type = 0;
             Love2dDll.wrap_love_dll_type_File_getMode(p, out mode_type);
             return (FileMode)mode_type;
         }
+
+        /// <summary>
+        /// Gets the filename that the File object was created with. If the file object originated from the <see cref="Scene.FileDropped(File)"/> callback, the filename will be the full platform-dependent file path.
+        /// </summary>
+        /// <returns></returns>
         public string GetFilename()
         {
             IntPtr out_filename = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_File_getFilename(p, out out_filename);
             return DllTool.WSToStringAndRelease(out_filename);
         }
-        public string GetExtension()
-        {
-            IntPtr out_extension = IntPtr.Zero;
-            Love2dDll.wrap_love_dll_type_File_getExtension(p, out out_extension);
-            return DllTool.WSToStringAndRelease(out_extension);
-        }
 
     }
 
+    /// <summary>
+    /// <see cref="Data"/> representing the contents of a file.
+    /// </summary>
     public partial class FileData : Data
     {
         /// <summary>
@@ -327,12 +591,21 @@ namespace Love
         /// </summary>
         protected FileData() {}
 
+        /// <summary>
+        /// Gets the filename of the FileData.
+        /// </summary>
+        /// <returns>The name of the file the FileData represents.</returns>
         public string GetFilename()
         {
             IntPtr out_filename = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_FileData_getFilename(p, out out_filename);
             return DllTool.WSToStringAndRelease(out_filename);
         }
+
+        /// <summary>
+        /// Gets the extension of the FileData.
+        /// </summary>
+        /// <returns>The extension of the file the FileData represents.</returns>
         public string GetExtension()
         {
             IntPtr out_extension = IntPtr.Zero;
@@ -341,6 +614,9 @@ namespace Love
         }
     }
 
+    /// <summary>
+    /// A GlyphData represents a drawable symbol of a font Rasterizer.
+    /// </summary>
     public partial class GlyphData : Data
     {
         /// <summary>
@@ -400,6 +676,9 @@ namespace Love
         }
     }
 
+    /// <summary>
+    /// A Rasterizer handles font rendering, containing the font data (image or TrueType font) and drawable glyphs.
+    /// </summary>
     public partial class Rasterizer : LoveObject
     {
         /// <summary>
@@ -407,6 +686,10 @@ namespace Love
         /// </summary>
         protected Rasterizer() {}
 
+        /// <summary>
+        /// Get font height
+        /// </summary>
+        /// <returns></returns>
         public int GetHeight()
         {
             int out_heigth = 0;
@@ -469,6 +752,11 @@ namespace Love
         }
     }
 
+    /// <summary>
+    /// <para>A Canvas is used for off-screen rendering. Think of it as an invisible screen that you can draw to, but that will not be visible until you draw it to the actual visible screen. It is also known as "render to texture".</para>
+    /// <para>By drawing things that do not change position often (such as background items) to the Canvas, and then drawing the entire Canvas instead of each item, you can reduce the number of draw operations performed each frame.</para>
+    /// <para>When drawing content to a Canvas using regular alpha blending, the alpha values of the content get multiplied with its RGB values. Therefore the Canvas' pixel colors will have premultiplied alpha once it has been drawn to, so when drawing the Canvas to the screen or to another Canvas you must use premultiplied alpha blending – Graphics.SetBlendMode(BlendMode.Alpha, BlendAlphaMode.PreMultiplied).</para>
+    /// </summary>
     public partial class Canvas : Texture
     {
         /// <summary>
@@ -517,12 +805,21 @@ namespace Love
             return NewObject<ImageData>(out_imageData);
         }
 
+        /// <summary>
+        /// Gets the texture format of the Canvas.
+        /// </summary>
+        /// <returns></returns>
         public PixelFormat GetFormat()
         {
             int out_format_type = 0;
             Love2dDll.wrap_love_dll_type_Canvas_getFormat(p, out out_format_type);
             return (PixelFormat)out_format_type;
         }
+
+        /// <summary>
+        /// Gets the number of MSAA samples used when drawing to the Canvas.
+        /// </summary>
+        /// <returns></returns>
         public int GetMSAA()
         {
             int out_msaa = 0;
@@ -598,11 +895,15 @@ namespace Love
         /// Gets the filter mode for a font.
         /// </summary>
         /// <returns></returns>
-        public Texture.Filter getFilter()
+        /// <param name="min_type">Filter mode used when minifying the font.</param>
+        /// <param name="mag_type">Filter mode used when magnifying the font.</param>
+        /// <param name="anisotropy">Maximum amount of anisotropic filtering used.</param>
+        public void GetFilter(out FilterMode min_type, out FilterMode mag_type, out float out_anisotropy)
         {
-            int out_min_type, out_mag_type; float out_anisotropy;
+            int out_min_type, out_mag_type;
             Love2dDll.wrap_love_dll_type_Font_getFilter(p, out out_min_type, out out_mag_type, out out_anisotropy);
-            return new Texture.Filter((FilterMode)out_min_type, (FilterMode)out_mag_type, out_anisotropy);
+            min_type = (FilterMode)out_min_type;
+            mag_type = (FilterMode)out_mag_type;
         }
 
         /// <summary>
@@ -680,22 +981,26 @@ namespace Love
         /// </summary>
         protected Image() {}
 
-        public void SetMipmapFilter(FilterMode mipmap_type, float sharpness)
-        {
-            Love2dDll.wrap_love_dll_type_Image_setMipmapFilter(p, (int)mipmap_type, sharpness);
-        }
-        public void GetMipmapFilter(out FilterMode out_mipmap_type, out float out_sharpness)
-        {
-            int out_mipmap_type_int;
-            Love2dDll.wrap_love_dll_type_Image_getMipmapFilter(p, out out_mipmap_type_int, out out_sharpness);
-            out_mipmap_type = (FilterMode)out_mipmap_type_int;
-        }
+        /// <summary>
+        /// Gets whether the Image was created from <see cref="CompressedImageData"/>.
+        /// </summary>
+        /// <returns></returns>
         public bool IsCompressed()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_Image_isCompressed(p, out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// Replace the contents of an Image.
+        /// </summary>
+        /// <param name="imageData">The new ImageData to replace the contents with.</param>
+        /// <param name="slice">Which cubemap face, array index, or volume layer to replace, if applicable.</param>
+        /// <param name="mipmap">The mimap level to replace, if the Image has mipmaps.</param>
+        /// <param name="x">The x-offset in pixels from the top-left of the image to replace. The given ImageData's width plus this value must not be greater than the pixel width of the Image's specified mipmap level.</param>
+        /// <param name="y">The y-offset in pixels from the top-left of the image to replace. The given ImageData's height plus this value must not be greater than the pixel height of the Image's specified mipmap level.</param>
+        /// <param name="reloadmipmaps">Whether to generate new mipmaps after replacing the Image's pixels. True by default if the Image was created with automatically generated mipmaps, false by default otherwise.</param>
         public void ReplacePixels(ImageData imageData, int slice, int mipmap, int x, int y, bool reloadmipmaps)
         {
             Love2dDll.wrap_love_dll_type_Image_replacePixels(p, imageData.p, slice, mipmap, x, y, reloadmipmaps);
@@ -711,20 +1016,6 @@ namespace Love
         /// disable construct
         /// </summary>
         protected Mesh() {}
-
-        // The type of data a vertex attribute can store.
-        public enum DataType
-        {
-            Byte,
-            Float,
-        };
-
-        public struct AttribFormat
-        {
-            public string name;
-            public DataType type;
-            public int components;
-        }
 
         /// <summary>
         /// Replaces a range of vertices in the Mesh with new ones. 
@@ -828,20 +1119,17 @@ namespace Love
         }
     }
 
+    /// <summary>
+    /// A ParticleSystem can be used to create particle effects like fire or smoke.
+    /// <para>The particle system has to be created using <see cref="Graphics.NewParticleSystem"/>. Just like any other <see cref="Drawable"/> it can be drawn to the screen using love.graphics.draw. You also have to call <see cref="ParticleSystem.Update(float)"/> in the update callback to see any changes in the particles emitted.</para>
+    /// <para>The particle system won't create any particles unless you call <see cref="SetParticleLifetime"/> and <see cref="SetEmissionRate"/>.</para>
+    /// </summary>
     public partial class ParticleSystem : Drawable
     {
         /// <summary>
         /// disable construct
         /// </summary>
         protected ParticleSystem() {}
-
-        // Insertion modes of new particles in the list: top, bottom, random.
-        public enum InsertMode
-        {
-            Top,
-            Bottom,
-            Random,
-        };
 
         public ParticleSystem Clone()
         {
@@ -869,15 +1157,15 @@ namespace Love
             Love2dDll.wrap_love_dll_type_ParticleSystem_getBufferSize(p, out out_buffersize);
             return out_buffersize;
         }
-        public void SetInsertMode(InsertMode mode_type)
+        public void SetInsertMode(ParticleInsertMode mode_type)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setInsertMode(p, (int)mode_type);
         }
-        public InsertMode GetInsertMode()
+        public ParticleInsertMode GetInsertMode()
         {
             int out_mode_type = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getInsertMode(p, out out_mode_type);
-            return (InsertMode)out_mode_type;
+            return (ParticleInsertMode)out_mode_type;
         }
         public void SetEmissionArea(AreaSpreadDistribution distribution, float dx, float dy, float angle = 0, bool directionRelativeToCenter = false)
         {
@@ -1387,7 +1675,6 @@ namespace Love
             return out_w;
         }
 
-
         /// <summary>
         /// Gets the height of the text in pixels.
         /// </summary>
@@ -1401,6 +1688,9 @@ namespace Love
         }
     }
 
+    /// <summary>
+    /// Superclass for drawable objects which represent a texture. All Textures can be drawn with Quads. This is an abstract type that can't be created directly.
+    /// </summary>
     public partial class Texture : Drawable
     {
         /// <summary>
@@ -1408,54 +1698,70 @@ namespace Love
         /// </summary>
         protected Texture() {}
 
-        public enum WrapMode
+        /// <summary>
+        /// Sets the mipmap filter mode for a Texture.
+        /// <para>Mipmapping(https://en.wikipedia.org/wiki/Mipmap) is useful when drawing a texture at a reduced scale. It can improve performance and reduce aliasing issues.</para>
+        /// <para>The texture must be created with the mipmaps flag enabled for the mipmap filter to have any effect. </para>
+        /// <remarks>On mobile devices (Android and iOS), the sharpness parameter is not supported and will do nothing. You can use a custom Shader instead, and specify the mipmap sharpness in the optional third parameter to the Texel function in the shader (a negative value makes the texture use a more detailed mipmap level.)</remarks>
+        /// </summary>
+        /// <param name="mipmap_type">The filter mode to use in between mipmap levels. "nearest" will often give better performance.</param>
+        /// <param name="sharpness">A positive sharpness value makes the texture use a more detailed mipmap level when drawing, at the expense of performance. A negative value does the reverse.</param>
+        public void SetMipmapFilter(FilterMode mipmap_type, float sharpness)
         {
-            Clamp,
-            ClampZero,
-            Repeat,
-            MirroredRepeat,
-        };
+            Love2dDll.wrap_love_dll_type_Texture_setMipmapFilter(p, (int)mipmap_type, sharpness);
+        }
 
-        public class Filter
+        /// <summary>
+        /// Gets the mipmap filter mode for a Texture.
+        /// </summary>
+        /// <param name="out_mipmap_type">The filter mode used in between mipmap levels. nil if mipmap filtering is not enabled.</param>
+        /// <param name="out_sharpness">Value used to determine whether the image should use more or less detailed mipmap levels than normal when drawing.</param>
+        public void GetMipmapFilter(out FilterMode out_mipmap_type, out float out_sharpness)
         {
-            /// <summary>
-            /// Filter mode used when minifying the font.
-            /// </summary>
-            public readonly FilterMode Min = FilterMode.Linear;
+            int out_mipmap_type_int;
+            Love2dDll.wrap_love_dll_type_Texture_getMipmapFilter(p, out out_mipmap_type_int, out out_sharpness);
+            out_mipmap_type = (FilterMode)out_mipmap_type_int;
+        }
 
-            /// <summary>
-            /// Filter mode used when magnifying the font.
-            /// </summary>
-            public readonly FilterMode Mag = FilterMode.Linear;
-
-            /// <summary>
-            /// Maximum amount of anisotropic filtering used.
-            /// </summary>
-            public readonly float Anisotropy = 1.0f;
-            public Filter(FilterMode min, FilterMode mag, float anisotropy)
-            {
-                this.Min = min;
-                this.Mag = mag;
-                this.Anisotropy = anisotropy;
-            }
-        };
-
+        /// <summary>
+        /// Gets the width of the Texture.
+        /// </summary>
+        /// <returns></returns>
         public int GetWidth()
         {
             int out_w;
             Love2dDll.wrap_love_dll_type_Texture_getWidth(p, out out_w);
             return out_w;
         }
+
+        /// <summary>
+        /// Gets the height of the Texture.
+        /// </summary>
+        /// <returns></returns>
         public int GetHeight()
         {
             int out_h;
             Love2dDll.wrap_love_dll_type_Texture_getHeight(p, out out_h);
             return out_h;
         }
-        public void SetFilter(FilterMode filtermin_type, FilterMode filtermag_type, float anisotropy)
+
+        /// <summary>
+        /// Sets the filter mode of the Texture.
+        /// </summary>
+        /// <param name="filtermin_type">Filter mode to use when minifying the texture (rendering it at a smaller size on-screen than its size in pixels).</param>
+        /// <param name="filtermag_type">Filter mode to use when magnifying the texture (rendering it at a larger size on-screen than its size in pixels).</param>
+        /// <param name="anisotropy">Maximum amount of anisotropic filtering to use.</param>
+        public void SetFilter(FilterMode filtermin_type, FilterMode filtermag_type, float anisotropy = 1)
         {
             Love2dDll.wrap_love_dll_type_Texture_setFilter(p, (int)filtermin_type, (int)filtermag_type, anisotropy);
         }
+
+        /// <summary>
+        /// Gets the filter mode of the Texture.
+        /// </summary>
+        /// <param name="out_filtermin_type">Filter mode to use when minifying the texture (rendering it at a smaller size on-screen than its size in pixels).</param>
+        /// <param name="out_filtermag_type">Filter mode to use when magnifying the texture (rendering it at a smaller size on-screen than its size in pixels).</param>
+        /// <param name="out_anisotropy">Maximum amount of anisotropic filtering used.</param>
         public void GetFilter(out FilterMode out_filtermin_type, out FilterMode out_filtermag_type, out float out_anisotropy)
         {
             int out_filtermin = 0, out_filtermag = 0;
@@ -1464,10 +1770,25 @@ namespace Love
             out_filtermag_type = (FilterMode)out_filtermag;
             out_filtermin_type = (FilterMode)out_filtermin;
         }
+
+        /// <summary>
+        /// Sets the wrapping properties of a Texture.
+        /// <para>This function sets the way a Texture is repeated when it is drawn with a Quad that is larger than the texture's extent, or when a custom Shader is used which uses texture coordinates outside of [0, 1]. A texture may be clamped or set to repeat in both horizontal and vertical directions.</para>
+        /// <para>Clamped textures appear only once (with the edges of the texture stretching to fill the extent of the Quad), whereas repeated ones repeat as many times as there is room in the Quad.</para>
+        /// </summary>
+        /// <param name="wraphoriz_type">Horizontal wrapping mode of the texture.</param>
+        /// <param name="wrapvert_type">Vertical wrapping mode of the texture.</param>
         public void SetWrap(WrapMode wraphoriz_type, WrapMode wrapvert_type)
         {
             Love2dDll.wrap_love_dll_type_Texture_setWrap(p, (int)wraphoriz_type, (int)wrapvert_type);
         }
+
+        /// <summary>
+        /// Gets the wrapping properties of a Texture.
+        /// <para>This function returns the currently set horizontal and vertical wrapping modes for the texture.</para>
+        /// </summary>
+        /// <param name="out_wraphoriz_type">Horizontal wrapping mode of the texture.</param>
+        /// <param name="out_wrapvert_type">Vertical wrapping mode of the texture.</param>
         public void GetWrap(out WrapMode out_wraphoriz_type, out WrapMode out_wrapvert_type)
         {
             int out_wraphoriz = 0, out_wrapvert = 0;
@@ -1962,111 +2283,13 @@ namespace Love
         /// </summary>
         protected Joystick() { }
 
-        // Joystick hat values.
-        public enum Hat
-        {
-            Invalid,
-            Centered,
-            Up,
-            Right,
-            Down,
-            Left,
-
-            /// <summary>
-            /// Right+Up
-            /// </summary>
-            RightUp,
-
-            /// <summary>
-            /// Right+Down
-            /// </summary>
-            RightDown,
-
-            /// <summary>
-            /// Left+Up
-            /// </summary>
-            LeftUp,
-
-            /// <summary>
-            /// Left+Down
-            /// </summary>
-            LeftDown,
-        };
-
-        // Valid Gamepad axes.
-        public enum GamepadAxis
-        {
-            Invalid,
-            LeftX,
-            LeftY,
-            RightX,
-            RightY,
-            TriggerLeft,
-            TriggerRight,
-        };
-
-        // Valid Gamepad buttons.
-        public enum GamepadButton
-        {
-            Invalid,
-            A,
-            B,
-            X,
-            Y,
-            Back,
-            Guide,
-            Start,
-
-            /// <summary>
-            /// Left stick click button.
-            /// </summary>
-            LeftStick,
-
-            /// <summary>
-            /// Right stick click button.
-            /// </summary>
-            RightStick,
-
-            /// <summary>
-            /// Left bumper.
-            /// </summary>
-            LeftShoulder,
-
-            /// <summary>
-            /// Right bumper.
-            /// </summary>
-            RightShoulder,
-
-            /// <summary>
-            /// D-pad up.
-            /// </summary>
-            DPadUp,
-
-            /// <summary>
-            /// D-pad down.
-            /// </summary>
-            DPadDown,
-
-            /// <summary>
-            /// D-pad left.
-            /// </summary>
-            DPadLeft,
-
-            /// <summary>
-            /// D-pad right.
-            /// </summary>
-            DPadRight,
-        };
-
-        // Different types of inputs for a joystick.
-        public enum InputType
-        {
-            Axis,
-            Button,
-            Hat,
-        };
-
-
+        //// Different types of inputs for a joystick.
+        //public enum InputType
+        //{
+        //    Axis,
+        //    Button,
+        //    Hat,
+        //};
 
         public bool IsConnected()
         {
@@ -2129,11 +2352,11 @@ namespace Love
             Love2dDll.wrap_love_dll_type_Joystick_getAxes(p, out out_axes, out out_axes_length);
             return DllTool.readFloatsAndRelease(out_axes, out_axes_length);
         }
-        public Hat GetHat(int hatindex)
+        public JoystickHat GetHat(int hatindex)
         {
             int out_hat_type = 0;
             Love2dDll.wrap_love_dll_type_Joystick_getHat(p, hatindex, out out_hat_type);
-            return (Hat)out_hat_type;
+            return (JoystickHat)out_hat_type;
         }
         public bool IsDown(int button)
         {
@@ -2235,15 +2458,6 @@ namespace Love
         /// disable construct
         /// </summary>
         protected TrueTypeRasterizer() { }
-
-        // Types of hinting for TrueType font glyphs.
-        public enum Hinting
-        {
-            Normal,
-            Light,
-            Mono,
-            None,
-        };
     }
     public partial class Drawable : LoveObject
     {

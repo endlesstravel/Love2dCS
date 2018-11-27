@@ -1,4 +1,7 @@
-﻿2018年11月15日
+﻿2018年11月18日
+1. 添加了 Source / File / FileData / Texture 的注释
+
+2018年11月15日
 1. 修复 ImageData.Encode 函数的返回值为 fileData
 2. 添加 ImageData / Data 注释
 3. 修复 Graphics.newCanvas 错误

@@ -1,5 +1,165 @@
 ﻿namespace Love
 {
+
+    /// <summary>
+    /// True Type hinting mode. See True Type official document for more information.
+    /// </summary>
+    public enum HintingMode
+    {
+        Normal,
+        Light,
+        Mono,
+        None,
+    };
+    /// <summary>
+    /// Virtual gamepad buttons.
+    /// </summary>
+    public enum GamepadButton
+    {
+        Invalid,
+        A,
+        B,
+        X,
+        Y,
+        Back,
+        Guide,
+        Start,
+
+        /// <summary>
+        /// Left stick click button.
+        /// </summary>
+        LeftStick,
+
+        /// <summary>
+        /// Right stick click button.
+        /// </summary>
+        RightStick,
+
+        /// <summary>
+        /// Left bumper.
+        /// </summary>
+        LeftShoulder,
+
+        /// <summary>
+        /// Right bumper.
+        /// </summary>
+        RightShoulder,
+
+        /// <summary>
+        /// D-pad up.
+        /// </summary>
+        DPadUp,
+
+        /// <summary>
+        /// D-pad down.
+        /// </summary>
+        DPadDown,
+
+        /// <summary>
+        /// D-pad left.
+        /// </summary>
+        DPadLeft,
+
+        /// <summary>
+        /// D-pad right.
+        /// </summary>
+        DPadRight,
+    };
+
+    /// <summary>
+    /// Virtual gamepad axes.
+    /// </summary>
+    public enum GamepadAxis
+    {
+        Invalid,
+        LeftX,
+        LeftY,
+        RightX,
+        RightY,
+        TriggerLeft,
+        TriggerRight,
+    };
+
+    // Joystick hat values.
+    public enum JoystickHat
+    {
+        Invalid,
+        Centered,
+        Up,
+        Right,
+        Down,
+        Left,
+
+        /// <summary>
+        /// Right+Up
+        /// </summary>
+        RightUp,
+
+        /// <summary>
+        /// Right+Down
+        /// </summary>
+        RightDown,
+
+        /// <summary>
+        /// Left+Up
+        /// </summary>
+        LeftUp,
+
+        /// <summary>
+        /// Left+Down
+        /// </summary>
+        LeftDown,
+    };
+
+    /// <summary>
+    /// How newly created particles are added to the ParticleSystem.
+    /// </summary>
+    public enum ParticleInsertMode
+    {
+        /// <summary>
+        /// Particles are inserted at the top of the ParticleSystem's list of particles.
+        /// </summary>
+        Top,
+
+        /// <summary>
+        /// Particles are inserted at the bottom of the ParticleSystem's list of particles.
+        /// </summary>
+        Bottom,
+
+        /// <summary>
+        /// Particles are inserted at random positions in the ParticleSystem's list of particles.
+        /// </summary>
+        Random,
+    };
+
+    /// <summary>
+    /// How the image wraps inside a Quad with a larger quad size than image size. This also affects how Meshes with texture coordinates which are outside the range of [0, 1] are drawn, and the color returned by the Texel Shader function when using it to sample from texture coordinates outside of the range of [0, 1].
+    /// <para>https://love2d.org/wiki/WrapMode</para>
+    /// </summary>
+    public enum WrapMode
+    {
+        /// <summary>
+        /// Clamp the texture. Appears only once. The area outside the texture's normal range is colored based on the edge pixels of the texture.
+        /// </summary>
+        Clamp,
+
+        /// <summary>
+        /// Clamp the texture. Fills the area outside the texture's normal range with transparent black (or opaque black for textures with no alpha channel.)
+        /// </summary>
+        ClampZero,
+
+        /// <summary>
+        /// Repeat the texture. Fills the whole available extent.
+        /// </summary>
+        Repeat,
+
+        /// <summary>
+        /// Repeat the texture, flipping it each time it repeats. May produce better visual results than the <see cref="Repeat"/> mode when the texture doesn't seamlessly tile.
+        /// </summary>
+        MirroredRepeat,
+    };
+
+
     /// <summary>
     /// How the image is filtered when scaling.
     /// </summary>
@@ -870,7 +1030,9 @@
         Pie,
     };
 
-
+    /// <summary>
+    /// Different ways to do color blending. See BlendAlphaMode and the BlendMode Formulas for additional notes.
+    /// </summary>
     public enum BlendMode : int
     {
         /// <summary>
@@ -932,9 +1094,20 @@
         /// </summary>
         PreMultiplied,
     };
+
+    /// <summary>
+    /// The styles in which lines are drawn.
+    /// </summary>
     public enum LineStyle : int
     {
+        /// <summary>
+        /// Draw rough lines.
+        /// </summary>
         Rough,
+
+        /// <summary>
+        /// Draw smooth lines.
+        /// </summary>
         Smooth,
     };
 

@@ -3880,11 +3880,6 @@ namespace wrap
     {
         *out_filename = new_WrapString(file->getFilename().c_str());
     }
-
-    void wrap_love_dll_type_File_getExtension(File *file, WrapString **out_extension)
-    {
-        *out_extension = new_WrapString(file->getExtension());
-    }
 #pragma endregion
 
 #pragma region type - FileData
@@ -4152,22 +4147,6 @@ namespace wrap
 
 #pragma region type - Image
 
-    bool4 wrap_love_dll_type_Image_setMipmapFilter(love::graphics::opengl::Image *i, int mipmap_type,float sharpness)
-    {
-        Texture::Filter f = i->getFilter();
-        f.mipmap = (Texture::FilterMode)mipmap_type;
-        return wrap_catchexcept([&]() { 
-            i->setFilter(f);
-            i->setMipmapSharpness(sharpness);
-        });
-    }
-
-    void wrap_love_dll_type_Image_getMipmapFilter(love::graphics::opengl::Image *i, int *out_mipmap_type, float *out_sharpness)
-    {
-        const Texture::Filter &f = i->getFilter();
-        *out_mipmap_type = f.mipmap;
-        *out_sharpness = i->getMipmapSharpness();
-    }
 
     void wrap_love_dll_type_Image_isCompressed(love::graphics::opengl::Image *i, bool4 *out_result)
     {
@@ -5325,6 +5304,23 @@ namespace wrap
 #pragma endregion
 
 #pragma region type - Texture
+
+	bool4 wrap_love_dll_type_Texture_setMipmapFilter(Texture *i, int mipmap_type, float sharpness)
+	{
+		Texture::Filter f = i->getFilter();
+		f.mipmap = (Texture::FilterMode)mipmap_type;
+		return wrap_catchexcept([&]() {
+			i->setFilter(f);
+			i->setMipmapSharpness(sharpness);
+		});
+	}
+
+	void wrap_love_dll_type_Texture_getMipmapFilter(Texture *i, int *out_mipmap_type, float *out_sharpness)
+	{
+		const Texture::Filter &f = i->getFilter();
+		*out_mipmap_type = f.mipmap;
+		*out_sharpness = i->getMipmapSharpness();
+	}
 
     void wrap_love_dll_type_Texture_getWidth(Texture *t, int *out_w)
     {
