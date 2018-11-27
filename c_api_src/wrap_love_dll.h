@@ -651,7 +651,6 @@ namespace wrap
     extern "C" LOVE_EXPORT void wrap_love_dll_type_File_getBuffer(File *file, int *out_bufmode_type, int64 *out_size);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_File_getMode(File *file, int *out_mode_type);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_File_getFilename(File *file, WrapString **out_filename);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_File_getExtension(File *file, WrapString **out_extension);
 
 
 #pragma endregion
@@ -718,8 +717,6 @@ namespace wrap
 #pragma endregion
 
 #pragma region type - Image
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Image_setMipmapFilter(love::graphics::opengl::Image *i, int mipmap_type, float sharpness);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Image_getMipmapFilter(love::graphics::opengl::Image *i, int *out_mipmap_type, float *out_sharpness);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Image_isCompressed(love::graphics::opengl::Image *i, bool4 *out_result);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Image_replacePixels(love::graphics::opengl::Image *i, ImageData *imgData, int slice, int mipmap, int x, int y, bool4 reloadmipmaps);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Image_getFlags(love::graphics::opengl::Image* i, bool4 *out_mipmaps, bool4 *out_linear);
@@ -874,6 +871,8 @@ namespace wrap
 #pragma endregion
 
 #pragma region type - Texture
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Texture_setMipmapFilter(Texture *i, int mipmap_type, float sharpness);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Texture_getMipmapFilter(Texture *i, int *out_mipmap_type, float *out_sharpness);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Texture_getWidth(Texture *t, int *out_w);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Texture_getHeight(Texture *t, int *out_h);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Texture_setFilter(Texture *t, int filtermin_type, int filtermag_type, float anisotropy);

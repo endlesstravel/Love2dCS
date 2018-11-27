@@ -1322,18 +1322,18 @@ namespace Love
             Love2dDll.wrap_love_dll_joystick_getJoystickCount(out out_sticks_lenght);
             return out_sticks_lenght;
         }
-        public static bool SetGamepadMapping(byte[] guid, Joystick.InputType gp_inputType_type, Joystick.InputType j_inputType_type, int inputIndex, Joystick.Hat hat_type)
-        {
-            bool out_success = false;
-            Love2dDll.wrap_love_dll_joystick_setGamepadMapping(guid, (int)gp_inputType_type, (int)j_inputType_type, inputIndex, (int)hat_type, out out_success);
-            return out_success;
-        }
-        public static bool LoadGamepadMappings(byte[] str)
-        {
-            bool out_success = false;
-            Love2dDll.wrap_love_dll_joystick_loadGamepadMappings(str, out out_success);
-            return out_success;
-        }
+        //public static bool SetGamepadMapping(byte[] guid, Joystick.InputType gp_inputType_type, Joystick.InputType j_inputType_type, int inputIndex, JoystickHat hat_type)
+        //{
+        //    bool out_success = false;
+        //    Love2dDll.wrap_love_dll_joystick_setGamepadMapping(guid, (int)gp_inputType_type, (int)j_inputType_type, inputIndex, (int)hat_type, out out_success);
+        //    return out_success;
+        //}
+        //public static bool LoadGamepadMappings(byte[] str)
+        //{
+        //    bool out_success = false;
+        //    Love2dDll.wrap_love_dll_joystick_loadGamepadMappings(str, out out_success);
+        //    return out_success;
+        //}
         public static string SaveGamepadMappings()
         {
             IntPtr out_str = IntPtr.Zero;
@@ -1471,18 +1471,18 @@ namespace Love
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_JOYSTICK_HAT_MOTION:
                     {
-                        scene.JoystickHat(out_joystick, out_idx, (Joystick.Hat)out_enum1_type);
+                        scene.JoystickHat(out_joystick, out_idx, (JoystickHat)out_enum1_type);
                     }
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_JOYSTICK_CONTROLLER_BUTTON:
                     {
-                        if (out_down_or_up) scene.JoystickGamepadPressed(out_joystick, (Joystick.GamepadButton)out_enum1_type);
-                        else scene.JoystickGamepadReleased(out_joystick, (Joystick.GamepadButton)out_enum1_type);
+                        if (out_down_or_up) scene.JoystickGamepadPressed(out_joystick, (GamepadButton)out_enum1_type);
+                        else scene.JoystickGamepadReleased(out_joystick, (GamepadButton)out_enum1_type);
                     }
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_JOYSTICK_CONTROLLER_AXIS_MOTION:
                     {
-                        scene.JoystickGamepadAxis(out_joystick, (Joystick.GamepadAxis)out_enum1_type, out_float_value);
+                        scene.JoystickGamepadAxis(out_joystick, (GamepadAxis)out_enum1_type, out_float_value);
                     }
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_JOYSTICK_DEVICE_ADDED_OR_REMOVED:
@@ -2354,7 +2354,7 @@ namespace Love
         /// <param name="size">The font size.</param>
         /// <param name="hinting">True Type hinting mode.</param>
         /// <returns></returns>
-        public static Rasterizer NewTrueTypeRasterizer(Data data, int size, TrueTypeRasterizer.Hinting hinting = TrueTypeRasterizer.Hinting.Normal)
+        public static Rasterizer NewTrueTypeRasterizer(Data data, int size, HintingMode hinting = HintingMode.Normal)
         {
             IntPtr out_reasterizer;
             Love2dDll.wrap_love_dll_font_newTrueTypeRasterizer_data(data.p, size, (int)hinting, out out_reasterizer);
@@ -2367,7 +2367,7 @@ namespace Love
         /// <param name="size">The font size.</param>
         /// <param name="hinting">True Type hinting mode.</param>
         /// <returns></returns>
-        public static Rasterizer NewTrueTypeRasterizer(int size, TrueTypeRasterizer.Hinting hinting = TrueTypeRasterizer.Hinting.Normal)
+        public static Rasterizer NewTrueTypeRasterizer(int size, HintingMode hinting = HintingMode.Normal)
         {
             IntPtr out_reasterizer;
             Love2dDll.wrap_love_dll_font_newTrueTypeRasterizer(size, (int)hinting, out out_reasterizer);

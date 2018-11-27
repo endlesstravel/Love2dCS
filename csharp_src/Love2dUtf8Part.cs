@@ -233,14 +233,14 @@ namespace Love
 
     public partial class Joystick
     {
-        public static bool SetGamepadMapping(string guid, Joystick.InputType gp_inputType_type, Joystick.InputType j_inputType_type, int inputIndex, Joystick.Hat hat_type)
-        {
-            return SetGamepadMapping(DllTool.GetNullTailUTF8Bytes(guid), gp_inputType_type, j_inputType_type, inputIndex, hat_type);
-        }
-        public static bool LoadGamepadMappings(string str)
-        {
-            return LoadGamepadMappings(DllTool.GetNullTailUTF8Bytes(str));
-        }
+        //public static bool SetGamepadMapping(string guid, Joystick.InputType gp_inputType_type, Joystick.InputType j_inputType_type, int inputIndex, JoystickHat hat_type)
+        //{
+        //    return SetGamepadMapping(DllTool.GetNullTailUTF8Bytes(guid), gp_inputType_type, j_inputType_type, inputIndex, hat_type);
+        //}
+        //public static bool LoadGamepadMappings(string str)
+        //{
+        //    return LoadGamepadMappings(DllTool.GetNullTailUTF8Bytes(str));
+        //}
     }
 
     public partial class Graphics

@@ -864,7 +864,7 @@ namespace Love
         /// <param name="filename">The filepath to the TrueType font file.</param>
         /// <param name="size">The size of the font in pixels.</param>
         /// <returns>A Font object which can be used to draw text on screen.</returns>
-        public static Font NewFont(string filename, int size = 12, TrueTypeRasterizer.Hinting hinting = TrueTypeRasterizer.Hinting.Normal)
+        public static Font NewFont(string filename, int size = 12, HintingMode hinting = HintingMode.Normal)
         {
             var fileData = FileSystem.NewFileData(filename);
             var rasterizer = Font.NewTrueTypeRasterizer(fileData, size, hinting);
@@ -1033,13 +1033,24 @@ namespace Love
 
     public partial class File
     {
-        public void Write(byte[] data)
+        /// <summary>
+        /// Write data to a file.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns>Whether the operation was successful.</returns>
+        public bool Write(byte[] data)
         {
-            Write(data, data.Length);
+            return Write(data, data.Length);
         }
-        public void Write(Data data)
+
+        /// <summary>
+        /// Write data to a file.
+        /// </summary>
+        /// <param name="data">The Data object to write.</param>
+        /// <returns>Whether the operation was successful.</returns>
+        public bool Write(Data data)
         {
-            Write(data, data.GetSize());
+            return Write(data, data.GetSize());
         }
     }
 

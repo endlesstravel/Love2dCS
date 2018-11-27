@@ -2276,17 +2276,17 @@ namespace Love
         #endregion
         #region  type - Image
 
-        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Image_setMipmapFilter")]
-        internal extern static bool _wrap_love_dll_type_Image_setMipmapFilter(IntPtr image, int mipmap_type, float sharpness);
-        internal static bool wrap_love_dll_type_Image_setMipmapFilter(IntPtr image, int mipmap_type, float sharpness)
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Texture_setMipmapFilter")]
+        internal extern static bool _wrap_love_dll_type_Texture_setMipmapFilter(IntPtr image, int mipmap_type, float sharpness);
+        internal static bool wrap_love_dll_type_Texture_setMipmapFilter(IntPtr image, int mipmap_type, float sharpness)
         {
-            return CheckCAPIException(_wrap_love_dll_type_Image_setMipmapFilter(image, mipmap_type, sharpness));
+            return CheckCAPIException(_wrap_love_dll_type_Texture_setMipmapFilter(image, mipmap_type, sharpness));
         }
-        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Image_getMipmapFilter")]
-        internal extern static void _wrap_love_dll_type_Image_getMipmapFilter(IntPtr image, out int out_mipmap_type, out float out_sharpness);
-        internal static void wrap_love_dll_type_Image_getMipmapFilter(IntPtr image, out int out_mipmap_type, out float out_sharpness)
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Texture_getMipmapFilter")]
+        internal extern static void _wrap_love_dll_type_Texture_getMipmapFilter(IntPtr image, out int out_mipmap_type, out float out_sharpness);
+        internal static void wrap_love_dll_type_Texture_getMipmapFilter(IntPtr image, out int out_mipmap_type, out float out_sharpness)
         {
-            _wrap_love_dll_type_Image_getMipmapFilter(image, out out_mipmap_type, out out_sharpness);
+            _wrap_love_dll_type_Texture_getMipmapFilter(image, out out_mipmap_type, out out_sharpness);
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Image_isCompressed")]
         internal extern static void _wrap_love_dll_type_Image_isCompressed(IntPtr image, out bool out_result);
@@ -3770,6 +3770,57 @@ namespace Love
         public static string StrRGBA32F(Pixel p)
         {
             return $"({p.rgba32f.r},{p.rgba32f.g},{p.rgba32f.b},{p.rgba32f.a})";
+        }
+
+        /// <summary>
+        /// Create pixel with given Float4 value and format
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
+        public static Pixel FromFloat4(Float4 value, PixelFormat format)
+        {
+            Pixel pixel = new Pixel();
+            if (format == PixelFormat.RGBA8)
+            {
+                unchecked
+                {
+                    pixel.rgba8.r = (byte)(value.r * byte.MaxValue);
+                    pixel.rgba8.g = (byte)(value.g * byte.MaxValue);
+                    pixel.rgba8.b = (byte)(value.b * byte.MaxValue);
+                    pixel.rgba8.a = (byte)(value.a * byte.MaxValue);
+                }
+            }
+            else if (format == PixelFormat.RGBA16)
+            {
+                unchecked
+                {
+                    pixel.rgba16.r = (ushort)(value.r * ushort.MaxValue);
+                    pixel.rgba16.g = (ushort)(value.g * ushort.MaxValue);
+                    pixel.rgba16.b = (ushort)(value.b * ushort.MaxValue);
+                    pixel.rgba16.a = (ushort)(value.a * ushort.MaxValue);
+                }
+            }
+            else if (format == PixelFormat.RGBA16F)
+            {
+                pixel.rgba16f.r = Half.FromFloat(value.r);
+                pixel.rgba16f.g = Half.FromFloat(value.g);
+                pixel.rgba16f.b = Half.FromFloat(value.b);
+                pixel.rgba16f.a = Half.FromFloat(value.a);
+            }
+            else if (format == PixelFormat.RGBA32F)
+            {
+                pixel.rgba32f.r = value.r;
+                pixel.rgba32f.g = value.g;
+                pixel.rgba32f.b = value.b;
+                pixel.rgba32f.a = value.a;
+            }
+            else
+            {
+                throw new Exception($"Unsupported format {format}");
+            }
+
+            return pixel;
         }
     }
 
