@@ -91,17 +91,17 @@ namespace Love
         /// <summary>
         /// The position of the vertex .
         /// </summary>
-        public readonly Float2 pos;
+        public readonly Vector2 pos;
 
         /// <summary>
         /// The u and v texture coordinate of the vertex. Texture coordinates are normally in the range of [0, 1], but can be greater or less (see WrapMode.)
         /// </summary>
-        public readonly Float2 uv;
+        public readonly Vector2 uv;
 
         /// <summary>
         /// The vertex color.
         /// </summary>
-        public readonly Float4 color;
+        public readonly Vector4 color;
 
 
         /// <summary>
@@ -110,11 +110,11 @@ namespace Love
         /// <param name="pos">The position of the vertex.</param>
         /// <param name="uv">The u and vtexture coordinate of the vertex. Texture coordinates are normally in the range of [0, 1], but can be greater or less (see <see cref="Texture.WrapMode"/>)  <para>https://love2d.org/wiki/WrapMode</para></param>
         /// <param name="color">The vertex color.</param>
-        public Vertex(Float2 pos)
+        public Vertex(Vector2 pos)
         {
             this.pos = pos;
-            uv = new Float2(0, 0);
-            color = new Float4(1, 1, 1, 1);
+            uv = new Vector2(0, 0);
+            color = new Vector4(1, 1, 1, 1);
         }
 
         /// <summary>
@@ -123,10 +123,25 @@ namespace Love
         /// <param name="pos">The position of the vertex.</param>
         /// <param name="uv">The u and vtexture coordinate of the vertex. Texture coordinates are normally in the range of [0, 1], but can be greater or less (see <see cref="Texture.WrapMode"/>)  <para>https://love2d.org/wiki/WrapMode</para></param>
         /// <param name="color">The vertex color.</param>
-        public Vertex(Float2 pos, Float2 uv, Float4 color)
+        public Vertex(Vector2 pos, Vector2 uv, Vector4 color)
         {
             this.pos = pos;
             this.uv = uv;
+            this.color = color;
+        }
+    }
+
+
+
+
+
+    public struct ColoredPoint
+    {
+        public readonly Vector2 pos;
+        public readonly Vector4 color;
+        public ColoredPoint(Vector2 pos, Vector4 color)
+        {
+            this.pos = pos;
             this.color = color;
         }
     }

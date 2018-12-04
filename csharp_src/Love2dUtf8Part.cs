@@ -356,7 +356,7 @@ namespace Love
     }
     public partial class Shader
     {
-        public void SendColors(string name, params Float4[] valuearray)
+        public void SendColors(string name, params Vector4[] valuearray)
         {
             SendColors(DllTool.GetNullTailUTF8Bytes(name), valuearray);
         }

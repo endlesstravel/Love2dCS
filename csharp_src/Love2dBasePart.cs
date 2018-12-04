@@ -120,17 +120,17 @@ namespace Love
             return PtrToStringUTF8(ws.data);
         }
 
-        public static Float3 ToFloat3(IntPtr ip)
+        public static Vector3 ToVector3(IntPtr ip)
         {
-            Float3 f3 = (Float3)Marshal.PtrToStructure(ip, typeof(Float3));
+            Vector3 f3 = (Vector3)Marshal.PtrToStructure(ip, typeof(Vector3));
             return f3;
         }
 
-        public static Float6 ToFloat6(IntPtr ip)
-        {
-            Float6 f = (Float6)Marshal.PtrToStructure(ip, typeof(Float6));
-            return f;
-        }
+        //public static Float6 ToFloat6(IntPtr ip)
+        //{
+        //    Float6 f = (Float6)Marshal.PtrToStructure(ip, typeof(Float6));
+        //    return f;
+        //}
 
         static System.Text.Encoding utf8 = System.Text.Encoding.UTF8;
         public static string PtrToStringUTF8(IntPtr ip)
@@ -174,7 +174,7 @@ namespace Love
             return buffer;
         }
 
-        public static byte[] readBytesAndRelease(IntPtr p, long size)
+        public static byte[] ReadBytesAndRelease(IntPtr p, long size)
         {
             byte[] buffer = new byte[size];
             for (int i = 0; i < size; i++)
@@ -186,7 +186,7 @@ namespace Love
             return buffer;
         }
 
-        public static IntPtr[] readIntPtrsAndRelease(IntPtr p, long size)
+        public static IntPtr[] ReadIntPtrsAndRelease(IntPtr p, long size)
         {
             IntPtr[] buffer = new IntPtr[size];
             for (int i = 0; i < size; i++)
@@ -198,7 +198,7 @@ namespace Love
             return buffer;
         }
 
-        public static T[] readIntPtrsWithConvertAndRelease<T>(IntPtr p, long size) where T : LoveObject
+        public static T[] ReadIntPtrsWithConvertAndRelease<T>(IntPtr p, long size) where T : LoveObject
         {
             IntPtr[] buffer = new IntPtr[size];
             for (int i = 0; i < size; i++)
@@ -217,7 +217,7 @@ namespace Love
             return tarray;
         }
 
-        public static int[] readInt32sAndRelease(IntPtr p, long size)
+        public static int[] ReadInt32sAndRelease(IntPtr p, long size)
         {
             int[] buffer = new int[size];
             for (int i = 0; i < size; i++)
@@ -229,7 +229,7 @@ namespace Love
             return buffer;
         }
 
-        public static uint[] readUInt32sAndRelease(IntPtr p, int size)
+        public static uint[] ReadUInt32sAndRelease(IntPtr p, int size)
         {
             uint[] buffer = new uint[size];
             for (int i = 0; i < size; i++)
@@ -243,7 +243,7 @@ namespace Love
         }
 
 
-        public static long[] readLongsAndRelease(IntPtr p, int size)
+        public static long[] ReadLongsAndRelease(IntPtr p, int size)
         {
             long[] buffer = new long[size];
             for (int i = 0; i < size; i++)
@@ -256,7 +256,7 @@ namespace Love
             return buffer;
         }
 
-        public static double[] readDoublesAndRelease(IntPtr p, int size)
+        public static double[] ReadDoublesAndRelease(IntPtr p, int size)
         {
             double[] buffer = new double[size];
             for (int i = 0; i < size; i++)
@@ -269,8 +269,7 @@ namespace Love
             return buffer;
         }
 
-
-        public static Int4[] readInt4sAndRelease(IntPtr p, int size)
+        public static Int4[] ReadInt4sAndRelease(IntPtr p, int size)
         {
             Int4[] buffer = new Int4[size];
             for (int i = 0; i < size; i++)
@@ -283,20 +282,20 @@ namespace Love
             return buffer;
         }
 
-        public static Float4[] readFloat4sAndRelease(IntPtr p, int size)
+        public static Vector4[] ReadVector4sAndRelease(IntPtr p, int size)
         {
-            Float4[] buffer = new Float4[size];
+            Vector4[] buffer = new Vector4[size];
             for (int i = 0; i < size; i++)
             {
-                IntPtr offset = IntPtr.Add(p, Marshal.SizeOf(typeof(Float4)) * size);
-                buffer[i] = (Float4)Marshal.PtrToStructure(offset, typeof(Float4));
+                IntPtr offset = IntPtr.Add(p, Marshal.SizeOf(typeof(Vector4)) * size);
+                buffer[i] = (Vector4)Marshal.PtrToStructure(offset, typeof(Vector4));
             }
 
             Love2dDll.wrap_love_dll_delete_array(p);
             return buffer;
         }
 
-        public static Int2[] readInt2sAndRelease(IntPtr p, int size)
+        public static Int2[] ReadInt2sAndRelease(IntPtr p, int size)
         {
             Int2[] buffer = new Int2[size];
             for (int i = 0; i < size; i++)
@@ -310,13 +309,13 @@ namespace Love
         }
 
 
-        public static Float2[] readFloat2sAndRelease(IntPtr p, int size)
+        public static Vector2[] ReadVector2sAndRelease(IntPtr p, int size)
         {
-            Float2[] buffer = new Float2[size];
+            Vector2[] buffer = new Vector2[size];
             for (int i = 0; i < size; i++)
             {
-                IntPtr offset = IntPtr.Add(p, Marshal.SizeOf(typeof(Float2)) * size);
-                buffer[i] = (Float2)Marshal.PtrToStructure(offset, typeof(Float2));
+                IntPtr offset = IntPtr.Add(p, Marshal.SizeOf(typeof(Vector2)) * size);
+                buffer[i] = (Vector2)Marshal.PtrToStructure(offset, typeof(Vector2));
             }
 
             Love2dDll.wrap_love_dll_delete_array(p);
@@ -324,7 +323,7 @@ namespace Love
         }
 
 
-        public static float[] readFloatsAndRelease(IntPtr p, int size)
+        public static float[] ReadFloatsAndRelease(IntPtr p, int size)
         {
             float[] buffer = new float[size];
             Marshal.Copy(p, buffer, 0, size);
@@ -566,7 +565,7 @@ namespace Love
             IntPtr out_modes;
             int out_modes_length;
             Love2dDll.wrap_love_dll_windows_getFullscreenModes(displayindex, out out_modes, out out_modes_length);
-            return DllTool.readInt2sAndRelease(out_modes, out_modes_length);
+            return DllTool.ReadInt2sAndRelease(out_modes, out_modes_length);
         }
 
         /// <summary>
@@ -1269,12 +1268,12 @@ namespace Love
             IntPtr out_indexs;IntPtr out_x;IntPtr out_y;IntPtr out_dx;IntPtr out_dy;IntPtr out_pressure;int out_length;
             Love2dDll.wrap_love_dll_touch_open_love_getTouches(out out_indexs, out out_x, out out_y, out out_dx, out out_dy, out out_pressure, out out_length);
 
-            var indexs = DllTool.readLongsAndRelease(out_indexs, out_length);
-            var x = DllTool.readDoublesAndRelease(out_x, out_length);
-            var y = DllTool.readDoublesAndRelease(out_y, out_length);
-            var dx = DllTool.readDoublesAndRelease(out_dx, out_length);
-            var dy = DllTool.readDoublesAndRelease(out_dy, out_length);
-            var pressure = DllTool.readDoublesAndRelease(out_pressure, out_length);
+            var indexs = DllTool.ReadLongsAndRelease(out_indexs, out_length);
+            var x = DllTool.ReadDoublesAndRelease(out_x, out_length);
+            var y = DllTool.ReadDoublesAndRelease(out_y, out_length);
+            var dx = DllTool.ReadDoublesAndRelease(out_dx, out_length);
+            var dy = DllTool.ReadDoublesAndRelease(out_dy, out_length);
+            var pressure = DllTool.ReadDoublesAndRelease(out_pressure, out_length);
 
             TouchInfo[] infos = new TouchInfo[out_length];
             for (int i = 0; i < out_length; i++)
@@ -1308,7 +1307,7 @@ namespace Love
             int out_sticks_lenght;
             Love2dDll.wrap_love_dll_joystick_getJoysticks(out out_sticks, out out_sticks_lenght);
 
-            return DllTool.readIntPtrsWithConvertAndRelease<Joystick>(out_sticks, out_sticks_lenght);
+            return DllTool.ReadIntPtrsWithConvertAndRelease<Joystick>(out_sticks, out_sticks_lenght);
         }
         public static int GetIndex(Joystick j)
         {
@@ -1399,7 +1398,7 @@ namespace Love
             Love2dDll.wrap_love_dll_event_open_love_event();
         }
 
-        public static void PollOrWait(bool isPoll, out bool out_hasEvent, out int out_event_type, out bool out_down_or_up, out bool out_bool, out int out_idx, out int out_enum1_type, out int out_enum2_type, out string out_string, out Int4 out_int4, out Float4 out_float4, out float out_float_value, out Joystick out_joystick)
+        public static void PollOrWait(bool isPoll, out bool out_hasEvent, out int out_event_type, out bool out_down_or_up, out bool out_bool, out int out_idx, out int out_enum1_type, out int out_enum2_type, out string out_string, out Int4 out_int4, out Vector4 out_float4, out float out_float_value, out Joystick out_joystick)
         {
             IntPtr out_str;
             IntPtr out_joystick_ptr;
@@ -1415,7 +1414,7 @@ namespace Love
             out_joystick = LoveObject.NewObject<Joystick>(out_joystick_ptr);
         }
 
-        private static void DoHandleEvent(Scene scene, int out_event_type, bool out_down_or_up, bool out_bool, int out_idx, int out_enum1_type, int out_enum2_type, string out_string, Int4 out_int4, Float4 out_float4, float out_float_value, Joystick out_joystick)
+        private static void DoHandleEvent(Scene scene, int out_event_type, bool out_down_or_up, bool out_bool, int out_idx, int out_enum1_type, int out_enum2_type, string out_string, Int4 out_int4, Vector4 out_float4, float out_float_value, Joystick out_joystick)
         {
             switch ((WrapEventType)out_event_type)
             {
@@ -1533,7 +1532,7 @@ namespace Love
         /// <returns></returns>
         public static bool PollOrWait(Scene scene, bool poll_or_wait)
         {
-            bool out_hasEvent;int out_event_type;bool out_down_or_up;bool out_bool;int out_idx;int out_enum1_type;int out_enum2_type;string out_string;Int4 out_int4;Float4 out_float4;float out_float_value;Joystick out_joystick;
+            bool out_hasEvent;int out_event_type;bool out_down_or_up;bool out_bool;int out_idx;int out_enum1_type;int out_enum2_type;string out_string;Int4 out_int4;Vector4 out_float4;float out_float_value;Joystick out_joystick;
             PollOrWait(true, out out_hasEvent, out out_event_type, out out_down_or_up, out out_bool, out out_idx, out out_enum1_type, out out_enum2_type, out out_string, out out_int4, out out_float4, out out_float_value, out out_joystick);
 
             if (out_hasEvent == false)
@@ -1851,7 +1850,7 @@ namespace Love
             IntPtr out_data;
             uint out_data_length;
             Love2dDll.wrap_love_dll_filesystem_read(filename, len, out out_data, out out_data_length);
-            return DllTool.readBytesAndRelease(out_data, out_data_length);
+            return DllTool.ReadBytesAndRelease(out_data, out_data_length);
         }
 
         /// <summary>
@@ -2148,11 +2147,11 @@ namespace Love
         /// Returns the position of the listener.
         /// </summary>
         /// <returns></returns>
-        public static Float3 GetPosition()
+        public static Vector3 GetPosition()
         {
             float out_x, out_y, out_z;
             Love2dDll.wrap_love_dll_audio_getPosition(out out_x, out out_y, out out_z);
-            return new Float3(out_x, out_y, out_z);
+            return new Vector3(out_x, out_y, out_z);
         }
 
         /// <summary>
@@ -2160,7 +2159,7 @@ namespace Love
         /// </summary>
         /// <param name="forward">Forward vector of the listener orientation.</param>
         /// <param name="up">Up vector of the listener orientation.</param>
-        public static void SetOrientation(Float3 forward, Float3 up)
+        public static void SetOrientation(Vector3 forward, Vector3 up)
         {
             Love2dDll.wrap_love_dll_audio_setOrientation(forward.x, forward.y, forward.z, up.x, up.y, up.z);
         }
@@ -2170,12 +2169,12 @@ namespace Love
         /// </summary>
         /// <param name="forward">Forward vector of the listener orientation.</param>
         /// <param name="up">Up vector of the listener orientation.</param>
-        public static void GetOrientation(out Float3 forward, out Float3 up)
+        public static void GetOrientation(out Vector3 forward, out Vector3 up)
         {
             float out_x,out_y,out_z,out_dx,out_dy,out_dz;
             Love2dDll.wrap_love_dll_audio_getOrientation(out out_x, out out_y, out out_z, out out_dx, out out_dy, out out_dz);
-            forward = new Float3(out_x, out_y, out_z);
-            up = new Float3(out_dx, out_dy, out_dz);
+            forward = new Vector3(out_x, out_y, out_z);
+            up = new Vector3(out_dx, out_dy, out_dz);
         }
 
         /// <summary>
@@ -2193,11 +2192,11 @@ namespace Love
         /// Returns the velocity of the listener.
         /// </summary>
         /// <returns></returns>
-        public static Float3 GetVelocity()
+        public static Vector3 GetVelocity()
         {
             float out_x, out_y, out_z;
             Love2dDll.wrap_love_dll_audio_getVelocity(out out_x, out out_y, out out_z);
-            return new Float3(out_x, out_y, out_z);
+            return new Vector3(out_x, out_y, out_z);
         }
 
         /// <summary>
@@ -2501,7 +2500,7 @@ namespace Love
         /// </summary>
         /// <param name="points"></param>
         /// <returns></returns>
-        public static BezierCurve NewBezierCurve(Float2[] points)
+        public static BezierCurve NewBezierCurve(Vector2[] points)
         {
             IntPtr out_BezierCurve = IntPtr.Zero;
             Love2dDll.wrap_love_dll_math_newBezierCurve(points, points.Length, out out_BezierCurve);
@@ -2513,20 +2512,20 @@ namespace Love
         /// </summary>
         /// <param name="points">Polygon to triangulate. Must not intersect itself.</param>
         /// <returns></returns>
-        public static Triangle[] Triangulate(Float2[] points)
+        public static Triangle[] Triangulate(Vector2[] points)
         {
             IntPtr out_triArray;
             int out_triCount;
             Love2dDll.wrap_love_dll_math_triangulate(points, points.Length, out out_triArray, out out_triCount);
 
-            float[] buffer = DllTool.readFloatsAndRelease(out_triArray, out_triCount * 6);
+            float[] buffer = DllTool.ReadFloatsAndRelease(out_triArray, out_triCount * 6);
             Triangle[] tri = new Triangle[out_triCount];
 
             for (int i = 0; i < out_triCount; i++)
             {
-                tri[i].a = new Float2(buffer[i * 6 + 0], buffer[i * 6 + 1]);
-                tri[i].b = new Float2(buffer[i * 6 + 2], buffer[i * 6 + 3]);
-                tri[i].c = new Float2(buffer[i * 6 + 4], buffer[i * 6 + 5]);
+                tri[i].a = new Vector2(buffer[i * 6 + 0], buffer[i * 6 + 1]);
+                tri[i].b = new Vector2(buffer[i * 6 + 2], buffer[i * 6 + 3]);
+                tri[i].c = new Vector2(buffer[i * 6 + 4], buffer[i * 6 + 5]);
             }
 
             return tri;
@@ -2538,7 +2537,7 @@ namespace Love
         /// </summary>
         /// <param name="points">The vertices of the polygon as a table in the form of {(x1, y1), (x2, y2), (x3, y3), ...}.</param>
         /// <returns>Whether the given polygon is convex.</returns>
-        public static bool IsConvex(Float2[] points)
+        public static bool IsConvex(Vector2[] points)
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_math_isConvex(points, points.Length, out out_result);
@@ -2767,7 +2766,7 @@ namespace Love
                 out out_canvas);
             return LoveObject.NewObject<Canvas>(out_canvas);
         }
-        public static Mesh NewMesh(Float2[] pos, Float2[] uv, Float4[] color, MeshDrawMode drawMode, SpriteBatchUsage usage)
+        public static Mesh NewMesh(Vector2[] pos, Vector2[] uv, Vector4[] color, MeshDrawMode drawMode, SpriteBatchUsage usage)
         {
             IntPtr out_mesh = IntPtr.Zero;
             Love2dDll.wrap_love_dll_graphics_newMesh_specifiedVertices(pos, uv, color, pos.Length, (int)drawMode, (int)usage, out out_mesh);
@@ -2950,11 +2949,11 @@ namespace Love
         /// Gets the current color.
         /// </summary>
         /// <returns></returns>
-        public static Float4 GetColor()
+        public static Vector4 GetColor()
         {
             float out_r, out_g, out_b, out_a;
             Love2dDll.wrap_love_dll_graphics_getColor(out out_r, out out_g, out out_b, out out_a);
-            return new Float4(out_r, out_g, out_b, out_a);
+            return new Vector4(out_r, out_g, out_b, out_a);
         }
 
         /// <summary>
@@ -2972,11 +2971,11 @@ namespace Love
         /// <summary>
         /// Gets the current background color.
         /// </summary>
-        public static Float4 GetBackgroundColor()
+        public static Vector4 GetBackgroundColor()
         {
             float out_r, out_g, out_b, out_a;
             Love2dDll.wrap_love_dll_graphics_getBackgroundColor(out out_r, out out_g, out out_b, out out_a);
-            return new Float4(out_r, out_g, out_b, out_a);
+            return new Vector4(out_r, out_g, out_b, out_a);
         }
 
         /// <summary>
@@ -3207,7 +3206,7 @@ namespace Love
             IntPtr out_canvaList = IntPtr.Zero;
             int out_canvaList_length = 0;
             Love2dDll.wrap_love_dll_graphics_getCanvas(out out_canvaList, out out_canvaList_length);
-            var buffer = DllTool.readIntPtrsAndRelease(out_canvaList, out_canvaList_length);
+            var buffer = DllTool.ReadIntPtrsAndRelease(out_canvaList, out_canvaList_length);
 
             Canvas[] canvas = new Canvas[buffer.Length];
             for (int i = 0; i < buffer.Length; i++)
@@ -3364,7 +3363,7 @@ namespace Love
             Love2dDll.wrap_love_dll_graphics_clear_rgba(r, g, b, a, stencil, enable_stencil, depth, enable_depth);
         }
 
-        private static void Clear(Float4[] colorList, bool[] enableList, float stencil = 0, bool enable_stencil = true, float depth = 1, bool enable_depth = true)
+        private static void Clear(Vector4[] colorList, bool[] enableList, float stencil = 0, bool enable_stencil = true, float depth = 1, bool enable_depth = true)
         {
             if (colorList.Length != enableList.Length)
             {
@@ -3527,12 +3526,12 @@ namespace Love
         /// Draws one or more points.
         /// </summary>
         /// <param name="coords">The position of the each point</param>
-        public static void Points(params Float2[] coords)
+        public static void Points(params Vector2[] coords)
         {
             Love2dDll.wrap_love_dll_graphics_points(coords, coords.Length);
         }
 
-        public static void Points(Float2[] coords, Int4[] colors)
+        public static void Points(Vector2[] coords, Vector4[] colors)
         {
             if (coords.Length != colors.Length)
             {
@@ -3546,7 +3545,7 @@ namespace Love
         /// </summary>
         /// <param name="coords">A array of point positions.</param>
         /// <returns></returns>
-        public static void Line(params Float2[] coords)
+        public static void Line(params Vector2[] coords)
         {
             Love2dDll.wrap_love_dll_graphics_line(coords, coords.Length);
         }
@@ -3557,7 +3556,7 @@ namespace Love
         /// </summary>
         /// <param name="mode_type">How to draw the polygon.</param>
         /// <param name="coords">The vertices of the polygon.</param>
-        public static void Polygon(DrawMode mode_type, params Float2[] coords)
+        public static void Polygon(DrawMode mode_type, params Vector2[] coords)
         {
             Love2dDll.wrap_love_dll_graphics_polygon((int)mode_type, coords, coords.Length);
         }
