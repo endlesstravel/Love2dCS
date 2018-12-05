@@ -1051,7 +1051,7 @@
         Subtract,
 
         /// <summary>
-        /// The pixel colors of what's drawn are multiplied with the pixel colors already on the screen (darkening them). The alpha of drawn objects is multiplied with the alpha of the screen rather than determining how much the colors on the screen are affected, even when the <see cref="Graphics.BlendAlphaMode.PreMultiplied"/> BlendAlphaMode is used.
+        /// The pixel colors of what's drawn are multiplied with the pixel colors already on the screen (darkening them). The alpha of drawn objects is multiplied with the alpha of the screen rather than determining how much the colors on the screen are affected, even when the <see cref="BlendAlphaMode.PreMultiplied"/> BlendAlphaMode is used.
         /// </summary>
         Multiply,
 

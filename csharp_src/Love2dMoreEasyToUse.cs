@@ -179,7 +179,7 @@ namespace Love
 
         /// <summary>
         /// Creates a new ImageData object.
-        /// <para> Vector4[x, y] <== new Vector4(0.1f, 0.2f, 0.3f, 0.4f) </para>
+        /// <para> Vector4[x, y] - new Vector4(0.1f, 0.2f, 0.3f, 0.4f) </para>
         /// </summary>
         /// <param name="rawData">color data to set</param>
         /// <param name="format">The pixel format of the ImageData.</param>

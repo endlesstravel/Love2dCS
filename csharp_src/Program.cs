@@ -818,7 +818,7 @@ namespace Love
             rectX = (float)(200 * (1.0 + Math.Sin(Timer.GetTime() / 10f * Math.PI)));
             rectY = 300;// * (float)(1 + Math.Cos(Timer.GetTime() * Math.PI));
 
-            Graphics.getCanvas();
+            Graphics.GetCanvas();
         }
 
         void DrawStencil()

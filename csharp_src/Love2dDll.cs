@@ -2787,8 +2787,8 @@ namespace Love
             _wrap_love_dll_type_Quad_getViewport(p, out out_x, out out_y, out out_w, out out_h);
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Quad_getTextureDimensions")]
-        internal extern static void _wrap_love_dll_type_Quad_getTextureDimensions(IntPtr p, out double out_sw, out double out_sh);
-        internal static void wrap_love_dll_type_Quad_getTextureDimensions(IntPtr p, out double out_sw, out double out_sh)
+        internal extern static void _wrap_love_dll_type_Quad_getTextureDimensions(IntPtr p, out float out_sw, out float out_sh);
+        internal static void wrap_love_dll_type_Quad_getTextureDimensions(IntPtr p, out float out_sw, out float out_sh)
         {
             _wrap_love_dll_type_Quad_getTextureDimensions(p, out out_sw, out out_sh);
         }

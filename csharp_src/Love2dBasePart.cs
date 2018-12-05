@@ -3201,7 +3201,7 @@ namespace Love
         /// <summary>
         /// Returns the current target Canvas. Returns zero length array if drawing to the real screen.
         /// </summary>
-        public static Canvas[] getCanvas()
+        public static Canvas[] GetCanvas()
         {
             IntPtr out_canvaList = IntPtr.Zero;
             int out_canvaList_length = 0;

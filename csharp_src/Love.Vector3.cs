@@ -2,7 +2,7 @@
 /// adapt from XnaGeometry
 /*
 MIT License
-Copyright © 2006 The Mono.Xna Team
+Copyright 漏 2006 The Mono.Xna Team
 
 All rights reserved.
 
