@@ -303,5 +303,72 @@ namespace Love
         /// </summary>
         /// <param name="f">The value</param>
         public static float Tan(float f) { return (float)Math.Tan(f); }
+
+
+        /// <summary>
+        /// Interpolates between min and max with smoothing at the limits.
+        /// This function interpolates between min and max in a similar way to Lerp.
+        /// However, the interpolation will gradually speed up from the start and slow down toward the end.
+        /// This is useful for creating natural-looking animation, fading and other transitions.
+        /// </summary>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
+        /// <param name="amount"></param>
+        /// <returns></returns>
+        public static float SmoothStep(float value1, float value2, float amount)
+        {
+            // It is expected that 0 < amount < 1
+            // If amount < 0, return value1
+            // If amount > 1, return value2
+            float result = Mathf.Clamp(amount, 0f, 1f);
+            result = Mathf.Hermite(value1, 0f, value2, 0f, result);
+            return result;
+        }
+
+        public static float Hermite(float value1, float tangent1, float value2, float tangent2, float amount)
+        {
+            // All transformed to double not to lose precission
+            // Otherwise, for high numbers of param:amount the result is NaN instead of Infinity
+            float v1 = value1, v2 = value2, t1 = tangent1, t2 = tangent2, s = amount, result;
+            float sCubed = s * s * s;
+            float sSquared = s * s;
+
+            if (amount == 0f)
+                result = value1;
+            else if (amount == 1f)
+                result = value2;
+            else
+                result = (2 * v1 - 2 * v2 + t2 + t1) * sCubed +
+                    (3 * v2 - 3 * v1 - 2 * t1 - t2) * sSquared +
+                    t1 * s +
+                    v1;
+            return result;
+        }
+
+        public static float Barycentric(float value1, float value2, float value3, float amount1, float amount2)
+        {
+            return value1 + (value2 - value1) * amount1 + (value3 - value1) * amount2;
+        }
+
+        /// <summary>
+        /// Using formula from http://www.mvps.org/directx/articles/catmull/
+        /// </summary>
+        /// <param name="value1"></param>
+        /// <param name="value2"></param>
+        /// <param name="value3"></param>
+        /// <param name="value4"></param>
+        /// <param name="amount"></param>
+        /// <returns></returns>
+        public static float CatmullRom(float value1, float value2, float value3, float value4, float amount)
+        {
+            // Using formula from http://www.mvps.org/directx/articles/catmull/
+            // Internally using doubles not to lose precission
+            float amountSquared = amount * amount;
+            float amountCubed = amountSquared * amount;
+            return (0.5f * (2.0f * value2 +
+                (value3 - value1) * amount +
+                (2.0f * value1 - 5.0f * value2 + 4.0f * value3 - value4) * amountSquared +
+                (3.0f * value2 - value1 - 3.0f * value3 + value4) * amountCubed));
+        }
     }
 }

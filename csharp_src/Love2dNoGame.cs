@@ -43,16 +43,16 @@ namespace Love
         class Toast
         {
             const float LOOK_DURATION = 0.5f;
-            readonly Float2[] LOOK_POINTS = new Float2[4]
+            readonly Vector2[] LOOK_POINTS = new Vector2[4]
             {
-                new Float2(0.8f, 0.8f),
-                new Float2(0.1f, 0.1f),
-                new Float2(0.8f, 0.1f),
-                new Float2(0.1f, 0.8f),
+                new Vector2(0.8f, 0.8f),
+                new Vector2(0.1f, 0.1f),
+                new Vector2(0.8f, 0.1f),
+                new Vector2(0.1f, 0.8f),
             };
 
-            Float2 look_target;
-            Float2 look_current;
+            Vector2 look_target;
+            Vector2 look_current;
             int look_point = 0;
             float look_point_t = 1;
             float look_t = 0;
@@ -76,14 +76,14 @@ namespace Love
                 y = (float)math.Floor(wh / 2 / 32) * 32 + 16;
             }
 
-            Float2 get_look_coordinates()
+            Vector2 get_look_coordinates()
             {
                 float t = look_t;
                 var src = look_current;
                 var dst = look_target;
                 float look_x = easeOut(t, src.x, dst.x - src.x, LOOK_DURATION);
                 float look_y = easeOut(t, src.y, dst.y - src.y, LOOK_DURATION);
-                return new Float2(look_x, look_y);
+                return new Vector2(look_x, look_y);
             }
 
             public void Update(float dt)

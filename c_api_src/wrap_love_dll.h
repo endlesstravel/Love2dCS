@@ -574,7 +574,7 @@ namespace wrap
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_arc(int mode_type, int arcmode_type, float x, float y, float radius, float angle1, float angle2);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_arc_points(int mode_type, int arcmode_type, float x, float y, float radius, float angle1, float angle2, int points);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_points(Float2 coords[], int coordsLength);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_points_colors(Float2 coords[], Int4 colors[], int coordsLength);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_points_colors(Float2 coords[], Float4 colors[], int coordsLength);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_line(Float2 coords[], int coordsLength);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_polygon(int mode_type, Float2 coords[], int coordsLength);
 
@@ -790,8 +790,8 @@ namespace wrap
     extern "C" LOVE_EXPORT void wrap_love_dll_type_ParticleSystem_getSpinVariation(ParticleSystem *t, float *out_variation);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_ParticleSystem_setOffset(ParticleSystem *t, float x, float y);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_ParticleSystem_getOffset(ParticleSystem *t, float *out_x, float *out_y);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_ParticleSystem_setColors(ParticleSystem *t, Int4 *colorarray, int colorarray_length);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_ParticleSystem_getColors(ParticleSystem *t, Int4 **out_colorarray, int *out_colorarray_length);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_ParticleSystem_setColors(ParticleSystem *t, Float4 *colorarray, int colorarray_length);
+    extern "C" LOVE_EXPORT void wrap_love_dll_type_ParticleSystem_getColors(ParticleSystem *t, Float4 **out_colorarray, int *out_colorarray_length);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_ParticleSystem_setQuads(ParticleSystem *t, Quad** quadsarray, int quadsarray_length);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_ParticleSystem_getQuads(ParticleSystem *t, Quad ***out_quadsarray, int *out_quadsarray_length);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_ParticleSystem_setRelativeRotation(ParticleSystem *t, bool4 enable);

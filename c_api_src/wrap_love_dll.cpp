@@ -3342,7 +3342,7 @@ namespace wrap
         bool res = wrap_catchexcept([&]() {graphicsInstance->points(points.data(), nullptr, numpoints);});
         return res;
     }
-    bool4 wrap_love_dll_graphics_points_colors(Float2 coords[], Int4 colors[], int coordsLength)
+    bool4 wrap_love_dll_graphics_points_colors(Float2 coords[], Float4 colors[], int coordsLength)
     {
         int numpoints = coordsLength;
         std::vector<Vector2> points;
@@ -4716,7 +4716,7 @@ namespace wrap
 		*out_y = offset.y;
     }
 
-    bool4 wrap_love_dll_type_ParticleSystem_setColors(ParticleSystem *t, Int4 *colorarray, int colorarray_length)
+    bool4 wrap_love_dll_type_ParticleSystem_setColors(ParticleSystem *t, Float4 *colorarray, int colorarray_length)
     {
         if (colorarray_length > 8)
         {
@@ -4736,10 +4736,10 @@ namespace wrap
         return true;
     }
 
-    void wrap_love_dll_type_ParticleSystem_getColors(ParticleSystem *t, Int4 **out_colorarray, int *out_colorarray_length)
+    void wrap_love_dll_type_ParticleSystem_getColors(ParticleSystem *t, Float4 **out_colorarray, int *out_colorarray_length)
     {
         const std::vector<Colorf> &colors = t->getColor();
-        *out_colorarray = new Int4[colors.size()];
+        *out_colorarray = new Float4[colors.size()];
         *out_colorarray_length = colors.size();
 
         for (size_t i = 0; i < colors.size(); i++)

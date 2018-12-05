@@ -1,4 +1,12 @@
-﻿2018年11月18日
+﻿2018年12月6日
+1. 添加了 ParticleSystem / Quad 的注释
+
+2018年12月5日
+1. 替换 Float2 / Float3 / Float4 为 Vector2 / Vector3 / Vector4
+2. 删除 Float6
+3. fix Int4 to Vector4 (wrap_love_dll_graphics_points_colors / wrap_love_dll_type_ParticleSystem_setColors / wrap_love_dll_type_ParticleSystem_getColors)
+
+2018年11月18日
 1. 添加了 Source / File / FileData / Texture 的注释
 
 2018年11月15日

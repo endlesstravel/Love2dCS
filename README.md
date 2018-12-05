@@ -60,6 +60,7 @@ Next to development
  - Improve the document : in development
  - Support Ubuntu : in development
  - Add support for Physics
+ - Add all SetXXX(float x, float y) / GetXXX(out float x, out float y)  with override SetXXX(Vector2) / Vector2 GetXXX().
 
 | Module        | Process | code comment   |     Test      |   ubuntu Test    | Remark         |
 | ------------- |--------:|---------------:|--------------:|----------------:| --------------:|

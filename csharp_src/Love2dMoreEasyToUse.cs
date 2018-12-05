@@ -145,9 +145,9 @@ namespace Love
         /// Returns the orientation of the listener.
         /// </summary>
         /// <returns>tuple (Forward vector of the listener orientation, Up vector of the listener orientation.)</returns>
-        public static Tuple<Float3, Float3> GetOrientation()
+        public static Tuple<Vector3, Vector3> GetOrientation()
         {
-            Float3 forword, up;
+            Vector3 forword, up;
             GetOrientation(out forword, out up);
             return Tuple.Create(forword, up);
         }
@@ -179,17 +179,17 @@ namespace Love
 
         /// <summary>
         /// Creates a new ImageData object.
-        /// <para> Float4[x, y] <== new Float(0.1f, 0.2f, 0.3f, 0.4f) </para>
+        /// <para> Vector4[x, y] - new Vector4(0.1f, 0.2f, 0.3f, 0.4f) </para>
         /// </summary>
         /// <param name="rawData">color data to set</param>
         /// <param name="format">The pixel format of the ImageData.</param>
         /// <returns></returns>
-        public static ImageData NewImageData(Float4[,] rawData, ImageDataPixelFormat format)
+        public static ImageData NewImageData(Vector4[,] rawData, ImageDataPixelFormat format)
         {
             Check.ArgumentNull(rawData, "rawData");
             int w = rawData.GetLength(0);
             int h = rawData.GetLength(1);
-            Float4[] data = new Float4[w * h];
+            Vector4[] data = new Vector4[w * h];
 
             for (int y = 0; y < h; y++)
             {
@@ -210,7 +210,7 @@ namespace Love
         /// <param name="rawData">Optional raw byte data to load into the ImageData, in the format specified by format.</param>
         /// <param name="format">The pixel format of the ImageData.</param>
         /// <returns></returns>
-        public static ImageData NewImageData(Float4[][] rawData, ImageDataPixelFormat format)
+        public static ImageData NewImageData(Vector4[][] rawData, ImageDataPixelFormat format)
         {
             Check.ArgumentNull(rawData, "data");
             int w = 0;
@@ -239,7 +239,7 @@ namespace Love
             }
 
             // copy data
-            Float4[] data = new Float4[w * h];
+            Vector4[] data = new Vector4[w * h];
             for (int y = 0; y < h; y++)
             {
                 for (int x = 0; x < w; x++)
@@ -275,9 +275,9 @@ namespace Love
         ////}
 
         public delegate Pixel MapPixelDelegate(int x, int y, Pixel p);
-        public delegate Float4 MapPixelColorDelegate(int x, int y, Float4 p);
+        public delegate Vector4 MapPixelColorDelegate(int x, int y, Vector4 p);
 
-        static void WriteVector4(IntPtr dest, int offset, Float4 input, PixelFormat format)
+        static void WriteVector4(IntPtr dest, int offset, Vector4 input, PixelFormat format)
         {
             Pixel pixel = new Pixel();
             if (format == PixelFormat.RGBA8)
@@ -317,7 +317,7 @@ namespace Love
             WritePixel(dest, offset, pixel, format); ;
         }
 
-        static void ReadVector4(IntPtr dest, int offset, PixelFormat format, ref Float4 output)
+        static void ReadVector4(IntPtr dest, int offset, PixelFormat format, ref Vector4 output)
         {
             Pixel pixel = ReadPixel(dest, offset, format);
             if (format == PixelFormat.RGBA8)
@@ -399,7 +399,7 @@ namespace Love
             int iw = GetWidth();
             var format = GetFormat();
 
-            Float4 input = new Float4();
+            Vector4 input = new Vector4();
             for (int y = sy; y < ey; y++)
             {
                 for (int x = sx; x < ex; x++)
@@ -582,11 +582,11 @@ namespace Love
         /// get every pixel, as Float4 format
         /// </summary>
         /// <returns></returns>
-        public Float4[] GetPixelsFloat()
+        public Vector4[] GetPixelsFloat()
         {
             int w = GetWidth();
             int h = GetHeight();
-            Float4[] output = new Float4[w * h];
+            Vector4[] output = new Vector4[w * h];
             DllTool.ExecuteAsIntprt(output, dest => Love2dDll.inner_wrap_love_dll_type_ImageData_getPixels_float4(p, dest));
             return output;
         }
@@ -655,7 +655,7 @@ namespace Love
         /// set every pixel with given data, function will convert Float4 to correct pixel format automatically
         /// </summary>
         /// <param name="data">color data to set</param>
-        public void SetPixelsFloat(Float4[] data)
+        public void SetPixelsFloat(Vector4[] data)
         {
             Check.ArgumentNull(data);
             int w = GetWidth();
@@ -686,11 +686,11 @@ namespace Love
         }
 
 
-        public static Float2 GetPosition()
+        public static Vector2 GetPosition()
         {
             double out_x, out_y;
             Love2dDll.wrap_love_dll_mouse_getPosition(out out_x, out out_y);
-            return new Float2((float)out_x, (float)out_y);
+            return new Vector2((float)out_x, (float)out_y);
         }
     }
 
@@ -920,9 +920,9 @@ namespace Love
         /// <returns>The new mesh.</returns>
         public static Mesh NewMesh(Vertex[] vertices, MeshDrawMode drawMode = MeshDrawMode.Fan, SpriteBatchUsage usage = SpriteBatchUsage.Dynamic)
         {
-            var posArray = new Float2[vertices.Length];
-            var uvArray = new Float2[vertices.Length];
-            var colorArray = new Float4[vertices.Length];
+            var posArray = new Vector2[vertices.Length];
+            var uvArray = new Vector2[vertices.Length];
+            var colorArray = new Vector4[vertices.Length];
             for (int i = 0; i < vertices.Length; i++)
             {
                 posArray[i] = vertices[i].pos;
@@ -932,22 +932,15 @@ namespace Love
             return NewMesh(posArray, uvArray, colorArray, drawMode, usage);
         }
 
-
-        public struct ColoredPoint
-        {
-            public readonly Float2 pos;
-            public readonly Int4 color;
-            public ColoredPoint(Float2 pos, Int4 color)
-            {
-                this.pos = pos;
-                this.color = color;
-            }
-        }
-
         public static void Points(ColoredPoint[] coloredPoints)
         {
-            Float2[] coords = new Float2[coloredPoints.Length];
-            Int4[] colors = new Int4[coloredPoints.Length];
+            Vector2[] coords = new Vector2[coloredPoints.Length];
+            Vector4[] colors = new Vector4[coloredPoints.Length];
+            for (int i = 0; i< coloredPoints.Length; i++)
+            {
+                coords[i] = coloredPoints[i].pos;
+                colors[i] = coloredPoints[i].color;
+            }
             Points(coords, colors);
         }
 
@@ -1003,7 +996,7 @@ namespace Love
         /// <param name="points">must be an integer multiple of 2. [first(x, y), second(x, y) ....]</param>
         public static void Line(params float[] points)
         {
-            Line(Float2.FromFloats(points));
+            Line(Vector2.FromFloats(points));
         }
 
         /// <summary>
@@ -1012,7 +1005,7 @@ namespace Love
         /// <param name="points">must be an integer multiple of 2. [first(x, y), second(x, y) ....]</param>
         public static void Points(params float[] points)
         {
-            Points(Float2.FromFloats(points));
+            Points(Vector2.FromFloats(points));
         }
 
         /// <summary>
@@ -1021,7 +1014,7 @@ namespace Love
         /// <param name="points">must be an integer multiple of 2. [first(x, y), second(x, y) ....]</param>
         public static void Polygon(DrawMode mode, params float[] points)
         {
-            Polygon(mode, Float2.FromFloats(points));
+            Polygon(mode, Vector2.FromFloats(points));
         }
     }
 

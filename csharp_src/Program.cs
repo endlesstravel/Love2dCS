@@ -50,7 +50,7 @@ namespace Love
 
             PrintExecTime("imageData.MapPixel((int x, int y, Float4 pixel, x, y, w, h )  ", () =>
             {
-                imageData.MapPixel((int x, int y, Float4 pixel) =>
+                imageData.MapPixel((int x, int y, Vector4 pixel) =>
                 {
                     pixel.r = 0;
                     pixel.g = 0;
@@ -62,7 +62,7 @@ namespace Love
 
             PrintExecTime("imageData.MapPixel((int x, int y, Float4 pixel)  ", () =>
             {
-                imageData.MapPixel((int x, int y, Float4 pixel) =>
+                imageData.MapPixel((int x, int y, Vector4 pixel) =>
                 {
                     pixel.r = 0;
                     pixel.g = 0;
@@ -153,12 +153,12 @@ namespace Love
 
             PrintExecTime("imageData.SetPixelsFloat( Float4[] p) =>  ", () =>
             {
-                Float4[] pixelBuffer = new Float4[w * h];
+                Vector4[] pixelBuffer = new Vector4[w * h];
                 for (int x = 0; x < w; x++)
                 {
                     for (int y = 0; y < h; y++)
                     {
-                        Float4 pixel = new Float4();
+                        Vector4 pixel = new Vector4();
                         pixel.r = 0.5f;
                         pixel.g = 0.4f;
                         pixel.b = 0.1f;
@@ -564,20 +564,32 @@ namespace Love
         {
             Graphics.SetLineWidth(2);
             Graphics.SetColor(1, 0, 0);
-            Float2[] list =
+            Vector2[] list =
             {
-                new Float2(10, 10),
-                new Float2(20, 10),
-                new Float2(20, 20),
-                new Float2(30, 20),
-                new Float2(30, 30),
-                new Float2(40, 30),
-                new Float2(40, 40),
+                new Vector2(10, 10),
+                new Vector2(20, 10),
+                new Vector2(20, 20),
+                new Vector2(30, 20),
+                new Vector2(30, 30),
+                new Vector2(40, 30),
+                new Vector2(40, 40),
             };
             Graphics.Line(list);
 
 
-            Graphics.Rectangle(DrawMode.Fill, 10, 10, 200, 200);
+            // Graphics.Rectangle(DrawMode.Fill, 10, 10, 200, 200);
+
+            Graphics.SetPointSize(5);
+
+            var cplist = new ColoredPoint[]
+            {
+                new ColoredPoint(new Vector2(200, 150), new Vector4(0.5f, 0, 0, 1)),
+                new ColoredPoint(new Vector2(200, 200), new Vector4(1, 0, 0, 1)),
+                new ColoredPoint(new Vector2(300, 300), new Vector4(0, 1, 0, 1)),
+                new ColoredPoint(new Vector2(400, 400), new Vector4(0, 0, 1, 1)),
+            };
+
+            Graphics.Points(cplist);
         }
     }
 
@@ -806,7 +818,7 @@ namespace Love
             rectX = (float)(200 * (1.0 + Math.Sin(Timer.GetTime() / 10f * Math.PI)));
             rectY = 300;// * (float)(1 + Math.Cos(Timer.GetTime() * Math.PI));
 
-            Graphics.getCanvas();
+            Graphics.GetCanvas();
         }
 
         void DrawStencil()

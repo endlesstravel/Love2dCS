@@ -1,54 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿/// adapt from XnaGeometry
+using System;
+using System.Runtime.InteropServices;
 
 namespace Love
 {
-    public struct Vector2 : IEquatable<Vector2>
+    [Serializable]
+    [StructLayout(LayoutKind.Sequential)]
+    public partial struct Vector2 : IEquatable<Vector2>
     {
-        #region Private Fields
-
-        private static Vector2 zeroVector = new Vector2(0f, 0f);
-        private static Vector2 unitVector = new Vector2(1f, 1f);
-        private static Vector2 unitXVector = new Vector2(1f, 0f);
-        private static Vector2 unitYVector = new Vector2(0f, 1f);
-
-        #endregion Private Fields
-
-
         #region Public Fields
 
         public float X;
         public float Y;
 
+        public float x
+        {
+            get { return X; }
+            set { X = value; }
+        }
+
+        public float y
+        {
+            get { return Y; }
+            set { Y = value; }
+        }
+
         #endregion Public Fields
 
 
-        #region Properties
+        #region Private Fields
 
-        public static Vector2 Zero
-        {
-            get { return zeroVector; }
-        }
-
-        public static Vector2 One
-        {
-            get { return unitVector; }
-        }
-
-        public static Vector2 UnitX
-        {
-            get { return unitXVector; }
-        }
-
-        public static Vector2 UnitY
-        {
-            get { return unitYVector; }
-        }
-
-        #endregion Properties
-
+        public static Vector2 Zero { get; } = new Vector2(0f, 0f);
+        public static Vector2 One { get; } = new Vector2(1f, 1f);
+        public static Vector2 UnitX { get; } = new Vector2(1f, 0f);
+        public static Vector2 UnitY { get; } = new Vector2(0f, 1f);
+        
+        #endregion Private Fields
 
         #region Constructors
 
@@ -81,6 +68,36 @@ namespace Love
             result.X = value1.X + value2.X;
             result.Y = value1.Y + value2.Y;
         }
+
+
+        public static Vector2 Barycentric(Vector2 value1, Vector2 value2, Vector2 value3, float amount1, float amount2)
+        {
+            return new Vector2(
+                Mathf.Barycentric(value1.X, value2.X, value3.X, amount1, amount2),
+                Mathf.Barycentric(value1.Y, value2.Y, value3.Y, amount1, amount2));
+        }
+
+        public static void Barycentric(ref Vector2 value1, ref Vector2 value2, ref Vector2 value3, float amount1, float amount2, out Vector2 result)
+        {
+            result = new Vector2(
+                Mathf.Barycentric(value1.X, value2.X, value3.X, amount1, amount2),
+                Mathf.Barycentric(value1.Y, value2.Y, value3.Y, amount1, amount2));
+        }
+
+        public static Vector2 CatmullRom(Vector2 value1, Vector2 value2, Vector2 value3, Vector2 value4, float amount)
+        {
+            return new Vector2(
+                Mathf.CatmullRom(value1.X, value2.X, value3.X, value4.X, amount),
+                Mathf.CatmullRom(value1.Y, value2.Y, value3.Y, value4.Y, amount));
+        }
+
+        public static void CatmullRom(ref Vector2 value1, ref Vector2 value2, ref Vector2 value3, ref Vector2 value4, float amount, out Vector2 result)
+        {
+            result = new Vector2(
+                Mathf.CatmullRom(value1.X, value2.X, value3.X, value4.X, amount),
+                Mathf.CatmullRom(value1.Y, value2.Y, value3.Y, value4.Y, amount));
+        }
+
 
         public static Vector2 Clamp(Vector2 value1, Vector2 min, Vector2 max)
         {
@@ -194,6 +211,12 @@ namespace Love
             return X.GetHashCode() + Y.GetHashCode();
         }
 
+        public static void Hermite(ref Vector2 value1, ref Vector2 tangent1, ref Vector2 value2, ref Vector2 tangent2, float amount, out Vector2 result)
+        {
+            result.X = Mathf.Hermite(value1.X, tangent1.X, value2.X, tangent2.X, amount);
+            result.Y = Mathf.Hermite(value1.Y, tangent1.Y, value2.Y, tangent2.Y, amount);
+        }
+
         public float Length()
         {
             return (float)Math.Sqrt((X * X) + (Y * Y));
@@ -303,6 +326,20 @@ namespace Love
             result.Y = value.Y * val;
         }
 
+        public static Vector2 SmoothStep(Vector2 value1, Vector2 value2, float amount)
+        {
+            return new Vector2(
+                Mathf.SmoothStep(value1.X, value2.X, amount),
+                Mathf.SmoothStep(value1.Y, value2.Y, amount));
+        }
+
+        public static void SmoothStep(ref Vector2 value1, ref Vector2 value2, float amount, out Vector2 result)
+        {
+            result = new Vector2(
+                Mathf.SmoothStep(value1.X, value2.X, amount),
+                Mathf.SmoothStep(value1.Y, value2.Y, amount));
+        }
+
         public static Vector2 Subtract(Vector2 value1, Vector2 value2)
         {
             value1.X -= value2.X;
@@ -403,5 +440,23 @@ namespace Love
         }
 
         #endregion Operators
+
+        public static Vector2[] FromFloats(params float[] points)
+        {
+            Check.ArgumentNull(points, "points");
+            if (points.Length % 2 == 1)
+            {
+                throw new Exception("points must be an integer multiple of 2.");
+            }
+
+            var result = new Vector2[points.Length / 2];
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i].x = points[2 * i];
+                result[i].y = points[2 * i + 1];
+            }
+            return result;
+        }
+
     }
 }

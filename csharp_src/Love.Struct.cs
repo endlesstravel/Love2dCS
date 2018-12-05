@@ -146,4 +146,79 @@ namespace Love
         }
     }
 
+    
+    public struct Viewport
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="x">The top-left corner along the x-axis.</param>
+        /// <param name="y">The top-right corner along the y-axis.</param>
+        /// <param name="w">The width of the viewport.</param>
+        /// <param name="h">The height of the viewport.</param>
+        public Viewport(float x, float y, float w, float h)
+        {
+            this.x = x;
+            this.y = y;
+            this.w = w;
+            this.h = h;
+        }
+
+        /// <summary>
+        /// The top-left corner along the x-axis.
+        /// </summary>
+        public float x;
+
+        /// <summary>
+        /// The top-right corner along the y-axis.
+        /// </summary>
+        public float y;
+
+        /// <summary>
+        /// The width of the viewport.
+        /// </summary>
+        public float w;
+
+        /// <summary>
+        /// The height of the viewport.
+        /// </summary>
+        public float h;
+
+        /// <summary>
+        /// The top-left corner along the x-axis.
+        /// </summary>
+        public float X
+        {
+            get { return x; }
+            set { x = value; }
+        }
+
+        /// <summary>
+        /// The top-right corner along the y-axis.
+        /// </summary>
+        public float Y
+        {
+            get { return y; }
+            set { y = value; }
+        }
+
+        /// <summary>
+        /// The width of the viewport.
+        /// </summary>
+        public float Width
+        {
+            get { return w; }
+            set { w = value; }
+        }
+
+        /// <summary>
+        /// The height of the viewport.
+        /// </summary>
+        public float Height
+        {
+            get { return h; }
+            set { h = value; }
+        }
+    }
+
 }

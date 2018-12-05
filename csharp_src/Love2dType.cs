@@ -67,7 +67,7 @@ namespace Love
 
         /// <summary>
         /// Creates an identical copy of the Source in the stopped state.
-        /// <para>Static Sources will use significantly less memory and take much less time to be created if <see cref="Clone"/> is used to create them instead of <see cref="Audio.NewSource"/>, so this method should be preferred when making multiple Sources which play the same sound.</para>
+        /// <para>Static Sources will use significantly less memory and take much less time to be created if <see cref="Clone"/> is used to create them instead of Audio.NewSource, so this method should be preferred when making multiple Sources which play the same sound.</para>
         /// </summary>
         /// <returns></returns>
         public Source Clone()
@@ -110,7 +110,6 @@ namespace Love
         public void SetPitch(float pitch)
         {
             Love2dDll.wrap_love_dll_type_Source_setPitch(p, pitch);
-            return;
         }
 
         /// <summary>
@@ -193,11 +192,11 @@ namespace Love
         /// Gets the position of the Source.
         /// </summary>
         /// <returns></returns>
-        public Float3 GetPosition()
+        public Vector3 GetPosition()
         {
             float out_x = 0, out_y = 0, out_z = 0;
             Love2dDll.wrap_love_dll_type_Source_getPosition(p, out out_x, out out_y, out out_z);
-            return new Float3(out_x, out_y, out_z);
+            return new Vector3(out_x, out_y, out_z);
         }
 
         /// <summary>
@@ -215,11 +214,11 @@ namespace Love
         /// Gets the velocity of the Source.
         /// </summary>
         /// <returns></returns>
-        public Float3 GetVelocity()
+        public Vector3 GetVelocity()
         {
             float out_x = 0, out_y = 0, out_z = 0;
             Love2dDll.wrap_love_dll_type_Source_getVelocity(p, out out_x, out out_y, out out_z);
-            return new Float3(out_x, out_y, out_z);
+            return new Vector3(out_x, out_y, out_z);
         }
 
         /// <summary>
@@ -231,18 +230,17 @@ namespace Love
         public void SetDirection(float x, float y, float z)
         {
             Love2dDll.wrap_love_dll_type_Source_setDirection(p, x, y, z);
-            return;
         }
 
         /// <summary>
         /// Gets the direction of the Source.
         /// </summary>
         /// <returns></returns>
-        public Float3 GetDirection()
+        public Vector3 GetDirection()
         {
             float out_x = 0, out_y = 0, out_z = 0;
             Love2dDll.wrap_love_dll_type_Source_getDirection(p, out out_x, out out_y, out out_z);
-            return new Float3(out_x, out_y, out_z);
+            return new Vector3(out_x, out_y, out_z);
         }
 
         /// <summary>
@@ -468,7 +466,7 @@ namespace Love
             long out_readedSize = 0;
             Love2dDll.wrap_love_dll_type_File_read(p, size, out out_data, out out_readedSize);
 
-            return DllTool.readBytesAndRelease(out_data, out_readedSize);
+            return DllTool.ReadBytesAndRelease(out_data, out_readedSize);
         }
 
         /// <summary>
@@ -865,7 +863,6 @@ namespace Love
         public void SetLineHeight(float h)
         {
             Love2dDll.wrap_love_dll_type_Font_setLineHeight(p, h);
-            return;
         }
 
         /// <summary>
@@ -888,7 +885,6 @@ namespace Love
         public void SetFilter(FilterMode min_type, FilterMode mag_type, float anisotropy = 1)
         {
             Love2dDll.wrap_love_dll_type_Font_setFilter(p, (int)min_type, (int)mag_type, anisotropy);
-            return;
         }
 
         /// <summary>
@@ -897,7 +893,7 @@ namespace Love
         /// <returns></returns>
         /// <param name="min_type">Filter mode used when minifying the font.</param>
         /// <param name="mag_type">Filter mode used when magnifying the font.</param>
-        /// <param name="anisotropy">Maximum amount of anisotropic filtering used.</param>
+        /// <param name="out_anisotropy">Maximum amount of anisotropic filtering used.</param>
         public void GetFilter(out FilterMode min_type, out FilterMode mag_type, out float out_anisotropy)
         {
             int out_min_type, out_mag_type;
@@ -970,7 +966,6 @@ namespace Love
             }
 
             Love2dDll.wrap_love_dll_type_Font_setFallbacks(p, fallbackarray, fallbackarray.Length);
-            return;
         }
     }
 
@@ -1024,9 +1019,9 @@ namespace Love
         /// <param name="startVertex">The index of the first vertex to replace.</param>
         public void SetVertices(Vertex[] vertices, int startVertex = 0)
         {
-            var posArray = new Float2[vertices.Length];
-            var uvArray = new Float2[vertices.Length];
-            var colorArray = new Float4[vertices.Length];
+            var posArray = new Vector2[vertices.Length];
+            var uvArray = new Vector2[vertices.Length];
+            var colorArray = new Vector4[vertices.Length];
             for (int i = 0; i < vertices.Length; i++)
             {
                 posArray[i] = vertices[i].pos;
@@ -1040,11 +1035,11 @@ namespace Love
             Love2dDll.wrap_love_dll_type_Mesh_setVertex(p, index, vertex.pos, vertex.uv, vertex.color);
         }
 
-        // TODO
-        public Vertex getVertex(int index)
+        /// TODO
+        public Vertex GetVertex(int index)
         {
-            Float2 pos, uv;
-            Float4 color;
+            Vector2 pos, uv;
+            Vector4 color;
             Love2dDll.wrap_love_dll_type_Mesh_getVertex(p, index, out pos, out uv, out color);
             return new Vertex(pos, uv, color);
         }
@@ -1067,7 +1062,7 @@ namespace Love
         {
             Love2dDll.wrap_love_dll_type_Mesh_setVertexMap(p, vertexmaps, vertexmaps.Length);
         }
-        public uint[] getVertexMap()
+        public uint[] GetVertexMap()
         {
             bool out_has_vertex_map = false;
             IntPtr out_vertexmaps = IntPtr.Zero;
@@ -1077,17 +1072,15 @@ namespace Love
             if (out_has_vertex_map == false)
                 return null;
 
-            return DllTool.readUInt32sAndRelease(out_vertexmaps, out_vertexmaps_length);
+            return DllTool.ReadUInt32sAndRelease(out_vertexmaps, out_vertexmaps_length);
         }
         public void SetTexture()
         {
             Love2dDll.wrap_love_dll_type_Mesh_setTexture_nil(p);
-            return;
         }
         public void SetTexture(Texture tex)
         {
             Love2dDll.wrap_love_dll_type_Mesh_setTexture_Texture(p, tex.p);
-            return;
         }
         public Texture GetTexture()
         {
@@ -1131,233 +1124,490 @@ namespace Love
         /// </summary>
         protected ParticleSystem() {}
 
+        /// <summary>
+        /// Creates an identical copy of the ParticleSystem in the stopped state.
+        /// </summary>
+        /// <returns></returns>
         public ParticleSystem Clone()
         {
             IntPtr out_clone = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_ParticleSystem_clone(p, out out_clone);
             return NewObject<ParticleSystem>(out_clone);
         }
-        public void SetTexture(Texture tex)
+
+        /// <summary>
+        /// Sets the texture (Image or Canvas) to be used for the particles.
+        /// </summary>
+        /// <param name="texture">An Image or Canvas to use for the particles.</param>
+        public void SetTexture(Texture texture)
         {
-            Love2dDll.wrap_love_dll_type_ParticleSystem_setTexture(p, tex.p);
+            Love2dDll.wrap_love_dll_type_ParticleSystem_setTexture(p, texture.p);
         }
+
+        /// <summary>
+        /// Gets the texture (Image or Canvas) used for the particles.
+        /// </summary>
+        /// <returns>The Image or Canvas used for the particles.</returns>
         public Texture GetTexture()
         {
             IntPtr out_texture = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getTexture(p, out out_texture);
             return NewObject<Texture>(out_texture);
         }
+
+        /// <summary>
+        /// Sets the size of the buffer (the max allowed amount of particles in the system).
+        /// </summary>
+        /// <param name="buffersize">The buffer size.</param>
         public void SetBufferSize(uint buffersize)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setBufferSize(p, buffersize);
         }
+
+        /// <summary>
+        /// Gets the maximum number of particles the ParticleSystem can have at once.
+        /// </summary>
+        /// <returns>The maximum number of particles.</returns>
         public uint GetBufferSize()
         {
             uint out_buffersize = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getBufferSize(p, out out_buffersize);
             return out_buffersize;
         }
+
+        /// <summary>
+        /// Sets the mode to use when the ParticleSystem adds new particles.
+        /// </summary>
+        /// <param name="mode_type">The mode to use when the ParticleSystem adds new particles.</param>
         public void SetInsertMode(ParticleInsertMode mode_type)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setInsertMode(p, (int)mode_type);
         }
+
+        /// <summary>
+        /// Gets the mode used when the ParticleSystem adds new particles.
+        /// </summary>
+        /// <returns>The mode used when the ParticleSystem adds new particles.</returns>
         public ParticleInsertMode GetInsertMode()
         {
             int out_mode_type = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getInsertMode(p, out out_mode_type);
             return (ParticleInsertMode)out_mode_type;
         }
-        public void SetEmissionArea(AreaSpreadDistribution distribution, float dx, float dy, float angle = 0, bool directionRelativeToCenter = false)
-        {
-            Love2dDll.wrap_love_dll_type_ParticleSystem_setEmissionArea(p, (int)distribution, dx, dy, angle, directionRelativeToCenter);
-        }
+
+        /// <summary>
+        /// Sets the amount of particles emitted per second.
+        /// </summary>
+        /// <param name="rate">The amount of particles per second.</param>
         public void SetEmissionRate(float rate)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setEmissionRate(p, rate);
-            return;
         }
+
+        /// <summary>
+        /// Gets the amount of particles emitted per second.
+        /// </summary>
+        /// <returns>The amount of particles per second.</returns>
         public float GetEmissionRate()
         {
             float out_rate = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getEmissionRate(p, out out_rate);
             return out_rate;
         }
+
+        /// <summary>
+        /// Sets how long the particle system should emit particles (if -1 then it emits particles forever).
+        /// </summary>
+        /// <param name="lifetime">The lifetime of the emitter (in seconds).</param>
         public void SetEmitterLifetime(float lifetime)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setEmitterLifetime(p, lifetime);
         }
+
+        /// <summary>
+        /// Gets how long the particle system will emit particles (if -1 then it emits particles forever).
+        /// </summary>
+        /// <returns>The lifetime of the emitter (in seconds).</returns>
         public float GetEmitterLifetime()
         {
             float out_lifetime = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getEmitterLifetime(p, out out_lifetime);
             return out_lifetime;
         }
+
+        /// <summary>
+        /// Sets the lifetime of the particles.
+        /// </summary>
+        /// <param name="min">The minimum life of the particles (in seconds).</param>
+        /// <param name="max">The maximum life of the particles (in seconds).</param>
         public void SetParticleLifetime(float min, float max)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setParticleLifetime(p, min, max);
-            return;
         }
+
+        /// <summary>
+        /// Gets the lifetime of the particles.
+        /// </summary>
+        /// <param name="out_min">The minimum life of the particles (in seconds).</param>
+        /// <param name="out_max">The maximum life of the particles (in seconds).</param>
         public void GetParticleLifetime(out int out_min, out int out_max)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_getParticleLifetime(p, out out_min, out out_max);
         }
+
+        /// <summary>
+        /// Sets the position of the emitter.
+        /// </summary>
+        /// <param name="x">Position along x-axis.</param>
+        /// <param name="y">Position along y-axis.</param>
         public void SetPosition(float x, float y)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setPosition(p, x, y);
         }
-        public Float2 GetPosition()
+
+        /// <summary>
+        /// Gets the position of the emitter.
+        /// </summary>
+        /// <returns>Position of the emitter.</returns>
+        public Vector2 GetPosition()
         {
             float out_x = 0, out_y = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getPosition(p, out out_x, out out_y);
-            return new Float2(out_x, out_y);
+            return new Vector2(out_x, out_y);
         }
+
+        /// <summary>
+        /// Moves the position of the emitter.
+        /// This results in smoother particle spawning behaviour than if ParticleSystem.SetPosition is used every frame.
+        /// </summary>
+        /// <param name="x">Position along x-axis.</param>
+        /// <param name="y">Position along y-axis.</param>
         public void MoveTo(float x, float y)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_moveTo(p, x, y);
         }
+
+        /// <summary>
+        /// Gets the area-based spawn parameters for the particles.
+        /// </summary>
+        /// <param name="out_distribution_type">The type of distribution for new particles.</param>
+        /// <param name="out_x"></param>
+        /// <param name="out_y"></param>
         public void GetAreaSpread(out AreaSpreadDistribution out_distribution_type, out float out_x, out float out_y)
         {
             int out_distribution = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getAreaSpread(p, out out_distribution, out out_x, out out_y);
             out_distribution_type = (AreaSpreadDistribution)out_distribution;
         }
+
+        /// <summary>
+        /// Sets area-based spawn parameters for the particles. Newly created particles will spawn in an area around the emitter based on the parameters to this function.
+        /// </summary>
+        /// <param name="distribution">The type of distribution for new particles.</param>
+        /// <param name="dx">The maximum spawn distance from the emitter along the x-axis for uniform distribution, or the standard deviation along the x-axis for normal distribution.</param>
+        /// <param name="dy">The maximum spawn distance from the emitter along the y-axis for uniform distribution, or the standard deviation along the y-axis for normal distribution.</param>
+        /// <param name="angle">The angle in radians of the emission area.</param>
+        /// <param name="directionRelativeToCenter">True if newly spawned particles will be oriented relative to the center of the emission area, false otherwise.</param>
+        public void SetEmissionArea(AreaSpreadDistribution distribution, float dx, float dy, float angle = 0, bool directionRelativeToCenter = false)
+        {
+            Love2dDll.wrap_love_dll_type_ParticleSystem_setEmissionArea(p, (int)distribution, dx, dy, angle, directionRelativeToCenter);
+        }
+
+        /// <summary>
+        /// Sets the direction the particles will be emitted in.
+        /// </summary>
+        /// <param name="direction">The direction of the particles(in radians).</param>
         public void SetDirection(float direction)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setDirection(p, direction);
-            return;
         }
+
+        /// <summary>
+        /// Gets the direction of the particle emitter (in radians).
+        /// </summary>
+        /// <returns>The direction of the emitter (radians).</returns>
         public float GetDirection()
         {
             float out_direction = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getDirection(p, out out_direction);
             return out_direction;
         }
+
+        /// <summary>
+        /// Sets the amount of spread for the system.
+        /// </summary>
+        /// <param name="spread">The amount of spread (radians).</param>
         public void SetSpread(float spread)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setSpread(p, spread);
-            return;
         }
+
+        /// <summary>
+        /// Gets the amount of directional spread of the particle emitter (in radians).
+        /// </summary>
+        /// <returns>The spread of the emitter (radians).</returns>
         public float GetSpread()
         {
             float out_spread = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getSpread(p, out out_spread);
             return out_spread;
         }
+
+        /// <summary>
+        /// Sets the speed of the particles.
+        /// </summary>
+        /// <param name="min">The minimum linear speed of the particles.</param>
+        /// <param name="max">The maximun linear speed of the particles.</param>
         public void SetSpeed(float min, float max)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setSpeed(p, min, max);
-            return;
         }
+
+        /// <summary>
+        /// Gets the speed of the particles.
+        /// </summary>
+        /// <param name="out_min">The minimum linear speed of the particles.</param>
+        /// <param name="out_max">The maximum linear speed of the particles.</param>
         public void GetSpeed(out float out_min, out float out_max)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_getSpeed(p, out out_min, out out_max);
         }
+
+        /// <summary>
+        /// Sets the linear acceleration (acceleration along the x and y axes) for particles.
+        /// <para>Every particle created will accelerate along the x and y axes between xmin,ymin and xmax,ymax.</para>
+        /// </summary>
+        /// <param name="xmin">The minimum acceleration along the x axis.</param>
+        /// <param name="ymin">The minimum acceleration along the y axis.</param>
+        /// <param name="xmax">The maximum acceleration along the x axis.</param>
+        /// <param name="ymax">The maximum acceleration along the y axis.</param>
         public void SetLinearAcceleration(float xmin, float ymin, float xmax, float ymax)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setLinearAcceleration(p, xmin, ymin, xmax, ymax);
         }
+
+        /// <summary>
+        /// Gets the linear acceleration (acceleration along the x and y axes) for particles.
+        /// <para>Every particle created will accelerate along the x and y axes between xmin,ymin and xmax,ymax.</para>
+        /// </summary>
+        /// <param name="out_xmin">The minimum acceleration along the x axis.</param>
+        /// <param name="out_ymin">The minimum acceleration along the y axis.</param>
+        /// <param name="out_xmax">The maximum acceleration along the x axis.</param>
+        /// <param name="out_ymax">The maximum acceleration along the y axis.</param>
         public void GetLinearAcceleration(out float out_xmin, out float out_ymin, out float out_xmax, out float out_ymax)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_getLinearAcceleration(p, out out_xmin, out out_ymin, out out_xmax, out out_ymax);
         }
+
+        /// <summary>
+        /// Set the radial acceleration (away from the emitter).
+        /// </summary>
+        /// <param name="min">The minimum acceleration.</param>
+        /// <param name="max">The maximum acceleration.</param>
         public void SetRadialAcceleration(float min, float max)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setRadialAcceleration(p, min, max);
         }
+
+        /// <summary>
+        /// Gets the radial acceleration (away from the emitter).
+        /// </summary>
+        /// <param name="out_min">The minimum acceleration.</param>
+        /// <param name="out_max">The maximum acceleration.</param>
         public void GetRadialAcceleration(out int out_min, out int out_max)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_getRadialAcceleration(p, out out_min, out out_max);
         }
+
+        /// <summary>
+        /// Sets the tangential acceleration (acceleration perpendicular to the particle's direction).
+        /// </summary>
+        /// <param name="min">The minimum acceleration.</param>
+        /// <param name="max">The maximum acceleration.</param>
         public void SetTangentialAcceleration(float min, float max)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setTangentialAcceleration(p, min, max);
         }
+
+        /// <summary>
+        /// Gets the tangential acceleration (acceleration perpendicular to the particle's direction).
+        /// </summary>
+        /// <param name="out_min">The minimum acceleration.</param>
+        /// <param name="out_max">The maximum acceleration.</param>
         public void GetTangentialAcceleration(out int out_min, out int out_max)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_getTangentialAcceleration(p, out out_min, out out_max);
         }
+
+        /// <summary>
+        /// Sets the amount of linear damping (constant deceleration) for particles.
+        /// </summary>
+        /// <param name="min">The minimum amount of linear damping applied to particles.</param>
+        /// <param name="max">The maximum amount of linear damping applied to particles.</param>
         public void SetLinearDamping(float min, float max)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setLinearDamping(p, min, max);
         }
+
+        /// <summary>
+        /// Gets the amount of linear damping (constant deceleration) for particles.
+        /// </summary>
+        /// <param name="out_min">The minimum amount of linear damping applied to particles.</param>
+        /// <param name="out_max">The maximum amount of linear damping applied to particles.</param>
         public void GetLinearDamping(out int out_min, out int out_max)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_getLinearDamping(p, out out_min, out out_max);
         }
-        public void SetSizes(float[] sizearray)
+
+        /// <summary>
+        /// Sets a series of sizes by which to scale a particle sprite. 1.0 is normal size. The particle system will interpolate between each size evenly over the particle's lifetime.
+        /// <para>At least one size must be specified.A maximum of eight may be used.</para>
+        /// </summary>
+        /// <param name="sizeArray">The size array.</param>
+        public void SetSizes(params float[] sizeArray)
         {
-            Love2dDll.wrap_love_dll_type_ParticleSystem_setSizes(p, sizearray, sizearray.Length);
+            Love2dDll.wrap_love_dll_type_ParticleSystem_setSizes(p, sizeArray, sizeArray.Length);
         }
-        public float[] getSizes()
+
+        /// <summary>
+        /// Gets the series of sizes by which the sprite is scaled. 1.0 is normal size. The particle system will interpolate between each size evenly over the particle's lifetime.
+        /// </summary>
+        /// <returns>The size array.</returns>
+        public float[] GetSizes()
         {
             IntPtr out_sizearray = IntPtr.Zero;
             int out_sizearray_length = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getSizes(p, out out_sizearray, out out_sizearray_length);
-            return DllTool.readFloatsAndRelease(out_sizearray, out_sizearray_length);
+            return DllTool.ReadFloatsAndRelease(out_sizearray, out_sizearray_length);
         }
+
+        /// <summary>
+        /// Sets the amount of size variation (0 meaning no variation and 1 meaning full variation between start and end).
+        /// </summary>
+        /// <param name="variation">The amount of variation (0 meaning no variation and 1 meaning full variation between start and end).</param>
         public void SetSizeVariation(float variation)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setSizeVariation(p, variation);
-            return;
         }
+
+        /// <summary>
+        /// Gets the amount of size variation (0 meaning no variation and 1 meaning full variation between start and end).
+        /// </summary>
+        /// <returns>The amount of variation (0 meaning no variation and 1 meaning full variation between start and end).</returns>
         public float GetSizeVariation()
         {
             float out_variation = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getSizeVariation(p, out out_variation);
             return out_variation;
         }
+
+        /// <summary>
+        /// Sets the rotation of the image upon particle creation (in radians).
+        /// </summary>
+        /// <param name="min">The minimum initial angle (radians).</param>
+        /// <param name="max">The maximum initial angle (radians).</param>
         public void SetRotation(float min, float max)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setRotation(p, min, max);
-            return;
         }
+
+        /// <summary>
+        /// Gets the rotation of the image upon particle creation (in radians).
+        /// </summary>
+        /// <param name="out_min">The minimum initial angle (radians).</param>
+        /// <param name="out_max">The maximum initial angle (radians).</param>
         public void GetRotation(out int out_min, out int out_max)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_getRotation(p, out out_min, out out_max);
         }
+
+        /// <summary>
+        /// Sets the spin of the sprite.
+        /// </summary>
+        /// <param name="start">The minimum spin (radians per second).</param>
+        /// <param name="end">The maximum spin (radians per second).</param>
         public void SetSpin(float start, float end)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setSpin(p, start, end);
-            return;
         }
+
+        /// <summary>
+        /// Gets the spin of the sprite.
+        /// </summary>
+        /// <param name="out_start">The minimum spin (radians per second).</param>
+        /// <param name="out_end">The maximum spin (radians per second).</param>
         public void GetSpin(out float out_start, out float out_end)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_getSpin(p, out out_start, out out_end);
         }
+
+        /// <summary>
+        /// Sets the amount of spin variation (0 meaning no variation and 1 meaning full variation between start and end).
+        /// </summary>
+        /// <param name="variation">The amount of variation (0 meaning no variation and 1 meaning full variation between start and end).</param>
         public void SetSpinVariation(float variation)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setSpinVariation(p, variation);
-            return;
         }
+
+        /// <summary>
+        /// Gets the amount of spin variation (0 meaning no variation and 1 meaning full variation between start and end).
+        /// </summary>
+        /// <returns>The amount of variation (0 meaning no variation and 1 meaning full variation between start and end).</returns>
         public float GetSpinVariation()
         {
             float out_variation = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getSpinVariation(p, out out_variation);
             return out_variation;
         }
+
+        /// <summary>
+        /// Set the offset position which the particle sprite is rotated around. If this function is not used, the particles rotate around their center.
+        /// </summary>
+        /// <param name="x">The x coordinate of the rotation offset.</param>
+        /// <param name="y">The y coordinate of the rotation offset.</param>
         public void SetOffset(float x, float y)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setOffset(p, x, y);
-            return;
         }
-        public Float2 GetOffset()
+
+        /// <summary>
+        /// Get the offset position which the particle sprite is rotated around. If this function is not used, the particles rotate around their center.
+        /// </summary>
+        /// <param name="out_x">The x coordinate of the rotation offset.</param>
+        /// <param name="out_y">The y coordinate of the rotation offset.</param>
+        public void GetOffset(out float out_x, out float out_y)
         {
-            float out_x = 0, out_y = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getOffset(p, out out_x, out out_y);
-            return new Float2(out_x, out_y);
         }
-        public void SetColors(Int4[] colorarray)
+
+        /// <summary>
+        /// <para>Sets a series of colors to apply to the particle sprite. The particle system will interpolate between each color evenly over the particle's lifetime.</para>
+        /// <para>Arguments can be passed in groups of four, representing the components of the desired RGBA value, or as tables of RGBA component values, with a default alpha value of 1 if only three values are given. At least one color must be specified. A maximum of eight may be used.</para>
+        /// </summary>
+        /// <param name="colorArray"></param>
+        public void SetColors(params Vector4[] colorArray)
         {
-            Love2dDll.wrap_love_dll_type_ParticleSystem_setColors(p, colorarray, colorarray.Length);
+            Love2dDll.wrap_love_dll_type_ParticleSystem_setColors(p, colorArray, colorArray.Length);
         }
-        public Int4[] getColors()
+
+        /// <summary>
+        /// Gets the series of colors applied to the particle sprite.
+        /// </summary>
+        /// <returns></returns>
+        public Vector4[] GetColors()
         {
             IntPtr out_colorarray = IntPtr.Zero;
             int out_colorarray_length = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getColors(p, out out_colorarray, out out_colorarray_length);
-            return DllTool.readInt4sAndRelease(out_colorarray, out_colorarray_length);
+            return DllTool.ReadVector4sAndRelease(out_colorarray, out_colorarray_length);
         }
-        public void SetQuads(Quad[] quads)
+
+        /// <summary>
+        /// Sets a series of Quads to use for the particle sprites. Particles will choose a Quad from the list based on the particle's current lifetime, allowing for the use of animated sprite sheets with ParticleSystems.
+        /// </summary>
+        /// <param name="quads">The Quads to use.</param>
+        public void SetQuads(params Quad[] quads)
         {
             IntPtr[] quadsarray = new IntPtr[quads.Length];
             for (int i = 0; i < quads.Length; i++)
@@ -1367,74 +1617,139 @@ namespace Love
 
             Love2dDll.wrap_love_dll_type_ParticleSystem_setQuads(p, quadsarray, quadsarray.Length);
         }
-        public Quad[] getQuads()
+
+        /// <summary>
+        /// Gets the series of Quads used for the particle sprites.
+        /// </summary>
+        /// <returns></returns>
+        public Quad[] GetQuads()
         {
             IntPtr out_quadsarray = IntPtr.Zero;
             int out_quadsarray_length = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getQuads(p, out out_quadsarray, out out_quadsarray_length);
-            return DllTool.readIntPtrsWithConvertAndRelease<Quad>(out_quadsarray, out_quadsarray_length);
+            return DllTool.ReadIntPtrsWithConvertAndRelease<Quad>(out_quadsarray, out_quadsarray_length);
         }
+
+        /// <summary>
+        /// Sets whether particle angles and rotations are relative to their velocities. If enabled, particles are aligned to the angle of their velocities and rotate relative to that angle.
+        /// </summary>
+        /// <param name="enable">True to enable relative particle rotation, false to disable it.</param>
         public void SetRelativeRotation(bool enable)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_setRelativeRotation(p, enable);
         }
+
+        /// <summary>
+        /// Gets whether particle angles and rotations are relative to their velocities. If enabled, particles are aligned to the angle of their velocities and rotate relative to that angle.
+        /// </summary>
+        /// <returns>True if relative particle rotation is enabled, false if it's disabled.</returns>
         public bool HasRelativeRotation()
         {
             bool out_enable = false;
             Love2dDll.wrap_love_dll_type_ParticleSystem_hasRelativeRotation(p, out out_enable);
             return out_enable;
         }
+
+        /// <summary>
+        /// Gets the number of particles that are currently in the system.
+        /// </summary>
+        /// <returns>The current number of live particles.</returns>
         public uint GetCount()
         {
             uint out_count = 0;
             Love2dDll.wrap_love_dll_type_ParticleSystem_getCount(p, out out_count);
             return out_count;
         }
+
+        /// <summary>
+        /// Starts the particle emitter.
+        /// </summary>
         public void Start()
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_start(p);
         }
+
+        /// <summary>
+        /// Stops the particle emitter, resetting the lifetime counter.
+        /// </summary>
         public void Stop()
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_stop(p);
         }
+
+        /// <summary>
+        /// Pauses the particle emitter.
+        /// </summary>
         public void Pause()
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_pause(p);
         }
+
+        /// <summary>
+        /// Resets the particle emitter, removing any existing particles and resetting the lifetime counter.
+        /// </summary>
         public void Reset()
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_reset(p);
         }
+
+        /// <summary>
+        /// Emits a burst of particles from the particle emitter.
+        /// </summary>
+        /// <param name="num">The amount of particles to emit. The number of emitted particles will be truncated if the particle system's max buffer size is reached.</param>
         public void Emit(int num)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_emit(p, num);
         }
+
+        /// <summary>
+        /// Checks whether the particle system is actively emitting particles.
+        /// </summary>
+        /// <returns>True if system is active, false otherwise.</returns>
         public bool IsActive()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_ParticleSystem_isActive(p, out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// Checks whether the particle system is paused.
+        /// </summary>
+        /// <returns>True if system is paused, false otherwise.</returns>
         public bool IsPaused()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_ParticleSystem_isPaused(p, out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// Checks whether the particle system is stopped.
+        /// </summary>
+        /// <returns>True if system is stopped, false otherwise.</returns>
         public bool IsStopped()
         {
             bool out_result = false;
             Love2dDll.wrap_love_dll_type_ParticleSystem_isStopped(p, out out_result);
             return out_result;
         }
+
+        /// <summary>
+        /// Updates the particle system; moving, creating and killing particles.
+        /// </summary>
+        /// <param name="dt">The time (seconds) since last frame.</param>
         public void Update(float dt)
         {
             Love2dDll.wrap_love_dll_type_ParticleSystem_update(p, dt);
-            return;
         }
     }
 
+    /// <summary>
+    /// A quadrilateral (a polygon with four sides and four corners) with texture coordinate information.
+    /// <para>Quads can be used to select part of a texture to draw. In this way, one large texture atlas can be loaded, and then split up into sub-images.</para>
+    /// <para>Quads 'bleed' when scaled, rotated or drawn at non-integer coordinates, even within SpriteBatches, to compensate for this, use 1px borders around the textures inside the texture atlas (preferably with the same colors as the actual border)</para>
+    /// </summary>
     public partial class Quad : LoveObject
     {
         /// <summary>
@@ -1442,28 +1757,44 @@ namespace Love
         /// </summary>
         protected Quad() {}
 
+        /// <summary>
+        /// Sets the texture coordinates according to a viewport.
+        /// </summary>
+        /// <param name="x">The top-left corner along the x-axis.</param>
+        /// <param name="y">The top-right corner along the y-axis.</param>
+        /// <param name="w">The width of the viewport.</param>
+        /// <param name="h">The height of the viewport.</param>
         public void SetViewport(float x, float y, float w, float h)
         {
             Love2dDll.wrap_love_dll_type_Quad_setViewport(p, x, y, w, h);
         }
-        public Float4 GetViewport()
+
+        /// <summary>
+        /// Gets the texture coordinates according to a viewport.
+        /// </summary>
+        /// <param name="out_x">The top-left corner along the x-axis.</param>
+        /// <param name="out_y">The top-right corner along the y-axis.</param>
+        /// <param name="out_w">The width of the viewport.</param>
+        /// <param name="out_h">The height of the viewport.</param>
+        public void GetViewport(out float out_x, out float out_y, out float out_w, out float out_h)
         {
-            float out_x, out_y, out_w, out_h;
             Love2dDll.wrap_love_dll_type_Quad_getViewport(p, out out_x, out out_y, out out_w, out out_h);
-            return new Float4(out_x, out_y, out_w, out_h);
         }
-        public Float2 GetTextureDimensions()
+
+        /// <summary>
+        /// Gets reference texture dimensions initially specified in love.graphics.newQuad.
+        /// </summary>
+        /// <returns>The Texture size used by the Quad.</returns>
+        public void GetTextureDimensions(out float out_sw, out float out_sh)
         {
-            double out_sw, out_sh;
             Love2dDll.wrap_love_dll_type_Quad_getTextureDimensions(p, out out_sw, out out_sh);
-            return new Float2((float)out_sw, (float)out_sh);
         }
     }
 
     public partial class Shader : LoveObject
     {
         /// <summary>
-        /// Use <see cref="Graphics.NewShader"/> to create Shader !
+        /// Use Graphics.NewShader(...) to create Shader !
         /// </summary>
         protected Shader() {}
 
@@ -1484,7 +1815,7 @@ namespace Love
             Love2dDll.wrap_love_dll_type_Shader_getWarnings(p, out out_str);
             return DllTool.WSToStringAndRelease(out_str);
         }
-        public void SendColors(byte[] name, params Float4[] valuearray)
+        public void SendColors(byte[] name, params Vector4[] valuearray)
         {
             Love2dDll.wrap_love_dll_type_Shader_sendColors(p, name, valuearray, valuearray.Length);
         }
@@ -1586,12 +1917,12 @@ namespace Love
         }
 
         // If no color has been set with SpriteBatch:setColor or the current SpriteBatch color has been cleared, this method will return false.
-        public Tuple<bool, Float4> getColor()
+        public Tuple<bool, Vector4> GetColor()
         {
             bool out_exist = false;
             float out_r, out_g, out_b, out_a;
             Love2dDll.wrap_love_dll_type_SpriteBatch_getColor(p, out out_exist, out out_r, out out_g, out out_b, out out_a);
-            return new Tuple<bool, Float4>(out_exist, new Float4(out_r, out_g, out_b, out_a));
+            return new Tuple<bool, Vector4>(out_exist, new Vector4(out_r, out_g, out_b, out_a));
         }
         public int GetCount()
         {
@@ -1649,12 +1980,10 @@ namespace Love
         public void Clear()
         {
             Love2dDll.wrap_love_dll_type_Text_clear(p);
-            return;
         }
         public void SetFont(Font f)
         {
             Love2dDll.wrap_love_dll_type_Text_setFont(p, f.p);
-            return;
         }
         public Font GetFont()
         {
@@ -1980,6 +2309,7 @@ namespace Love
         /// Encodes the ImageData and optionally writes it to the save directory.
         /// </summary>
         /// <param name="format_type">The format to encode the image as.</param>
+        /// <param name="writeToFile">Whether to write to the specified file</param>
         /// <param name="filename">The filename to write the file to. If null, no file will be written but the FileData will still be returned.</param>
         /// <returns></returns>
         public FileData Encode(ImageFormat format_type, bool writeToFile, byte[] filename)
@@ -2101,7 +2431,6 @@ namespace Love
         public void SetSample(int i, float sample)
         {
             Love2dDll.wrap_love_dll_SoundData_setSample(p, i, sample);
-            return;
         }
         public float GetSample(int i)
         {
@@ -2173,11 +2502,11 @@ namespace Love
             Love2dDll.wrap_love_dll_type_BezierCurve_getDerivative(p, out out_deriv);
             return NewObject<BezierCurve>(out_deriv);
         }
-        public Float2 GetControlPoint(int idx)
+        public Vector2 GetControlPoint(int idx)
         {
             float out_x, out_y;
             Love2dDll.wrap_love_dll_type_BezierCurve_getControlPoint(p, idx, out out_x, out out_y);
-            return new Float2(out_x, out_y);
+            return new Vector2(out_x, out_y);
         }
         public void SetControlPoint(int idx, float x, float y)
         {
@@ -2209,11 +2538,11 @@ namespace Love
         {
             Love2dDll.wrap_love_dll_type_BezierCurve_scale(p, s, ox, oy);
         }
-        public Float2 Evaluate(double t)
+        public Vector2 Evaluate(double t)
         {
             float out_x, out_y;
             Love2dDll.wrap_love_dll_type_BezierCurve_evaluate(p, t, out out_x, out out_y);
-            return new Float2(out_x, out_y);
+            return new Vector2(out_x, out_y);
         }
         public BezierCurve GetSegment(double t1, double t2)
         {
@@ -2221,19 +2550,19 @@ namespace Love
             Love2dDll.wrap_love_dll_type_BezierCurve_getSegment(p, t1, t2, out out_segment);
             return NewObject<BezierCurve>(out_segment);
         }
-        public Float2[] render(int accuracy)
+        public Vector2[] Render(int accuracy)
         {
             IntPtr out_points;
             int out_points_lenght;
             Love2dDll.wrap_love_dll_type_BezierCurve_render(p, accuracy, out out_points, out out_points_lenght);
-            return DllTool.readFloat2sAndRelease(out_points, out_points_lenght);
+            return DllTool.ReadVector2sAndRelease(out_points, out_points_lenght);
         }
-        public Float2[] renderSegment(double start, double end, int accuracy)
+        public Vector2[] RenderSegment(double start, double end, int accuracy)
         {
             IntPtr out_points;
             int out_points_lenght;
             Love2dDll.wrap_love_dll_type_BezierCurve_renderSegment(p, start, end, accuracy, out out_points, out out_points_lenght);
-            return DllTool.readFloat2sAndRelease(out_points, out_points_lenght);
+            return DllTool.ReadVector2sAndRelease(out_points, out_points_lenght);
         }
     }
 
@@ -2345,12 +2674,12 @@ namespace Love
             Love2dDll.wrap_love_dll_type_Joystick_getAxis(p, axisindex, out out_axis);
             return out_axis;
         }
-        public float[] getAxes()
+        public float[] GetAxes()
         {
             IntPtr out_axes;
             int out_axes_length;
             Love2dDll.wrap_love_dll_type_Joystick_getAxes(p, out out_axes, out out_axes_length);
-            return DllTool.readFloatsAndRelease(out_axes, out_axes_length);
+            return DllTool.ReadFloatsAndRelease(out_axes, out_axes_length);
         }
         public JoystickHat GetHat(int hatindex)
         {
@@ -2490,20 +2819,20 @@ namespace Love
     public class ColoredString
     {
         public readonly string text;
-        public readonly Float4 color;
-        public ColoredString(string text, Float4 color)
+        public readonly Vector4 color;
+        public ColoredString(string text, Vector4 color)
         {
             this.text = text;
             this.color = color;
         }
 
-        public static ColoredString Create(string text, Float4 color)
+        public static ColoredString Create(string text, Vector4 color)
         {
             return new ColoredString(text, color);
         }
         public static ColoredString Create(string text, float r, float g, float b, float a = 1)
         {
-            return Create(text, new Float4(r, g, b, a));
+            return Create(text, new Vector4(r, g, b, a));
         }
     }
 
@@ -2512,11 +2841,11 @@ namespace Love
 
         public static ColoredStringArray Create(string text)
         {
-            return new ColoredStringArray(ColoredString.Create(text, new Float4(1, 1, 1, 1)));
+            return new ColoredStringArray(ColoredString.Create(text, new Vector4(1, 1, 1, 1)));
         }
 
         public readonly string[] texts;
-        public readonly Float4[] colors;
+        public readonly Vector4[] colors;
 
         public int Length
         {
@@ -2526,7 +2855,7 @@ namespace Love
         public ColoredStringArray(params ColoredString[] inputItems)
         {
             texts = new string[inputItems.Length];
-            colors = new Float4[inputItems.Length];
+            colors = new Vector4[inputItems.Length];
             for (int i = 0; i < inputItems.Length; i++)
             {
                 texts[i] = inputItems[i].text;
@@ -2534,7 +2863,7 @@ namespace Love
             }
         }
 
-        public ColoredStringArray(string[] texts, Float4[] colors)
+        public ColoredStringArray(string[] texts, Vector4[] colors)
         {
             if (texts.Length != colors.Length)
             {
@@ -2545,7 +2874,7 @@ namespace Love
             this.colors = colors;
         }
 
-        public void ExecResource(Action<Tuple<IntPtr[], Float4[]>> func)
+        public void ExecResource(Action<Tuple<IntPtr[], Vector4[]>> func)
         {
             if (func != null)
             {
