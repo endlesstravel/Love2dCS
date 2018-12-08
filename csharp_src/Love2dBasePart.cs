@@ -666,6 +666,9 @@ namespace Love
         /// <returns></returns>
         public static bool SetIcon(ImageData imagedata)
         {
+            if (imagedata == null)
+                return false;
+
             bool out_success = false;
             Love2dDll.wrap_love_dll_windows_setIcon(imagedata.p, out out_success);
             return out_success;
@@ -1156,10 +1159,10 @@ namespace Love
         /// </summary>
         /// <param name="key_type">The key to check.</param>
         /// <returns>True if the key is down, false if not.</returns>
-        public static bool IsDown(KeyConstant key_type)
+        public static bool IsDown(KeyConstant key)
         {
             bool out_result = false;
-            Love2dDll.wrap_love_dll_keyboard_isDown((int)key_type, out out_result);
+            Love2dDll.wrap_love_dll_keyboard_isDown((int)key, out out_result);
             return out_result;
         }
 
@@ -1169,10 +1172,10 @@ namespace Love
         /// </summary>
         /// <param name="scancode_type"></param>
         /// <returns></returns>
-        public static bool IsScancodeDown(Scancode scancode_type)
+        public static bool IsScancodeDown(Scancode scancode)
         {
             bool out_result = false;
-            Love2dDll.wrap_love_dll_keyboard_isScancodeDown((int)scancode_type, out out_result);
+            Love2dDll.wrap_love_dll_keyboard_isScancodeDown((int)scancode, out out_result);
             return out_result;
         }
 
@@ -1301,7 +1304,7 @@ namespace Love
         {
             Love2dDll.wrap_love_dll_joystick_open_love_joystick();
         }
-        public Joystick[] GetJoysticks()
+        public static Joystick[] GetJoysticks()
         {
             IntPtr out_sticks;
             int out_sticks_lenght;
@@ -2101,7 +2104,7 @@ namespace Love
         /// <param name="sources"></param>
         public static void Play(params Source[] sources)
         {
-            Check.ArgumentNull(sources);
+            Check.ArgumentNull(sources, "sources");
 
             IntPtr[] ptrs = new IntPtr[sources.Length];
             for (int i = 0; i < sources.Length; i++)
@@ -2826,7 +2829,7 @@ namespace Love
         /// Resets the current graphics settings.
         /// <para>Calling reset makes the current drawing color white, the current background color black, disables any active Canvas or Shader, and removes any scissor settings. It sets the BlendMode to alpha, enables all color component masks, disables wireframe mode and resets the current graphics transformation to the origin. It also sets both the point and line drawing modes to smooth and their sizes to 1.0.</para>
         /// </summary>
-        void Reset()
+        public static void Reset()
         {
             Love2dDll.wrap_love_dll_graphics_reset();
         }
@@ -3033,11 +3036,11 @@ namespace Love
         /// <summary>
         /// Sets the blending mode.
         /// </summary>
-        /// <param name="blendMode_type">The blend mode to use.</param>
-        /// <param name="blendAlphaMode_type">What to do with the alpha of drawn objects when blending.</param>
-        public static void SetBlendMode(BlendMode blendMode_type, BlendAlphaMode blendAlphaMode_type = BlendAlphaMode.Multiply)
+        /// <param name="blendMode">The blend mode to use.</param>
+        /// <param name="blendAlphaMode">What to do with the alpha of drawn objects when blending.</param>
+        public static void SetBlendMode(BlendMode blendMode, BlendAlphaMode blendAlphaMode = BlendAlphaMode.Multiply)
         {
-            Love2dDll.wrap_love_dll_graphics_setBlendMode((int)blendMode_type, (int)blendAlphaMode_type);
+            Love2dDll.wrap_love_dll_graphics_setBlendMode((int)blendMode, (int)blendAlphaMode);
         }
 
         /// <summary>
@@ -3223,7 +3226,10 @@ namespace Love
         /// <param name="shader"></param>
         public static void SetShader(Shader shader)
         {
-            Love2dDll.wrap_love_dll_graphics_setShader(shader.p);
+            if (shader == null)
+                SetShader();
+            else
+                Love2dDll.wrap_love_dll_graphics_setShader(shader.p);
         }
 
         /// <summary>
@@ -3405,11 +3411,11 @@ namespace Love
         /// <param name="kx">Shearing factor (x-axis).</param>
         /// <param name="ky">Shearing factor (y-axis).</param>
         /// <returns></returns>
-        public static void Draw(Drawable drawable, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public static void Draw(Drawable drawable, float x = 0, float y = 0, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
             Love2dDll.wrap_love_dll_graphics_draw_drawable(drawable.p, x, y, angle, sx, sy, ox, oy, kx, ky);
         }
-        public static void Draw(Quad quad, Texture texture, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public static void Draw(Quad quad, Texture texture, float x = 0, float y = 0, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
             Love2dDll.wrap_love_dll_graphics_draw_texture_quad(quad.p, texture.p, x, y, angle, sx, sy, ox, oy, kx, ky);
         }
@@ -3429,7 +3435,7 @@ namespace Love
         /// <param name="oy">Origin offset (y-axis).</param>
         /// <param name="kx">Shearing factor (x-axis).</param>
         /// <param name="ky">Shearing factor (y-axis).</param>
-        public static void Print(string text, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public static void Print(string text, float x = 0, float y = 0, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
             var coloredStr = ColoredStringArray.Create(text);
 
@@ -3442,7 +3448,7 @@ namespace Love
         /// Same as Love.Graphics.Print(string...), but coloredStr used to show text in different color.
         /// </summary>
         /// <param name="coloredStr">colors and strings </param>
-        public static void Print(ColoredStringArray coloredStr, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        public static void Print(ColoredStringArray coloredStr, float x = 0, float y = 0, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
         {
             coloredStr.ExecResource((tmp) =>{
                 Love2dDll.wrap_love_dll_graphics_print(tmp.Item1, tmp.Item2, coloredStr.Length, x, y, angle, sx, sy, ox, oy, kx, ky);

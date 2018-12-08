@@ -38,6 +38,11 @@ namespace Love
         // real pointer
         internal IntPtr p;
 
+        public static IntPtr AcquirePointer(LoveObject loveObject)
+        {
+            return loveObject == null ? IntPtr.Zero : loveObject.p;
+        }
+
         // disable no-param construct
         internal LoveObject() { }
 
@@ -53,6 +58,29 @@ namespace Love
         // if we release resource in ~LoveObject() we may encounter crash
         // when we exit program. I think the reason is that C# disorder the
         // time of release chance between openGL and opengGL resource (for example Texture)
+
+        /// <summary>
+        /// 如果两个 LoveObject 指向的非托管对象一样，那么则返回相等
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public override bool Equals(object obj)
+        {
+            // 检查 null 值并且比较运行时类型。
+            if (obj == null || GetType() != obj.GetType())
+                return false;
+
+            return this.p == (obj as LoveObject).p;
+        }
+
+        /// <summary>
+        /// 返回此实例的 IntPtr p 的哈希代码。
+        /// </summary>
+        /// <returns></returns>
+        public override int GetHashCode()
+        {
+            return p.GetHashCode();
+        }
     }
 
     /// <summary>
@@ -1080,7 +1108,10 @@ namespace Love
         }
         public void SetTexture(Texture tex)
         {
-            Love2dDll.wrap_love_dll_type_Mesh_setTexture_Texture(p, tex.p);
+            if (tex == null)
+                SetTexture();
+            else
+                Love2dDll.wrap_love_dll_type_Mesh_setTexture_Texture(p, tex.p);
         }
         public Texture GetTexture()
         {
@@ -1141,6 +1172,7 @@ namespace Love
         /// <param name="texture">An Image or Canvas to use for the particles.</param>
         public void SetTexture(Texture texture)
         {
+            Check.ArgumentNull(texture, "texture");
             Love2dDll.wrap_love_dll_type_ParticleSystem_setTexture(p, texture.p);
         }
 
@@ -1791,6 +1823,10 @@ namespace Love
         }
     }
 
+    /// <summary>
+    /// A Shader is used for advanced hardware-accelerated pixel or vertex manipulation. These effects are written in a language based on GLSL (OpenGL Shading Language) with a few things simplified for easier coding.
+    /// <para>Potential uses for shaders include HDR/bloom, motion blur, grayscale/invert/sepia/any kind of color effect, reflection/refraction, distortions, bump mapping, and much more! Here is a collection of basic shaders and good starting point to learn: https://github.com/vrld/moonshine </para>
+    /// </summary>
     public partial class Shader : LoveObject
     {
         /// <summary>
@@ -1809,31 +1845,66 @@ namespace Love
             Unknown,
         };
 
+        /// <summary>
+        /// Gets warning and error messages (if any).
+        /// </summary>
+        /// <returns></returns>
         public string GetWarnings()
         {
             IntPtr out_str = IntPtr.Zero;
             Love2dDll.wrap_love_dll_type_Shader_getWarnings(p, out out_str);
             return DllTool.WSToStringAndRelease(out_str);
         }
-        public void SendColors(byte[] name, params Vector4[] valuearray)
+
+        /// <summary>
+        /// Sends one or more colors to a special (extern / uniform) vec3 or vec4 variable inside the shader. The color components must be in the range of [0, 1]. The colors are gamma-corrected if global gamma-correction is enabled.
+        /// </summary>
+        /// <param name="name">The name of the color extern variable to send to in the shader. (UTF8 byte array)</param>
+        /// <param name="valueArray">A array with red, green, blue, and alpha color components in the range of [0, 1] to send to the extern as a vector.</param>
+        public void SendColors(byte[] name, params Vector4[] valueArray)
         {
-            Love2dDll.wrap_love_dll_type_Shader_sendColors(p, name, valuearray, valuearray.Length);
+            Love2dDll.wrap_love_dll_type_Shader_sendColors(p, name, valueArray, valueArray.Length);
         }
-        public void SendFloats(byte[] name, params float[] valuearray)
+
+        /// <summary>
+        /// Sends one or more float values to a special (uniform) variable inside the shader.
+        /// </summary>
+        /// <param name="name">Name of the float to send to the shader. (UTF8 byte array)</param>
+        /// <param name="valueArray">Float to send to store in the uniform variable.</param>
+        public void SendFloats(byte[] name, params float[] valueArray)
         {
-            Love2dDll.wrap_love_dll_type_Shader_sendFloats(p, name, valuearray, valuearray.Length);
+            Love2dDll.wrap_love_dll_type_Shader_sendFloats(p, name, valueArray, valueArray.Length);
         }
-        public void SendUints(byte[] name, params uint[] valuearray)
+
+        /// <summary>
+        /// Sends one or more uint values to a special (uniform) variable inside the shader.
+        /// </summary>
+        /// <param name="name">Name of the uint to send to the shader. (UTF8 byte array)</param>
+        /// <param name="valueArray">Uint to send to store in the uniform variable.</param>
+        public void SendUints(byte[] name, params uint[] valueArray)
         {
-            Love2dDll.wrap_love_dll_type_Shader_sendUints(p, name, valuearray, valuearray.Length);
+            Love2dDll.wrap_love_dll_type_Shader_sendUints(p, name, valueArray, valueArray.Length);
         }
-        public void SendInts(byte[] name, params int[] valuearray)
+
+        /// <summary>
+        /// Sends one or more int values to a special (uniform) variable inside the shader.
+        /// </summary>
+        /// <param name="name">Name of the int to send to the shader. (UTF8 byte array)</param>
+        /// <param name="valueArray">Int to send to store in the uniform variable.</param>
+        public void SendInts(byte[] name, params int[] valueArray)
         {
-            Love2dDll.wrap_love_dll_type_Shader_sendInts(p, name, valuearray, valuearray.Length);
+            Love2dDll.wrap_love_dll_type_Shader_sendInts(p, name, valueArray, valueArray.Length);
         }
-        public void SendBooleans(byte[] name, params bool[] valuearray)
+
+
+        /// <summary>
+        /// Sends one or more boolean values to a special (uniform) variable inside the shader.
+        /// </summary>
+        /// <param name="name">Name of the boolean to send to the shader. (UTF8 byte array)</param>
+        /// <param name="valueArray">Boolean to send to store in the uniform variable.</param>
+        public void SendBooleans(byte[] name, params bool[] valueArray)
         {
-            Love2dDll.wrap_love_dll_type_Shader_sendBooleans(p, name, valuearray, valuearray.Length);
+            Love2dDll.wrap_love_dll_type_Shader_sendBooleans(p, name, valueArray, valueArray.Length);
         }
 
         /// <summary>
@@ -1855,6 +1926,11 @@ namespace Love
             Love2dDll.wrap_love_dll_type_Shader_sendMatrices(p, name, valueArray, columns, rows, count);
         }
 
+        /// <summary>
+        /// Sends one or more texture to a special (uniform) variable inside the shader.
+        /// </summary>
+        /// <param name="name">Name of the Texture to send to the shader.(UTF8 byte array)</param>
+        /// <param name="texture">Texture (Image or Canvas) to send to the uniform variable.</param>
         public void SendTexture(byte[] name, params Texture[] texture)
         {
             IntPtr[] txts = DllTool.GenIntPtrArray(texture);
@@ -1862,6 +1938,10 @@ namespace Love
         }
     }
 
+    /// <summary>
+    /// Using a single image, draw any number of identical copies of the image using a single call to Love.Graphics.Draw(). This can be used, for example, to draw repeating copies of a single background image with high performance.
+    /// <para>A SpriteBatch can be even more useful when the underlying image is a texture atlas (a single image file containing many independent images); by adding Quads to the batch, different sub-images from within the atlas can be drawn.</para>
+    /// </summary>
     public partial class SpriteBatch : Drawable
     {
         /// <summary>
@@ -2352,16 +2432,24 @@ namespace Love
         /// </summary>
         protected Decoder() { }
 
-        // Indicates how many bytes of raw data should be generated at each call to Decode.
+        /// <summary>
+        /// Indicates how many bytes of raw data should be generated at each call to Decode.
+        /// </summary>
         public const int DEFAULT_BUFFER_SIZE = 16384;
 
-        // Indicates the quality of the sound.
+        /// <summary>
+        /// Indicates the quality of the sound.
+        /// </summary>
         public const int DEFAULT_SAMPLE_RATE = 44100;
 
-        // Default is stereo.
+        /// <summary>
+        /// Default is stereo.
+        /// </summary>
         public const int DEFAULT_CHANNELS = 2;
 
-        // 16 bit audio is the default.
+        /// <summary>
+        /// 16 bit audio is the default.
+        /// </summary>
         public const int DEFAULT_BIT_DEPTH = 16;
 
 
@@ -2717,7 +2805,7 @@ namespace Love
             Love2dDll.wrap_love_dll_type_Joystick_isVibrationSupported(p, out out_result);
             return out_result;
         }
-        public bool SetVibration_nil()
+        public bool SetVibration()
         {
             bool out_success = false;
             Love2dDll.wrap_love_dll_type_Joystick_setVibration_nil(p, out out_success);
@@ -2826,10 +2914,26 @@ namespace Love
             this.color = color;
         }
 
+        /// <summary>
+        /// Create ColoredString form text and color
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="color"></param>
+        /// <returns></returns>
         public static ColoredString Create(string text, Vector4 color)
         {
             return new ColoredString(text, color);
         }
+
+        /// <summary>
+        /// Create ColoredString form text and color
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="r"></param>
+        /// <param name="g"></param>
+        /// <param name="b"></param>
+        /// <param name="a"></param>
+        /// <returns></returns>
         public static ColoredString Create(string text, float r, float g, float b, float a = 1)
         {
             return Create(text, new Vector4(r, g, b, a));
@@ -2838,7 +2942,11 @@ namespace Love
 
     public struct ColoredStringArray
     {
-
+        /// <summary>
+        /// Create white Color text
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
         public static ColoredStringArray Create(string text)
         {
             return new ColoredStringArray(ColoredString.Create(text, new Vector4(1, 1, 1, 1)));

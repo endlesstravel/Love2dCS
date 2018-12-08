@@ -9,8 +9,6 @@ using System.Runtime.InteropServices;
 namespace Love
 {
 
-    #region Love Module
-
     public partial class Event
     {
         /// <summary>
@@ -79,7 +77,7 @@ namespace Love
         /// Attempts to find a decoder for the encoded sound data in the specified file.
         /// </summary>
         /// <param name="filename">The filename of the file with encoded sound data.</param>
-        /// <param name="buffersize">The size of each decoded chunk, in bytes.</param>
+        /// <param name="bufferSize">The size of each decoded chunk, in bytes.</param>
         /// <returns></returns>
         public static Decoder NewDecoder(string filename, int bufferSize = Decoder.DEFAULT_BUFFER_SIZE)
         {
@@ -131,7 +129,7 @@ namespace Love
         /// <summary>
         /// Creates a new Source from file name. 
         /// </summary>
-        /// <param name="decoder">The filepath to the audio file.</param>
+        /// <param name="filename">The filepath to the audio file.</param>
         /// <param name="type">Streaming or static source.</param>
         /// <returns></returns>
         public static Source NewSource(string filename, SourceType type)
@@ -459,7 +457,7 @@ namespace Love
         }
 
         /// <summary>
-        /// <para> Advance version of <see cref="MapPixel_slow(MapPixelColorDelegate, int, int, int, int)"/>,</para>
+        /// <para> Advance version of <see cref="MapPixel(MapPixelColorDelegate, int, int, int, int)"/>,</para>
         /// <para>if you don't know how to handle pixel format, please use <see cref="MapPixel(MapPixelColorDelegate, int, int, int, int)"/> </para>
         /// <para>if you need speed, consider use <see cref="SetPixels(Pixel[])"/></para>
         /// </summary>
@@ -501,7 +499,7 @@ namespace Love
         }
 
         /// <summary>
-        /// <para> Advance version of <see cref="MapPixel_slow(MapPixelColorDelegate, int, int, int, int)"/>,</para>
+        /// <para> Advance version of <see cref="MapPixel(MapPixelColorDelegate, int, int, int, int)"/>,</para>
         /// <para>if you don't know how to handle pixel format, please use <see cref="MapPixel(MapPixelColorDelegate, int, int, int, int)"/> </para>
         /// <para>if you need speed, consider use <see cref="SetPixels(Pixel[])"/></para>
         /// </summary>
@@ -597,7 +595,7 @@ namespace Love
         /// <param name="data"></param>
         public void SetPixels(Pixel[] data)
         {
-            Check.ArgumentNull(data);
+            Check.ArgumentNull(data, "data");
             int w = GetWidth();
             int h = GetHeight();
             if (data.Length != w * h)
@@ -657,7 +655,7 @@ namespace Love
         /// <param name="data">color data to set</param>
         public void SetPixelsFloat(Vector4[] data)
         {
-            Check.ArgumentNull(data);
+            Check.ArgumentNull(data, "data");
             int w = GetWidth();
             int h = GetHeight();
             if (data.Length != w * h)
@@ -685,7 +683,10 @@ namespace Love
             return NewCursor(Image.NewImageData(filename), hotX, hotY);
         }
 
-
+        /// <summary>
+        /// Returns the current position of the mouse.
+        /// </summary>
+        /// <returns>The position of the mouse.</returns>
         public static Vector2 GetPosition()
         {
             double out_x, out_y;
@@ -807,23 +808,32 @@ namespace Love
             return NewImage(filedata, flagMipmaps, flagLinear);
         }
 
+        /// <summary>
+        /// Create a new instance of the default font (Vera Sans) with a custom size.
+        /// </summary>
+        /// <returns></returns>
+        public static Font NewFont(int size, HintingMode hinting = HintingMode.Normal)
+        {
+            var rasterizer = Font.NewTrueTypeRasterizer(size, hinting);
+            return NewFont(rasterizer);
+        }
 
         /// <summary>
         /// </summary>
         /// <param name="filename">The filepath to the BMFont file.</param>
         /// <param name="imageFileName">The filepath to the BMFont's image file.</param>
         /// <returns></returns>
-        public static Font NewBMFont(string filename, params string[] imageFilename)
+        public static Font NewBMFont(string filename, params string[] imageFileName)
         {
-            if (imageFilename == null)
+            if (imageFileName == null)
             {
                 throw new Exception("imageFilename array can't be null !");
             }
 
-            var imageData = new ImageData[imageFilename.Length];
-            for (int i = 0; i < imageFilename.Length; i++)
+            var imageData = new ImageData[imageFileName.Length];
+            for (int i = 0; i < imageFileName.Length; i++)
             {
-                imageData[i] = Image.NewImageData(imageFilename[i]);
+                imageData[i] = Image.NewImageData(imageFileName[i]);
             }
             var filedata  = FileSystem.NewFileData(filename);
             var rasterizerImage = Font.NewBMFontRasterizer(filedata, imageData);
@@ -863,6 +873,7 @@ namespace Love
         /// </summary>
         /// <param name="filename">The filepath to the TrueType font file.</param>
         /// <param name="size">The size of the font in pixels.</param>
+        /// <param name="hinting">True Type hinting mode.</param>
         /// <returns>A Font object which can be used to draw text on screen.</returns>
         public static Font NewFont(string filename, int size = 12, HintingMode hinting = HintingMode.Normal)
         {
@@ -881,6 +892,24 @@ namespace Love
         Video NewVideo(string filename, bool audio = true, float? dipScale = null)
         {
             return NewVideo(Video.NewVideoStream(filename), audio, dipScale);
+        }
+
+
+        /// <summary>
+        /// Clears the screen to transparent black (0, 0, 0, 0).
+        /// </summary>
+        public static void Clear()
+        {
+            var color = GetBackgroundColor();
+            Clear(0, 0, 0, 0);
+        }
+
+        /// <summary>
+        /// Sets the color used for drawing.
+        /// </summary>
+        public static void SetColor(Vector4 color)
+        {
+            SetColor(color.x, color.y, color.z, color.w);
         }
 
 
@@ -956,7 +985,7 @@ namespace Love
         /// <para>Aligning does not work as one might expect! It doesn't align to the x/y coordinates given, but in a rectangle, where the limit is the width.</para>
         /// <para>Text may appear blurry if it's rendered at non-integer pixel locations.</para>
         /// </summary>
-        /// <param name="coloredStr">A text string.</param>
+        /// <param name="text">A text string.</param>
         /// <param name="x">The position on the x-axis.</param>
         /// <param name="y">The position on the y-axis.</param>
         /// <param name="wrap"></param>
@@ -1011,54 +1040,11 @@ namespace Love
         /// <summary>
         /// Draw a polygon.
         /// </summary>
+        /// <param name="mode">How to draw the polygon.</param>
         /// <param name="points">must be an integer multiple of 2. [first(x, y), second(x, y) ....]</param>
         public static void Polygon(DrawMode mode, params float[] points)
         {
             Polygon(mode, Vector2.FromFloats(points));
         }
     }
-
-
-#endregion
-
-
-#region Love Type
-
-    public partial class File
-    {
-        /// <summary>
-        /// Write data to a file.
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns>Whether the operation was successful.</returns>
-        public bool Write(byte[] data)
-        {
-            return Write(data, data.Length);
-        }
-
-        /// <summary>
-        /// Write data to a file.
-        /// </summary>
-        /// <param name="data">The Data object to write.</param>
-        /// <returns>Whether the operation was successful.</returns>
-        public bool Write(Data data)
-        {
-            return Write(data, data.GetSize());
-        }
-    }
-
-    public partial class Text
-    {
-        public int Add(string text, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
-        {
-            return Add(ColoredStringArray.Create(text), x, y, angle, sx, sy, ox, oy, kx, ky);
-        }
-        public int add(string text, float wraplimit, AlignMode align_type, float x, float y, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
-        {
-            return Addf(ColoredStringArray.Create(text), wraplimit, align_type, x, y, angle, sx, sy, ox, oy, kx, ky);
-        }
-    }
-
-
-#endregion
 }

@@ -354,28 +354,78 @@ namespace Love
     public partial class Mesh
     {
     }
+
     public partial class Shader
     {
-        public void SendColors(string name, params Vector4[] valuearray)
+        /// <summary>
+        /// Sends one or more colors to a special (extern / uniform) vec3 or vec4 variable inside the shader. The color components must be in the range of [0, 1]. The colors are gamma-corrected if global gamma-correction is enabled.
+        /// </summary>
+        /// <param name="name">The name of the color extern variable to send to in the shader.</param>
+        /// <param name="valueArray">A array with red, green, blue, and alpha color components in the range of [0, 1] to send to the extern as a vector.</param>
+        public void SendColors(string name, params Vector4[] valueArray)
         {
-            SendColors(DllTool.GetNullTailUTF8Bytes(name), valuearray);
+            SendColors(DllTool.GetNullTailUTF8Bytes(name), valueArray);
         }
-        public void SendFloats(string name, params float[] valuearray)
+
+        /// <summary>
+        /// Sends one or more float values to a special (uniform) variable inside the shader.
+        /// </summary>
+        /// <param name="name">Name of the float to send to the shader.</param>
+        /// <param name="valueArray">Float to send to store in the uniform variable.</param>
+        public void SendFloats(string name, params float[] valueArray)
         {
-            SendFloats(DllTool.GetNullTailUTF8Bytes(name), valuearray);
+            SendFloats(DllTool.GetNullTailUTF8Bytes(name), valueArray);
         }
-        public void SendInts(string name, params int[] valuearray)
+
+        /// <summary>
+        /// Sends one or more uint values to a special (uniform) variable inside the shader.
+        /// </summary>
+        /// <param name="name">Name of the uint to send to the shader.</param>
+        /// <param name="valueArray">Uint to send to store in the uniform variable.</param>
+        public void SendUints(string name, params uint[] valueArray)
         {
-            SendInts(DllTool.GetNullTailUTF8Bytes(name), valuearray);
+            SendUints(DllTool.GetNullTailUTF8Bytes(name), valueArray);
         }
-        public void SendBooleans(string name, params bool[] valuearray)
+
+        /// <summary>
+        /// Sends one or more int values to a special (uniform) variable inside the shader.
+        /// </summary>
+        /// <param name="name">Name of the int to send to the shader.</param>
+        /// <param name="valueArray">Int to send to store in the uniform variable.</param>
+        public void SendInts(string name, params int[] valueArray)
         {
-            SendBooleans(DllTool.GetNullTailUTF8Bytes(name), valuearray);
+            SendInts(DllTool.GetNullTailUTF8Bytes(name), valueArray);
         }
-        public void SendMatrix(string name, float[] valuearray, int columns, int rows, int count)
+
+        /// <summary>
+        /// Sends one or more boolean values to a special (uniform) variable inside the shader.
+        /// </summary>
+        /// <param name="name">Name of the boolean to send to the shader.</param>
+        /// <param name="valueArray">Boolean to send to store in the uniform variable.</param>
+        public void SendBooleans(string name, params bool[] valueArray)
         {
-            SendMatrix(DllTool.GetNullTailUTF8Bytes(name), valuearray, columns, rows, count);
+            SendBooleans(DllTool.GetNullTailUTF8Bytes(name), valueArray);
         }
+
+        /// <summary>
+        /// WARNNING: incorrect use of this function can carsh program.
+        /// <para> params of valueArray.Length should equals columns * rows * count </para>
+        /// </summary>
+        /// <param name="name">uniform variable name</param>
+        /// <param name="valueArray">each float consistute matrix array</param>
+        /// <param name="columns">matrix columns</param>
+        /// <param name="rows">matrix rows</param>
+        /// <param name="count">matrix count</param>
+        public void SendMatrix(string name, float[] valueArray, int columns, int rows, int count)
+        {
+            SendMatrix(DllTool.GetNullTailUTF8Bytes(name), valueArray, columns, rows, count);
+        }
+
+        /// <summary>
+        /// Sends one or more Matrix22 values to a special (uniform) variable inside the shader.
+        /// </summary>
+        /// <param name="name">Name of the Matrix22 to send to the shader.</param>
+        /// <param name="valueArray">Matrix22 to send to store in the uniform variable.</param>
         public void SendMatrix(string name, params Matrix22[] valueArray)
         {
             float[] values = new float[2 * 2 * valueArray.Length];
@@ -387,6 +437,12 @@ namespace Love
             }
             SendMatrix(name, values, 2, 2, valueArray.Length);
         }
+
+        /// <summary>
+        /// Sends one or more Matrix33 values to a special (uniform) variable inside the shader.
+        /// </summary>
+        /// <param name="name">Name of the Matrix33 to send to the shader.</param>
+        /// <param name="valueArray">Matrix33 to send to store in the uniform variable.</param>
         public void SendMatrix(string name, params Matrix33[] valueArray)
         {
             float[] values = new float[3 * 3 * valueArray.Length];
@@ -398,6 +454,12 @@ namespace Love
             }
             SendMatrix(name, values, 3, 3, valueArray.Length);
         }
+
+        /// <summary>
+        /// Sends one or more SendMatrix values to a special (uniform) variable inside the shader.
+        /// </summary>
+        /// <param name="name">Name of the SendMatrix to send to the shader.</param>
+        /// <param name="valueArray">SendMatrix to send to store in the uniform variable.</param>
         public void SendMatrix(string name, params Matrix44[] valueArray)
         {
             float[] values = new float[4 * 4 * valueArray.Length];
@@ -409,6 +471,12 @@ namespace Love
             }
             SendMatrix(name, values, 4, 4, valueArray.Length);
         }
+
+        /// <summary>
+        /// Sends one or more texture to a special (uniform) variable inside the shader.
+        /// </summary>
+        /// <param name="name">Name of the Texture to send to the shader.(UTF8 byte array)</param>
+        /// <param name="texture">Texture (Image or Canvas) to send to the uniform variable.</param>
         public void SendTexture(string name, Texture texture)
         {
             SendTexture(DllTool.GetNullTailUTF8Bytes(name), texture);

@@ -1,4 +1,23 @@
-﻿2018年12月6日
+﻿2018年12月8日
+1. 修复 Graphics.NewShader / Graphics.SetShader(Shader) 错误
+2. 添加了错误处理显示屏幕
+3. 重载了两个 LoveObject 的 Equals / GetHashCode 函数
+4. 添加了 Shader 的注释
+5. Add Graphics.NewFont(size, hinting)
+6. Add Send(/*....*/) on Shader
+7. fix JoyStick.GetJoysticks / Graphics.Reset statis Modifier
+8. other bugs ....
+
+1. fix bug on Graphics.NewShader / Graphics.SetShader(Shader)
+2. add error screen
+3. override Equals / GetHashCode of LoveObject
+4. add code comment on Shader
+5. Add Graphics.NewFont(size, hinting)
+6. Add Send(/*....*/) on Shader
+7. fix JoyStick.GetJoysticks / Graphics.Reset statis Modifier
+8. other bugs ....
+
+2018年12月6日
 1. 添加了 ParticleSystem / Quad 的注释
 
 2018年12月5日

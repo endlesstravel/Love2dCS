@@ -108,8 +108,6 @@ namespace Love
         /// Mesh vertex.
         /// </summary>
         /// <param name="pos">The position of the vertex.</param>
-        /// <param name="uv">The u and vtexture coordinate of the vertex. Texture coordinates are normally in the range of [0, 1], but can be greater or less (see <see cref="Texture.WrapMode"/>)  <para>https://love2d.org/wiki/WrapMode</para></param>
-        /// <param name="color">The vertex color.</param>
         public Vertex(Vector2 pos)
         {
             this.pos = pos;
@@ -121,7 +119,7 @@ namespace Love
         /// Mesh vertex.
         /// </summary>
         /// <param name="pos">The position of the vertex.</param>
-        /// <param name="uv">The u and vtexture coordinate of the vertex. Texture coordinates are normally in the range of [0, 1], but can be greater or less (see <see cref="Texture.WrapMode"/>)  <para>https://love2d.org/wiki/WrapMode</para></param>
+        /// <param name="uv">The u and vtexture coordinate of the vertex. Texture coordinates are normally in the range of [0, 1], but can be greater or less (see <see cref="WrapMode"/>)  <para>https://love2d.org/wiki/WrapMode</para></param>
         /// <param name="color">The vertex color.</param>
         public Vertex(Vector2 pos, Vector2 uv, Vector4 color)
         {
@@ -130,8 +128,6 @@ namespace Love
             this.color = color;
         }
     }
-
-
 
 
 
