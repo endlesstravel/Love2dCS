@@ -885,6 +885,27 @@ namespace Love
     }
 
 
+    class TestMoonShine : Scene
+    {
+        MoonShine ms;
+        Image img;
+
+        public override void Load()
+        {
+            ms = MoonShine.Create(MoonShine.BoxBlur.Default);
+            img = Graphics.NewImage("res/img.png");
+        }
+
+        public override void Draw()
+        {
+            ms.Draw(() =>
+            {
+                Graphics.Draw(img);
+            });
+        }
+    }
+
+
     class Program : Scene
     {
         class StageContainer
@@ -1103,9 +1124,14 @@ namespace Love
             Graphics.Print(string.Join("    ", strs), 0, 0);
         }
 
+        public override bool ErrorHandler(Exception e)
+        {
+            return base.ErrorHandler(e);
+        }
+
         static void Main(string[] args)
         {
-            Boot.Run(new Program());
+            Boot.Run(new TestMoonShine());
         }
     }
 

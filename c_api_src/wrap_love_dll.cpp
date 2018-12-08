@@ -2760,7 +2760,7 @@ namespace wrap
     }
     bool4 wrap_love_dll_graphics_newShader(const char* vertexCodeStr, const char* pixelCodeStr, Shader** out_shader)
     {
-        return wrap_catchexcept([&]() { *out_shader = graphicsInstance->newShader(pixelCodeStr, pixelCodeStr);});
+        return wrap_catchexcept([&]() { *out_shader = graphicsInstance->newShader(vertexCodeStr, pixelCodeStr);});
     }
     bool4 wrap_love_dll_graphics_newMesh_specifiedVertices(Float2 pos[], Float2 uv[], Float4 color[], int vertexCount, int drawMode_type, int usage_type, Mesh** out_mesh)
     {

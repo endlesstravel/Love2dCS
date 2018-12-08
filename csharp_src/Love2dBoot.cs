@@ -2,6 +2,9 @@
 // this part same as love2d's boot.lua
 
 using System;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Love
 {
@@ -239,10 +242,12 @@ namespace Love
 
         /// <summary>
         /// Callback function when exception occur.
+        /// Return true means exit error screen.
+        /// This function will be called each error screen render frame.
         /// </summary>
-        public virtual void ErrorHandler(Exception e)
+        public virtual bool ErrorHandler(Exception e)
         {
-
+            return Keyboard.IsDown(KeyConstant.Escape);
         }
     }
 
@@ -313,6 +318,72 @@ namespace Love
         /// The x-coordinate(y-coordinate) of the window's position in the specified display
         /// </summary>
         public int? WindowX = null, WindowY = null;
+    }
+
+
+    public class ErrorHandleScene: Scene
+    {
+        string errorMsg;
+
+        public ErrorHandleScene(Exception e)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("Error:");
+            sb.AppendLine("    " + e.Message);
+            sb.AppendLine();
+            sb.AppendLine("StackTrace:");
+            Array.ForEach(Regex.Split(e.StackTrace, "\r\n|\r|\n"), item => sb.AppendLine(item.TrimEnd()));
+            errorMsg = sb.ToString();
+
+            // reset window state
+            try
+            {
+                Window.SetMode(800, 600);
+            }
+            catch(Exception)
+            {
+            }
+
+            // reset mouse state
+            Mouse.SetVisible(true);
+            Mouse.SetGrabbed(false);
+            Mouse.SetRelativeMode(false);
+            if (Mouse.IsCursorSupported())
+                Mouse.SetCursor();
+
+
+            // reset joystick state
+            foreach(var joy in Joystick.GetJoysticks())
+            {
+                if (joy != null)
+                {
+                    joy.SetVibration();
+                }
+            }
+
+            // reset audio
+            Audio.Stop();
+
+            // reset graphics
+            Graphics.Reset();
+            Graphics.SetFont(Graphics.NewFont(14));
+            Graphics.SetColor(1, 1, 1, 1);
+            Graphics.Origin();
+        }
+
+        public override void Draw()
+        {
+            var pos = 70;
+            Graphics.Clear(89 / 255f, 157 / 255f, 220 / 255f);
+            Graphics.Printf(errorMsg, pos, pos, Graphics.GetWidth() - pos);
+        }
+
+        public override void KeyPressed(KeyConstant key, Scancode scancode, bool isRepeat)
+        {
+            if (Keyboard.IsDown(KeyConstant.C) &&(Keyboard.IsDown(KeyConstant.LCtrl) || Keyboard.IsDown(KeyConstant.RCtrl)))
+            {
+            }
+        }
     }
 
     /// <summary>
@@ -392,6 +463,40 @@ namespace Love
             }
         }
 
+        static void LoopErrorScene(Scene scene, Exception e)
+        {
+            try
+            {
+                bool showErrorScreen = true;
+                if (scene != null)
+                {
+                    showErrorScreen = scene.ErrorHandler(e) == false;
+                }
+                if (showErrorScreen)
+                {
+                    var errorScene = new ErrorHandleScene(e);
+                    while (scene.ErrorHandler(e) == false)
+                    {
+                        Event.Poll(errorScene);
+                        Timer.Step();
+
+                        errorScene.Update(Timer.GetDelta());
+
+                        var c = Graphics.GetBackgroundColor();
+                        Graphics.Clear(c.r, c.g, c.b, c.a);
+                        Graphics.Origin();
+                        errorScene.Draw();
+                        Graphics.Present();
+                        Timer.Sleep(0.001f);
+                    }
+                }
+            }
+            catch (Exception innerException)
+            {
+
+            }
+        }
+
         /// <summary>
         /// LÖVE engine entrance function
         /// </summary>
@@ -406,11 +511,8 @@ namespace Love
             }
             catch (Exception e)
             {
-                if(scene != null)
-                {
-                    scene.ErrorHandler(e);
-                }
-                Console.WriteLine(e.ToString());
+                Console.WriteLine(e.StackTrace);
+                LoopErrorScene(scene, e);
             }
         }
     }
