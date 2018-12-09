@@ -1555,44 +1555,6 @@ namespace Love
     /// </summary>
     public partial class FileSystem
     {
-        public class Info
-        {
-            /// <summary>
-            /// Numbers will be -1 if they cannot be determined.
-            /// </summary>
-            public readonly int64 Size;
-
-            /// <summary>
-            /// The file's last modification time in seconds since the unix epoch, or nil if it can't be determined.
-            /// </summary>
-            public readonly int64 ModifyTime;
-
-            /// <summary>
-            /// The type of the object at the path (file, directory, symlink, etc.)
-            /// </summary>
-            public readonly FileType Type;
-
-            public Info(int64 size, int64 modifyTime, FileType type)
-            {
-                Size = size;
-                ModifyTime = modifyTime;
-                Type = type;
-            }
-
-            public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
-            {
-                // Unix timestamp is seconds past epoch
-                var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-                dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
-                return dtDateTime;
-            }
-
-            public override string ToString()
-            {
-                var time = UnixTimeStampToDateTime(ModifyTime);
-                return $"size: {string.Format("{0:0,00}", Size)}, modify-time: {time}, type: {Type}";
-            }
-        };
 
         /// <summary>
         /// Creates a new File object. It needs to be opened before it can be accessed. (UTF-8 byte array version)
@@ -1809,13 +1771,13 @@ namespace Love
         /// </summary>
         /// <param name="path">The file or directory path to check.</param>
         /// <returns></returns>
-        public static Info GetInfo(byte[] path)
+        public static FileInfo GetInfo(byte[] path)
         {
             int fileType_int = 0;
             int64 size, modifyTime;
             bool success;
             Love2dDll.wrap_love_dll_filesystem_getInfo(path, out fileType_int, out size, out modifyTime, out success);
-            return success ? new Info(size, modifyTime, (FileType)fileType_int) : null;
+            return success ? new FileInfo(size, modifyTime, (FileType)fileType_int) : null;
         }
 
         /// <summary>
@@ -2745,7 +2707,7 @@ namespace Love
         /// <param name="height">The desired height of the Canvas.</param>
         /// <param name="format_type"></param>
         /// <param name="msaa"></param>
-        /// <returns>A new Canvas with dimensions equal to the window's size in pixels.</returns>
+        /// <returns>A new Canvas with specified width and height.</returns>
         public static Canvas NewCanvas(int width, int height, Settings settings = null)
         {
             if (settings == null)

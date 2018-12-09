@@ -1,6 +1,55 @@
 ﻿
+using size_t = System.UInt32;
+using int64 = System.Int64;
+using System;
+
 namespace Love
 {
+
+    public class FileInfo
+    {
+        /// <summary>
+        /// Numbers will be -1 if they cannot be determined.
+        /// </summary>
+        public readonly int64 Size;
+
+        /// <summary>
+        /// The file's last modification time in seconds since the unix epoch, or nil if it can't be determined.
+        /// </summary>
+        public readonly int64 ModifyTime;
+
+        /// <summary>
+        /// The type of the object at the path (file, directory, symlink, etc.)
+        /// </summary>
+        public readonly FileType Type;
+
+        public FileInfo(int64 size, int64 modifyTime, FileType type)
+        {
+            Size = size;
+            ModifyTime = modifyTime;
+            Type = type;
+        }
+
+        public static DateTime ConvertFromUnixTimestamp(double timestamp)
+        {
+            DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            return origin.AddSeconds(timestamp);
+        }
+
+        public static double ConvertToUnixTimestamp(DateTime date)
+        {
+            DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            TimeSpan diff = date.ToUniversalTime() - origin;
+            return Math.Floor(diff.TotalSeconds);
+        }
+
+        public override string ToString()
+        {
+            var time = ConvertFromUnixTimestamp(ModifyTime);
+            return $"size: {string.Format("{0:0,00}", Size)}, modify-time: {time}, type: {Type}";
+        }
+    };
+
     /// <summary>
     /// 窗口属性
     /// </summary>

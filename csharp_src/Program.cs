@@ -551,6 +551,123 @@ namespace Love
         }
     }
 
+
+
+    [StageName("test resource file")]
+    class TestResourceFile : Stage
+    {
+        static string TEST_FILE_PATH = "test.txt";
+        static string TEST_DIR_PATH = "a_dir";
+        string recursiveEnumerateBuffer;
+        public override void OnKeyPressed(KeyConstant key)
+        {
+            if (key == KeyConstant.A)
+            {
+                Persistence.Append(TEST_FILE_PATH, "You have to be happiness.\n");
+            }
+
+            if (key == KeyConstant.C)
+            {
+                Persistence.Write(TEST_FILE_PATH, "new file .... \n");
+            }
+
+            if (key == KeyConstant.D)
+            {
+                var success = Persistence.CreateDirectory(TEST_DIR_PATH);
+                Console.WriteLine("CreateDirectory success : {0}", success);
+            }
+
+            if (key == KeyConstant.X)
+            {
+                Console.WriteLine("remove dir success : {0}", Persistence.Remove(TEST_DIR_PATH));
+            }
+
+
+            if (key == KeyConstant.E)
+            {
+                var success = Persistence.Remove(TEST_FILE_PATH);
+                Console.WriteLine("remove success : {0}", success);
+            }
+
+            if (key == KeyConstant.R)
+            {
+                recursiveEnumerateBuffer = recursiveEnumerate("/", "", "");
+            }
+
+            if (key == KeyConstant.S)
+            {
+                throw new Exception("no support yet");
+            }
+        }
+        public override void OnLoad()
+        {
+            recursiveEnumerateBuffer = recursiveEnumerate(".", "", "");
+        }
+        public override void OnUpdate(float dt)
+        {
+        }
+
+        public string recursiveEnumerate(string folder, string fileTree, string tab)
+        {
+            var list = Persistence.GetDirectoryItems(folder);
+            foreach (var item in list)
+            {
+                var file = folder + "/" + item;
+                var info = Persistence.GetInfo(file);
+                if (info != null)
+                {
+                    if (info.Type == FileType.File)
+                    {
+                        fileTree = fileTree + "\n" + tab + file;
+                    }
+                    else if (info.Type == FileType.Directory)
+                    {
+                        fileTree = fileTree + "\n" + file + " (DIR)";
+                        fileTree = recursiveEnumerate(file, fileTree, tab + "  ");
+                    }
+                }
+            }
+
+            return fileTree;
+        }
+
+
+        public override void OnDraw()
+        {
+            var info = Persistence.GetInfo(TEST_FILE_PATH);
+
+            var sb = new List<string>();
+            sb.Add($"-------------------- {TEST_FILE_PATH} --------------------");
+            sb.Add($"exist : {info != null}");
+            if (info != null)
+            {
+                string content = System.Text.Encoding.UTF8
+                    .GetString(Persistence.Read(TEST_FILE_PATH))
+                    .Replace(Convert.ToChar(0x0).ToString(), " ");
+
+                sb.Add($"info : {(info == null ? "" : info.ToString())}");
+                sb.Add($"text content : {content}");
+
+            }
+            sb.Add($"-------------------- Operate --------------------");
+            sb.Add($"[A]: Append to file  '{TEST_FILE_PATH}'  'You have to be happiness.(LR)' ");
+            sb.Add($"[C]: (Re)create new file  '{TEST_FILE_PATH}' with content 'new file ....(LR)' ");
+            sb.Add($"[E]: remove file  '{TEST_FILE_PATH}'  ");
+            sb.Add($"[X]: remove dir  '{TEST_DIR_PATH}'  ");
+            sb.Add($"[D]: create dir {TEST_DIR_PATH} ");
+            sb.Add($"[S]: toogle symbolic link switch ");
+            sb.Add($"-------------------- Status --------------------");
+            sb.Add($"-------------------- recursive enumerate files --------------------");
+            sb.Add($"[R]: refresh file list");
+            sb.Add($"{recursiveEnumerateBuffer}");
+
+
+            Graphics.SetColor(0, 0, 0);
+            Graphics.Print(string.Join("\n", sb), 10, 10);
+        }
+    }
+
+
     [StageName("test other")]
     class TestOther : Stage
     {
@@ -892,7 +1009,8 @@ namespace Love
 
         public override void Load()
         {
-            ms = MoonShine.Create(MoonShine.BoxBlur.Default);
+            var eff = MoonShine.Glow.Default;
+            ms = MoonShine.Create(eff);
             img = Graphics.NewImage("res/img.png");
         }
 
@@ -901,7 +1019,9 @@ namespace Love
             ms.Draw(() =>
             {
                 Graphics.Draw(img);
+                Graphics.Rectangle(DrawMode.Fill, 300, 200, 200, 200);
             });
+            //Graphics.Draw(img, 200, 200);
         }
     }
 
@@ -1008,6 +1128,7 @@ namespace Love
             AddStage(new TestMouse());
             AddStage(new TestKeyborad());
             AddStage(new TestFile());
+            AddStage(new TestResourceFile());
             AddStage(new TestFont());
             AddStage(new TestImageData());
             AddStage(new TestAudio());
@@ -1131,7 +1252,7 @@ namespace Love
 
         static void Main(string[] args)
         {
-            Boot.Run(new TestMoonShine());
+            Boot.Run(new Program());
         }
     }
 

@@ -329,9 +329,15 @@ namespace Love
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("Error:");
-            sb.AppendLine("    " + e.Message);
+
+            Exception itException = e;
+            while (itException != null)
+            {
+                sb.AppendLine("    " + itException.Message);
+                itException = itException.InnerException;
+            }
             sb.AppendLine();
-            sb.AppendLine("StackTrace:");
+            sb.AppendLine("Stack trace:");
             Array.ForEach(Regex.Split(e.StackTrace, "\r\n|\r|\n"), item => sb.AppendLine(item.TrimEnd()));
             errorMsg = sb.ToString();
 
@@ -511,7 +517,17 @@ namespace Love
             }
             catch (Exception e)
             {
+                Console.WriteLine("----------------------------------------------------");
+                Console.WriteLine("[Error]:");
+                Exception itException = e;
+                while (itException != null)
+                {
+                    Console.WriteLine(itException.Message);
+                    itException = itException.InnerException;
+                }
+                Console.WriteLine("[Stack trace]:");
                 Console.WriteLine(e.StackTrace);
+                Console.WriteLine("----------------------------------------------------");
                 LoopErrorScene(scene, e);
             }
         }

@@ -35,7 +35,7 @@ namespace Love
         /// Creates a new FileData object.
         /// </summary>
         /// <param name="contents">The contents of the file.</param>
-        /// <param name="filename">The name  of the file.</param>
+        /// <param name="filename">The name of the file.</param>
         /// <returns></returns>
         public static FileData NewFileData(byte[] contents, string filename)
         {
@@ -57,7 +57,7 @@ namespace Love
         /// </summary>
         /// <param name="path">The file or directory path to check.</param>
         /// <returns></returns>
-        public static Info GetInfo(string path)
+        public static FileInfo GetInfo(string path)
         {
             return GetInfo(DllTool.GetNullTailUTF8Bytes(path));
         }

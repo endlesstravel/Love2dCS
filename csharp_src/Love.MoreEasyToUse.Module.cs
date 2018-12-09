@@ -763,6 +763,18 @@ namespace Love
 
     public partial class Graphics
     {
+
+        /// <summary>
+        /// Creates a new Canvas.
+        /// <para>This function can be slow if it is called repeatedly, such as from love.update or love.draw. If you need to use a specific resource often, create it once and store it somewhere it can be reused!</para>
+        /// </summary>
+        /// <returns>A new Canvas with dimensions equal to the window's size in pixels.</returns>
+        public static Canvas NewCanvas()
+        {
+            Window.GetMode(out int w, out int h);
+            return NewCanvas(w, h);
+        }
+
         /// <summary>
         /// Creates a new drawable Text object.
         /// </summary>
@@ -784,16 +796,16 @@ namespace Love
             return NewImage(new CompressedImageData[] { compressedImageData }, flagMipmaps, flagLinear);
         }
 
-        /// <summary>
-        /// Creates a new Image from a filepath.
-        /// </summary>
-        /// <param name="filename">The filepath to the image file.</param>
-        /// <returns></returns>
-        public static Image NewImage(string filename)
-        {
-            var filedata = Image.NewImageData(filename);
-            return NewImage(filedata);
-        }
+        ///// <summary>
+        ///// Creates a new Image from a filepath.
+        ///// </summary>
+        ///// <param name="filename">The filepath to the image file.</param>
+        ///// <returns></returns>
+        //public static Image NewImage(string filename)
+        //{
+        //    var imagedata = Image.NewImageData(filename);
+        //    return NewImage(imagedata);
+        //}
 
         /// <summary>
         /// Creates a new Image from a filepath.
@@ -804,8 +816,8 @@ namespace Love
         /// <returns></returns>
         public static Image NewImage(string filename, bool flagMipmaps = false, bool flagLinear = false)
         {
-            var filedata = Image.NewImageData(filename);
-            return NewImage(filedata, flagMipmaps, flagLinear);
+            var imagedata = Image.NewImageData(filename);
+            return NewImage(imagedata, flagMipmaps, flagLinear);
         }
 
         /// <summary>
