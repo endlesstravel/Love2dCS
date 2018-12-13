@@ -58,6 +58,7 @@ Next to development
 ---
  - Support Love 11.0 : in development
  - Improve the document : in development
+ - Support call lua function : Love.Lua.Call(name, ...arg) / Love.Lua.LoadString / Love.Lua.LoadFile
  - Support Ubuntu : in development
  - Add support for Physics
  - Add all SetXXX(float x, float y) / GetXXX(out float x, out float y)  with override SetXXX(Vector2) / Vector2 GetXXX().
@@ -85,6 +86,8 @@ Next to development
 | Window        | 80%     |      80%       |               |                 |                |
 
 [develop log](Module-devlop-log.md)
+
+[change log](changelog.txt)
 
 Documentation
 ---

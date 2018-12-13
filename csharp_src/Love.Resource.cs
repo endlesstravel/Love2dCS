@@ -14,7 +14,7 @@ namespace Love
     /// This module will create resource through starndard C# IO, 
     /// this means you can read a png file from path like C:/love-logo.png
     /// </summary>
-    class Persistence // Resource ? 
+    class Resource
     {
         #region Audio
         /// <summary>
@@ -227,7 +227,7 @@ namespace Love
         /// <returns>The rasterizer.</returns>
         public static Rasterizer NewRasterizer(string fileName)
         {
-            return Font.NewRasterizer(Persistence.NewFileData(fileName));
+            return Font.NewRasterizer(Resource.NewFileData(fileName));
         }
         #endregion
 
@@ -241,7 +241,7 @@ namespace Love
         /// <returns>A Font object which can be used to draw text on screen.</returns>
         public static Font NewFont(string filename, int size = 12, HintingMode hinting = HintingMode.Normal)
         {
-            var fileData = Persistence.NewFileData(filename);
+            var fileData = Resource.NewFileData(filename);
             var rasterizer = Font.NewTrueTypeRasterizer(fileData, size, hinting);
             return Graphics.NewFont(rasterizer);
         }
@@ -261,9 +261,9 @@ namespace Love
             var imageData = new ImageData[imageFileName.Length];
             for (int i = 0; i < imageFileName.Length; i++)
             {
-                imageData[i] = Persistence.NewImageData(imageFileName[i]);
+                imageData[i] = Resource.NewImageData(imageFileName[i]);
             }
-            var filedata = Persistence.NewFileData(filename);
+            var filedata = Resource.NewFileData(filename);
             var rasterizerImage = Font.NewBMFontRasterizer(filedata, imageData);
             return Graphics.NewFont(rasterizerImage);
         }
@@ -277,7 +277,7 @@ namespace Love
         /// <returns></returns>
         public static Image NewImage(string filename, bool flagMipmaps = false, bool flagLinear = false)
         {
-            var imgData = Persistence.NewImageData(filename);
+            var imgData = Resource.NewImageData(filename);
             return Graphics.NewImage(imgData, flagMipmaps, flagLinear);
         }
 
@@ -292,7 +292,7 @@ namespace Love
         /// <returns></returns>
         public static Font NewImageFont(string filename, string glyphs, int extraspacing = 0)
         {
-            var imageData = Persistence.NewImageData(filename);
+            var imageData = Resource.NewImageData(filename);
             var glyphsBytes = DllTool.GetNullTailUTF8Bytes(glyphs);
             var rasterizerImage = Font.NewImageRasterizer(imageData, glyphsBytes, extraspacing);
             return Graphics.NewFont(rasterizerImage);
@@ -320,7 +320,7 @@ namespace Love
         /// <returns>The new ImageData object.</returns>
         public static ImageData NewImageData(string filename)
         {
-            return Image.NewImageData(Persistence.NewFileData(filename));
+            return Image.NewImageData(Resource.NewFileData(filename));
         }
 
         /// <summary>
@@ -330,7 +330,7 @@ namespace Love
         /// <returns>The new CompressedImageData object.</returns>
         public static CompressedImageData NewCompressedData(string filename)
         {
-            return Image.NewCompressedData(Persistence.NewFileData(filename));
+            return Image.NewCompressedData(Resource.NewFileData(filename));
         }
         #endregion
 
@@ -346,7 +346,7 @@ namespace Love
         /// <returns></returns>
         public static Cursor NewCursor(string filename, int hotX, int hotY)
         {
-            return Mouse.NewCursor(Persistence.NewImageData(filename), hotX, hotY);
+            return Mouse.NewCursor(Resource.NewImageData(filename), hotX, hotY);
         }
         #endregion
 
@@ -359,7 +359,7 @@ namespace Love
         /// <returns></returns>
         public static Decoder NewDecoder(string filename, int bufferSize = Decoder.DEFAULT_BUFFER_SIZE)
         {
-            return Sound.NewDecoder(Persistence.NewFileData(filename), bufferSize);
+            return Sound.NewDecoder(Resource.NewFileData(filename), bufferSize);
         }
 
         /// <summary>
@@ -371,7 +371,7 @@ namespace Love
         /// <returns>A new SoundData object.</returns>
         public static SoundData NewSoundData(string filename)
         {
-            return Sound.NewSoundData(Persistence.NewDecoder(filename));
+            return Sound.NewSoundData(Resource.NewDecoder(filename));
         }
         #endregion
 

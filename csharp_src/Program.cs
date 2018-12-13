@@ -553,7 +553,7 @@ namespace Love
 
 
 
-    [StageName("test resource file")]
+    [StageName("resource file")]
     class TestResourceFile : Stage
     {
         static string TEST_FILE_PATH = "test.txt";
@@ -1002,29 +1002,6 @@ namespace Love
     }
 
 
-    class TestMoonShine : Scene
-    {
-        MoonShine ms;
-        Image img;
-
-        public override void Load()
-        {
-            var eff = MoonShine.Glow.Default;
-            ms = MoonShine.Create(eff);
-            img = Graphics.NewImage("res/img.png");
-        }
-
-        public override void Draw()
-        {
-            ms.Draw(() =>
-            {
-                Graphics.Draw(img);
-                Graphics.Rectangle(DrawMode.Fill, 300, 200, 200, 200);
-            });
-            //Graphics.Draw(img, 200, 200);
-        }
-    }
-
 
     class Program : Scene
     {
@@ -1252,7 +1229,33 @@ namespace Love
 
         static void Main(string[] args)
         {
-            Boot.Run(new Program());
+            Boot.Run(new TestMoonShine());
+        }
+    }
+
+    class TestMoonShine : Scene
+    {
+        MoonShine ms;
+        Image img;
+
+        public override void Load()
+        {
+            ms = MoonShine
+                .China(MoonShine.DMG.Default)
+                .Next(MoonShine.Scanlines.Default)
+                .Next(MoonShine.Vignette.Default)
+                ;
+            img = Graphics.NewImage("res/img.png");
+        }
+
+        public override void Draw()
+        {
+            ms.Draw(() =>
+            {
+                Graphics.Rectangle(DrawMode.Fill, 300, 200, 200, 200);
+                Graphics.Draw(img);
+            });
+            //Graphics.Draw(img, 200, 200);
         }
     }
 

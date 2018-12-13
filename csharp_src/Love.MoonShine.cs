@@ -79,9 +79,9 @@ namespace Love
         /// <param name="h"></param>
         /// <param name="e"></param>
         /// <returns></returns>
-        public static MoonShine Create(Effect e)
+        public static MoonShine China(Effect e)
         {
-            return new MoonShine().Chain(e);
+            return new MoonShine().Next(e);
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace Love
         /// <returns></returns>
         public static MoonShine Create(int w, int h, Effect e)
         {
-            return new MoonShine().Chain(w, h, e);
+            return new MoonShine().Next(w, h, e);
         }
 
         private MoonShine()
@@ -115,7 +115,7 @@ namespace Love
             return this;
         }
 
-        public MoonShine Chain(int w, int h, Effect e)
+        public MoonShine Next(int w, int h, Effect e)
         {
             if (e == null)
                 throw new ArgumentNullException("e");
@@ -125,7 +125,7 @@ namespace Love
             return this;
         }
 
-        public MoonShine Chain(Effect e)
+        public MoonShine Next(Effect e)
         {
             if (e == null)
                 throw new ArgumentNullException("e");
@@ -241,7 +241,7 @@ namespace Love
         /// </summary>
         public class Chromasep : Effect
         {
-            
+
             static readonly Shader m_shader = Graphics.NewShader(@"
                 extern vec2 direction;
                 vec4 effect(vec4 color, Image texture, vec2 tc, vec2 _)
@@ -275,9 +275,9 @@ namespace Love
         /// <summary>
         /// weighting of color channels
         /// </summary>
-        public class ColorGradeSimple: Effect
+        public class ColorGradeSimple : Effect
         {
-            
+
             static readonly Shader m_shader = Graphics.NewShader(@"
                 extern vec3 factors;
                 vec4 effect(vec4 color, Image texture, vec2 tc, vec2 _) {
@@ -302,9 +302,9 @@ namespace Love
         /// <summary>
         /// crt/barrel distortion
         /// </summary>
-        public class CRT: Effect
+        public class CRT : Effect
         {
-            
+
             static readonly Shader m_shader = Graphics.NewShader(@"
                 extern vec2 distortionFactor;
                 extern vec2 scaleFactor;
@@ -350,7 +350,7 @@ namespace Love
         /// </summary>
         public class Desaturate : Effect
         {
-            
+
             static readonly Shader m_shader = Graphics.NewShader(@"
                 extern vec4 tint;
                 extern number strength;
@@ -382,7 +382,7 @@ namespace Love
         /// </summary>
         public class DMG : Effect
         {
-            
+
             static readonly Shader m_shader = Graphics.NewShader(@"
                 extern vec3 palette[ 4 ];
                 vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 pixel_coords) {
@@ -491,7 +491,7 @@ namespace Love
         /// </summary>
         private class FastGaussianBlur : Effect
         {
-            
+
             public enum OffsetType
             {
                 Weighted,
@@ -719,7 +719,7 @@ namespace Love
             float m_sigma = 1;
             public float Sigma
             {
-                get { return m_sigma;  }
+                get { return m_sigma; }
                 set { m_sigma = Mathf.Max(value, 0); ResetShader(); }
             }
 
@@ -742,14 +742,14 @@ namespace Love
                     { vec4 c = vec4(0.0f);
                 ");
 
-                for(int i = -support; i <= support; i++)
+                for (int i = -support; i <= support; i++)
                 {
                     float coeff = Mathf.Exp(-.5f * i * i * one_by_sigma_sq);
                     norm = norm + coeff;
                     code.AppendLine($"c += vec4({coeff}) * Texel(texture, tc + vec2({i}) * direction);");
                 }
 
-                code.AppendLine($"return c * vec4({(norm > 0 ? 1/norm : 1)}) * color;");
+                code.AppendLine($"return c * vec4({(norm > 0 ? 1 / norm : 1)}) * color;");
                 code.AppendLine("}");
 
                 m_shader = Graphics.NewShader(code.ToString());
@@ -877,5 +877,273 @@ namespace Love
 
         }
 
+        /// <summary>
+        /// aka light scattering
+        /// </summary>
+        public class Godsray : Effect
+        {
+            static readonly Shader m_shader = Graphics.NewShader(@"
+                extern number exposure;
+                extern number decay;
+                extern number density;
+                extern number weight;
+                extern vec2 light_position;
+                extern number samples;
+
+                vec4 effect(vec4 color, Image tex, vec2 uv, vec2 px) {
+                  color = Texel(tex, uv);
+
+                  vec2 offset = (uv - light_position) * density / samples;
+                  number illumination = decay;
+                  vec4 c = vec4(.0, .0, .0, 1.0);
+
+                  for (int i = 0; i < int(samples); ++i) {
+                    uv -= offset;
+                    c += Texel(tex, uv) * illumination * weight;
+                    illumination *= decay;
+                  }
+
+                  return vec4(c.rgb * exposure + color.rgb, color.a);
+                }
+            ");
+
+            public static Godsray Default = new Godsray();
+
+            public float Exposure = 0.25f, Decay = 0.95f, Density = 0.15f, Weight = 0.5f, Samples = 70;
+            public Vector2 LightPosition = new Vector2(0.5f, 0.5f);
+
+            public override void Draw(DoubleBufferCanvas buffer)
+            {
+                m_shader.Send("exposure", Mathf.Clamp01(Exposure));
+                m_shader.Send("decay", Mathf.Clamp01(Decay));
+                m_shader.Send("density", Mathf.Clamp01(Density));
+                m_shader.Send("weight", Mathf.Clamp01(Weight));
+                m_shader.Send("light_position", LightPosition);
+                m_shader.Send("samples", Mathf.Max(Samples, 1f));
+
+                buffer.Swap(m_shader);
+            }
+        }
+
+        /// <summary>
+        /// sub-sampling (for that indie look)
+        /// </summary>
+        public class Pixelate : Effect
+        {
+            static readonly Shader m_shader = Graphics.NewShader(@"
+                extern vec2 size;
+                extern number feedback;
+                vec4 effect(vec4 color, Image tex, vec2 tc, vec2 _)
+                {
+                  vec4 c = Texel(tex, tc);
+
+                  // average pixel color over 5 samples
+                  vec2 scale = love_ScreenSize.xy / size;
+                  tc = floor(tc * scale + vec2(.5));
+                  vec4 meanc = Texel(tex, tc/scale);
+                  meanc += Texel(tex, (tc+vec2( 1.0,  .0))/scale);
+                  meanc += Texel(tex, (tc+vec2(-1.0,  .0))/scale);
+                  meanc += Texel(tex, (tc+vec2(  .0, 1.0))/scale);
+                  meanc += Texel(tex, (tc+vec2(  .0,-1.0))/scale);
+
+                  return color * mix(.2*meanc, c, feedback);
+                }
+            ");
+
+            public static Pixelate Default = new Pixelate();
+
+            public float Feedback = 1;
+            public Vector2 Size = new Vector2(5f, 5f);
+
+            public override void Draw(DoubleBufferCanvas buffer)
+            {
+                m_shader.Send("feedback", Mathf.Clamp01(Feedback));
+                m_shader.Send("size", Size);
+                buffer.Swap(m_shader);
+            }
+        }
+
+
+        /// <summary>
+        /// restrict number of colors
+        /// </summary>
+        public class Posterize : Effect
+        {
+            static readonly Shader m_shader = Graphics.NewShader(@"
+                extern number num_bands;
+                vec3 rgb2hsv(vec3 c)
+                {
+                  vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+                  vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));
+                  vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));
+
+                  float d = q.x - min(q.w, q.y);
+                  float e = 1.0e-10;
+                  return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
+                }
+
+                vec3 hsv2rgb(vec3 c)
+                {
+                  vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+                  vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+                  return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+                }
+
+                vec4 effect(vec4 color, Image texture, vec2 tc, vec2 _)
+                {
+                  color = Texel(texture, tc);
+                  vec3 hsv = floor((rgb2hsv(color.rgb) * num_bands) + vec3(0.5)) / num_bands;
+                  return vec4(hsv2rgb(hsv), color.a);
+                }
+            ");
+
+            public static Posterize Default = new Posterize();
+
+            public float NumBands = 3;
+
+            public override void Draw(DoubleBufferCanvas buffer)
+            {
+                m_shader.Send("num_bands", Math.Max(NumBands, 1f));
+                buffer.Swap(m_shader);
+            }
+        }
+
+
+        /// <summary>
+        /// horizontal lines
+        /// </summary>
+        public class Scanlines : Effect
+        {
+            static readonly Shader m_shader = Graphics.NewShader(@"
+                extern number width;
+                extern number phase;
+                extern number thickness;
+                extern number opacity;
+                extern vec3 color;
+                vec4 effect(vec4 c, Image tex, vec2 tc, vec2 _) {
+                  number v = .5*(sin(tc.y * 3.14159 / width * love_ScreenSize.y + phase) + 1.);
+                  c = Texel(tex,tc);
+                  //c.rgb = mix(color, c.rgb, mix(1, pow(v, thickness), opacity));
+                  c.rgb -= (color - c.rgb) * (pow(v,thickness) - 1.0) * opacity;
+                  return c;
+                }
+            ");
+
+            public static Scanlines Default = new Scanlines();
+
+            float m_width = 2;
+
+            public float Phase = 0, Thickness = 1, Opacity = 1;
+
+            public Vector3 Color = Vector3.Zero;
+
+            public float Width
+            {
+                set
+                {
+                    m_width = value;
+                }
+            }
+
+            public float Frequency
+            {
+                set
+                {
+                    m_width = Graphics.GetHeight() / value;
+                }
+            }
+
+            public override void Draw(DoubleBufferCanvas buffer)
+            {
+                m_shader.Send("width", m_width);
+                m_shader.Send("phase", Phase);
+                m_shader.Send("thickness", Thickness);
+                m_shader.Send("opacity", Opacity);
+                m_shader.Send("color", Color);
+                buffer.Swap(m_shader);
+            }
+        }
+
+        /// <summary>
+        /// simulate pencil drawings
+        /// </summary>
+        public class Sketch : Effect
+        {
+            static Image NoiseTex;
+            static Sketch()
+            {
+                var imgData = Image.NewImageData(256, 256, ImageDataPixelFormat.RGBA8);
+                imgData.MapPixel((x, y, input) =>
+                {
+                    var p = new Pixel();
+                    p.rgba8.r = (byte)(Mathf.Random() * 255);
+                    p.rgba8.g = (byte)(Mathf.Random() * 255);
+                    p.rgba8.b = 0;
+                    p.rgba8.a = 0;
+                    return p;
+                });
+                NoiseTex = Graphics.NewImage(imgData);
+                NoiseTex.SetWrap(WrapMode.Repeat, WrapMode.Repeat);
+                NoiseTex.SetFilter(FilterMode.Nearest, FilterMode.Nearest);
+            }
+            static readonly Shader m_shader = Graphics.NewShader(@"
+                extern Image noisetex;
+                extern number amp;
+                extern vec2 center;
+
+                vec4 effect(vec4 color, Image texture, vec2 tc, vec2 _) {
+                  vec2 displacement = Texel(noisetex, tc + center).rg;
+                  tc += normalize(displacement * 2.0 - vec2(1.0)) * amp;
+
+                  return Texel(texture, tc);
+                }
+            ");
+
+            public static Sketch Default = new Sketch();
+            public float Amp = 0.0007f;
+            public Vector2 Center = Vector2.Zero;
+
+            public override void Draw(DoubleBufferCanvas buffer)
+            {
+                m_shader.Send("amp", Math.Max(Amp, 0f));
+                m_shader.Send("center", Center);
+                buffer.Swap(m_shader);
+            }
+        }
+
+        /// <summary>
+        /// shadow in the corners
+        /// </summary>
+        public class Vignette : Effect
+        {
+            static readonly Shader m_shader = Graphics.NewShader(@"
+                    extern number radius;
+                    extern number softness;
+                    extern number opacity;
+                    extern vec4 color;
+
+                    vec4 effect(vec4 c, Image tex, vec2 tc, vec2 _)
+                    {
+                      number aspect = love_ScreenSize.x / love_ScreenSize.y;
+                      aspect = max(aspect, 1.0 / aspect); // use different aspect when in portrait mode
+                      number v = 1.0 - smoothstep(radius, radius-softness,
+                                                  length((tc - vec2(0.5f)) * aspect));
+                      return mix(Texel(tex, tc), color, v*opacity);
+                    }
+                ");
+
+            public static Vignette Default = new Vignette();
+            public float Radius = .8f, Softness = .5f, Opacity = .5f;
+            public Vector3 Color = Vector3.Zero;
+
+            public override void Draw(DoubleBufferCanvas buffer)
+            {
+                m_shader.Send("radius", Math.Max(0, Radius));
+                m_shader.Send("softness", Math.Max(0, Softness));
+                m_shader.Send("opacity", Math.Max(0, Opacity));
+                m_shader.Send("color", Color.x, Color.y, Color.z, 1);
+                buffer.Swap(m_shader);
+            }
+        }
     }
 }
