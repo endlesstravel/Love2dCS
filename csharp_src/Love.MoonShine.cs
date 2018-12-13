@@ -10,7 +10,7 @@ namespace Love
     /// <para> adapt from https://github.com/vrld/moonshine .</para>
     /// <para> more resource https://www.love2d.org/forums/viewtopic.php?t=3733 .</para>
     /// </summary>
-    public class MoonShine
+    public class Moonshine
     {
         public abstract class Effect
         {
@@ -79,9 +79,9 @@ namespace Love
         /// <param name="h"></param>
         /// <param name="e"></param>
         /// <returns></returns>
-        public static MoonShine China(Effect e)
+        public static Moonshine China(Effect e)
         {
-            return new MoonShine().Next(e);
+            return new Moonshine().Next(e);
         }
 
         /// <summary>
@@ -89,12 +89,12 @@ namespace Love
         /// </summary>
         /// <param name="e"></param>
         /// <returns></returns>
-        public static MoonShine Create(int w, int h, Effect e)
+        public static Moonshine Create(int w, int h, Effect e)
         {
-            return new MoonShine().Next(w, h, e);
+            return new Moonshine().Next(w, h, e);
         }
 
-        private MoonShine()
+        private Moonshine()
         {
 
         }
@@ -108,14 +108,14 @@ namespace Love
             return buffer;
         }
 
-        public MoonShine Resize(int w, int h)
+        public Moonshine Resize(int w, int h)
         {
             buffer.Front = Graphics.NewCanvas(w, h);
             buffer.Back = Graphics.NewCanvas(w, h);
             return this;
         }
 
-        public MoonShine Next(int w, int h, Effect e)
+        public Moonshine Next(int w, int h, Effect e)
         {
             if (e == null)
                 throw new ArgumentNullException("e");
@@ -125,7 +125,7 @@ namespace Love
             return this;
         }
 
-        public MoonShine Next(Effect e)
+        public Moonshine Next(Effect e)
         {
             if (e == null)
                 throw new ArgumentNullException("e");
