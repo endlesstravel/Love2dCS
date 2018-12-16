@@ -332,6 +332,22 @@ namespace Love
         {
             return Image.NewCompressedData(Resource.NewFileData(filename));
         }
+
+        /// <summary>
+        /// Encodes the ImageData and writes it to the path.
+        /// </summary>
+        /// <param name="path">The filename to write the file to.</param>
+        /// <param name="imageData">The imageData to write the file to. </param>
+        /// <param name="format">The format to encode the image as.</param>
+        /// <returns></returns>
+        public static void EncodeToFile(string path, ImageData imageData, ImageFormat format)
+        {
+            Check.ArgumentNull(path, "path");
+            Check.ArgumentNull(imageData, "imageData");
+
+            var fileData = imageData.Encode(format);
+            SFile.WriteAllBytes(path, fileData.GetBytes());
+        }
         #endregion
 
         #region Mouse

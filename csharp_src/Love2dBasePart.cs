@@ -295,13 +295,13 @@ namespace Love
             return buffer;
         }
 
-        public static Int2[] ReadInt2sAndRelease(IntPtr p, int size)
+        public static Point[] ReadPointsAndRelease(IntPtr p, int size)
         {
-            Int2[] buffer = new Int2[size];
+            Point[] buffer = new Point[size];
             for (int i = 0; i < size; i++)
             {
-                IntPtr offset = IntPtr.Add(p, Marshal.SizeOf(typeof(Int2)) * size);
-                buffer[i] = (Int2)Marshal.PtrToStructure(offset, typeof(Int2));
+                IntPtr offset = IntPtr.Add(p, Marshal.SizeOf(typeof(Point)) * size);
+                buffer[i] = (Point)Marshal.PtrToStructure(offset, typeof(Point));
             }
 
             Love2dDll.wrap_love_dll_delete_array(p);
@@ -491,13 +491,34 @@ namespace Love
             {
                 return Love2dDll.wrap_love_dll_windows_setMode_w_h(width, height);
             }
+
+            var setting = GetMode();
+            setting.usePosition = false;
+            if (flag.fullscreen.HasValue) setting.fullscreen = flag.fullscreen.Value;
+            if (flag.fullscreenType.HasValue) setting.fullscreenType = flag.fullscreenType.Value;
+            if (flag.vsync.HasValue) setting.vsync = flag.vsync.Value;
+            if (flag.msaa.HasValue) setting.msaa = flag.msaa.Value;
+            if (flag.depth.HasValue) setting.depth = flag.depth.Value;
+            if (flag.stencil.HasValue) setting.stencil = flag.stencil.Value;
+            if (flag.resizable.HasValue) setting.resizable = flag.resizable.Value;
+            if (flag.minWidth.HasValue) setting.minWidth = flag.minWidth.Value;
+            if (flag.minHeight.HasValue) setting.minHeight = flag.minHeight.Value;
+            if (flag.borderless.HasValue) setting.borderless = flag.borderless.Value;
+            if (flag.centered.HasValue) setting.centered = flag.centered.Value;
+            if (flag.display.HasValue) setting.display = flag.display.Value;
+            if (flag.highDpi.HasValue) setting.highDpi = flag.highDpi.Value;
+            if (flag.refreshrate.HasValue) setting.refreshrate = flag.refreshrate.Value;
+            if (flag.x.HasValue) setting.x = flag.x.Value;
+            if (flag.y.HasValue) setting.y = flag.y.Value;
+            if (flag.fullscreen.HasValue) setting.fullscreen = flag.fullscreen.Value;
+
             return Love2dDll.wrap_love_dll_windows_setMode_w_h_setting(
                 width, height,
-                flag.fullscreen, (int)flag.fullscreenType, flag.vsync,
-                flag.msaa, flag.depth, flag.stencil, 
-                flag.resizable, flag.minWidth, flag.minHeight, 
-                flag.borderless, flag.centered, flag.display, 
-                flag.highDpi, flag.refreshrate, flag.useposition, flag.x, flag.y);
+                setting.Fullscreen, (int)setting.FullscreenType, setting.Vsync,
+                setting.MSAA, setting.Depth, setting.Stencil,
+                setting.Resizable, setting.MinWidth, setting.MinHeight,
+                setting.Borderless, setting.Centered, setting.Display,
+                setting.HighDpi, setting.Refreshrate, setting.UsePosition, setting.X, setting.Y);
         }
 
 
@@ -535,37 +556,45 @@ namespace Love
         /// <returns></returns>
         public static WindowSettings GetMode(out int out_width, out int out_height)
         {
-            WindowSettings flag = new WindowSettings();
-
-            int fullscreenType = 0;
 
             Love2dDll.wrap_love_dll_windows_getMode(
                 out out_width, out out_height, 
-                out flag.fullscreen, out fullscreenType, out flag.vsync, 
-                out flag.msaa, out flag.depth, out flag.stencil,
-                out flag.resizable, out flag.minWidth,  out flag.minHeight,
-                out flag.borderless, out flag.centered, out flag.display, 
-                out flag.highDpi, out flag.refreshrate, out flag.useposition, out flag.x, out flag.y);
+                out bool fullscreen, out int fullscreenType, out bool vsync, 
+                out int msaa, out int depth, out bool stencil,
+                out bool resizable, out int minWidth,  out int minHeight,
+                out bool borderless, out bool centered, out int display, 
+                out bool highDpi, out double refreshrate, out bool useposition, out int x, out int y);
 
-            flag.fullscreenType = (FullscreenType)fullscreenType;
-
-
+            WindowSettings flag = new WindowSettings();
+            flag.Fullscreen = fullscreen;
+            flag.FullscreenType = (FullscreenType)fullscreenType;
+            flag.Vsync = vsync;
+            flag.MSAA = msaa;
+            flag.Depth = depth;
+            flag.Stencil = stencil;
+            flag.Resizable = resizable;
+            flag.MinWidth = minWidth;
+            flag.MinHeight = minHeight;
+            flag.Borderless = borderless;
+            flag.Centered = centered;
+            flag.HighDpi = highDpi;
+            flag.Refreshrate = refreshrate;
+            flag.X = x;
+            flag.Y = y;
             return flag;
         }
-
-        
 
         /// <summary>
         /// Gets a list of supported fullscreen modes.
         /// </summary>
         /// <param name="displayindex">The index of the display, if multiple monitors are available.</param>
         /// <returns></returns>
-        public static Int2[] GetFullscreenModes(int displayindex = 0)
+        public static Point[] GetFullscreenModes(int displayindex = 0)
         {
             IntPtr out_modes;
             int out_modes_length;
             Love2dDll.wrap_love_dll_windows_getFullscreenModes(displayindex, out out_modes, out out_modes_length);
-            return DllTool.ReadInt2sAndRelease(out_modes, out_modes_length);
+            return DllTool.ReadPointsAndRelease(out_modes, out_modes_length);
         }
 
         /// <summary>
@@ -617,11 +646,11 @@ namespace Love
         /// Gets the width and height of the desktop.
         /// </summary>
         /// <param name="displayIndex">The index of the display, if multiple monitors are available.</param>
-        public static Int2 GetDesktopDimensions(int displayIndex = 0)
+        public static Size GetDesktopDimensions(int displayIndex = 0)
         {
             int out_width, out_height;
             Love2dDll.wrap_love_dll_windows_getDesktopDimensions(displayIndex, out out_width, out out_height);
-            return new Int2(out_width, out_height);
+            return new Size(out_width, out_height);
         }
 
         /// <summary>
@@ -639,11 +668,11 @@ namespace Love
         /// Gets the position of the window on the screen
         /// </summary>
         /// <returns></returns>
-        public static Int2 GetPosition()
+        public static Point GetPosition()
         {
             int out_x, out_y, out_displayindex;
             Love2dDll.wrap_love_dll_windows_getPosition(out out_x, out out_y, out out_displayindex);
-            return new Int2(out_x, out_y);
+            return new Point(out_x, out_y);
         }
 
         /// <summary>
@@ -652,11 +681,11 @@ namespace Love
         /// </summary>
         /// <param name="out_displayindex"></param>
         /// <returns></returns>
-        public static Int2 GetPosition(out int out_displayindex)
+        public static Point GetPosition(out int out_displayindex)
         {
             int out_x, out_y;
             Love2dDll.wrap_love_dll_windows_getPosition(out out_x, out out_y, out out_displayindex);
-            return new Int2(out_x, out_y);
+            return new Point(out_x, out_y);
         }
 
         /// <summary>
@@ -1401,7 +1430,7 @@ namespace Love
             Love2dDll.wrap_love_dll_event_open_love_event();
         }
 
-        public static void PollOrWait(bool isPoll, out bool out_hasEvent, out int out_event_type, out bool out_down_or_up, out bool out_bool, out int out_idx, out int out_enum1_type, out int out_enum2_type, out string out_string, out Int4 out_int4, out Vector4 out_float4, out float out_float_value, out Joystick out_joystick)
+        internal static void PollOrWait(bool isPoll, out bool out_hasEvent, out int out_event_type, out bool out_down_or_up, out bool out_bool, out int out_idx, out int out_enum1_type, out int out_enum2_type, out string out_string, out Int4 out_int4, out Vector4 out_float4, out float out_float_value, out Joystick out_joystick)
         {
             IntPtr out_str;
             IntPtr out_joystick_ptr;
@@ -2866,11 +2895,11 @@ namespace Love
         /// </summary>
         /// <returns>
         /// </returns>
-        public static Int4 GetScissor()
+        public static Rectangle GetScissor()
         {
             int out_x, out_y, out_w, out_h;
             Love2dDll.wrap_love_dll_graphics_getScissor(out out_x, out out_y, out out_w, out out_h);
-            return new Int4(out_x, out_y, out_w, out_h);
+            return new Rectangle(out_x, out_y, out_w, out_h);
         }
 
         /// <summary>

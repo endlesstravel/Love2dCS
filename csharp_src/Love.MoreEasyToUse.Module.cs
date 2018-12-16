@@ -919,11 +919,38 @@ namespace Love
         /// <summary>
         /// Sets the color used for drawing.
         /// </summary>
+        public static void SetColor(Color color)
+        {
+            SetColor(color.R, color.G, color.B, color.A);
+        }
+
+        /// <summary>
+        /// Sets the color used for drawing.
+        /// </summary>
         public static void SetColor(Vector4 color)
         {
             SetColor(color.x, color.y, color.z, color.w);
         }
 
+        /// <summary>
+        /// Draws a rectangle.
+        /// </summary>
+        /// <param name="mode">How to draw the rectangle.</param>
+        /// <param name="rect">the rectangle to draw.</param>
+        public static void Rectangle(DrawMode mode, RectangleF rect)
+        {
+            Rectangle(mode, rect.x, rect.y, rect.width, rect.height);
+        }
+
+        /// <summary>
+        /// Draws a rectangle.
+        /// </summary>
+        /// <param name="mode">How to draw the rectangle.</param>
+        /// <param name="rect">the rectangle to draw.</param>
+        public static void Rectangle(DrawMode mode, Rectangle rect)
+        {
+            Rectangle(mode, rect.x, rect.y, rect.width, rect.height);
+        }
 
         /// <summary>
         /// Draws an arc using the "pie" ArcType.
@@ -1026,9 +1053,9 @@ namespace Love
         /// Gets the width and height of the window.
         /// </summary>
         /// <returns></returns>
-        public static Int2 GetDimensions()
+        public static Size GetDimensions()
         {
-            return new Int2(GetWidth(), GetHeight());
+            return new Size(GetWidth(), GetHeight());
         }
 
         /// <summary>
@@ -1037,7 +1064,7 @@ namespace Love
         /// <param name="points">must be an integer multiple of 2. [first(x, y), second(x, y) ....]</param>
         public static void Line(params float[] points)
         {
-            Line(Vector2.FromFloats(points));
+            Line(Vector2.Array(points));
         }
 
         /// <summary>
@@ -1046,7 +1073,7 @@ namespace Love
         /// <param name="points">must be an integer multiple of 2. [first(x, y), second(x, y) ....]</param>
         public static void Points(params float[] points)
         {
-            Points(Vector2.FromFloats(points));
+            Points(Vector2.Array(points));
         }
 
         /// <summary>
@@ -1056,7 +1083,26 @@ namespace Love
         /// <param name="points">must be an integer multiple of 2. [first(x, y), second(x, y) ....]</param>
         public static void Polygon(DrawMode mode, params float[] points)
         {
-            Polygon(mode, Vector2.FromFloats(points));
+            Polygon(mode, Vector2.Array(points));
+        }
+
+        /// <summary>
+        /// <para>以二维方式缩放坐标系。</para>
+        /// <para>默认情况下，LÖVE中的坐标系在水平和垂直方向上一对一显示像素，x轴向右增加，y轴向下增加。 缩放坐标系会改变这种关系。</para>
+        /// <para>在通过sx和sy进行缩放之后，所有坐标都被视为与sx和sy相乘。 绘图操作的每个结果也相应地缩放，例如按（2,2）缩放将意味着在x和y方向上使所有内容都变为两倍。 按负值缩放会使坐标系在相应的方向上翻转，所有内容都会被翻转或颠倒（或两者兼而有之）。 按零缩放没有意义。</para>
+        /// <para>缩放(Scale)操作和平移(Translate)操作不是可交换操作，以不同的顺序调用它们会产生不同的结果。</para>
+        /// <para>效果持续到 Scene.Draw 调用结束（每一帧画面绘制结束都会自动重置为1倍。）</para>
+        /// 
+        /// <para>Scales the coordinate system in two dimensions.</para> 
+        /// <para>By default the coordinate system in LÖVE corresponds to the display pixels in horizontal and vertical directions one-to-one, and the x-axis increases towards the right while the y-axis increases downwards. Scaling the coordinate system changes this relation.</para>
+        /// <para>After scaling by sx and sy, all coordinates are treated as if they were multiplied by sx and sy. Every result of a drawing operation is also correspondingly scaled, so scaling by (2, 2) for example would mean making everything twice as large in both x- and y-directions. Scaling by a negative value flips the coordinate system in the corresponding direction, which also means everything will be drawn flipped or upside down, or both. Scaling by zero is not a useful operation.</para>
+        /// <para>Scale and translate are not commutative operations, therefore, calling them in different orders will change the outcome.</para>
+        /// <para>Scaling lasts until Scene.Draw exits.</para>
+        /// </summary>
+        /// <param name="scale">The scaling on each axis.</param>
+        public static void Scale(Vector2 scale)
+        {
+            Scale(scale.x, scale.y);
         }
     }
 }

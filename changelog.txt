@@ -1,4 +1,12 @@
-﻿2018年12月13日
+﻿2018年12月17日
+添加了 Color / Misc.FPSGraph / Misc.QuadTree / Misc.Moonshine / Ray2D
+修复其他 bug
+
+2018年12月15日
+添加了 Point / Size / Sizef / Reactangle / Reactanglef 结构
+移除 Int2
+
+2018年12月13日
 添加了后处理效果的 MoonShine 模块
 
 2018年12月9日

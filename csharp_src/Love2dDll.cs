@@ -15,6 +15,7 @@ namespace Love
 {
     class Love2dDll
     {
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)] // .NET 4.5
         static bool CheckCAPIException(bool hasNoException)
         {
             if (hasNoException == false)
@@ -3840,14 +3841,7 @@ namespace Love
     };
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct Int2
-    {
-        public int x, y;
-        public Int2(int x, int y) { this.x = x; this.y = y; }
-    };
-
-    [StructLayout(LayoutKind.Sequential)]
-    public struct Int4
+    internal struct Int4
     {
         public int x, y, z, w;
         public int r { get { return x; } }

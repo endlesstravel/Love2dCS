@@ -283,7 +283,7 @@ namespace Love
 
     #endregion
 
-
+    
     #region Love Type
 
     public partial class Rasterizer
@@ -508,9 +508,9 @@ namespace Love
         /// <param name="format_type">The format to encode the image as.</param>
         /// <param name="filename">The filename to write the file to. If null, no file will be written but the FileData will still be returned.</param>
         /// <returns></returns>
-        public FileData Encode(ImageFormat format_type, string filename = null)
+        public FileData Encode(ImageFormat format, string filename = null)
         {
-            return Encode(format_type, filename != null, DllTool.GetNullTailUTF8Bytes(filename));
+            return Encode(format, filename != null, DllTool.GetNullTailUTF8Bytes(filename));
         }
     }
 

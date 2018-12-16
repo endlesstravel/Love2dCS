@@ -317,7 +317,7 @@ namespace Love
         /// <summary>
         /// The x-coordinate(y-coordinate) of the window's position in the specified display
         /// </summary>
-        public int? WindowX = null, WindowY = null;
+        public int? WindowX, WindowY;
     }
 
 
@@ -427,23 +427,19 @@ namespace Love
                 bootConfig = new BootConfig();
             }
 
-            bool usePosition = bootConfig.WindowX != null && bootConfig.WindowY != null;
-
             WindowSettings settings = new WindowSettings();
-
-            settings.fullscreenType = bootConfig.WindowFullscreen;
-            settings.vsync = bootConfig.WindowVsync;
-            settings.msaa = bootConfig.WindowMSAA;
-            settings.resizable = bootConfig.WindowResizable;
-            settings.minWidth = bootConfig.WindowMinWidth;
-            settings.minHeight = bootConfig.WindowMinHeight;
-            settings.borderless = bootConfig.WindowBorderless;
-            settings.centered = bootConfig.WindowCentered;
-            settings.display = bootConfig.WindowDisplay;
-            settings.highDpi = bootConfig.WindowHighdpi;
-            settings.useposition = usePosition;
-            settings.x = bootConfig.WindowX != null ? (int)bootConfig.WindowX : 0;
-            settings.y = bootConfig.WindowY != null ? (int)bootConfig.WindowY : 0;
+            settings.FullscreenType = bootConfig.WindowFullscreen;
+            settings.Vsync = bootConfig.WindowVsync;
+            settings.MSAA = bootConfig.WindowMSAA;
+            settings.Resizable = bootConfig.WindowResizable;
+            settings.MinWidth = bootConfig.WindowMinWidth;
+            settings.MinHeight = bootConfig.WindowMinHeight;
+            settings.Borderless = bootConfig.WindowBorderless;
+            settings.Centered = bootConfig.WindowCentered;
+            settings.Display = bootConfig.WindowDisplay;
+            settings.HighDpi = bootConfig.WindowHighdpi;
+            if (bootConfig.WindowX.HasValue) settings.X = bootConfig.WindowX.Value;
+            if (bootConfig.WindowY.HasValue) settings.Y = bootConfig.WindowY.Value;
             Window.SetMode(bootConfig.WindowWidth, bootConfig.WindowHeight, settings);
 
             FileSystem.SetSource(Environment.CurrentDirectory);
