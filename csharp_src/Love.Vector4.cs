@@ -346,10 +346,7 @@ namespace Love
                 && this.Z == other.Z;
         }
 
-        public override int GetHashCode()
-        {
-            return (int)(this.W + this.X + this.Y + this.Y);
-        }
+        public override int GetHashCode() => HashHelpers.Combine(X, Y, Z, W);
 
         public static Vector4 Hermite(Vector4 value1, Vector4 tangent1, Vector4 value2, Vector4 tangent2, float amount)
         {

@@ -12,7 +12,7 @@ Love2dCS - C# Wrapper for LÖVE
 * 在 LÖVE 中，为了遵循 lua 语言的习惯，索引是从 0 开始计算的。而 Love2dCS 中的索引遵循 C# 语言的使用习惯，从 0 开始记起。
 
 # 当前已发布的平台
-windows x86
+windows x86 / windows x64
 
 # 特点
 * 容易使用
@@ -29,8 +29,8 @@ windows x86
 - [x] string 与 UTF8 编码
 - [x] 完善C#实用性
 - [x] 发布到NuGet
+- [x] 添加对 win-x64 平台的支持
 - [ ] 添加物理模块
-- [ ] 添加对 win-x64 平台的支持
 - [ ] 完善文档
 - [ ] 写测试部分
 

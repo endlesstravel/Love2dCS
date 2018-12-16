@@ -27,17 +27,28 @@ namespace Love
 
         #endregion Public Fields
 
-
         #region Private Fields
 
         public static Vector2 Zero { get; } = new Vector2(0f, 0f);
         public static Vector2 One { get; } = new Vector2(1f, 1f);
         public static Vector2 UnitX { get; } = new Vector2(1f, 0f);
         public static Vector2 UnitY { get; } = new Vector2(0f, 1f);
-        
+
         #endregion Private Fields
 
         #region Constructors
+
+        public Vector2(Point point)
+        {
+            this.X = point.X;
+            this.Y = point.Y;
+        }
+
+        public Vector2(Vector2 pointF)
+        {
+            this.X = pointF.X;
+            this.Y = pointF.Y;
+        }
 
         public Vector2(float x, float y)
         {
@@ -206,10 +217,7 @@ namespace Love
             result.Y = vector.Y - (normal.Y * val);
         }
 
-        public override int GetHashCode()
-        {
-            return X.GetHashCode() + Y.GetHashCode();
-        }
+        public override int GetHashCode() => HashHelpers.Combine(X, Y);
 
         public static void Hermite(ref Vector2 value1, ref Vector2 tangent1, ref Vector2 value2, ref Vector2 tangent2, float amount, out Vector2 result)
         {
@@ -441,20 +449,26 @@ namespace Love
 
         #endregion Operators
 
-        public static Vector2[] FromFloats(params float[] points)
+        public static Vector2[] Array(params float[] points)
         {
-            Check.ArgumentNull(points, "points");
-            if (points.Length % 2 == 1)
-            {
-                throw new Exception("points must be an integer multiple of 2.");
-            }
+            points = points == null ? new float[0] : points;
+            int odd = points.Length % 2;
+            int length = points.Length / 2;
 
-            var result = new Vector2[points.Length / 2];
-            for (int i = 0; i < result.Length; i++)
+            var result = new Vector2[length + odd];
+            for (int i = 0; i < length; i++)
             {
                 result[i].x = points[2 * i];
                 result[i].y = points[2 * i + 1];
             }
+
+            // the last one
+            if (odd == 1)
+            {
+                result[length].x = points[length * 2];
+                result[length].y = 0;
+            }
+
             return result;
         }
 
