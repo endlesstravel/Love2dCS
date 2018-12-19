@@ -1401,6 +1401,40 @@ namespace Love
         }
     }
 
+
+    class TestQuadTreeMoveSingle : TestQuadTreeScene
+    {
+        public override void Draw()
+        {
+            Graphics.Clear(0.7f, 0.7f, 0.7f);
+            float x = 300, y = 200;
+            x = Mouse.GetX() * 100;
+            y = Mouse.GetY() * 100;
+
+            Graphics.SetColor(Color.White);
+            Graphics.Line(0, 0, x, y);
+
+
+            Ray2D ray = new Ray2D(0, 0, x, y);
+            if (m_drawDebugInfo)
+                tree.DrawDebug();
+
+            Graphics.SetColor(Color.Black);
+            Graphics.SetPointSize(4);
+            if (tree.RayCast(ray, out var result))
+            {
+                Graphics.Points(result.Intersection);
+                Graphics.Print(result.Intersection.ToString());
+            }
+            else
+            {
+                Graphics.Print("None");
+            }
+
+            base.Draw();
+        }
+    }
+
     class TestQuadTreeScene : Scene
     {
         protected bool m_drawDebugInfo = false;
@@ -1462,7 +1496,7 @@ namespace Love
 
         public override bool ErrorHandler(System.Exception e)
         {
-            System.Console.Write(e.StackTrace);
+            Console.Write(e.StackTrace);
             return false;
         }
         #endregion
