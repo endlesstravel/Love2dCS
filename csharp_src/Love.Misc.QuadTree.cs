@@ -49,6 +49,126 @@ namespace Love.Misc.QuadTree
         }
     }
 
+    //internal static class Collision
+    //{
+    //    //public static void RectangleCollision(RectangleF moved, RectangleF target, Vector2 targetPoint)
+    //    //{
+    //    //    bool overLaps = false;
+    //    //    var diffX = moved.x - target.x - target.width;
+    //    //    var diffY = moved.y - target.y - target.height;
+    //    //    var diffW = moved.width + target.width;
+    //    //    var diffH = moved.height + target.height;
+
+    //    //    overLaps = !(diffX < );
+
+    //    //    RectangleF.Intersect()
+    //    //}
+
+
+    //    public class RectSegmentIntersection
+    //    {
+    //        public readonly RectangleF originalRect;
+    //        public readonly Segment orginalSegment;
+    //        public readonly float ti1, ti2;
+    //        public readonly Vector2 n1, n2;
+
+    //        public RectSegmentIntersection(RectangleF originalRect, Segment orginalSegment, float ti1, float ti2, Vector2 n1, Vector2 n2)
+    //        {
+    //            this.originalRect = originalRect;
+    //            this.orginalSegment = orginalSegment;
+    //            this.ti1 = ti1;
+    //            this.ti2 = ti2;
+    //            this.n1 = n1;
+    //            this.n2 = n2;
+    //        }
+
+    //        public Segment GetIntersectionSegment()
+    //        {
+    //            var vec = orginalSegment.P2 - orginalSegment.P1;
+    //            var p1 = orginalSegment.P1 + ti1 * vec;
+    //            var p2 = orginalSegment.P1 + ti2 * vec;
+    //            return Segment.Create(p1, p2);
+    //        }
+    //    }
+
+
+    //    /// <summary>
+    //    /// This is a generalized implementation of the liang-barsky algorithm, which also returns
+    //    /// the normals of the sides where the segment intersects.
+    //    /// Returns null if the segment never touches the rect
+    //    /// Notice that normals are only guaranteed to be accurate when initially ti1, ti2 == -math.huge, math.huge
+    //    /// https://blog.csdn.net/soulmeetliang/article/details/79185603
+    //    /// </summary>
+    //    public RectSegmentIntersection GetSegmentIntersectionIndices(RectangleF rect, float x1, float y1, float x2, float y2, float ti1 = 0, float ti2 = 1)
+    //    {
+    //        float nx, ny; // side noarmal 当前矩形边的法线
+    //        var dx = x2 - x1;
+    //        var dy = y2 - y1;
+    //        float p, q;  // 当凸多边形恰为矩形，且矩形的边平行于坐标轴时，每个边的法向量仅有一个非零分量，所以法向量与任意矢量的内积，等于该向量的相应 x 或 y 分量。
+
+    //        for (int side = 1; side <= 4; side++)
+    //        {
+    //            if (side == 1) // left
+    //            {
+    //                nx = -1;
+    //                ny = 0;
+    //                p = segment.P1.X - segment.P2.X;
+    //                q = segment.P1.X - Left;
+    //            }
+    //            else if (side == 2) // right
+    //            {
+    //                nx = 1;
+    //                ny = 0;
+    //                p = segment.P2.X - segment.P1.X;
+    //                q = Right - segment.P1.X;
+    //            }
+    //            else if (side == 3) // top
+    //            {
+    //                nx = 0;
+    //                ny = -1;
+    //                p = segment.P1.Y - segment.P2.Y;
+    //                q = segment.P1.Y - Top;
+    //            }
+    //            else // if (side == 4) // bottom 
+    //            {
+    //                nx = 0;
+    //                ny = 1;
+    //                p = segment.P2.Y - segment.P1.Y;
+    //                q = Bottom - segment.P1.Y;
+    //            }
+    //            // q < 0, P(t) 在多边形外侧
+    //            // 
+    //            if (p == 0)
+    //            {
+    //                if (q <= 0) return null;
+    //            }
+    //            else
+    //            {
+    //                float t = q / p; // t [ti1, ti2] <-- [0, 1] 线段上的 P(t)
+    //                if (p < 0) // 此点在多边形内部
+    //                {
+    //                    if (t > ti2) return null;
+    //                    else if (t > ti1)
+    //                    {
+    //                        ti1 = t;
+    //                        n1 = new Vector2(nx, ny);
+    //                    }
+    //                }
+    //                else // if (p > 0) // 此点在多边形外部
+    //                {
+    //                    if (t < ti1) return null;
+    //                    else if (t < ti2)
+    //                    {
+    //                        ti2 = t;
+    //                        n2 = new Vector2(nx, ny);
+    //                    }
+    //                }
+    //            }
+    //        }
+    //        return new RectSegmentIntersection(this, segment, ti1, ti2, n1, n2);
+    //    }
+    //}
+
     class QuadTreeNode
     {
         internal readonly HashSet<Leaf> managedItems = new HashSet<Leaf>();

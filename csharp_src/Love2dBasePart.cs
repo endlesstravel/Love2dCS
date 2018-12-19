@@ -3643,8 +3643,7 @@ namespace Love
 
         /// <summary>
         /// Gets information about the system's video card and drivers.
-        /// 
-        /// <para>	Almost everything returned by this function is highly dependent on the system running the code and should probably not be used to make run-time decisions</para>
+        /// <para> Almost everything returned by this function is highly dependent on the system running the code and should probably not be used to make run-time decisions</para>
         /// </summary>
         /// <param name="name">The name of the renderer, e.g. "OpenGL" or "OpenGL ES".</param>
         /// <param name="version">The version of the renderer with some extra driver-dependent version info, e.g. "2.1 INTEL-8.10.44".</param>

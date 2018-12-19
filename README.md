@@ -22,14 +22,15 @@ Physics module temporarily not support.
 
 Feature
 ---
-
 * [Easy to install with Visual Studio (install introduce)](README-Install.md)
-* Easy to use [Getting Start](README-getting-started.md) / [Wiki](https://github.com/endlesstravel/Love2dCS/wiki)
+* Easy to install: [Install](https://endlesstravel.github.io/#/tutorial/01.Install) 
+* Document support `[WIP]` : [https://endlesstravel.github.io](https://endlesstravel.github.io)
+* [Work with ubuntu + mono-develop](develop.md)
 
-Other
+Documentation
 ---
-
-* [work with ubuntu + mono-develop](develop.md)
+* [Document https://endlesstravel.github.io](https://endlesstravel.github.io)
+* [love wiki](https://love2d.org/wiki/love)
 
 Examples
 ---
@@ -53,7 +54,8 @@ namespace Example
     }
 }
 ```
-[More examples](README-getting-started.md#more-examples)
+* [More examples](README-getting-started.md#more-examples)
+* [Test file example](csharp_src/Program.cs)
 
 
 Addition Modle
@@ -67,7 +69,6 @@ Addition Modle
 
 Next to development
 ---
- - Add `Love.Color` struct / module : in development
  - Support Love 11.0 : in development
  - Improve the document : in development
  - Support call lua function : Love.Lua.Call(name, ...arg) / Love.Lua.LoadString / Love.Lua.LoadFile
@@ -102,12 +103,6 @@ Next to development
 [develop log](Module-devlop-log.md)
 
 [change log](changelog.txt)
-
-Documentation
----
-* [wiki](https://github.com/endlesstravel/Love2dCS/wiki)
-
-* [love wiki](https://love2d.org/wiki/love)
 
 Distribute
 ---

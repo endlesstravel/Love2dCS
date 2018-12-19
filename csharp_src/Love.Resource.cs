@@ -14,7 +14,7 @@ namespace Love
     /// This module will create resource through starndard C# IO, 
     /// this means you can read a png file from path like C:/love-logo.png
     /// </summary>
-    class Resource
+    public class Resource
     {
         #region Audio
         /// <summary>
@@ -340,6 +340,38 @@ namespace Love
         /// <param name="imageData">The imageData to write the file to. </param>
         /// <param name="format">The format to encode the image as.</param>
         /// <returns></returns>
+        /// <example>
+        /// Draw red rectangle to canvas, and presss F12 to save png file at 'D:/a.png'
+        /// <code>
+        /// class TestSavePngNew : Scene
+        /// {
+        ///     Canvas canvas = null;
+        ///
+        ///     public override void Load()
+        ///     {
+        ///         canvas = Graphics.NewCanvas();
+        ///     }
+        ///
+        ///     public override void KeyPressed(KeyConstant key, Scancode scancode, bool isRepeat)
+        ///     {
+        ///         if (key == KeyConstant.F12)
+        ///         {
+        ///             Resource.EncodeToFile("D:/a.png", canvas.NewImageData(), ImageFormat.PNG);
+        ///         }
+        ///     }
+        ///
+        ///     public override void Draw()
+        ///     {
+        ///         Graphics.SetCanvas(canvas);
+        ///         Graphics.SetColor(Color.Red);
+        ///         Graphics.Rectangle(DrawMode.Fill, 100, 200, 300, 400);
+        ///         Graphics.SetCanvas();
+        ///
+        ///         Graphics.Draw(canvas);
+        ///     }
+        /// }
+        /// </code>
+        /// </example>
         public static void EncodeToFile(string path, ImageData imageData, ImageFormat format)
         {
             Check.ArgumentNull(path, "path");
