@@ -494,22 +494,22 @@ namespace Love
 
             var setting = GetMode();
             setting.usePosition = false;
-            if (flag.fullscreen.HasValue) setting.fullscreen = flag.fullscreen.Value;
-            if (flag.fullscreenType.HasValue) setting.fullscreenType = flag.fullscreenType.Value;
-            if (flag.vsync.HasValue) setting.vsync = flag.vsync.Value;
-            if (flag.msaa.HasValue) setting.msaa = flag.msaa.Value;
-            if (flag.depth.HasValue) setting.depth = flag.depth.Value;
-            if (flag.stencil.HasValue) setting.stencil = flag.stencil.Value;
-            if (flag.resizable.HasValue) setting.resizable = flag.resizable.Value;
-            if (flag.minWidth.HasValue) setting.minWidth = flag.minWidth.Value;
-            if (flag.minHeight.HasValue) setting.minHeight = flag.minHeight.Value;
-            if (flag.borderless.HasValue) setting.borderless = flag.borderless.Value;
-            if (flag.centered.HasValue) setting.centered = flag.centered.Value;
-            if (flag.display.HasValue) setting.display = flag.display.Value;
-            if (flag.highDpi.HasValue) setting.highDpi = flag.highDpi.Value;
-            if (flag.refreshrate.HasValue) setting.refreshrate = flag.refreshrate.Value;
-            if (flag.x.HasValue) setting.x = flag.x.Value;
-            if (flag.y.HasValue) setting.y = flag.y.Value;
+            if (flag.fullscreen.HasValue) setting.Fullscreen = flag.fullscreen.Value;
+            if (flag.fullscreenType.HasValue) setting.FullscreenType = flag.fullscreenType.Value;
+            if (flag.vsync.HasValue) setting.Vsync = flag.vsync.Value;
+            if (flag.msaa.HasValue) setting.MSAA = flag.msaa.Value;
+            if (flag.depth.HasValue) setting.Depth = flag.depth.Value;
+            if (flag.stencil.HasValue) setting.Stencil = flag.stencil.Value;
+            if (flag.resizable.HasValue) setting.Resizable = flag.resizable.Value;
+            if (flag.minWidth.HasValue) setting.MinWidth = flag.minWidth.Value;
+            if (flag.minHeight.HasValue) setting.MinHeight = flag.minHeight.Value;
+            if (flag.borderless.HasValue) setting.Borderless = flag.borderless.Value;
+            if (flag.centered.HasValue) setting.Centered = flag.centered.Value;
+            if (flag.display.HasValue) setting.Display = flag.display.Value;
+            if (flag.highDpi.HasValue) setting.HighDpi = flag.highDpi.Value;
+            if (flag.refreshrate.HasValue) setting.Refreshrate = flag.refreshrate.Value;
+            if (flag.x.HasValue) setting.X = flag.x.Value;
+            if (flag.y.HasValue) setting.Y = flag.y.Value;
             if (flag.fullscreen.HasValue) setting.fullscreen = flag.fullscreen.Value;
 
             return Love2dDll.wrap_love_dll_windows_setMode_w_h_setting(

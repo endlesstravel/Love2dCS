@@ -11,7 +11,7 @@ Love2dCS was designed to be as close as possible to the original LÖVE API, as s
 * The `love.math` module in LÖVE is replaced by `Love.Mathf` in Love2dCS
 * The `love.thread` module in LÖVE is not ready to supply, you can use threads in C# instead.
 * Most index begin from 1 at LÖVE. However, index will begin from 0 at Love2dCS
-* Love2dCS provide more [build-in module](#addition-modle) to convience use.
+* Love2dCS provide more [build-in module](https://endlesstravel.github.io/#/module/README?id=addition-modules) to convience use.
 * *More in development ... *
 
 Love2dCS currently based on [LÖVE 11.1](https://love2d.org/wiki/11.1)
@@ -54,18 +54,8 @@ namespace Example
     }
 }
 ```
-* [More examples](README-getting-started.md#more-examples)
+* [Getting Start](https://endlesstravel.github.io/#/tutorial/README)
 * [Test file example](csharp_src/Program.cs)
-
-
-Addition Modle
----
-| Module               | summary                                               | remark                                              |
-| -------------------- |-------------------------------------------------------|----------------------------------------------------:|
-| Love.Resource        | You can load resouce(Image/Font/Sound) from standard path such as 'C:/image.png'  |                         |      
-| Love.Misc.QuadTree   | quad tree                                             |  in develop                                         |      
-| Love.Misc.Moonshine  | Postprocessing effect repository for LÖVE             |  adapt from https://github.com/vrld/moonshine       |      
-| Love.Misc.FPSGraph   | A small FPS graphing utility for LOVE                 |  adapt from https://github.com/icrawler/FPSGraph    |      
 
 Next to development
 ---
