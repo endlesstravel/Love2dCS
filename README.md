@@ -23,7 +23,7 @@ Physics module temporarily not support.
 Feature
 ---
 * [Easy to install with Visual Studio (install introduce)](README-Install.md)
-* Easy to install: [Install](https://endlesstravel.github.io/#/tutorial/01.Install) 
+* Easy to install: [install](https://endlesstravel.github.io/#/tutorial/01.Install) 
 * Document support `[WIP]` : [https://endlesstravel.github.io](https://endlesstravel.github.io)
 * [Work with ubuntu + mono-develop](develop.md)
 
