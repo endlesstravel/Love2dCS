@@ -289,7 +289,12 @@ namespace Love
         /// <summary>
         /// Choose between "DeskTop" fullscreen or "Exclusive" fullscreen mode 
         /// </summary>
-        public FullscreenType WindowFullscreen = FullscreenType.DeskTop;
+        public FullscreenType WindowFullscreenType = FullscreenType.DeskTop;
+
+        /// <summary>
+        /// Fullscreen (true), or windowed (false).
+        /// </summary>
+        public bool WindowFullscreen = false;
 
         /// <summary>
         /// Vertical sync mode
@@ -398,52 +403,65 @@ namespace Love
     /// </summary>
     static public partial class Boot
     {
-        static public void Init(BootConfig bootConfig)
+        static bool InitFlag = false;
+
+        static public void Init(BootConfig bootConfig = null)
         {
-            // init to load native library
-            InitNativeLibrary();
-
-            Mathf.Init();
-            FileSystem.Init("");
-
-            Timer.Init();
-            Event.Init();
-            Keyboard.Init();
-            Joystick.Init();
-            Mouse.Init();
-            Touch.Init();
-            Sound.Init();
-
-            Audio.Init();
-            Font.Init();
-            Image.Init();
-            Video.Init();
-            Window.Init();
-            Graphics.Init();
-
-            // config
-            if (bootConfig == null)
+            if (InitFlag == false)
             {
-                bootConfig = new BootConfig();
+                InitFlag = true;
+
+                // init to load native library
+                InitNativeLibrary();
+
+                Mathf.Init();
+                FileSystem.Init("");
+
+                Timer.Init();
+                Event.Init();
+                Keyboard.Init();
+                Joystick.Init();
+                Mouse.Init();
+                Touch.Init();
+                Sound.Init();
+
+                Audio.Init();
+                Font.Init();
+                Image.Init();
+                Video.Init();
+                Window.Init();
+                Graphics.Init();
+
+                // config
+                if (bootConfig == null)
+                {
+                    bootConfig = new BootConfig();
+                }
+
+                if (bootConfig.WindowTitle != null)
+                {
+                    Window.SetTitle(bootConfig.WindowTitle);
+                }
+
+                WindowSettings settings = new WindowSettings();
+                settings.FullscreenType = bootConfig.WindowFullscreenType;
+                settings.Fullscreen = bootConfig.WindowFullscreen;
+                settings.Vsync = bootConfig.WindowVsync;
+                settings.MSAA = bootConfig.WindowMSAA;
+                settings.Resizable = bootConfig.WindowResizable;
+                settings.MinWidth = bootConfig.WindowMinWidth;
+                settings.MinHeight = bootConfig.WindowMinHeight;
+                settings.Borderless = bootConfig.WindowBorderless;
+                settings.Centered = bootConfig.WindowCentered;
+                settings.Display = bootConfig.WindowDisplay;
+                settings.HighDpi = bootConfig.WindowHighdpi;
+                if (bootConfig.WindowX.HasValue) settings.X = bootConfig.WindowX.Value;
+                if (bootConfig.WindowY.HasValue) settings.Y = bootConfig.WindowY.Value;
+                Window.SetMode(bootConfig.WindowWidth, bootConfig.WindowHeight, settings);
+
+                FileSystem.SetSource(Environment.CurrentDirectory);
+                Console.WriteLine($"FileSystem set source with path : {FileSystem.GetSource()}");
             }
-
-            WindowSettings settings = new WindowSettings();
-            settings.FullscreenType = bootConfig.WindowFullscreen;
-            settings.Vsync = bootConfig.WindowVsync;
-            settings.MSAA = bootConfig.WindowMSAA;
-            settings.Resizable = bootConfig.WindowResizable;
-            settings.MinWidth = bootConfig.WindowMinWidth;
-            settings.MinHeight = bootConfig.WindowMinHeight;
-            settings.Borderless = bootConfig.WindowBorderless;
-            settings.Centered = bootConfig.WindowCentered;
-            settings.Display = bootConfig.WindowDisplay;
-            settings.HighDpi = bootConfig.WindowHighdpi;
-            if (bootConfig.WindowX.HasValue) settings.X = bootConfig.WindowX.Value;
-            if (bootConfig.WindowY.HasValue) settings.Y = bootConfig.WindowY.Value;
-            Window.SetMode(bootConfig.WindowWidth, bootConfig.WindowHeight, settings);
-
-            FileSystem.SetSource(Environment.CurrentDirectory);
-            Console.WriteLine($"FileSystem set source with path : {FileSystem.GetSource()}");
         }
 
         static void Loop(Scene scene)

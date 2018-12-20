@@ -1234,7 +1234,14 @@ namespace Love
 
         static void Main(string[] args)
         {
-            Boot.Run();
+            Boot.Run(new TestMoonShine(), new BootConfig
+            {
+                WindowX = 100,
+                WindowY = 100,
+                //WindowFullscreen = true,
+                WindowFullscreenType = FullscreenType.DeskTop,
+                WindowTitle = "test",
+            });
         }
     }
 
@@ -1515,21 +1522,28 @@ namespace Love
         public override void Load()
         {
             ms = Moonshine
-                .China(Moonshine.DMG.Default)
+                .China(Moonshine.CRT.Default)
+                .Next(Moonshine.DMG.Default)
                 .Next(Moonshine.Scanlines.Default)
                 .Next(Moonshine.Vignette.Default)
                 ;
             img = Graphics.NewImage("res/img.png");
         }
 
+        public override void Update(float dt)
+        {
+            FPSGraph.Update(dt);
+        }
+
         public override void Draw()
         {
             ms.Draw(() =>
             {
-                Graphics.Rectangle(DrawMode.Fill, 300, 200, 200, 200);
+                //Graphics.Rectangle(DrawMode.Fill, 300, 200, 200, 200);
                 Graphics.Draw(img);
             });
             //Graphics.Draw(img, 200, 200);
+            FPSGraph.Draw();
         }
     }
 
