@@ -323,6 +323,22 @@ namespace Love
         /// The x-coordinate(y-coordinate) of the window's position in the specified display
         /// </summary>
         public int? WindowX, WindowY;
+
+        /// <summary>
+        /// Lua module support, if it is ture, the LUA module will open
+        /// </summary>
+        public bool LuaOpen = true;
+
+        /// <summary>
+        /// Default is IntPtr.Zero, assigning to internal Lua state, will be injected love function.
+        /// if it is IntPtr.Zero, lua state will create automatic
+        /// </summary>
+        public IntPtr LuaState = IntPtr.Zero;
+
+        /// <summary>
+        /// if Lua module was supported, lua file to exec.
+        /// </summary>
+        public string LuaLoveMainFile = null;
     }
 
 
@@ -405,7 +421,7 @@ namespace Love
     {
         static bool InitFlag = false;
 
-        static public void Init(BootConfig bootConfig = null)
+        static public void Init(BootConfig bootConfig)
         {
             if (InitFlag == false)
             {
@@ -432,12 +448,6 @@ namespace Love
                 Window.Init();
                 Graphics.Init();
 
-                // config
-                if (bootConfig == null)
-                {
-                    bootConfig = new BootConfig();
-                }
-
                 if (bootConfig.WindowTitle != null)
                 {
                     Window.SetTitle(bootConfig.WindowTitle);
@@ -461,16 +471,27 @@ namespace Love
 
                 FileSystem.SetSource(Environment.CurrentDirectory);
                 Console.WriteLine($"FileSystem set source with path : {FileSystem.GetSource()}");
+
+                // init lua module
+                if (bootConfig.LuaOpen == true)
+                {
+                    Lua.Init(bootConfig.LuaState);
+                    if (bootConfig.LuaLoveMainFile != null)
+                    {
+                        Lua.LoadLoveMainFile(bootConfig.LuaLoveMainFile);
+                    }
+                }
             }
         }
 
-        static void Loop(Scene scene)
+        static void Loop(BootConfig bootConfig, Scene scene)
         {
             scene.Load();
             while (true)
             {
-                Event.Poll(scene);
                 Timer.Step();
+                Keyboard.Update();
+                Event.Poll(scene);
 
                 scene.Update(Timer.GetDelta());
 
@@ -524,10 +545,16 @@ namespace Love
         /// <param name="bootConfig">LÖVE engine boot config</param>
         static public void Run(Scene scene = null, BootConfig bootConfig = null)
         {
+            // config
+            if (bootConfig == null)
+            {
+                bootConfig = new BootConfig();
+            }
+
             try
             {
                 Init(bootConfig);
-                Loop(scene != null ? scene : new Love2dNoGame());
+                Loop(bootConfig, scene != null ? scene : new Love2dNoGame());
             }
             catch (Exception e)
             {

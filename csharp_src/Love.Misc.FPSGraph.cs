@@ -150,8 +150,26 @@ namespace Love.Misc.FPSGraph
         /// </summary>
         public static Vector2 Position
         {
-            set { m_Defalt.m_rect.Location = Position; }
+            set { m_Defalt.m_rect.Location = value; }
             get { return m_Defalt.m_rect.Location; }
+        }
+
+        /// <summary>
+        /// set or get graph size
+        /// </summary>
+        public static SizeF Size
+        {
+            set { m_Defalt.m_rect.Size = value; }
+            get { return m_Defalt.m_rect.Size; }
+        }
+
+        /// <summary>
+        /// set or get graph rect
+        /// </summary>
+        public static RectangleF Rect
+        {
+            set { m_Defalt.m_rect = value; }
+            get { return m_Defalt.m_rect; }
         }
 
         /// <summary>

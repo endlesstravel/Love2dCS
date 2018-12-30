@@ -47,8 +47,29 @@
 
 #include "common/config.h"
 #include "common/version.h"
+#include "common/runtime.h"
 #include "wrap_love_dll.h"
 
+#include "lua.h"
+#include "modules/audio/wrap_Audio.h"
+#include "modules/data//wrap_DataModule.h"
+#include "modules/event/wrap_Event.h"
+#include "modules/filesystem/wrap_Filesystem.h"
+#include "modules/font/wrap_Font.h"
+#include "modules/graphics/wrap_Graphics.h"
+#include "modules/image/wrap_Image.h"
+#include "modules/joystick/wrap_JoystickModule.h"
+#include "modules/system/wrap_System.h"
+#include "modules/thread/wrap_ThreadModule.h"
+#include "modules/timer/wrap_Timer.h"
+#include "modules/touch/wrap_Touch.h"
+#include "modules/video/wrap_Video.h"
+#include "modules/window/wrap_Window.h"
+//#include "modules/"
+//#include "modules/"
+//#include "modules/"
+//#include "modules/"
+//#include "modules/"
 
 #include <stdio.h>
 #include <iostream>
@@ -256,6 +277,276 @@ namespace wrap
     }
 
 #pragma endregion
+
+
+#pragma region Lua region
+
+	extern "C"
+	{
+#if defined(LOVE_ENABLE_AUDIO)
+		extern int luaopen_love_audio(lua_State*);
+#endif
+#if defined(LOVE_ENABLE_DATA)
+		extern int luaopen_love_data(lua_State*);
+#endif
+#if defined(LOVE_ENABLE_EVENT)
+		extern int luaopen_love_event(lua_State*);
+#endif
+#if defined(LOVE_ENABLE_FILESYSTEM)
+		extern int luaopen_love_filesystem(lua_State*);
+#endif
+#if defined(LOVE_ENABLE_FONT)
+		extern int luaopen_love_font(lua_State*);
+#endif
+#if defined(LOVE_ENABLE_GRAPHICS)
+		extern int luaopen_love_graphics(lua_State*);
+#endif
+#if defined(LOVE_ENABLE_IMAGE)
+		extern int luaopen_love_image(lua_State*);
+#endif
+#if defined(LOVE_ENABLE_JOYSTICK)
+		extern int luaopen_love_joystick(lua_State*);
+#endif
+#if defined(LOVE_ENABLE_KEYBOARD)
+		extern int luaopen_love_keyboard(lua_State*);
+#endif
+#if defined(LOVE_ENABLE_MATH)
+		extern int luaopen_love_math(lua_State*);
+#endif
+#if defined(LOVE_ENABLE_MOUSE)
+		extern int luaopen_love_mouse(lua_State*);
+#endif
+#if defined(LOVE_ENABLE_PHYSICS)
+		extern int luaopen_love_physics(lua_State*);
+#endif
+#if defined(LOVE_ENABLE_SOUND)
+		extern int luaopen_love_sound(lua_State*);
+#endif
+#if defined(LOVE_ENABLE_SYSTEM)
+		extern int luaopen_love_system(lua_State*);
+#endif
+#if defined(LOVE_ENABLE_TIMER)
+		extern int luaopen_love_timer(lua_State*);
+#endif
+#if defined(LOVE_ENABLE_THREAD)
+		extern int luaopen_love_thread(lua_State*);
+#endif
+#if defined(LOVE_ENABLE_TOUCH)
+		extern int luaopen_love_touch(lua_State*);
+#endif
+#if defined(LOVE_ENABLE_VIDEO)
+		extern int luaopen_love_video(lua_State*);
+#endif
+#if defined(LOVE_ENABLE_WINDOW)
+		extern int luaopen_love_window(lua_State*);
+#endif
+	}
+
+
+	static const luaL_Reg modules[] = {
+	#if defined(LOVE_ENABLE_AUDIO)
+		{ "love.audio", luaopen_love_audio },
+	#endif
+	#if defined(LOVE_ENABLE_DATA)
+		{ "love.data", luaopen_love_data },
+	#endif
+	#if defined(LOVE_ENABLE_EVENT)
+		{ "love.event", luaopen_love_event },
+	#endif
+	#if defined(LOVE_ENABLE_FILESYSTEM)
+		{ "love.filesystem", luaopen_love_filesystem },
+	#endif
+	#if defined(LOVE_ENABLE_FONT)
+		{ "love.font", luaopen_love_font },
+	#endif
+	#if defined(LOVE_ENABLE_GRAPHICS)
+		{ "love.graphics", luaopen_love_graphics },
+	#endif
+	#if defined(LOVE_ENABLE_IMAGE)
+		{ "love.image", luaopen_love_image },
+	#endif
+	#if defined(LOVE_ENABLE_JOYSTICK)
+		{ "love.joystick", luaopen_love_joystick },
+	#endif
+	#if defined(LOVE_ENABLE_KEYBOARD)
+		{ "love.keyboard", luaopen_love_keyboard },
+	#endif
+	#if defined(LOVE_ENABLE_MATH)
+		{ "love.math", luaopen_love_math },
+	#endif
+	#if defined(LOVE_ENABLE_MOUSE)
+		{ "love.mouse", luaopen_love_mouse },
+	#endif
+	#if defined(LOVE_ENABLE_PHYSICS)
+		{ "love.physics", luaopen_love_physics },
+	#endif
+	#if defined(LOVE_ENABLE_SOUND)
+		{ "love.sound", luaopen_love_sound },
+	#endif
+	#if defined(LOVE_ENABLE_SYSTEM)
+		{ "love.system", luaopen_love_system },
+	#endif
+	#if defined(LOVE_ENABLE_THREAD)
+		{ "love.thread", luaopen_love_thread },
+	#endif
+	#if defined(LOVE_ENABLE_TIMER)
+		{ "love.timer", luaopen_love_timer },
+	#endif
+	#if defined(LOVE_ENABLE_TOUCH)
+		{ "love.touch", luaopen_love_touch },
+	#endif
+	#if defined(LOVE_ENABLE_VIDEO)
+		{ "love.video", luaopen_love_video },
+	#endif
+	#if defined(LOVE_ENABLE_WINDOW)
+		{ "love.window", luaopen_love_window },
+	#endif
+		{ 0, 0 }
+	};
+
+	lua_State *global_lua_state;
+
+	static int love_preload(lua_State *L, lua_CFunction f, const char *name)
+	{
+		lua_getglobal(L, "package");
+		lua_getfield(L, -1, "preload");
+		lua_pushcfunction(L, f);
+		lua_setfield(L, -2, name);
+		lua_pop(L, 2);
+		return 0;
+	}
+
+	static int w_love_setDeprecationOutput(lua_State *L)
+	{
+		bool enable = love::luax_checkboolean(L, 1);
+		love::setDeprecationOutputEnabled(enable);
+		return 0;
+	}
+
+	static int w_love_hasDeprecationOutput(lua_State *L)
+	{
+		love::luax_pushboolean(L, love::isDeprecationOutputEnabled());
+		return 1;
+	}
+
+	static int w_deprecation__gc(lua_State *)
+	{
+		love::deinitDeprecation();
+		return 0;
+	}
+
+	int luaopen_love(lua_State *L)
+	{
+		love::luax_insistpinnedthread(L);
+
+		love::luax_insistglobal(L, "love");
+
+		// Set version information.
+		lua_pushstring(L, love::VERSION);
+		lua_setfield(L, -2, "_version");
+
+		lua_pushnumber(L, love::VERSION_MAJOR);
+		lua_setfield(L, -2, "_version_major");
+		lua_pushnumber(L, love::VERSION_MINOR);
+		lua_setfield(L, -2, "_version_minor");
+		lua_pushnumber(L, love::VERSION_REV);
+		lua_setfield(L, -2, "_version_revision");
+
+		lua_pushstring(L, love::VERSION_CODENAME);
+		lua_setfield(L, -2, "_version_codename");
+
+#ifdef LOVE_ANDROID
+		luaJIT_setmode(L, 0, LUAJIT_MODE_ENGINE | LUAJIT_MODE_OFF);
+		lua_register(L, "print", w_print_sdl_log);
+#endif
+
+#ifdef LOVE_LEGENDARY_ACCELEROMETER_AS_JOYSTICK_HACK
+		lua_pushcfunction(L, w__setAccelerometerAsJoystick);
+		lua_setfield(L, -2, "_setAccelerometerAsJoystick");
+#endif
+		lua_newtable(L);
+
+		for (int i = 0; love::VERSION_COMPATIBILITY[i] != nullptr; i++)
+		{
+			lua_pushstring(L, love::VERSION_COMPATIBILITY[i]);
+			lua_rawseti(L, -2, i + 1);
+		}
+
+#ifdef LOVE_WINDOWS_UWP
+		lua_pushstring(L, "UWP");
+#elif LOVE_WINDOWS
+		lua_pushstring(L, "Windows");
+#elif defined(LOVE_MACOSX)
+		lua_pushstring(L, "OS X");
+#elif defined(LOVE_IOS)
+		lua_pushstring(L, "iOS");
+#elif defined(LOVE_ANDROID)
+		lua_pushstring(L, "Android");
+#elif defined(LOVE_LINUX)
+		lua_pushstring(L, "Linux");
+#else
+		lua_pushstring(L, "Unknown");
+#endif
+		lua_setfield(L, -2, "_os");
+
+		{
+			love::initDeprecation();
+
+			// Any old data that we can attach a metatable to, for __gc. We want to
+			// call deinitDeprecation when love is garbage collected.
+			lua_newuserdata(L, sizeof(int));
+
+			luaL_newmetatable(L, "love_deprecation");
+			lua_pushcfunction(L, w_deprecation__gc);
+			lua_setfield(L, -2, "__gc");
+			lua_setmetatable(L, -2);
+
+			lua_setfield(L, -2, "_deprecation");
+
+			lua_pushcfunction(L, w_love_setDeprecationOutput);
+			lua_setfield(L, -2, "setDeprecationOutput");
+
+			lua_pushcfunction(L, w_love_hasDeprecationOutput);
+			lua_setfield(L, -2, "hasDeprecationOutput");
+		}
+
+		// Preload module loaders.
+		for (int i = 0; modules[i].name != nullptr; i++)
+			love::luax_preload(L, modules[i].func, modules[i].name);
+
+		// Necessary for Data-creating methods to work properly in Data subclasses.
+		love::luax_require(L, "love.data");
+		lua_pop(L, 1);
+		return 1;
+	}
+
+	bool4 wrap_love_dll_luasupport_init(lua_State* L)
+	{
+		return wrap_catchexcept([&]() {
+			if (L == nullptr)
+			{
+				global_lua_state = luaL_newstate();
+				luaL_openlibs(global_lua_state);
+			}
+			else 
+			{
+				global_lua_state = L;
+			}
+			love_preload(global_lua_state, luaopen_love, "love");
+		});
+	}
+
+	bool4 wrap_love_dll_luasupport_doString(const char* str)
+	{
+		return wrap_catchexcept([&]() {
+			int ret = luaL_dostring(global_lua_state, str);
+			if (ret != 0)
+				throw love::Exception("%s\n", lua_tostring(global_lua_state, -1));
+		});
+	}
+
+#pragma endregion
+
 
 #pragma region *new* region
 

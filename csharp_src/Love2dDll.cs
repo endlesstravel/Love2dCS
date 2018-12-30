@@ -100,6 +100,23 @@ namespace Love
 
         #endregion
 
+        #region lua
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_luasupport_init")]
+        internal extern static bool _wrap_love_dll_luasupport_init(IntPtr L);
+        internal static bool wrap_love_dll_luasupport_init(IntPtr L)
+        {
+            return CheckCAPIException(_wrap_love_dll_luasupport_init(L));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_luasupport_doString")]
+        internal extern static bool _wrap_love_dll_luasupport_doString(byte[] strCode);
+        internal static bool wrap_love_dll_luasupport_doString(byte[] strCode)
+        {
+            return CheckCAPIException(_wrap_love_dll_luasupport_doString(strCode));
+        }
+        #endregion
+
         #region *new*
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_filesystem_newFile")]
         internal extern static bool _wrap_love_dll_filesystem_newFile(byte[] filename, int fmode, out IntPtr out_file);
