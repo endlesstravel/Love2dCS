@@ -608,6 +608,11 @@ namespace Love
         }
         public override void OnUpdate(float dt)
         {
+
+            if (Keyboard.IsPressed(KeyConstant.T) || Keyboard.IsReleased(KeyConstant.T))
+            {
+                Resource.Append(TEST_FILE_PATH, "You have to be happiness.\n");
+            }
         }
 
         public string recursiveEnumerate(string folder, string fileTree, string tab)
@@ -653,6 +658,7 @@ namespace Love
 
             }
             sb.Add($"-------------------- Operate --------------------");
+            sb.Add($"[T/T]: Append to file  '{TEST_FILE_PATH}'  'You have to be happiness.(LR)' ");
             sb.Add($"[A]: Append to file  '{TEST_FILE_PATH}'  'You have to be happiness.(LR)' ");
             sb.Add($"[C]: (Re)create new file  '{TEST_FILE_PATH}' with content 'new file ....(LR)' ");
             sb.Add($"[E]: remove file  '{TEST_FILE_PATH}'  ");
@@ -1008,6 +1014,20 @@ namespace Love
 
 
 
+    [StageName("test lua")]
+    class TestLua : Stage
+    {
+        public override void OnUpdate(float dt)
+        {
+            Lua.Update(dt);
+        }
+        public override void OnDraw()
+        {
+            Lua.Draw();
+        }
+    }
+
+
     class Program : Scene
     {
         class StageContainer
@@ -1118,6 +1138,7 @@ namespace Love
             AddStage(new TestStencil());
             AddStage(new TestText());
             AddStage(new TestOther());
+            AddStage(new TestLua());
         }
 
         public override void Update(float dt)
@@ -1159,6 +1180,11 @@ namespace Love
             {
                 currentStage.OnUpdate(dt);
             }
+
+            FPSGraph.Update(dt);
+            var gw = Graphics.GetWidth();
+            var gh = Graphics.GetHeight();
+            FPSGraph.Position = new Vector2(gw - FPSGraph.Size.width, gh - FPSGraph.Size.height);
         }
 
         public override void KeyPressed(KeyConstant key, Scancode scancode, bool isRepeat)
@@ -1193,6 +1219,7 @@ namespace Love
         public override void Draw()
         {
             Graphics.Clear(136 / 255f, 193 / 255f, 206 / 255f, 1);
+            FPSGraph.Draw();
 
             Graphics.Push(StackType.All);
             Graphics.Translate(anchorStageX, anchorStageY);
@@ -1234,7 +1261,15 @@ namespace Love
 
         static void Main(string[] args)
         {
-            Boot.Run();
+            Boot.Run(new Program(), new BootConfig
+            {
+                WindowX = 100,
+                WindowY = 100,
+                WindowFullscreen = true,
+                WindowFullscreenType = FullscreenType.DeskTop,
+                WindowTitle = "test",
+                LuaLoveMainFile = "res.main",
+            });
         }
     }
 
@@ -1515,21 +1550,28 @@ namespace Love
         public override void Load()
         {
             ms = Moonshine
-                .China(Moonshine.DMG.Default)
+                .China(Moonshine.CRT.Default)
+                .Next(Moonshine.DMG.Default)
                 .Next(Moonshine.Scanlines.Default)
                 .Next(Moonshine.Vignette.Default)
                 ;
             img = Graphics.NewImage("res/img.png");
         }
 
+        public override void Update(float dt)
+        {
+            FPSGraph.Update(dt);
+        }
+
         public override void Draw()
         {
             ms.Draw(() =>
             {
-                Graphics.Rectangle(DrawMode.Fill, 300, 200, 200, 200);
+                //Graphics.Rectangle(DrawMode.Fill, 300, 200, 200, 200);
                 Graphics.Draw(img);
             });
             //Graphics.Draw(img, 200, 200);
+            FPSGraph.Draw();
         }
     }
 

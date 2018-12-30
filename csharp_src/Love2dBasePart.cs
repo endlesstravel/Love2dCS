@@ -494,22 +494,22 @@ namespace Love
 
             var setting = GetMode();
             setting.usePosition = false;
-            if (flag.fullscreen.HasValue) setting.fullscreen = flag.fullscreen.Value;
-            if (flag.fullscreenType.HasValue) setting.fullscreenType = flag.fullscreenType.Value;
-            if (flag.vsync.HasValue) setting.vsync = flag.vsync.Value;
-            if (flag.msaa.HasValue) setting.msaa = flag.msaa.Value;
-            if (flag.depth.HasValue) setting.depth = flag.depth.Value;
-            if (flag.stencil.HasValue) setting.stencil = flag.stencil.Value;
-            if (flag.resizable.HasValue) setting.resizable = flag.resizable.Value;
-            if (flag.minWidth.HasValue) setting.minWidth = flag.minWidth.Value;
-            if (flag.minHeight.HasValue) setting.minHeight = flag.minHeight.Value;
-            if (flag.borderless.HasValue) setting.borderless = flag.borderless.Value;
-            if (flag.centered.HasValue) setting.centered = flag.centered.Value;
-            if (flag.display.HasValue) setting.display = flag.display.Value;
-            if (flag.highDpi.HasValue) setting.highDpi = flag.highDpi.Value;
-            if (flag.refreshrate.HasValue) setting.refreshrate = flag.refreshrate.Value;
-            if (flag.x.HasValue) setting.x = flag.x.Value;
-            if (flag.y.HasValue) setting.y = flag.y.Value;
+            if (flag.fullscreen.HasValue) setting.Fullscreen = flag.fullscreen.Value;
+            if (flag.fullscreenType.HasValue) setting.FullscreenType = flag.fullscreenType.Value;
+            if (flag.vsync.HasValue) setting.Vsync = flag.vsync.Value;
+            if (flag.msaa.HasValue) setting.MSAA = flag.msaa.Value;
+            if (flag.depth.HasValue) setting.Depth = flag.depth.Value;
+            if (flag.stencil.HasValue) setting.Stencil = flag.stencil.Value;
+            if (flag.resizable.HasValue) setting.Resizable = flag.resizable.Value;
+            if (flag.minWidth.HasValue) setting.MinWidth = flag.minWidth.Value;
+            if (flag.minHeight.HasValue) setting.MinHeight = flag.minHeight.Value;
+            if (flag.borderless.HasValue) setting.Borderless = flag.borderless.Value;
+            if (flag.centered.HasValue) setting.Centered = flag.centered.Value;
+            if (flag.display.HasValue) setting.Display = flag.display.Value;
+            if (flag.highDpi.HasValue) setting.HighDpi = flag.highDpi.Value;
+            if (flag.refreshrate.HasValue) setting.Refreshrate = flag.refreshrate.Value;
+            if (flag.x.HasValue) setting.X = flag.x.Value;
+            if (flag.y.HasValue) setting.Y = flag.y.Value;
             if (flag.fullscreen.HasValue) setting.fullscreen = flag.fullscreen.Value;
 
             return Love2dDll.wrap_love_dll_windows_setMode_w_h_setting(
@@ -1155,133 +1155,6 @@ namespace Love
         }
     }
 
-    public partial class Keyboard
-    {
-        public static bool Init()
-        {
-            return Love2dDll.wrap_love_dll_keyboard_open_love_keyboard();
-        }
-
-        /// <summary>
-        /// Enables or disables key repeat for love.keypressed. It is disabled by default.
-        /// <para>The interval between repeats depends on the user's system settings. This function doesn't affect whether <see cref="Scene.TextInput"/> is called multiple times while a key is held down</para>
-        /// </summary>
-        /// <param name="enable">Whether repeat keypress events should be enabled when a key is held down.</param>
-        public static void SetKeyRepeat(bool enable)
-        {
-            Love2dDll.wrap_love_dll_keyboard_setKeyRepeat(enable);
-        }
-
-        /// <summary>
-        /// Gets whether key repeat is enabled.
-        /// </summary>
-        /// <returns></returns>
-        public static bool HasKeyRepeat()
-        {
-            bool out_result = false;
-            Love2dDll.wrap_love_dll_keyboard_hasKeyRepeat(out out_result);
-            return out_result;
-        }
-
-        /// <summary>
-        /// Checks whether a certain <see cref="KeyConstant"/> is down. Not to be confused with <see cref="Scene.KeyPressed(KeyConstant, Scancode, bool)"/> or <see cref="Scene.KeyReleased(KeyConstant, Scancode)"/>.
-        /// </summary>
-        /// <param name="key_type">The key to check.</param>
-        /// <returns>True if the key is down, false if not.</returns>
-        public static bool IsDown(KeyConstant key)
-        {
-            bool out_result = false;
-            Love2dDll.wrap_love_dll_keyboard_isDown((int)key, out out_result);
-            return out_result;
-        }
-
-        /// <summary>
-        /// Checks whether a certain <see cref="Scancode"/> is down. Not to be confused with <see cref="Scene.KeyPressed(KeyConstant, Scancode, bool)"/> or <see cref="Scene.KeyReleased(KeyConstant, Scancode)"/>.
-        /// <para>Unlike regular KeyConstants, Scancodes are keyboard layout-independent. The scancode "w" is used if the key in the same place as the "w" key on an American keyboard is pressed, no matter what the key is labelled or what the user's operating system settings are.</para>
-        /// </summary>
-        /// <param name="scancode_type"></param>
-        /// <returns></returns>
-        public static bool IsScancodeDown(Scancode scancode)
-        {
-            bool out_result = false;
-            Love2dDll.wrap_love_dll_keyboard_isScancodeDown((int)scancode, out out_result);
-            return out_result;
-        }
-
-        /// <summary>
-        /// Gets the hardware scancode corresponding to the given key.
-        /// <para>Unlike <see cref="KeyConstant"/>, <see cref="Scancode"/> are keyboard layout-independent. For example the scancode "w" will be generated if the key in the same place as the "w" key on an American keyboard is pressed, no matter what the key is labelled or what the user's operating system settings are.</para>
-        /// <para><see cref="Scancode"/> are useful for creating default controls that have the same physical locations on on all systems.</para>
-        /// </summary>
-        /// <param name="key_type">The key to get the scancode from.</param>
-        /// <returns>The scancode corresponding to the given key, or "unknown" if the given key has no known physical representation on the current system.</returns>
-        public static Scancode GetScancodeFromKey(KeyConstant key_type)
-        {
-            int out_scancode_type = 0;
-            Love2dDll.wrap_love_dll_keyboard_getScancodeFromKey((int)key_type, out out_scancode_type);
-            return (Scancode)out_scancode_type;
-        }
-
-        /// <summary>
-        /// <para>Gets the key corresponding to the given hardware scancode.</para>
-        /// <para>Unlike <see cref="KeyConstant"/>, <see cref="Scancode"/> are keyboard layout-independent. For example the scancode "w" will be generated if the key in the same place as the "w" key on an American keyboard is pressed, no matter what the key is labelled or what the user's operating system settings are.</para>
-        /// <para><see cref="Scancode"/> are useful for creating default controls that have the same physical locations on on all systems.</para>
-        /// </summary>
-        /// <param name="scancode_type">The scancode to get the key from.</param>
-        /// <returns>The key corresponding to the given <see cref="Scancode"/> , or "unknown" if the <see cref="Scancode"/> doesn't map to a KeyConstant on the current system.</returns>
-        public static KeyConstant GetKeyFromScancode(Scancode scancode_type)
-        {
-            int out_key_type = 0;
-            Love2dDll.wrap_love_dll_keyboard_getKeyFromScancode((int)scancode_type, out out_key_type);
-            return (KeyConstant)out_key_type;
-        }
-
-        /// <summary>
-        /// <para>Enables or disables text input events. It is enabled by default on Windows, Mac, and Linux, and disabled by default on iOS and Android.</para>
-        /// <para>On touch devices, this shows the system's native on-screen keyboard when it's enabled.</para>
-        /// </summary>
-        /// <param name="enable">Whether text input events should be enabled.</param>
-        public static void SetTextInput(bool enable)
-        {
-            Love2dDll.wrap_love_dll_keyboard_setTextInput(enable);
-        }
-
-        /// <summary>
-        /// <para>Enables or disables text input events. It is enabled by default on Windows, Mac, and Linux, and disabled by default on iOS and Android.</para>
-        /// <para>On iOS and Android this variant tells the OS that the specified rectangle is where text will show up in the game, which prevents the system on-screen keyboard from covering the text.</para>
-        /// <para>On touch devices, this shows the system's native on-screen keyboard when it's enabled.</para>
-        /// </summary>
-        /// <param name="enable">Whether text input events should be enabled.</param>
-        /// <param name="x">Text rectangle x position.</param>
-        /// <param name="y">Text rectangle y position.</param>
-        /// <param name="w">Text rectangle width.</param>
-        /// <param name="h">Text rectangle height.</param>
-        public static void SetTextInput(bool enable, double x, double y, double w, double h)
-        {
-            Love2dDll.wrap_love_dll_keyboard_setTextInput_xywh(enable, x, y, w, h);
-        }
-
-        /// <summary>
-        /// Gets whether key repeat is enabled.
-        /// </summary>
-        /// <returns>Whether key repeat is enabled.</returns>
-        public static bool HasTextInput()
-        {
-            bool out_result = false;
-            Love2dDll.wrap_love_dll_keyboard_hasTextInput(out out_result);
-            return out_result;
-        }
-
-
-        public static bool HasScreenKeyboard()
-        {
-            bool out_result = false;
-            Love2dDll.wrap_love_dll_keyboard_hasScreenKeyboard(out out_result);
-            return out_result;
-        }
-
-
-    }
 
     public partial class Touch
     {

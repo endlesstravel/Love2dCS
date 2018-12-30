@@ -61,18 +61,12 @@ c. build C# Part :
 * build & run
 
 ## Code Convention
-*in development ...*
-
-### Resource manage
-*in development ...*
-
-
 ### UTF8
-*in development ...*
 
-Love.Graphics.Print / Love.Graphics.Printf / Love.Graphics will receive 0-terminated byte array (https://docs.microsoft.com/en-us/cpp/cpp/string-and-character-literals-cpp?view=vs-2017#narrow-string-literals) to represent end of string input. for example :
+Love.Graphics.Print / Love.Graphics.Printf / Love.Graphics can receive 0-terminated byte array (https://docs.microsoft.com/en-us/cpp/cpp/string-and-character-literals-cpp?view=vs-2017#narrow-string-literals) to represent end of string input. for example :
 
 ``` C#
     var bytes = new bytes[] {65, 66, 67, 0}; // "ABC"
-    Love.Graphics.Print(bytes, 0, 0, 0, 1, 1, 0, 0, 0, 0); // print "ABC" at position (0, 0)
+    Love.Graphics.Print(bytes, 0, 0); // print "ABC" at position (0, 0)
 ```
+### Resource manage

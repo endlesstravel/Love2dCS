@@ -274,6 +274,7 @@ namespace Love
 
         public delegate Pixel MapPixelDelegate(int x, int y, Pixel p);
         public delegate Vector4 MapPixelColorDelegate(int x, int y, Vector4 p);
+        public delegate Color MapColorDelegate(int x, int y, Color color);
 
         static void WriteVector4(IntPtr dest, int offset, Vector4 input, PixelFormat format)
         {
@@ -365,6 +366,31 @@ namespace Love
                 {
                     int offset = x + y * h;
                     buffer[offset] = func(x, y, buffer[offset]);
+                }
+            }
+            SetPixelsFloat(buffer);
+        }
+
+
+        /// <summary>
+        /// <para> Transform an image by applying a function to every pixel. </para>
+        /// <para> This function is a higher-order function(https://en.wikipedia.org/wiki/Higher-order_function). It takes another function as a parameter, and calls it once for each pixel in the ImageData. </para>
+        /// <para>The passed function is called with six parameters for each pixel in turn. The parameters are numbers that represent the x and y coordinates of the pixel and its red, green, blue and alpha values. The function should return the new red, green, blue, and alpha values for that pixel.</para>
+        /// </summary>
+        /// <param name="func">Function to apply to every pixel.</param>
+        public void MapPixel(MapColorDelegate func)
+        {
+            var buffer = GetPixelsFloat();
+            int w = GetWidth();
+            int h = GetHeight();
+            for (int y = 0; y < h; y++)
+            {
+                for (int x = 0; x < w; x++)
+                {
+                    int offset = x + y * h;
+                    var vc = buffer[offset];
+                    var c = func(x, y, new Color(vc.r, vc.g, vc.b, vc.a));
+                    buffer[offset] = new Vector4(c.r, c.g, c.b, c.a);
                 }
             }
             SetPixelsFloat(buffer);

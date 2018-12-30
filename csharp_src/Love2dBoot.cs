@@ -289,7 +289,12 @@ namespace Love
         /// <summary>
         /// Choose between "DeskTop" fullscreen or "Exclusive" fullscreen mode 
         /// </summary>
-        public FullscreenType WindowFullscreen = FullscreenType.DeskTop;
+        public FullscreenType WindowFullscreenType = FullscreenType.DeskTop;
+
+        /// <summary>
+        /// Fullscreen (true), or windowed (false).
+        /// </summary>
+        public bool WindowFullscreen = false;
 
         /// <summary>
         /// Vertical sync mode
@@ -318,6 +323,22 @@ namespace Love
         /// The x-coordinate(y-coordinate) of the window's position in the specified display
         /// </summary>
         public int? WindowX, WindowY;
+
+        /// <summary>
+        /// Lua module support, if it is ture, the LUA module will open
+        /// </summary>
+        public bool LuaOpen = true;
+
+        /// <summary>
+        /// Default is IntPtr.Zero, assigning to internal Lua state, will be injected love function.
+        /// if it is IntPtr.Zero, lua state will create automatic
+        /// </summary>
+        public IntPtr LuaState = IntPtr.Zero;
+
+        /// <summary>
+        /// if Lua module was supported, lua file to exec.
+        /// </summary>
+        public string LuaLoveMainFile = null;
     }
 
 
@@ -398,61 +419,79 @@ namespace Love
     /// </summary>
     static public partial class Boot
     {
+        static bool InitFlag = false;
+
         static public void Init(BootConfig bootConfig)
         {
-            // init to load native library
-            InitNativeLibrary();
-
-            Mathf.Init();
-            FileSystem.Init("");
-
-            Timer.Init();
-            Event.Init();
-            Keyboard.Init();
-            Joystick.Init();
-            Mouse.Init();
-            Touch.Init();
-            Sound.Init();
-
-            Audio.Init();
-            Font.Init();
-            Image.Init();
-            Video.Init();
-            Window.Init();
-            Graphics.Init();
-
-            // config
-            if (bootConfig == null)
+            if (InitFlag == false)
             {
-                bootConfig = new BootConfig();
+                InitFlag = true;
+
+                // init to load native library
+                InitNativeLibrary();
+
+                Mathf.Init();
+                FileSystem.Init("");
+
+                Timer.Init();
+                Event.Init();
+                Keyboard.Init();
+                Joystick.Init();
+                Mouse.Init();
+                Touch.Init();
+                Sound.Init();
+
+                Audio.Init();
+                Font.Init();
+                Image.Init();
+                Video.Init();
+                Window.Init();
+                Graphics.Init();
+
+                if (bootConfig.WindowTitle != null)
+                {
+                    Window.SetTitle(bootConfig.WindowTitle);
+                }
+
+                WindowSettings settings = new WindowSettings();
+                settings.FullscreenType = bootConfig.WindowFullscreenType;
+                settings.Fullscreen = bootConfig.WindowFullscreen;
+                settings.Vsync = bootConfig.WindowVsync;
+                settings.MSAA = bootConfig.WindowMSAA;
+                settings.Resizable = bootConfig.WindowResizable;
+                settings.MinWidth = bootConfig.WindowMinWidth;
+                settings.MinHeight = bootConfig.WindowMinHeight;
+                settings.Borderless = bootConfig.WindowBorderless;
+                settings.Centered = bootConfig.WindowCentered;
+                settings.Display = bootConfig.WindowDisplay;
+                settings.HighDpi = bootConfig.WindowHighdpi;
+                if (bootConfig.WindowX.HasValue) settings.X = bootConfig.WindowX.Value;
+                if (bootConfig.WindowY.HasValue) settings.Y = bootConfig.WindowY.Value;
+                Window.SetMode(bootConfig.WindowWidth, bootConfig.WindowHeight, settings);
+
+                FileSystem.SetSource(Environment.CurrentDirectory);
+                Console.WriteLine($"FileSystem set source with path : {FileSystem.GetSource()}");
+
+                // init lua module
+                if (bootConfig.LuaOpen == true)
+                {
+                    Lua.Init(bootConfig.LuaState);
+                    if (bootConfig.LuaLoveMainFile != null)
+                    {
+                        Lua.LoadLoveMainFile(bootConfig.LuaLoveMainFile);
+                    }
+                }
             }
-
-            WindowSettings settings = new WindowSettings();
-            settings.FullscreenType = bootConfig.WindowFullscreen;
-            settings.Vsync = bootConfig.WindowVsync;
-            settings.MSAA = bootConfig.WindowMSAA;
-            settings.Resizable = bootConfig.WindowResizable;
-            settings.MinWidth = bootConfig.WindowMinWidth;
-            settings.MinHeight = bootConfig.WindowMinHeight;
-            settings.Borderless = bootConfig.WindowBorderless;
-            settings.Centered = bootConfig.WindowCentered;
-            settings.Display = bootConfig.WindowDisplay;
-            settings.HighDpi = bootConfig.WindowHighdpi;
-            if (bootConfig.WindowX.HasValue) settings.X = bootConfig.WindowX.Value;
-            if (bootConfig.WindowY.HasValue) settings.Y = bootConfig.WindowY.Value;
-            Window.SetMode(bootConfig.WindowWidth, bootConfig.WindowHeight, settings);
-
-            FileSystem.SetSource(Environment.CurrentDirectory);
-            Console.WriteLine($"FileSystem set source with path : {FileSystem.GetSource()}");
         }
 
-        static void Loop(Scene scene)
+        static void Loop(BootConfig bootConfig, Scene scene)
         {
             scene.Load();
             while (true)
             {
-                Event.Poll(scene);
                 Timer.Step();
+                Keyboard.Update();
+                Event.Poll(scene);
 
                 scene.Update(Timer.GetDelta());
 
@@ -506,10 +545,16 @@ namespace Love
         /// <param name="bootConfig">LÖVE engine boot config</param>
         static public void Run(Scene scene = null, BootConfig bootConfig = null)
         {
+            // config
+            if (bootConfig == null)
+            {
+                bootConfig = new BootConfig();
+            }
+
             try
             {
                 Init(bootConfig);
-                Loop(scene != null ? scene : new Love2dNoGame());
+                Loop(bootConfig, scene != null ? scene : new Love2dNoGame());
             }
             catch (Exception e)
             {

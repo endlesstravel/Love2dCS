@@ -37,6 +37,8 @@
 #include "modules/physics/box2d/Physics.h"
 #include "common/Memoizer.h"
 
+#include "lua.h"
+
 using namespace love::sound;
 using namespace love::audio;
 using namespace love::filesystem;
@@ -228,6 +230,12 @@ namespace wrap
 	extern "C" LOVE_EXPORT void wrap_love_dll_delete_array(void *p);
     extern "C" LOVE_EXPORT void wrap_love_dll_delete_WrapString(WrapString *ws);
     extern "C" LOVE_EXPORT void wrap_love_dll_delete_WrapSequenceString(WrapSequenceString *ws);
+#pragma endregion
+
+#pragma region *new* region
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_luasupport_init(lua_State* L);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_luasupport_loadFile(const char* filename);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_luasupport_doString(const char* str);
 #pragma endregion
 
 #pragma region *new* region

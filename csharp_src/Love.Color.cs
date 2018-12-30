@@ -13,28 +13,50 @@ namespace Love
     {
         public static readonly Color Empty = new Color();
 
+        /// <summary>
+        /// get/set each color range (0-255)
+        /// </summary>
         public byte r, g, b, a;
+
+        /// <summary>
+        /// get/set red component [0-1]
+        /// </summary>
         public float R
         {
             get { return r / 255f; }
             set { r = unchecked((byte)(255 * value)); }
         }
+
+        /// <summary>
+        /// get/set green component [0-1]
+        /// </summary>
         public float G
         {
             get { return g / 255f; }
             set { g = unchecked((byte)(255 * value)); }
         }
+
+        /// <summary>
+        /// get/set blue component [0-1]
+        /// </summary>
         public float B
         {
             get { return b / 255f; }
             set { b = unchecked((byte)(255 * value)); }
         }
+
+        /// <summary>
+        /// get/set alpha component [0-1]
+        /// </summary>
         public float A
         {
             get { return a / 255f; }
             set { a = unchecked((byte)(255 * value)); }
         }
 
+        /// <summary>
+        /// get as uint value
+        /// </summary>
         public uint UintValue
         {
             get {
@@ -45,6 +67,14 @@ namespace Love
               (uint)b << RGBABlueShift; }
         }
 
+        /// <summary>
+        /// Generate new Color and set each color component from 0.0 to 1.0
+        /// </summary>
+        /// <param name="r"></param>
+        /// <param name="g"></param>
+        /// <param name="b"></param>
+        /// <param name="a"></param>
+        /// <returns></returns>
         public Color(float r, float g, float b, float a)
         {
             this.r = unchecked((byte)(255 * r));
@@ -53,6 +83,14 @@ namespace Love
             this.a = unchecked((byte)(255 * a));
         }
 
+        /// <summary>
+        /// Generate new Color and set each color component from 0 to 255
+        /// </summary>
+        /// <param name="r"></param>
+        /// <param name="g"></param>
+        /// <param name="b"></param>
+        /// <param name="a"></param>
+        /// <returns></returns>
         public Color(byte r, byte g, byte b, byte a)
         {
             this.r = r;
@@ -146,6 +184,37 @@ namespace Love
             c.SetAsRGBA(value);
             return c;
         }
+
+        /// <summary>
+        /// Generate new Color and set each color component from 0.0 to 1.0
+        /// </summary>
+        /// <param name="r"></param>
+        /// <param name="g"></param>
+        /// <param name="b"></param>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        public static Color FromRGBA(float r, float g, float b, float a)
+        {
+            var c = new Color();
+            c.SetAsRGBA(r, g, b, a);
+            return c;
+        }
+
+        /// <summary>
+        /// Generate new Color and set each color component from 0 to 255
+        /// </summary>
+        /// <param name="r"></param>
+        /// <param name="g"></param>
+        /// <param name="b"></param>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        public static Color FromRGBA(byte r, byte g, byte b, byte a)
+        {
+            var c = new Color();
+            c.SetAsRGBA(r, g, b, a);
+            return c;
+        }
+
 
         public static Color FromARGB(uint value)
         {
