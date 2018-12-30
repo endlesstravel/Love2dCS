@@ -421,11 +421,17 @@ namespace Love
     {
         static bool InitFlag = false;
 
-        static public void Init(BootConfig bootConfig)
+        static public void Init(BootConfig bootConfig = null)
         {
             if (InitFlag == false)
             {
                 InitFlag = true;
+
+                // config
+                if (bootConfig == null)
+                {
+                    bootConfig = new BootConfig();
+                }
 
                 // init to load native library
                 InitNativeLibrary();
