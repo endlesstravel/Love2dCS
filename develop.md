@@ -32,7 +32,18 @@ c. build C# part :
 * add all code `csharp_src/*.cs` to your C# project.
 * set workspace to `love.dll` locate directory or just copy  `love.dll` / `lua51.dll` / `mpg123` / `OpenAL32.dll` / `SDL2.dll` to your `xxxxx.exe` locate directory.
 
-### 2. Ubuntu [](img/ubuntu_logo.png)
+### 2. Ubuntu c part with shell [](img/ubuntu_logo.png)
+* Follow the instructions at the [Building LÖVE](https://love2d.org/wiki/Building_L%C3%96VE) to build `LÖVE`
+
+execute command below at the root of the repository.
+```bash
+wget https://github.com/endlesstravel/Love2dCS/raw/feature/UbuntuAutoAddCodeShell/ubuntu_auto_add_code_to_file.sh
+chmod a+x ubuntu_auto_add_code_to_file.sh
+./ubuntu_auto_add_code_to_file.sh
+```
+
+
+### 3. Ubuntu Manual [](img/ubuntu_logo.png)
 
 a. tool
 
