@@ -34,8 +34,8 @@ add_code_to_file() {
 
 # download files
 echo "[1/2]download files ...."
-wget https://github.com/endlesstravel/Love2dCS/raw/master/c_api_src/wrap_love_dll.cpp -o src/modules/wrap_love_dll.cpp
-wget https://github.com/endlesstravel/Love2dCS/raw/master/c_api_src/wrap_love_dll.h -o src/modules/wrap_love_dll.h
+wget -o src/modules/wrap_love_dll.cpp https://github.com/endlesstravel/Love2dCS/raw/master/c_api_src/wrap_love_dll.cpp
+wget -o src/modules/wrap_love_dll.h https://github.com/endlesstravel/Love2dCS/raw/master/c_api_src/wrap_love_dll.h
 
 
 echo "[2/2]add code to file ..."
