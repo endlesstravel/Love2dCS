@@ -415,7 +415,7 @@ namespace Love
         }
 
         /// <summary>
-        /// Pauses the current thread for the specified amount of time.	
+        /// Pauses the current thread for the specified amount of time.
         /// </summary>
         /// <param name="t"></param>
         public static void Sleep(float t)
@@ -424,7 +424,7 @@ namespace Love
         }
 
         /// <summary>
-        /// Returns the amount of time since some time in the past.		
+        /// Returns the amount of time since some time in the past.
         /// </summary>
         /// <returns></returns>
         public static float GetTime()
@@ -441,7 +441,7 @@ namespace Love
     /// </summary>
     public partial class Window
     {
-        
+
 
         public static bool Init()
         {
@@ -558,11 +558,11 @@ namespace Love
         {
 
             Love2dDll.wrap_love_dll_windows_getMode(
-                out out_width, out out_height, 
-                out bool fullscreen, out int fullscreenType, out bool vsync, 
+                out out_width, out out_height,
+                out bool fullscreen, out int fullscreenType, out bool vsync,
                 out int msaa, out int depth, out bool stencil,
                 out bool resizable, out int minWidth,  out int minHeight,
-                out bool borderless, out bool centered, out int display, 
+                out bool borderless, out bool centered, out int display,
                 out bool highDpi, out double refreshrate, out bool useposition, out int x, out int y);
 
             WindowSettings flag = new WindowSettings();
@@ -716,7 +716,7 @@ namespace Love
 
         /// <summary>
         /// Sets whether the display is allowed to sleep while the program is running.
-        /// <para>Display sleep is disabled by default. Some types of input(e.g.joystick button presses) might not prevent the display from sleeping, if display sleep is allowed.</para>        
+        /// <para>Display sleep is disabled by default. Some types of input(e.g.joystick button presses) might not prevent the display from sleeping, if display sleep is allowed.</para>
         /// </summary>
         /// <param name="enable">True to enable system display sleep, false to disable it.</param>
         public static void SetDisplaySleepEnabled(bool enable)
@@ -1883,7 +1883,7 @@ namespace Love
     public partial class Audio
     {
         /// <summary>
-        /// Creates a new Source from a Decoder. 
+        /// Creates a new Source from a Decoder.
         /// </summary>
         /// <param name="decoder">The Decoder to create a Source from.</param>
         /// <param name="type">Streaming or static source.</param>
@@ -2287,7 +2287,7 @@ namespace Love
             Love2dDll.wrap_love_dll_font_newGlyphData_rasterizer_num(rasterizer.p, glyphCode, out out_GlyphData);
             return LoveObject.NewObject<GlyphData>(out_GlyphData);
         }
-        
+
         public static bool Init()
         {
             return Love2dDll.wrap_love_dll_font_open_love_font();
@@ -2330,10 +2330,22 @@ namespace Love
         /// <param name="min">The minimum possible value it should return.</param>
         /// <param name="max">The maximum possible value it should return.</param>
         /// <returns></returns>
+        public static int Random(int min, int max)
+        {
+            float random = rg.Random();
+            return Mathf.RoundToInt(random * (max - min) + min);
+        }
+
+        /// <summary>
+        /// Get uniformly distributed pseudo-random integer within [min, max].
+        /// </summary>
+        /// <param name="min">The minimum possible value it should return.</param>
+        /// <param name="max">The maximum possible value it should return.</param>
+        /// <returns></returns>
         public static float Random(float min, float max)
         {
-            double random = rg.Random();
-            return (float)(Math.Floor(random * (max - min + 1) + min));
+            float random = rg.Random();
+            return random * (max - min) + min;
         }
 
         /// <summary>
@@ -2342,7 +2354,7 @@ namespace Love
         /// <returns></returns>
         public static float Random()
         {
-            return Random(0, 1);
+            return Random(0f, 1f);
         }
 
         public static RandomGenerator Ext_getRandomGenerator()
@@ -2745,7 +2757,7 @@ namespace Love
         }
 
         /// <summary>
-        /// 设置 scissor 为所给矩形和现有 scissor 的交集（交集肯定还是个矩形）。如果之前没有设置 scissor，则相当于调用 <see cref="Graphics.SetScissor"/> 
+        /// 设置 scissor 为所给矩形和现有 scissor 的交集（交集肯定还是个矩形）。如果之前没有设置 scissor，则相当于调用 <see cref="Graphics.SetScissor"/>
         /// <para>Sets the scissor to the rectangle created by the intersection of the specified rectangle with the existing scissor.</para>
         /// <para>The scissor limits the drawing area to a specified rectangle. This affects all graphics calls, including love.graphics.clear.</para>
         /// <para>The dimensions of the scissor is unaffected by graphical transformations(translate, scale, ...).</para>
@@ -3153,8 +3165,8 @@ namespace Love
         /// <para>在通过sx和sy进行缩放之后，所有坐标都被视为与sx和sy相乘。 绘图操作的每个结果也相应地缩放，例如按（2,2）缩放将意味着在x和y方向上使所有内容都变为两倍。 按负值缩放会使坐标系在相应的方向上翻转，所有内容都会被翻转或颠倒（或两者兼而有之）。 按零缩放没有意义。</para>
         /// <para>缩放(Scale)操作和平移(Translate)操作不是可交换操作，以不同的顺序调用它们会产生不同的结果。</para>
         /// <para>效果持续到 Scene.Draw 调用结束（每一帧画面绘制结束都会自动重置为1倍。）</para>
-        /// 
-        /// <para>Scales the coordinate system in two dimensions.</para> 
+        ///
+        /// <para>Scales the coordinate system in two dimensions.</para>
         /// <para>By default the coordinate system in LÖVE corresponds to the display pixels in horizontal and vertical directions one-to-one, and the x-axis increases towards the right while the y-axis increases downwards. Scaling the coordinate system changes this relation.</para>
         /// <para>After scaling by sx and sy, all coordinates are treated as if they were multiplied by sx and sy. Every result of a drawing operation is also correspondingly scaled, so scaling by (2, 2) for example would mean making everything twice as large in both x- and y-directions. Scaling by a negative value flips the coordinate system in the corresponding direction, which also means everything will be drawn flipped or upside down, or both. Scaling by zero is not a useful operation.</para>
         /// <para>Scale and translate are not commutative operations, therefore, calling them in different orders will change the outcome.</para>

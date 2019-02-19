@@ -19,7 +19,7 @@ Love2dCS currently supports Windows x86 / x64. Linux and OSX temporarily was not
 
 Physics module temporarily not support.
 
-You can work with lua as will, but only `love.load` `love.update` and `love.draw` support [Work with lua](https://endlesstravel.github.io/#/tutorial/05.use-lua)
+You can work with lua as will, but only `love.load` `love.update` and `love.draw` are native supported : [Work with lua](https://endlesstravel.github.io/#/tutorial/05.use-lua)
 
 Feature
 ---
