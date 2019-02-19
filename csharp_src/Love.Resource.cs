@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
 using SFile = System.IO.File;
 using SFileMode = System.IO.FileMode;
 using SFileInfo = System.IO.FileInfo;
@@ -16,6 +15,35 @@ namespace Love
     /// </summary>
     public class Resource
     {
+        #region Persistence
+        /// <summary>
+        /// Save data to file, object will serialize as binary file.
+        /// </summary>
+        /// <param name="path">path to save</param>
+        /// <param name="obj">object to save</param>
+        public static void SaveData(string path, object obj)
+        {
+            MemoryStream memorystream = new MemoryStream();
+            BinaryFormatter bf = new BinaryFormatter();
+            bf.Serialize(memorystream, obj);
+            Resource.Write(path, memorystream.ToArray());
+        }
+
+        /// <summary>
+        /// Load data from a file as specify type.
+        /// </summary>
+        /// <typeparam name="T">the data type you want convert</typeparam>
+        /// <param name="path">the path you want to load</param>
+        /// <returns></returns>
+        public static T LoadData<T>(string path)
+        {
+            MemoryStream memorystreamd = new MemoryStream(Resource.Read(path));
+            BinaryFormatter bfd = new BinaryFormatter();
+            return (T)bfd.Deserialize(memorystreamd);
+        }
+        #endregion
+
+
         #region Audio
         /// <summary>
         /// Creates a new Source from file name. 

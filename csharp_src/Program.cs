@@ -1013,6 +1013,33 @@ namespace Love
     }
 
 
+    [StageName("test Joystick")]
+    class TestJoystick : Stage
+    {
+        public override void OnDraw()
+        {
+            var jys = Joystick.GetJoysticks();
+            if (jys.Length > 0)
+            {
+                var joy = jys[0];;
+                Graphics.Print("has");
+
+                if (joy.IsDown(0))
+                {
+                    joy.SetVibration(1, 0, 1);
+                }
+                else
+                {
+                    joy.SetVibration();
+                }
+            }
+            else
+            {
+                Graphics.Print("has no");
+            }
+        }
+    }
+
 
     [StageName("test lua")]
     class TestLua : Stage
@@ -1138,6 +1165,7 @@ namespace Love
             AddStage(new TestStencil());
             AddStage(new TestText());
             AddStage(new TestOther());
+            AddStage(new TestJoystick());
             AddStage(new TestLua());
         }
 
