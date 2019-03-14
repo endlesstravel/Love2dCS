@@ -1,0 +1,3 @@
+[submodule "Rockyfi"]
+	path = Rockyfi
+	url = git@github.com:endlesstravel/Rockyfi.git

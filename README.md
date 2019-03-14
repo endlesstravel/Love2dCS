@@ -1,10 +1,23 @@
 
-![logo](https://github.com/endlesstravel/Love2dCS/raw/master/img/logo.png "logo") 
+![logo](https://github.com/endlesstravel/Love2dCS/raw/master/img/logo.png "logo")
 
 Love2dCS - C# Wrapper for LÖVE
 ---
-Love2dCS is a C# Wrapper for [LÖVE game engine](https://love2d.org/), it can be used your C# based Application. 
+Love2dCS is a C# Wrapper for [LÖVE game engine](https://love2d.org/), it can be used your C# based Application.
 
+
+Links
+---
+* [Document https://endlesstravel.github.io](https://endlesstravel.github.io)
+* [love wiki](https://love2d.org/wiki/love)
+* [Easy to install with Visual Studio (install introduce)](https://endlesstravel.github.io/#/tutorial/01.install)
+* [Work with lua](https://endlesstravel.github.io/#/tutorial/05.use-lua)
+* [Work with ubuntu + mono-develop](develop.md)
+* [Test file example](csharp_src/Program.cs)
+
+
+Status
+---
 Love2dCS was designed to be as close as possible to the original LÖVE API, as such the documentation provided from LÖVE largely covers usage of Love2dCS. There is a difference between Love2dCS and LÖVE where is :
 
 * The `love.physics` module in LÖVE is not included in Love2dCS yet.
@@ -21,16 +34,6 @@ Physics module temporarily not support.
 
 You can work with lua as will, but only `love.load` `love.update` and `love.draw` are native supported : [Work with lua](https://endlesstravel.github.io/#/tutorial/05.use-lua)
 
-Feature
----
-* [Easy to install with Visual Studio (install introduce)](https://endlesstravel.github.io/#/tutorial/01.install) 
-* [Work with lua](https://endlesstravel.github.io/#/tutorial/05.use-lua)
-* [Work with ubuntu + mono-develop](develop.md)
-
-Documentation
----
-* [Document https://endlesstravel.github.io](https://endlesstravel.github.io)
-* [love wiki](https://love2d.org/wiki/love)
 
 Examples
 ---
@@ -51,21 +54,19 @@ class Program : Scene
     }
 }
 ```
-* [Getting Start](https://endlesstravel.github.io/#/tutorial/README)
-* [Test file example](csharp_src/Program.cs)
 
 Next to development
 ---
- - Fully support Love 11.0 : in development
  - Improve the document : in development
- - Support call lua function : Love.Lua.Call(name, ...arg) / Love.Lua.LoadString / Love.Lua.LoadFile
- - Support Func(Vector2) on Func(x, y)
  - Support Ubuntu : in development
+ - Fully support Love 11.0 : in development
+ - Add support for .net core
  - Add support for Physics
- - Add all SetXXX(float x, float y) / GetXXX(out float x, out float y)  with override SetXXX(Vector2) / Vector2 GetXXX().
+ - Add support for GUI
 
  Finished:
- -[x] Support helpper function : Love.Keyboard.IsPressed /Love.Keyboard.IsReleased
+ - Support call lua function : Love.Lua.Call(name, ...arg) / Love.Lua.LoadString / Love.Lua.LoadFile ([here](https://endlesstravel.github.io/#/tutorial/05.use-lua))
+ - Support helpper function : Love.Keyboard.IsPressed / Love.Keyboard.IsReleased
 
 | Module        | Process | code comment   |     Test      |   ubuntu Test    | Remark         |
 | ------------- |--------:|---------------:|--------------:|----------------:| --------------:|
