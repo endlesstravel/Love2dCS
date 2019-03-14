@@ -4,7 +4,7 @@ Getting Started
 
 1. Create a C# console application
 
-2. Please [install](https://endlesstravel.github.io/#/tutorial/01.Install) Love2dCS from NuGet to your Visual Studio first.
+2. Please [install](https://endlesstravel.github.io/#/tutorial/01.install) Love2dCS from NuGet to your Visual Studio first.
 
 3. Put the following code in the file(maybe Program.cs), and save it.
 ``` C#

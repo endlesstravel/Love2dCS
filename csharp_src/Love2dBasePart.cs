@@ -366,7 +366,7 @@ namespace Love
     /// <para>提供高精度计时功能。</para>
     /// <para>Provides high-resolution timing functionality.</para>
     /// </summary>
-    public partial class Timer
+    internal partial class Timer
     {
         public static bool Init()
         {
@@ -432,6 +432,16 @@ namespace Love
             float out_time = 0;
             Love2dDll.wrap_love_dll_timer_getTime(out out_time);
             return out_time;
+        }
+
+
+        /// <summary>
+        /// Returns the time of the system .
+        /// </summary>
+        /// <returns></returns>
+        public static float GetSystemTime()
+        {
+            return (System.DateTime.Now.Ticks) / (float)System.TimeSpan.TicksPerSecond;
         }
     }
 
