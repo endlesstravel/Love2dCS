@@ -7415,43 +7415,43 @@ namespace wrap
 
 #pragma region type - MouseJoint
 	using love::physics::box2d::MouseJoint;
-	void w_MouseJoint_setTarget(MouseJoint *t, float x, float y)
+	void wrap_love_dll_type_MouseJoint_setTarget(MouseJoint *t, float x, float y)
 	{
 		t->setTarget(x, y);
 	}
-	void w_MouseJoint_setMaxForce(MouseJoint *t, float force)
+	void wrap_love_dll_type_MouseJoint_setMaxForce(MouseJoint *t, float force)
 	{
 		t->setMaxForce(force);
 	}
 
-	void w_MouseJoint_getMaxForce(MouseJoint *t, float* out_force)
+	void wrap_love_dll_type_MouseJoint_getMaxForce(MouseJoint *t, float* out_force)
 	{
 		*out_force = t->getMaxForce();
 	}
 
-	bool4 w_MouseJoint_setFrequency(MouseJoint *t, float frequency)
+	bool4 wrap_love_dll_type_MouseJoint_setFrequency(MouseJoint *t, float frequency)
 	{
 		return wrap_catchexcept([&]() { t->setFrequency(frequency); });
 	}
 
-	void w_MouseJoint_getFrequency(MouseJoint *t, float* out_frequency)
+	void wrap_love_dll_type_MouseJoint_getFrequency(MouseJoint *t, float* out_frequency)
 	{
 		*out_frequency = t->getFrequency();
 	}
 
-	void w_MouseJoint_setDampingRatio(MouseJoint *t, float ratio)
+	void wrap_love_dll_type_MouseJoint_setDampingRatio(MouseJoint *t, float ratio)
 	{
 		t->setDampingRatio(ratio);
 	}
 
-	void w_MouseJoint_getDampingRatio(MouseJoint *t, float* out_ratio)
+	void wrap_love_dll_type_MouseJoint_getDampingRatio(MouseJoint *t, float* out_ratio)
 	{
 		*out_ratio = t->getDampingRatio();
 	}
 
 
 	//// FIXME: because the params is lua_State *L, we need hack it.
-	//void w_MouseJoint_getTarget(MouseJoint *t)
+	//void wrap_love_dll_type_MouseJoint_getTarget(MouseJoint *t)
 	//{
 	//	MouseJoint *t = luax_checkmousejoint(L, 1);
 	//	lua_remove(L, 1);
@@ -7697,13 +7697,13 @@ namespace wrap
 
 #pragma region type - PolygonShape
 
-	void w_PolygonShape_validate(PolygonShape *t, bool4 *out_validate)
+	void wrap_love_dll_type_PolygonShape_validate(PolygonShape *t, bool4 *out_validate)
 	{
 		*out_validate = t->validate();
 	}
 
 	//// FIXME: because the params is lua_State *L, we need hack it.
-	//void w_PolygonShape_getPoints(PolygonShape *t)
+	//void wrap_love_dll_type_PolygonShape_getPoints(PolygonShape *t)
 	//{
 	//	= luax_checkpolygonshape(L, 1);
 	//	lua_remove(L, 1);
@@ -7713,100 +7713,100 @@ namespace wrap
 
 #pragma region type - PrismaticJoin
 
-	void w_PrismaticJoint_getJointTranslation(PrismaticJoint *t, float *out_translation)
+	void wrap_love_dll_type_PrismaticJoint_getJointTranslation(PrismaticJoint *t, float *out_translation)
 	{
 		*out_translation = t->getJointTranslation();
 	}
 
-	void w_PrismaticJoint_getJointSpeed(PrismaticJoint *t, float *out_speed)
+	void wrap_love_dll_type_PrismaticJoint_getJointSpeed(PrismaticJoint *t, float *out_speed)
 	{
 		*out_speed = t->getJointSpeed();
 	}
 
-	void w_PrismaticJoint_setMotorEnabled(PrismaticJoint *t, bool4 ebabled)
+	void wrap_love_dll_type_PrismaticJoint_setMotorEnabled(PrismaticJoint *t, bool4 ebabled)
 	{
 		t->setMotorEnabled(ebabled);
 	}
 
-	void w_PrismaticJoint_isMotorEnabled(PrismaticJoint *t, bool4 *out_enabled)
+	void wrap_love_dll_type_PrismaticJoint_isMotorEnabled(PrismaticJoint *t, bool4 *out_enabled)
 	{
 		*out_enabled = t->isMotorEnabled();
 	}
 
-	void w_PrismaticJoint_setMaxMotorForce(PrismaticJoint *t, float force)
+	void wrap_love_dll_type_PrismaticJoint_setMaxMotorForce(PrismaticJoint *t, float force)
 	{
 		t->setMaxMotorForce(force);
 	}
 
-	void w_PrismaticJoint_setMotorSpeed(PrismaticJoint *t, float speed)
+	void wrap_love_dll_type_PrismaticJoint_setMotorSpeed(PrismaticJoint *t, float speed)
 	{
 		t->setMotorSpeed(speed);
 	}
 
-	void w_PrismaticJoint_getMotorSpeed(PrismaticJoint *t, float *out_speed)
+	void wrap_love_dll_type_PrismaticJoint_getMotorSpeed(PrismaticJoint *t, float *out_speed)
 	{
 		*out_speed = t->getMotorSpeed();
 	}
 
-	void w_PrismaticJoint_getMotorForce(PrismaticJoint *t, float inv_dt, float *out_force)
+	void wrap_love_dll_type_PrismaticJoint_getMotorForce(PrismaticJoint *t, float inv_dt, float *out_force)
 	{
 		*out_force = t->getMotorForce(inv_dt);
 	}
 
-	void w_PrismaticJoint_getMaxMotorForce(PrismaticJoint *t, float *out_force)
+	void wrap_love_dll_type_PrismaticJoint_getMaxMotorForce(PrismaticJoint *t, float *out_force)
 	{
 		*out_force = t->getMaxMotorForce();
 	}
 
-	void w_PrismaticJoint_setLimitsEnabled(PrismaticJoint *t, bool4 enabled)
+	void wrap_love_dll_type_PrismaticJoint_setLimitsEnabled(PrismaticJoint *t, bool4 enabled)
 	{
 		t->setLimitsEnabled(enabled);
 	}
 
-	void w_PrismaticJoint_areLimitsEnabled(PrismaticJoint *t, bool4 *out_enabled)
+	void wrap_love_dll_type_PrismaticJoint_areLimitsEnabled(PrismaticJoint *t, bool4 *out_enabled)
 	{
 		*out_enabled = t->areLimitsEnabled();
 	}
 
-	bool4 w_PrismaticJoint_setUpperLimit(PrismaticJoint *t, float limit)
+	bool4 wrap_love_dll_type_PrismaticJoint_setUpperLimit(PrismaticJoint *t, float limit)
 	{
 		return wrap_catchexcept([&]() { t->setUpperLimit(limit); });
 	}
 
-	bool4 w_PrismaticJoint_setLowerLimit(PrismaticJoint *t, float limit)
+	bool4 wrap_love_dll_type_PrismaticJoint_setLowerLimit(PrismaticJoint *t, float limit)
 	{
 		return wrap_catchexcept([&]() { t->setLowerLimit(limit); });
 	}
 
-	bool4 w_PrismaticJoint_setLimits(PrismaticJoint *t, float lowerLimit, float upperLimit)
+	bool4 wrap_love_dll_type_PrismaticJoint_setLimits(PrismaticJoint *t, float lowerLimit, float upperLimit)
 	{
 		return wrap_catchexcept([&]() { t->setLimits(lowerLimit, upperLimit); });
 	}
 
-	void w_PrismaticJoint_getLowerLimit(PrismaticJoint *t, float *out_limit)
+	void wrap_love_dll_type_PrismaticJoint_getLowerLimit(PrismaticJoint *t, float *out_limit)
 	{
 		*out_limit = t->getLowerLimit();
 	}
 
-	void w_PrismaticJoint_getUpperLimit(PrismaticJoint *t, float *out_limit)
+	void wrap_love_dll_type_PrismaticJoint_getUpperLimit(PrismaticJoint *t, float *out_limit)
 	{
 		*out_limit = t->getUpperLimit();
 	}
 
-	void w_PrismaticJoint_getReferenceAngle(PrismaticJoint *t, float *out_angle)
+	void wrap_love_dll_type_PrismaticJoint_getReferenceAngle(PrismaticJoint *t, float *out_angle)
 	{
 		*out_angle = t->getReferenceAngle();
 	}
 
 	//// FIXME: because the params is lua_State *L, we need hack it.
-	//void w_PrismaticJoint_getLimits(PrismaticJoint *t)
+	//void wrap_love_dll_type_PrismaticJoint_getLimits(PrismaticJoint *t)
 	//{
 	//	lua_remove(L, 1);
 	//	return t->getLimits(L);
 	//}
 
 	//// FIXME: because the params is lua_State *L, we need hack it.
-	//void w_PrismaticJoint_getAxis(PrismaticJoint *t)
+	//void wrap_love_dll_type_PrismaticJoint_getAxis(PrismaticJoint *t)
 	//{
 	//	return t->getAxis(L);
 	//}
@@ -7816,23 +7816,23 @@ namespace wrap
 #pragma region type - PulleyJoint
 	
 	
-	void w_PulleyJoint_getLengthA(PulleyJoint *t, float *out_lengthA)
+	void wrap_love_dll_type_PulleyJoint_getLengthA(PulleyJoint *t, float *out_lengthA)
 	{
 		*out_lengthA = t->getLengthA();
 	}
 
-	void w_PulleyJoint_getLengthB(PulleyJoint *t, float *out_lengthB)
+	void wrap_love_dll_type_PulleyJoint_getLengthB(PulleyJoint *t, float *out_lengthB)
 	{
 		*out_lengthB = t->getLengthB();
 	}
 
-	void w_PulleyJoint_getRatio(PulleyJoint *t, float *out_ratio)
+	void wrap_love_dll_type_PulleyJoint_getRatio(PulleyJoint *t, float *out_ratio)
 	{
 		*out_ratio = t->getRatio();
 	}
 
 	//// FIXME: because the params is lua_State *L, we need hack it.
-	//void w_PulleyJoint_getGroundAnchors(PulleyJoint *t)
+	//void wrap_love_dll_type_PulleyJoint_getGroundAnchors(PulleyJoint *t)
 	//{
 	//	= luax_checkpulleyjoint(L, 1);
 	//	lua_remove(L, 1);
@@ -7940,15 +7940,528 @@ namespace wrap
 #pragma endregion
 
 #pragma region type - Shape
+	void wrap_love_dll_type_Shape_getType(Shape *t, int *out_shapeType)
+	{
+		*out_shapeType = t->getType();
+	}
+
+	void wrap_love_dll_type_Shape_getRadius(Shape *t, float *out_radius)
+	{
+		*out_radius = t->getRadius();
+	}
+
+	void wrap_love_dll_type_Shape_getChildCount(Shape *t, float *out_childCount)
+	{
+		*out_childCount = t->getChildCount();
+	}
+
+	void wrap_love_dll_type_Shape_testPoint(Shape *t, float tx, float ty, float tr, float px, float py, bool4 *out_result)
+	{
+		*out_result = t->testPoint(tx, ty, tr, px, py);
+	}
+
+	//// FIXME: because the params is lua_State *L, we need hack it.
+	//void wrap_love_dll_type_Shape_rayCast(Shape *t)
+	//{
+	//	Shape *t = luax_checkshape(L, 1);
+	//	lua_remove(L, 1);
+	//	int ret = 0;
+	//	luax_catchexcept(L, [&]() { ret = t->rayCast(L); });
+	//	return ret;
+	//}
+
+	//// FIXME: because the params is lua_State *L, we need hack it.
+	//void wrap_love_dll_type_Shape_computeAABB(Shape *t)
+	//{
+	//	Shape *t = luax_checkshape(L, 1);
+	//	lua_remove(L, 1);
+	//	return t->computeAABB(L);
+	//}
+
+	//// FIXME: because the params is lua_State *L, we need hack it.
+	//void wrap_love_dll_type_Shape_computeMass(Shape *t)
+	//{
+	//	Shape *t = luax_checkshape(L, 1);
+	//	lua_remove(L, 1);
+	//	return t->computeMass(L);
+	//}
 #pragma endregion
 
 #pragma region type - WeldJoint
+	void wrap_love_dll_type_WeldJoint_setFrequency(WeldJoint *t, float frequency)
+	{
+		t->setFrequency(frequency);
+	}
+
+	void wrap_love_dll_type_WeldJoint_getFrequency(WeldJoint *t, float *out_frequency)
+	{
+		*out_frequency = t->getFrequency();
+	}
+
+	void wrap_love_dll_type_WeldJoint_setDampingRatio(WeldJoint *t, float ratio)
+	{
+		t->setDampingRatio(ratio);
+	}
+
+	void wrap_love_dll_type_WeldJoint_getDampingRatio(WeldJoint *t, float *out_ratio)
+	{
+		*out_ratio = t->getDampingRatio();
+	}
+
+	void wrap_love_dll_type_WeldJoint_getReferenceAngle(WeldJoint *t, float *out_angle)
+	{
+		*out_angle = t->getReferenceAngle();
+	}
+
 #pragma endregion
 
 #pragma region type - WheelJoint
+	void wrap_love_dll_type_WheelJoint_getJointTranslation(WheelJoint *t, float *out_translation)
+	{
+		*out_translation = t->getJointTranslation();
+	}
+
+	void wrap_love_dll_type_WheelJoint_getJointSpeed(WheelJoint *t, float *out_speed)
+	{
+		*out_speed = t->getJointSpeed();
+	}
+
+	void wrap_love_dll_type_WheelJoint_setMotorEnabled(WheelJoint *t, bool4 enabled)
+	{
+		t->setMotorEnabled(enabled);
+	}
+
+	void wrap_love_dll_type_WheelJoint_isMotorEnabled(WheelJoint *t, bool4 *out_enabled)
+	{
+		*out_enabled = t->isMotorEnabled();
+	}
+
+	void wrap_love_dll_type_WheelJoint_setMotorSpeed(WheelJoint *t, float speed)
+	{
+		t->setMotorSpeed(speed);
+	}
+
+	void wrap_love_dll_type_WheelJoint_getMotorSpeed(WheelJoint *t, float *out_speed)
+	{
+		*out_speed = t->getMotorSpeed();
+	}
+
+	void wrap_love_dll_type_WheelJoint_setMaxMotorTorque(WheelJoint *t, float torque)
+	{
+		t->setMaxMotorTorque(torque);
+	}
+
+	void wrap_love_dll_type_WheelJoint_getMaxMotorTorque(WheelJoint *t, float *out_torque)
+	{
+		*out_torque = t->getMaxMotorTorque();
+	}
+
+	void wrap_love_dll_type_WheelJoint_getMotorTorque(WheelJoint *t, float inv_dt, float *out_torque)
+	{
+		*out_torque = t->getMotorTorque(inv_dt);
+	}
+
+	void wrap_love_dll_type_WheelJoint_setSpringFrequency(WheelJoint *t, float frequency)
+	{
+		t->setSpringFrequency(frequency);
+	}
+
+	void wrap_love_dll_type_WheelJoint_getSpringFrequency(WheelJoint *t, float *out_frequency)
+	{
+		*out_frequency = t->getSpringFrequency();
+	}
+
+	void wrap_love_dll_type_WheelJoint_setSpringDampingRatio(WheelJoint *t, float ratio)
+	{
+		t->setSpringDampingRatio(ratio);
+	}
+
+	void wrap_love_dll_type_WheelJoint_getSpringDampingRatio(WheelJoint *t, float *out_ratio)
+	{
+		*out_ratio = t->getSpringDampingRatio();
+	}
+
+	//// FIXME: because the params is lua_State *L, we need hack it.
+	//void wrap_love_dll_type_WheelJoint_getAxis(WheelJoint *t)
+	//{
+	//	WheelJoint *t = luax_checkwheeljoint(L, 1);
+	//	lua_remove(L, 1);
+	//	return t->getAxis(L);
+	//}
+
 #pragma endregion
 
 #pragma region type - World
+
+	class WrapWorldCallBackClass: public b2ContactListener, public b2ContactFilter
+	{
+	public:
+		WrapContactCallbackFunc beginContact;
+		WrapContactCallbackFunc endContact;
+		WrapContactCallbackFunc preSolve;
+		WrapContactCallbackFunc postSolve;
+		WrapContactFilterFunc filter;
+
+		WrapWorldCallBackClass(
+			WrapContactCallbackFunc beginContact,
+			WrapContactCallbackFunc endContact,
+			WrapContactCallbackFunc preSolve,
+			WrapContactCallbackFunc postSolve,
+			WrapContactFilterFunc filter
+			): 
+			beginContact(beginContact),
+			endContact(endContact),
+			preSolve(preSolve),
+			postSolve(postSolve),
+			filter(filter)
+		{
+		}
+
+		// From b2ContactListener
+		void BeginContact(b2Contact *contact)
+		{
+			ProcessContactOrSolve(contact, NULL, beginContact);
+		}
+		void EndContact(b2Contact *contact)
+		{
+			ProcessContactOrSolve(contact, NULL, endContact);
+
+			// Letting the Contact know that the b2Contact will be destroyed any second.
+			Contact *c = (Contact *)Memoizer::find(contact);
+			if (c != NULL)
+				c->invalidate();
+		}
+		void PreSolve(b2Contact *contact, const b2Manifold *oldManifold)
+		{
+			B2_NOT_USED(oldManifold); // not sure what to do with this
+			ProcessContactOrSolve(contact, NULL, preSolve);
+		}
+		void PostSolve(b2Contact *contact, const b2ContactImpulse *impulse)
+		{
+			ProcessContactOrSolve(contact, impulse, postSolve);
+		}
+
+		bool ProcessContactOrSolve(b2Contact *contact, const b2ContactImpulse *impulse, WrapContactCallbackFunc func)
+		{
+			// Fixtures should be memoized, if we created them
+			Fixture *a = (Fixture *)Memoizer::find(contact->GetFixtureA());
+			Fixture *b = (Fixture *)Memoizer::find(contact->GetFixtureB());
+			if (!a || !b)
+				throw love::Exception("A fixture has escaped Memoizer!");
+
+			Contact *cobj = (Contact *)Memoizer::find(contact);
+			if (!cobj)
+				cobj = new Contact(contact);
+			else
+				cobj->retain();
+
+			Float2 *impulseArray = nullptr;
+			int impulseCount = 0;
+			if (impulse)
+			{
+				impulseCount = impulse->count;
+				impulseArray = new Float2[impulseCount];
+				for (int c = 0; c < impulseCount; c++)
+				{
+					impulseArray[c].x = Physics::scaleUp(impulse->normalImpulses[c]);
+					impulseArray[c].y = Physics::scaleUp(impulse->tangentImpulses[c]);
+				}
+			}
+
+			a->retain();
+			b->retain();
+			func(a, b, cobj, impulseArray, impulseCount);
+
+			delete[] impulseArray;
+		}
+
+		// From b2ContactFilter
+		bool ShouldCollide(b2Fixture *fixtureA, b2Fixture *fixtureB)
+		{
+			// Fixtures should be memoized, if we created them
+			Fixture *a = (Fixture *)Memoizer::find(fixtureA);
+			Fixture *b = (Fixture *)Memoizer::find(fixtureB);
+			if (!a || !b)
+				throw love::Exception("A fixture has escaped Memoizer!");
+
+			// Handle masks, reimplemented from the manual
+			int filterA[3], filterB[3];
+			// [0] categoryBits
+			// [1] maskBits
+			// [2] groupIndex
+			a->getFilterData(filterA);
+			b->getFilterData(filterB);
+
+			if (filterA[2] != 0 && // 0 is the default group, so this does not count
+				filterA[2] == filterB[2]) // if they are in the same group
+				return filterA[2] > 0; // Negative indexes mean you don't collide
+
+			if ((filterA[1] & filterB[0]) == 0 ||
+				(filterB[1] & filterA[0]) == 0)
+				return false; // A and B aren't set to collide
+
+			if (filter != nullptr)
+			{
+				a->retain();
+				b->retain();
+				return filter(a, b);
+			}
+			return true;
+		}
+	};
+
+	// hack the World
+	class WrapHackWorld : Object
+	{
+		static love::Type type;
+		// Pointer to the Box2D world.
+		b2World *world;
+
+		// Ground body
+		b2Body *groundBody;
+
+		// The list of to be destructed bodies.
+		std::vector<Body *> destructBodies;
+		std::vector<Fixture *> destructFixtures;
+		std::vector<Joint *> destructJoints;
+		bool destructWorld;
+
+		// Contact callbacks.
+		World::ContactCallback begin, end, presolve, postsolve;
+		World::ContactFilter filter;
+	public:
+		b2World *wrap_getWorld()
+		{
+			return world;
+		}
+	};
+
+	void wrap_love_dll_type_World_setGravity(World *t, float gx, float gy)
+	{
+		t->setGravity(gx, gy);
+	}
+
+	bool4 wrap_love_dll_type_World_translateOrigin(World *t, float x, float y)
+	{
+		return wrap_catchexcept([&]() { t->translateOrigin(x, y); });
+	}
+
+	void wrap_love_dll_type_World_setSleepingAllowed(World *t, bool4 allowed)
+	{
+		t->setSleepingAllowed(allowed);
+	}
+
+	void wrap_love_dll_type_World_isSleepingAllowed(World *t, bool4 *out_allowed)
+	{
+		*out_allowed = t->isSleepingAllowed();
+	}
+
+	void wrap_love_dll_type_World_isLocked(World *t, bool4 *out_locked)
+	{
+		*out_locked = t->isLocked();
+	}
+
+	void wrap_love_dll_type_World_getBodyCount(World *t, int *out_count)
+	{
+		*out_count = t->getBodyCount();
+	}
+
+	void wrap_love_dll_type_World_getJointCount(World *t, int *out_count)
+	{
+		*out_count = t->getJointCount();
+	}
+
+	void wrap_love_dll_type_World_getContactCount(World *t, int *out_count)
+	{
+		*out_count = t->getContactCount();
+	}
+
+	bool4 wrap_love_dll_type_World_destroy(World *t)
+	{
+		return wrap_catchexcept([&]() { t->destroy(); });
+	}
+
+	void wrap_love_dll_type_World_isDestroyed(World *t, bool4 *out_validate)
+	{
+		*out_validate = !t->isValid();
+	}
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	bool4 wrap_love_dll_type_World_update(
+		World *t, float dt, int velocityiterations, int positioniterations,
+		WrapContactCallbackFunc beginContact,
+		WrapContactCallbackFunc endContact,
+		WrapContactCallbackFunc preSolve,
+		WrapContactCallbackFunc postSolve,
+		WrapContactFilterFunc filter
+		)
+	{
+		return wrap_catchexcept([&]() { 
+			WrapWorldCallBackClass callBack(beginContact, endContact, preSolve, postSolve, filter);
+			auto b2w = ((WrapHackWorld*)t)->wrap_getWorld();
+			b2w->SetContactFilter(&callBack);
+			b2w->SetContactListener(&callBack);
+			t->update(dt, velocityiterations, positioniterations);
+			b2w->SetContactFilter(nullptr);
+			b2w->SetContactListener(nullptr);
+		});
+	}
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	void wrap_love_dll_typeWorld_getGravity(World *t, float *out_x, float *out_y)
+	{
+		auto b2w = ((WrapHackWorld*)t)->wrap_getWorld();
+		auto g = b2w->GetGravity();
+		*out_x = g.x;
+		*out_y = g.y;
+	}
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	bool4 wrap_love_dll_typeWorld_getBodies(World *t, Body ***out_bodyList, int *out_bodyListLenght)
+	{
+		return wrap_catchexcept([&]() {
+			auto b2w = ((WrapHackWorld*)t)->wrap_getWorld();
+			b2Body *b = b2w->GetBodyList();
+			std::vector<Body*> bodyList;
+			bodyList.reserve(b2w->GetBodyCount());
+			do
+			{
+				if (!b)
+					break;
+				if (b == t->getGroundBody())
+					continue;
+				Body *body = (Body *)Memoizer::find(b);
+				if (!body)
+					throw love::Exception("A body has escaped Memoizer!");
+
+				bodyList.push_back(body);
+				body->retain();
+			} while ((b = b->GetNext()));
+
+			*out_bodyListLenght = bodyList.size();
+			*out_bodyList = new Body*[bodyList.size()];
+			for (int i = 0; i < bodyList.size(); i++)
+			{
+				(*out_bodyList)[i] = bodyList[i];
+			}
+		});
+	}
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	bool4 wrap_love_dll_typeWorld_getJoints(World *t, Joint ***out_jointList, int *out_jointListLenght)
+	{
+		return wrap_catchexcept([&]() {
+			auto b2w = ((WrapHackWorld*)t)->wrap_getWorld();
+			b2Joint *j = b2w->GetJointList();
+			std::vector<Joint*> jointList;
+			jointList.reserve(b2w->GetJointCount());
+			do
+			{
+				if (!j) break;
+				Joint *joint = (Joint *)Memoizer::find(j);
+				if (!joint) throw love::Exception("A joint has escaped Memoizer!");
+
+				jointList.push_back(joint);
+				joint->retain();
+			} while ((j = j->GetNext()));
+
+			*out_jointListLenght = jointList.size();
+			*out_jointList = new Joint*[jointList.size()];
+			for (int i = 0; i < jointList.size(); i++)
+			{
+				(*out_jointList)[i] = jointList[i];
+			}
+		});
+	}
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	bool4 wrap_love_dll_typeWorld_getContacts(World *t, Contact ***out_contactList, int *out_contactListLenght)
+	{
+		return wrap_catchexcept([&]() {
+			auto b2w = ((WrapHackWorld*)t)->wrap_getWorld();
+			b2Contact *c = b2w->GetContactList();
+			std::vector<Contact*> contactList;
+			contactList.reserve(b2w->GetContactCount());
+			do
+			{
+				if (!c) break;
+				Contact *contact = (Contact *)Memoizer::find(c);
+				if (!contact)
+					contact = new Contact(c);
+				else
+					contact->retain();
+				contactList.push_back(contact);
+			} while ((c = c->GetNext()));
+
+			*out_contactListLenght = contactList.size();
+			*out_contactList = new Contact*[contactList.size()];
+			for (int i = 0; i < contactList.size(); i++)
+			{
+				(*out_contactList)[i] = contactList[i];
+			}
+		});
+	}
+
+	class WrapQueryBoundingBoxCallback : public b2QueryCallback
+	{
+		WrapQueryBoundingBoxCallbackFunc callBackFunc;
+	public:
+		WrapQueryBoundingBoxCallback(WrapQueryBoundingBoxCallbackFunc f)
+			:callBackFunc(f) {}
+		bool ReportFixture(b2Fixture* fixture)
+		{
+			Fixture *f = (Fixture *)Memoizer::find(fixture);
+			if (!f)
+				throw love::Exception("A fixture has escaped Memoizer!");
+
+			f->retain();
+			return callBackFunc(f);
+		}
+	};
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	bool4 wrap_love_dll_typeWorld_queryBoundingBox(World *t, float topLeftX, float topLeftY, float bottomRightX, float bottomRightY, WrapQueryBoundingBoxCallbackFunc callback)
+	{
+		return wrap_catchexcept([&]() {
+			auto b2w = ((WrapHackWorld*)t)->wrap_getWorld();
+			b2AABB box;
+			box.lowerBound = Physics::scaleDown(b2Vec2(topLeftX, topLeftY));
+			box.upperBound = Physics::scaleDown(b2Vec2(bottomRightX, bottomRightY));
+			WrapQueryBoundingBoxCallback query(callback);
+			b2w->QueryAABB(&query, box);
+		});
+	}
+
+	class WrapRayCastCallback : public b2RayCastCallback
+	{
+		WrapRayCastCallbackFunc callBackFunc;
+	public:
+		WrapRayCastCallback(WrapRayCastCallbackFunc f)
+			:callBackFunc(f) {}
+		float32 ReportFixture(b2Fixture *fixture, const b2Vec2 &point, const b2Vec2 &normal, float32 fraction)
+		{
+			Fixture *f = (Fixture *)Memoizer::find(fixture);
+			if (!f)
+				throw love::Exception("A fixture has escaped Memoizer!");
+			b2Vec2 scaledPoint = Physics::scaleUp(point);
+
+			f->retain();
+			return callBackFunc(f, scaledPoint.x, scaledPoint.y, normal.x, normal.y, fraction);
+		}
+	};
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	bool4 wrap_love_dll_typeWorld_rayCast(World *t, float x1, float y1, float x2, float y2, WrapRayCastCallbackFunc callback)
+	{
+		return wrap_catchexcept([&]() {
+			auto b2w = ((WrapHackWorld*)t)->wrap_getWorld();
+			b2Vec2 v1 = Physics::scaleDown(b2Vec2(x1, y1));
+			b2Vec2 v2 = Physics::scaleDown(b2Vec2(x2, y2));
+			WrapRayCastCallback raycast(callback);
+			b2w->RayCast(&raycast, v1, v2);
+		});
+	}
+
 #pragma endregion
 }
 }

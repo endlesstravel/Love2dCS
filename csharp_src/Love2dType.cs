@@ -2901,6 +2901,230 @@ namespace Love
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#region Physics
+namespace Love
+{
+    public class Body: LoveObject
+    {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected Body() { }
+
+    }
+    public class Contact : LoveObject
+    {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected Contact() { }
+
+    }
+
+    public class Fixture : LoveObject
+    {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected Fixture() { }
+
+    }
+    public class Joint : LoveObject
+    {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected Joint() { }
+
+    }
+    public class Shape : LoveObject
+    {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected Shape() { }
+
+    }
+    public class World : LoveObject
+    {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected World() { }
+
+    }
+
+
+    public class ChainShape: Shape
+    {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected ChainShape() { }
+
+    }
+
+
+    public class CircleShape: Shape
+    {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected CircleShape() { }
+
+    }
+
+
+    public class EdgeShape: Shape
+    {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected EdgeShape() { }
+
+    }
+
+
+    public class PolygonShape: Shape
+    {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected PolygonShape() { }
+
+    }
+
+
+    public class DistanceJoint : Joint
+    {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected DistanceJoint() { }
+
+    }
+
+
+    public class FrictionJoint : Joint
+    {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected FrictionJoint() { }
+
+    }
+
+
+    public class GearJoint : Joint
+    {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected GearJoint() { }
+
+    }
+
+
+    public class MotorJoint : Joint
+    {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected MotorJoint() { }
+
+    }
+
+
+    public class MouseJoint : Joint
+    {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected MouseJoint() { }
+
+    }
+
+
+    public class PrismaticJoint : Joint
+    {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected PrismaticJoint() { }
+
+    }
+
+
+    public class PulleyJoint : Joint
+    {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected PulleyJoint() { }
+
+    }
+
+
+    public class RevoluteJoint : Joint
+    {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected RevoluteJoint() { }
+
+    }
+
+
+    public class RopeJoint : Joint
+    {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected RopeJoint() { }
+
+    }
+
+
+    public class WeldJoint : Joint
+    {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected WeldJoint() { }
+
+    }
+
+
+    public class WheelJoint : Joint
+    {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected WheelJoint() { }
+
+    }
+}
+#endregion
+
+
+
+
+
 namespace Love
 {
 

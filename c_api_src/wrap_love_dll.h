@@ -1034,6 +1034,16 @@ namespace wrap
 
 #pragma endregion
 
+#pragma region type - callback func define
+
+	/// [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	/// public delegate double CallbackDelegate(double x);
+
+	typedef float(__stdcall *WrapRayCastCallbackFunc)(Fixture* fixture, float x, float y, float nx, float ny, float fraction);
+	typedef bool4(__stdcall *WrapQueryBoundingBoxCallbackFunc)(Fixture*);
+	typedef void(__stdcall *WrapContactCallbackFunc)(Fixture *a, Fixture *b, Contact *contact, Float2* impluse, int impluseLength);
+	typedef bool4(__stdcall *WrapContactFilterFunc)(Fixture *a, Fixture *b);
+#pragma endregion
 
 #pragma region type - Body
 #pragma endregion
