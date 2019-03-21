@@ -2,11 +2,11 @@
 // author : endlesstravel
 // sumary : give we power call love2d with dynamic link library
 // modify libs/love/CmakeList.txt
-// in line 1427 add 
-// 
+// in line 1427 add
+//
 // src/wrap_love_dll.cpp
 // src/wrap_love_dll.h
-//  
+//
 // and afeter that add
 //
 // source_group("src" FILES src/wrap_love_dll.cpp src/wrap_love_dll.h)
@@ -104,7 +104,7 @@ using love::math::BezierCurve;
 using love::mouse::Cursor;
 
 
-//#define bool // ½ûÖ¹Ê¹ÓÃ bool£¬Ö»ÄÜÊ¹ÓÃ bool4
+//#define bool // ï¿½ï¿½Ö¹Ê¹ï¿½ï¿½ boolï¿½ï¿½Ö»ï¿½ï¿½Ê¹ï¿½ï¿½ bool4
 
 namespace love
 {
@@ -148,7 +148,7 @@ namespace wrap
 
 
 
-#pragma region 
+#pragma region
 	Timer *timerInstance = nullptr;
 	Window *windowInstance = nullptr;
 	Mouse *mouseInstance = nullptr;
@@ -163,6 +163,7 @@ namespace wrap
 	font::Font *fontInstance = nullptr;
 	video::Video *videoInstance = nullptr;
 	graphics::Graphics *graphicsInstance = nullptr;
+	physics::box2d::Physics *physicsInstance = nullptr;
 #pragma endregion
 
 #pragma region platform
@@ -253,7 +254,7 @@ namespace wrap
 	{
 		delete[] p;
 	}
-    
+
     void wrap_love_dll_delete_WrapString(WrapString *ws)
     {
         if (ws != nullptr)
@@ -528,7 +529,7 @@ namespace wrap
 				global_lua_state = luaL_newstate();
 				luaL_openlibs(global_lua_state);
 			}
-			else 
+			else
 			{
 				global_lua_state = L;
 			}
@@ -583,7 +584,7 @@ namespace wrap
 
     bool4 wrap_love_dll_sound_newDecoder_filedata(FileData* data, int buffsize, Decoder** out_decoder)
     {
-        return wrap_catchexcept([&]() { 
+        return wrap_catchexcept([&]() {
             Decoder *t = soundInstance->newDecoder(data, buffsize); // default is buffsize = data->getSize()
             if (t == nullptr && data != nullptr)
             {
@@ -621,7 +622,7 @@ namespace wrap
     {
         return wrap_catchexcept([&]() { *out_soundata = soundInstance->newSoundData(samples, rate, bits, channels); });
     }
-    
+
 
     bool4 wrap_love_dll_audio_newSource_decoder(Decoder *decoder, int type, Source** out_source)
     {
@@ -672,8 +673,8 @@ namespace wrap
     }
     bool4 wrap_love_dll_image_newCompressedData(FileData *data, CompressedImageData** out_compressedimagedata)
     {
-        return wrap_catchexcept([&]() { 
-            *out_compressedimagedata = imageInstance->newCompressedData(data); 
+        return wrap_catchexcept([&]() {
+            *out_compressedimagedata = imageInstance->newCompressedData(data);
         });
     }
 
@@ -689,8 +690,8 @@ namespace wrap
     bool4 wrap_love_dll_font_newTrueTypeRasterizer(int size, int hinting_type, Rasterizer** out_Rasterizer)
     {
         TrueTypeRasterizer::Hinting hinting = (TrueTypeRasterizer::Hinting)hinting_type; //TrueTypeRasterizer::HINTING_NORMAL;
-        return wrap_catchexcept([&]() { 
-            *out_Rasterizer = fontInstance->newTrueTypeRasterizer(size, hinting); 
+        return wrap_catchexcept([&]() {
+            *out_Rasterizer = fontInstance->newTrueTypeRasterizer(size, hinting);
         });
     }
     bool4 wrap_love_dll_font_newBMFontRasterizer(FileData *fileData, pImageData datas[], int dataLength, Rasterizer** out_Rasterizer)
@@ -704,7 +705,7 @@ namespace wrap
     bool4 wrap_love_dll_font_newImageRasterizer(ImageData *imageData, const char* glyphsStr, int extraspacing, Rasterizer** out_Rasterizer)
     {
         std::string glyphs(glyphsStr);
-        return wrap_catchexcept([&]() { 
+        return wrap_catchexcept([&]() {
             *out_Rasterizer = fontInstance->newImageRasterizer(imageData, glyphs, extraspacing, 1);
         });
     }
@@ -763,7 +764,7 @@ namespace wrap
         if (timerInstance == nullptr)
         {
             return wrap_catchexcept([&]() {
-                timerInstance = new love::timer::Timer(); 
+                timerInstance = new love::timer::Timer();
                 Module::registerInstance(timerInstance);
             });
         }
@@ -827,7 +828,7 @@ namespace wrap
 
     bool4 wrap_love_dll_windows_getDisplayName(int displayindex, WrapString** out_name)
     {
-        return wrap_catchexcept([&]() { 
+        return wrap_catchexcept([&]() {
            auto name = windowInstance->getDisplayName(displayindex);
            *out_name = new_WrapString(name);
         });
@@ -862,7 +863,7 @@ namespace wrap
         settings.x = x;
         settings.y = y;
 
-        return wrap_catche_bool([&]() { 
+        return wrap_catche_bool([&]() {
             return windowInstance->setWindow(width, height, &settings);
         });
     }
@@ -1077,7 +1078,7 @@ namespace wrap
         if (mouseInstance == nullptr)
         {
             return wrap_catchexcept([&]() {
-                mouseInstance = new love::mouse::sdl::Mouse(); 
+                mouseInstance = new love::mouse::sdl::Mouse();
                 Module::registerInstance(mouseInstance);
             });
         }
@@ -1187,7 +1188,7 @@ namespace wrap
         *out_result = mouseInstance->getRelativeMode();
     }
 
-#pragma endregion 
+#pragma endregion
 
 #pragma region keyboard
 
@@ -1196,8 +1197,8 @@ namespace wrap
         keyboardInstance = Module::getInstance<Keyboard>(Module::M_KEYBOARD);
         if (keyboardInstance == nullptr)
         {
-            return wrap_catchexcept([&]() { 
-                keyboardInstance = new love::keyboard::sdl::Keyboard(); 
+            return wrap_catchexcept([&]() {
+                keyboardInstance = new love::keyboard::sdl::Keyboard();
                 Module::registerInstance(keyboardInstance);
             });
         }
@@ -1302,7 +1303,7 @@ namespace wrap
 
     bool4 wrap_love_dll_touch_open_love_getToucheInfo(int64 idx, double *out_x, double *out_y, double *out_dx, double *out_dy, double *out_pressure)
     {
-        return wrap_catchexcept([&]() { 
+        return wrap_catchexcept([&]() {
             Touch::TouchInfo touch = touchInstance->getTouch(idx);
             (*out_x) = touch.x;
             (*out_y) = touch.y;
@@ -1709,7 +1710,7 @@ namespace wrap
 
     }
     std::map<SDL_Scancode, love::keyboard::Keyboard::Scancode> wrap_love_dll_event_scancodeMap = wrap_love_dll_event_createScancodeMap();
-   
+
 #undef KEY_EXECUTE
     std::map<SDL_Keycode, love::keyboard::Keyboard::Key> wrap_love_dll_event_createKeyMap()
     {
@@ -2358,7 +2359,7 @@ namespace wrap
 
         if (fsInstance == nullptr)
         {
-            return wrap_catchexcept([&]() { 
+            return wrap_catchexcept([&]() {
                 fsInstance = new physfs::Filesystem();
                 Module::registerInstance(fsInstance);
             });
@@ -2587,7 +2588,7 @@ namespace wrap
         soundInstance = Module::getInstance<Sound>(Module::M_SOUND);
         if (soundInstance == nullptr)
         {
-            return wrap_catchexcept([&]() { 
+            return wrap_catchexcept([&]() {
                 soundInstance = new lullaby::Sound();
                 Module::registerInstance(soundInstance);
             });
@@ -2750,8 +2751,8 @@ namespace wrap
         imageInstance = Module::getInstance<love::image::Image>(Module::M_IMAGE);
         if (imageInstance == nullptr)
         {
-            wrap_catchexcept([&]() { 
-                imageInstance = new love::image::Image(); 
+            wrap_catchexcept([&]() {
+                imageInstance = new love::image::Image();
                 Module::registerInstance(imageInstance);
             });
         }
@@ -2773,7 +2774,7 @@ namespace wrap
         fontInstance = Module::getInstance<font::Font>(Module::M_FONT);
         if (fontInstance == nullptr)
         {
-            return wrap_catchexcept([&]() { 
+            return wrap_catchexcept([&]() {
                 fontInstance = new freetype::Font();
                 Module::registerInstance(fontInstance);
             });
@@ -2887,7 +2888,7 @@ namespace wrap
     //bool4 wrap_love_dll_math_compress_str(const char* str, int str_size, int format_type, int level, CompressedData **out_compressedData)
     //{
     //    // default is Compressor::FORMAT_LZ4;
-    //    Compressor::Format format = (Compressor::Format)format_type; 
+    //    Compressor::Format format = (Compressor::Format)format_type;
     //    // level default is -1
 
     //    return wrap_catchexcept([&]() {
@@ -2900,7 +2901,7 @@ namespace wrap
     //{
     //    Compressor::Format format = (Compressor::Format)format_type; // default is Compressor::FORMAT_LZ4;
     //                                                                 // level default is -1
-    //    return wrap_catchexcept([&]() { 
+    //    return wrap_catchexcept([&]() {
     //        *out_compressedData = Math::instance.compress(format, data, level);
     //        // no need for xxxx->retain()
     //    });
@@ -2923,7 +2924,7 @@ namespace wrap
     //    Compressor::Format format = (Compressor::Format)format_type; // default is Compressor::FORMAT_LZ4;
     //    size_t compressedsize = cbytes_length;
 
-    //    return wrap_catchexcept([&]() { 
+    //    return wrap_catchexcept([&]() {
     //        *out_datas = Math::instance.decompress(format, cbytes, compressedsize, rawsize);
     //        *out_datas_length = rawsize;
     //    });
@@ -2956,8 +2957,8 @@ namespace wrap
     bool4 wrap_love_dll_graphics_newImage_data(
         ImageDataBase **imageDataList,
 		bool4* compressedTypeList,
-        int imageDataListLength, 
-        bool4 flagMipmaps, 
+        int imageDataListLength,
+        bool4 flagMipmaps,
         bool4 flagLinear,
         love::graphics::Image** out_image)
     {
@@ -2968,7 +2969,7 @@ namespace wrap
         settings.linear = flagLinear;
         float *autodpiscale = dpiscaleset ? nullptr : &settings.dpiScale;
 
-        for (int i = 0; i < imageDataListLength; i++) 
+        for (int i = 0; i < imageDataListLength; i++)
         {
             if (compressedTypeList[i] == false) {
                 slices.set(0, 0, imageDataList[i]);
@@ -2998,20 +2999,20 @@ namespace wrap
     bool4 wrap_love_dll_graphics_newFont(Rasterizer *rasterizer, love::graphics::Font** out_font)
     {
         return wrap_catchexcept( [&]() {
-            *out_font = graphicsInstance->newFont(rasterizer, graphicsInstance->getDefaultFilter()); 
+            *out_font = graphicsInstance->newFont(rasterizer, graphicsInstance->getDefaultFilter());
         });
     }
     bool4 wrap_love_dll_graphics_newSpriteBatch(Texture *texture, int maxSprites, int usage_type, love::graphics::SpriteBatch** out_spriteBatch)
     {
         vertex::Usage usage = (vertex::Usage)usage_type;//love::graphics::opengl::Mesh::USAGE_DYNAMIC;
         return wrap_catchexcept([&]() {
-            *out_spriteBatch = graphicsInstance->newSpriteBatch(texture, maxSprites, usage); 
+            *out_spriteBatch = graphicsInstance->newSpriteBatch(texture, maxSprites, usage);
         });
     }
     bool4 wrap_love_dll_graphics_newParticleSystem(Texture *texture, int buffer, ParticleSystem** out_particleSystem)
     {
         return wrap_catchexcept([&]() {
-            *out_particleSystem = graphicsInstance->newParticleSystem(texture, buffer); 
+            *out_particleSystem = graphicsInstance->newParticleSystem(texture, buffer);
         });
     }
     bool4 wrap_love_dll_graphics_newCanvas(
@@ -3019,7 +3020,7 @@ namespace wrap
 		int texture_type,
         int format_type,
 		bool4 readable,
-        int msaa, 
+        int msaa,
 		float dpiscale,
 		int mipmaps,
         graphics::Canvas** out_canvas)
@@ -3071,7 +3072,7 @@ namespace wrap
 
             v.s = uv[i].x;
             v.t = uv[i].y;
-                
+
             v.color.r = color[i].r * 255;
             v.color.g = color[i].g * 255;
             v.color.b = color[i].b * 255;
@@ -3385,7 +3386,7 @@ namespace wrap
 
     void wrap_love_dll_graphics_setDefaultShaderCode(const char **strPtr)
     {
-		// Graphics::defaultShaderCode 
+		// Graphics::defaultShaderCode
 		// 2 -> [0(defaults) | 1(defaults_gammacorrect)]
 		// 4 -> [LANGUAGE_GLSL1 | LANGUAGE_ESSL1 | LANGUAGE_GLSL3| LANGUAGE_ESSL3]
 		// 4 -> [vertex | pixel | videopixel | arraypixel]
@@ -3395,7 +3396,7 @@ namespace wrap
 		// gamma correct ?
         for (int i = 0; i < 2; i++)
         {
-			// lanage 
+			// lanage
             for (int lang = 0; lang < Shader::LANGUAGE_MAX_ENUM; lang++)
             {
                 std::string vertex = strPtr[index++];
@@ -3628,7 +3629,7 @@ namespace wrap
         {
 			points.push_back(Vector2(coords[i].x, coords[i].y));
         }
-        
+
 
         bool res = wrap_catchexcept([&]() {graphicsInstance->points(points.data(), nullptr, numpoints);});
         return res;
@@ -3884,7 +3885,7 @@ namespace wrap
     bool4 wrap_love_dll_type_Source_getPosition(Source *t, float *out_x, float *out_y, float *out_z)
     {
         float v[3];
-        return wrap_catchexcept( [&]() { 
+        return wrap_catchexcept( [&]() {
             t->getPosition(v);
             *out_x = v[0];
             *out_y = v[1];
@@ -3904,7 +3905,7 @@ namespace wrap
     bool4 wrap_love_dll_type_Source_getVelocity(Source *t, float *out_x, float *out_y, float *out_z)
     {
         float v[3];
-        return wrap_catchexcept( [&]() { 
+        return wrap_catchexcept( [&]() {
             t->getVelocity(v);
             *out_x = v[0];
             *out_y = v[1];
@@ -3924,7 +3925,7 @@ namespace wrap
     bool4 wrap_love_dll_type_Source_getDirection(Source *t, float *out_x, float *out_y, float *out_z)
     {
         float v[3];
-        return wrap_catchexcept( [&]() { 
+        return wrap_catchexcept( [&]() {
             t->getDirection(v);
             *out_x = v[0];
             *out_y = v[1];
@@ -4303,7 +4304,7 @@ namespace wrap
 #pragma endregion
 
 #pragma region type - Canvas
-    
+
 
     void wrap_love_dll_type_Canvas_getFormat(graphics::Canvas *canvas, int *out_format_type)
     {
@@ -4329,7 +4330,7 @@ namespace wrap
         return wrap_catchexcept([&]() { *out_width = t->getWidth(str); });
     }
 
-    bool4 wrap_love_dll_type_Font_getWrap(love::graphics::Font *t, 
+    bool4 wrap_love_dll_type_Font_getWrap(love::graphics::Font *t,
         pChar coloredStringText[], Float4 coloredStringColor[], int coloredStringLength, float wrap,
         int *out_maxWidth, WrapSequenceString **out_pws)
     {
@@ -4351,8 +4352,8 @@ namespace wrap
         std::vector<std::string> lines;
         std::vector<int> widths;
 
-        return wrap_catchexcept([&]() { 
-            t->getWrap(strings, wrap, lines, &widths); 
+        return wrap_catchexcept([&]() {
+            t->getWrap(strings, wrap, lines, &widths);
 
 
             for (int width : widths)
@@ -4446,7 +4447,7 @@ namespace wrap
 
     bool4 wrap_love_dll_type_Image_replacePixels(love::graphics::opengl::Image *i, ImageData *imgData, int slice, int mipmap, int x, int y, bool4 reloadmipmaps)
     {
-        return wrap_catchexcept([&]() { 
+        return wrap_catchexcept([&]() {
             i->replacePixels(imgData, slice, mipmap, x, y, reloadmipmaps);
         });
     }
@@ -4587,7 +4588,7 @@ namespace wrap
     bool4 wrap_love_dll_type_Mesh_getVertexMap(Mesh *t, bool4 *out_has_vertex_map, uint32 **out_vertexmaps, int *out_vertexmaps_length)
     {
         std::vector<uint32> vertex_map;
-        return wrap_catchexcept([&]() { 
+        return wrap_catchexcept([&]() {
 
             *out_has_vertex_map = false;
             *out_has_vertex_map = t->getVertexMap(vertex_map);
@@ -4631,7 +4632,7 @@ namespace wrap
         else
         {
             wrap_ee("Unable to determine texture type.");
-            return false; 
+            return false;
         }
 
         *out_texture = tex;
@@ -4717,7 +4718,7 @@ namespace wrap
             wrap_ee("Invalid buffer size");
             return false;
         }
-        
+
         return wrap_catchexcept([&]() { t->setBufferSize(buffersize); });
     }
 
@@ -4799,7 +4800,7 @@ namespace wrap
             if (x < 0.0f || y < 0.0f)
             {
                 wrap_ee("Invalid area spread parameters (must be >= 0)");
-                return false; 
+                return false;
             }
         }
 
@@ -5481,7 +5482,7 @@ namespace wrap
         wrap_catchexcept([&]() { t->attachAttribute(name, m); });
     }
 
-#pragma endregion 
+#pragma endregion
 
 #pragma region type - Text
 
@@ -5777,7 +5778,7 @@ namespace wrap
 
 	void wrap_love_dll_type_ImageData_GetFormat(ImageData *t, int *out_pixelFormat)
 	{
-		*out_pixelFormat = (PixelFormat)t->getFormat(); 
+		*out_pixelFormat = (PixelFormat)t->getFormat();
 	}
 
     void wrap_love_dll_type_ImageData_paste(ImageData *t, ImageData* src,int dx, int dy, int sx, int sy, int sw, int sh)
@@ -5788,7 +5789,7 @@ namespace wrap
     void wrap_love_dll_type_ImageData_encode(ImageData *t, int format_type, bool4 writeToFile, const char* filename, FileData** out_fileData)
     {
         auto format = (FormatHandler::EncodedFormat)format_type;
-        wrap_catchexcept([&]() { 
+        wrap_catchexcept([&]() {
             love::filesystem::FileData *filedata = t->encode(format, filename, false);
 			if (writeToFile) {
 	           wrap_love_dll_filesystem_write(filename, filedata->getData(), filedata->getSize());
@@ -5931,7 +5932,7 @@ namespace wrap
 			memcpy(data, src, size * pixelSize);
 		}
 	}
-    
+
 
 #pragma endregion
 
@@ -6148,8 +6149,8 @@ namespace wrap
 
     bool4 wrap_love_dll_type_BezierCurve_render(BezierCurve *curve, int accuracy, Float2** out_points, int *out_points_lenght)
     {
-        
-        return wrap_catchexcept([&]() { 
+
+        return wrap_catchexcept([&]() {
             std::vector<Vector2> points = curve->render(accuracy);
             *out_points_lenght = (int)points.size();
             *out_points = new Float2[(int)points.size()];
@@ -6346,30 +6347,16 @@ namespace wrap
 
 #pragma endregion
 
+
 #pragma region type - Body
 
-
-    void wrap_love_dll_type_Body_getX(Body *t, float *out_x)
-    {
-        *out_x = t->getX();
-    }
-
-    void wrap_love_dll_type_Body_getY(Body *t, float *out_y)
-    {
-        *out_y = t->getY();
-    }
-
-    void wrap_love_dll_type_Body_getAngle(Body *t, float *out_angle)
-    {
-        *out_angle = t->getAngle();
-    }
-
-    void wrap_love_dll_type_Body_getPosition(Body *t, Float2 *out_pos)
+    void wrap_love_dll_type_Body_getTransform(Body *t, Float3 *out_pos)
     {
         float x_o, y_o;
         t->getPosition(x_o, y_o);
         out_pos->x = x_o;
         out_pos->y = y_o;
+        out_pos->z = t->getAngle();
     }
 
     void wrap_love_dll_type_Body_getLinearVelocity(Body *t, Float2 *out_result)
@@ -6436,9 +6423,9 @@ namespace wrap
         t->applyLinearImpulse(jx, jy, true);
     }
 
-    void wrap_love_dll_type_Body_applyLinearImpulse_xy_offset(Body *t, float jx, float jy, float rx, float ry)
+    void wrap_love_dll_type_Body_applyLinearImpulse_xy_offset(Body *t, float jx, float jy, float ox, float oy)
     {
-        t->applyLinearImpulse(jx, jy, rx, ry, true);
+        t->applyLinearImpulse(jx, jy, ox, oy, true);
     }
 
     void wrap_love_dll_type_Body_applyAngularImpulse(Body *t, float i)
@@ -6455,9 +6442,9 @@ namespace wrap
     {
         t->applyForce(fx, fy, true);
     }
-    void wrap_love_dll_type_Body_applyForce_xy_offset(Body *t, float fx, float fy, float rx, float ry)
+    void wrap_love_dll_type_Body_applyForce_xy_offset(Body *t, float fx, float fy, float ox, float oy)
     {
-        t->applyForce(fx, fy, rx, ry, true);
+        t->applyForce(fx, fy, ox, oy, true);
     }
 
     bool4 wrap_love_dll_type_Body_setX(Body *t, float x)
@@ -6629,90 +6616,7 @@ namespace wrap
         *out_world = t->getWorld();
         (*out_world)->retain();
     }
-
-    bool4 wrap_love_dll_type_Body_getFixtureList(Body *t, Fixture ***out_fixtures, int *out_fixtures_length)
-    {
-        return wrap_catchexcept([&]() {
-            b2Fixture *f = t->body->GetFixtureList();
-            std::vector<Fixture*> list;
-            do
-            {
-                if (!f)
-                    break;
-                Fixture *fixture = (Fixture *)Memoizer::find(f);
-                if (!fixture)
-                    throw love::Exception("A fixture has escaped Memoizer!");
-
-                list.push_back(fixture);
-
-            } while ((f = f->GetNext()));
-
-            *out_fixtures_length = list.size();
-            *out_fixtures = new Fixture*[list.size()];
-            for (int i = 0; i < list.size(); i++)
-            {
-                (*out_fixtures)[i] = list[i];
-                list[i]->retain();
-            }
-        });
-    }
-
-    bool4 wrap_love_dll_type_Body_getJointList(Body *t, Joint ***out_joints, int *out_joints_length)
-    {
-        return wrap_catchexcept([&]() { 
-            const b2JointEdge *je = t->body->GetJointList();
-            std::vector<Joint*> list;
-            do
-            {
-                if (!je)
-                    break;
-
-                Joint *joint = (Joint *)Memoizer::find(je->joint);
-                if (!joint)
-                    throw love::Exception("A joint has escaped Memoizer!");
-
-                list.push_back(joint);
-            } while ((je = je->next));
-
-            *out_joints_length = list.size();
-            *out_joints = new Joint*[list.size()];
-            for (int i = 0; i < list.size(); i++)
-            {
-                (*out_joints)[i] = list[i];
-                list[i]->retain();
-            }
-        });
-    }
-
-    bool4 wrap_love_dll_type_Body_getContactList(Body *t, Contact*** out_contacts, int *out_contacts_length)
-    {
-        return wrap_catchexcept([&]() {
-            const b2ContactEdge *ce = t->body->GetContactList();
-            std::vector<Contact*> list;
-            do
-            {
-                if (!ce)
-                    break;
-
-                Contact *contact = (Contact *)Memoizer::find(ce->contact);
-                if (!contact)
-                    contact = new Contact(ce->contact);
-                else
-                    contact->retain();
-
-                list.push_back(contact);
-            } while ((ce = ce->next));
-
-            *out_contacts_length = list.size();
-            *out_contacts = new Contact*[list.size()];
-            for (int i = 0; i < list.size(); i++)
-            {
-                (*out_contacts)[i] = list[i];
-                list[i]->retain();
-            }
-        });
-    }
-
+	
     bool4 wrap_love_dll_type_Body_destroy(Body *t)
     {
         return wrap_catchexcept([&]() { t->destroy(); });
@@ -6723,6 +6627,91 @@ namespace wrap
         *out_result = (b->body == nullptr);
     }
 
+	// FIXME: because the params is lua_State *L, we need hack it.
+	bool4 wrap_love_dll_type_Body_getFixtureList(Body *t, Fixture ***out_fixtures, int *out_fixtures_length)
+	{
+		return wrap_catchexcept([&]() {
+			b2Fixture *f = t->body->GetFixtureList();
+			std::vector<Fixture*> list;
+			do
+			{
+				if (!f)
+					break;
+				Fixture *fixture = (Fixture *)Memoizer::find(f);
+				if (!fixture)
+					throw love::Exception("A fixture has escaped Memoizer!");
+
+				list.push_back(fixture);
+
+			} while ((f = f->GetNext()));
+
+			*out_fixtures_length = list.size();
+			*out_fixtures = new Fixture*[list.size()];
+			for (int i = 0; i < list.size(); i++)
+			{
+				(*out_fixtures)[i] = list[i];
+				list[i]->retain();
+			}
+		});
+	}
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	bool4 wrap_love_dll_type_Body_getJointList(Body *t, Joint ***out_joints, int *out_joints_length)
+	{
+		return wrap_catchexcept([&]() {
+			const b2JointEdge *je = t->body->GetJointList();
+			std::vector<Joint*> list;
+			do
+			{
+				if (!je)
+					break;
+
+				Joint *joint = (Joint *)Memoizer::find(je->joint);
+				if (!joint)
+					throw love::Exception("A joint has escaped Memoizer!");
+
+				list.push_back(joint);
+			} while ((je = je->next));
+
+			*out_joints_length = list.size();
+			*out_joints = new Joint*[list.size()];
+			for (int i = 0; i < list.size(); i++)
+			{
+				(*out_joints)[i] = list[i];
+				list[i]->retain();
+			}
+		});
+	}
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	bool4 wrap_love_dll_type_Body_getContactList(Body *t, Contact*** out_contacts, int *out_contacts_length)
+	{
+		return wrap_catchexcept([&]() {
+			const b2ContactEdge *ce = t->body->GetContactList();
+			std::vector<Contact*> list;
+			do
+			{
+				if (!ce)
+					break;
+
+				Contact *contact = (Contact *)Memoizer::find(ce->contact);
+				if (!contact)
+					contact = new Contact(ce->contact);
+				else
+					contact->retain();
+
+				list.push_back(contact);
+			} while ((ce = ce->next));
+
+			*out_contacts_length = list.size();
+			*out_contacts = new Contact*[list.size()];
+			for (int i = 0; i < list.size(); i++)
+			{
+				(*out_contacts)[i] = list[i];
+				list[i]->retain();
+			}
+		});
+	}
 #pragma endregion
 
 #pragma region type - ChainShape
@@ -6749,7 +6738,10 @@ namespace wrap
 
     bool4 wrap_love_dll_type_ChainShape_getChildEdge(ChainShape *c, int index, EdgeShape **out_edgeShape)
     {
-        return wrap_catchexcept([&](){ *out_edgeShape = c->getChildEdge(index); });
+        return wrap_catchexcept([&](){ 
+			*out_edgeShape = c->getChildEdge(index);
+			(*out_edgeShape)->retain();
+		});
     }
 
     void wrap_love_dll_type_ChainShape_getVertexCount(ChainShape *c, int *out_count)
@@ -6922,7 +6914,7 @@ namespace wrap
 
 #pragma endregion
 
-#pragma region type - DistanceJoint 
+#pragma region type - DistanceJoint
 
     void wrap_love_dll_type_DistanceJoint_setLength(DistanceJoint *t, float length)
     {
@@ -7066,89 +7058,6 @@ namespace wrap
         *out_result = t->testPoint(x, y);
     }
 
-    // FIX: 
-    // hack to access private member :
-    class WrapFixture : public Fixture
-    {
-    public:
-        bool4 RayCast(b2RayCastOutput* output, const b2RayCastInput& input, int32 childIndex)
-        {
-            fixture->RayCast(output, input, childIndex);
-            return true;
-        }
-
-        void setCategory(uint16 categories)
-        {
-            b2Filter f = fixture->GetFilterData();
-            f.categoryBits = categories;
-            fixture->SetFilterData(f);
-        }
-
-        uint16 getCategory()
-        {
-            b2Filter f = fixture->GetFilterData();
-            return f.categoryBits;
-        }
-
-        void setMask(uint16 masks)
-        {
-            b2Filter f = fixture->GetFilterData();
-            f.maskBits = ~masks;
-            fixture->SetFilterData(f);
-        }
-
-        uint16 getMask()
-        {
-            b2Filter f = fixture->GetFilterData();
-            return ~f.maskBits;
-        }
-
-        void getBoundingBox(int childIndex, float *out_topLeftX, float *out_topLeftY, float *out_bottomRightX, float *out_bottomRightY)
-        {
-            b2AABB box = fixture->GetAABB(childIndex);
-            box = Physics::scaleUp(box);
-            *out_topLeftX = box.lowerBound.x;
-            *out_topLeftY = box.lowerBound.y;
-            *out_bottomRightX = box.upperBound.x;
-            *out_bottomRightY = box.upperBound.y;
-        }
-
-        void getMassData(Float2 *out_center, float *out_mass, float *out_rotationalInertia)
-        {
-            b2MassData data;
-            fixture->GetMassData(&data);
-            b2Vec2 center = Physics::scaleUp(data.center);
-            out_center->x = center.x;
-            out_center->y = center.y;
-            *out_mass =  data.mass;
-            *out_rotationalInertia =  data.I;
-        }
-    };
-
-    bool4 wrap_love_dll_type_Fixture_rayCast(Fixture *t, bool4 *hasHit, float x1, float y1, float x2, float y2, float maxFraction, int childIndex, Float2 *out_pos, float *out_fraction)
-    {
-        return wrap_catchexcept([&]() { 
-
-            WrapFixture* tt = (WrapFixture*)t;
-
-            float p1x = Physics::scaleDown(x1);
-            float p1y = Physics::scaleDown(y1);
-            float p2x = Physics::scaleDown(x2);
-            float p2y = Physics::scaleDown(y2);
-            b2RayCastInput input;
-            input.p1.Set(p1x, p1y);
-            input.p2.Set(p2x, p2y);
-            input.maxFraction = maxFraction;
-            b2RayCastOutput output;
-            if (!(*hasHit = tt->RayCast(&output, input, childIndex)))
-                return; // Nothing hit.
-
-            out_pos->x = output.normal.x;
-            out_pos->y = output.normal.y;
-            *out_fraction = output.fraction;
-        }); 
-    }
-
     void wrap_love_dll_type_Fixture_setFilterData(Fixture *t, float categories, float mask, float group)
     {
         int v[3];
@@ -7166,57 +7075,7 @@ namespace wrap
         *out_mask = v[1];
         *out_group = v[2];
     }
-
-    bool4 wrap_love_dll_type_Fixture_setCategory(Fixture *t, uint16 categories)
-    {
-        return wrap_catchexcept([&]() {
-            WrapFixture* tt = (WrapFixture*)t;
-            tt->setCategory(categories);
-        });
-    }
-
-    bool4 wrap_love_dll_type_Fixture_getCategory(Fixture *t, uint16 *out_categories)
-    {
-        return wrap_catchexcept([&]() {
-            WrapFixture* tt = (WrapFixture*)t;
-            *out_categories = tt->getCategory();
-        });
-    }
-
-    bool4 wrap_love_dll_type_Fixture_setMask(Fixture *t, uint16 mask)
-    {
-        return wrap_catchexcept([&]() {
-            WrapFixture* tt = (WrapFixture*)t;
-            tt->setMask(mask);
-        });
-    }
-
-    bool4 wrap_love_dll_type_Fixture_getMask(Fixture *t, uint16 *out_mask)
-    {
-        return wrap_catchexcept([&]() {
-            WrapFixture* tt = (WrapFixture*)t;
-            *out_mask = tt->getMask();
-        });
-    }
-
-    //`setUserData, getUserData` Implement by C# port
-
-    bool4 wrap_love_dll_type_Fixture_getBoundingBox(Fixture *t, int childIndex, float *out_topLeftX, float *out_topLeftY, float *out_bottomRightX, float *out_bottomRightY)
-    {
-        return wrap_catchexcept([&]() {
-            WrapFixture* tt = (WrapFixture*)t;
-            tt->getBoundingBox(childIndex, out_topLeftX, out_topLeftY, out_bottomRightX, out_bottomRightY);
-        });
-    }
-
-    bool4 wrap_love_dll_type_Fixture_getMassData(Fixture *t, Float2 *out_center, float *out_mass, float *out_rotationalInertia)
-    {
-        return wrap_catchexcept([&]() {
-            WrapFixture* tt = (WrapFixture*)t;
-            tt->getMassData(out_center, out_mass, out_rotationalInertia);
-        });
-    }
-
+	
     void wrap_love_dll_type_Fixture_getGroupIndex(Fixture *t, int *out_index)
     {
         *out_index = t->getGroupIndex();
@@ -7238,27 +7097,166 @@ namespace wrap
     }
 
 
+	// FIXME:
+	// hack to access private member :
+	class WrapFixture : public Fixture
+	{
+	public:
+		bool4 RayCast(b2RayCastOutput* output, const b2RayCastInput& input, int32 childIndex)
+		{
+			fixture->RayCast(output, input, childIndex);
+			return true;
+		}
+
+		void setCategory(uint16 categories)
+		{
+			b2Filter f = fixture->GetFilterData();
+			f.categoryBits = categories;
+			fixture->SetFilterData(f);
+		}
+
+		uint16 getCategory()
+		{
+			b2Filter f = fixture->GetFilterData();
+			return f.categoryBits;
+		}
+
+		void setMask(uint16 masks)
+		{
+			b2Filter f = fixture->GetFilterData();
+			f.maskBits = ~masks;
+			fixture->SetFilterData(f);
+		}
+
+		uint16 getMask()
+		{
+			b2Filter f = fixture->GetFilterData();
+			return ~f.maskBits;
+		}
+
+		void getBoundingBox(int childIndex, float *out_topLeftX, float *out_topLeftY, float *out_bottomRightX, float *out_bottomRightY)
+		{
+			b2AABB box = fixture->GetAABB(childIndex);
+			box = Physics::scaleUp(box);
+			*out_topLeftX = box.lowerBound.x;
+			*out_topLeftY = box.lowerBound.y;
+			*out_bottomRightX = box.upperBound.x;
+			*out_bottomRightY = box.upperBound.y;
+		}
+
+		void getMassData(Float2 *out_center, float *out_mass, float *out_rotationalInertia)
+		{
+			b2MassData data;
+			fixture->GetMassData(&data);
+			b2Vec2 center = Physics::scaleUp(data.center);
+			out_center->x = center.x;
+			out_center->y = center.y;
+			*out_mass = data.mass;
+			*out_rotationalInertia = data.I;
+		}
+	};
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	bool4 wrap_love_dll_type_Fixture_rayCast(Fixture *t, bool4 *hasHit, float x1, float y1, float x2, float y2, float maxFraction, int childIndex, Float2 *out_pos, float *out_fraction)
+	{
+		return wrap_catchexcept([&]() {
+
+			WrapFixture* tt = (WrapFixture*)t;
+
+			float p1x = Physics::scaleDown(x1);
+			float p1y = Physics::scaleDown(y1);
+			float p2x = Physics::scaleDown(x2);
+			float p2y = Physics::scaleDown(y2);
+			b2RayCastInput input;
+			input.p1.Set(p1x, p1y);
+			input.p2.Set(p2x, p2y);
+			input.maxFraction = maxFraction;
+			b2RayCastOutput output;
+			if (!(*hasHit = tt->RayCast(&output, input, childIndex)))
+				return; // Nothing hit.
+
+			out_pos->x = output.normal.x;
+			out_pos->y = output.normal.y;
+			*out_fraction = output.fraction;
+		});
+	}
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	bool4 wrap_love_dll_type_Fixture_setCategory(Fixture *t, uint16 categories)
+	{
+		return wrap_catchexcept([&]() {
+			WrapFixture* tt = (WrapFixture*)t;
+			tt->setCategory(categories);
+		});
+	}
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	bool4 wrap_love_dll_type_Fixture_getCategory(Fixture *t, uint16 *out_categories)
+	{
+		return wrap_catchexcept([&]() {
+			WrapFixture* tt = (WrapFixture*)t;
+			*out_categories = tt->getCategory();
+		});
+	}
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	bool4 wrap_love_dll_type_Fixture_setMask(Fixture *t, uint16 mask)
+	{
+		return wrap_catchexcept([&]() {
+			WrapFixture* tt = (WrapFixture*)t;
+			tt->setMask(mask);
+		});
+	}
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	bool4 wrap_love_dll_type_Fixture_getMask(Fixture *t, uint16 *out_mask)
+	{
+		return wrap_catchexcept([&]() {
+			WrapFixture* tt = (WrapFixture*)t;
+			*out_mask = tt->getMask();
+		});
+	}
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	bool4 wrap_love_dll_type_Fixture_getBoundingBox(Fixture *t, int childIndex, float *out_topLeftX, float *out_topLeftY, float *out_bottomRightX, float *out_bottomRightY)
+	{
+		return wrap_catchexcept([&]() {
+			WrapFixture* tt = (WrapFixture*)t;
+			tt->getBoundingBox(childIndex, out_topLeftX, out_topLeftY, out_bottomRightX, out_bottomRightY);
+		});
+	}
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	bool4 wrap_love_dll_type_Fixture_getMassData(Fixture *t, Float2 *out_center, float *out_mass, float *out_rotationalInertia)
+	{
+		return wrap_catchexcept([&]() {
+			WrapFixture* tt = (WrapFixture*)t;
+			tt->getMassData(out_center, out_mass, out_rotationalInertia);
+		});
+	}
+
+
 #pragma endregion
 
 
 #pragma region type - FrictionJoint
 
-    bool4 w_FrictionJoint_setMaxForce(FrictionJoint *t, float maxForce)
+    bool4 wrap_love_dll_type_FrictionJoint_setMaxForce(FrictionJoint *t, float maxForce)
     {
         return wrap_catchexcept([&]() { t->setMaxForce(maxForce); });
     }
 
-    void w_FrictionJoint_getMaxForce(FrictionJoint *t, float *out_maxForce)
+    void wrap_love_dll_type_FrictionJoint_getMaxForce(FrictionJoint *t, float *out_maxForce)
     {
         *out_maxForce = t->getMaxForce();
     }
 
-    bool4 w_FrictionJoint_setMaxTorque(FrictionJoint *t, float maxTorque)
+    bool4 wrap_love_dll_type_FrictionJoint_setMaxTorque(FrictionJoint *t, float maxTorque)
     {
         return wrap_catchexcept([&]() { t->setMaxTorque(maxTorque); });
     }
 
-    void w_FrictionJoint_getMaxTorque(FrictionJoint *t, float *out_maxTorque)
+    void wrap_love_dll_type_FrictionJoint_getMaxTorque(FrictionJoint *t, float *out_maxTorque)
     {
         *out_maxTorque = t->getMaxTorque();
     }
@@ -7267,17 +7265,17 @@ namespace wrap
 
 #pragma region type - GearJoint
 
-    bool4 w_GearJoint_setRatio(GearJoint *t, float ration)
+    bool4 wrap_love_dll_type_GearJoint_setRatio(GearJoint *t, float ration)
     {
         return wrap_catchexcept([&]() { t->setRatio(ration); });
     }
 
-    void w_GearJoint_getRatio(GearJoint *t, float *out_ration)
+    void wrap_love_dll_type_GearJoint_getRatio(GearJoint *t, float *out_ration)
     {
         *out_ration = t->getRatio();
     }
 
-    bool4 w_GearJoint_getJoints(GearJoint *t, Joint** out_j1, Joint **out_j2)
+    bool4 wrap_love_dll_type_GearJoint_getJoints(GearJoint *t, Joint** out_j1, Joint **out_j2)
     {
         return wrap_catchexcept([&]() {
             *out_j1 = t->getJointA();
@@ -7287,93 +7285,671 @@ namespace wrap
 
 
 #pragma endregion
-//
-//#pragma region type - Joint
-//
-//    class WrapJoint : public Joint
-//    {
-//    public:
-//        void getAnchors()
-//        {
-//            Physics::scaleUp(joint->GetAnchorA().x);
-//            Physics::scaleUp(joint->GetAnchorA().y);
-//            Physics::scaleUp(joint->GetAnchorB().x);
-//            Physics::scaleUp(joint->GetAnchorB().y);
-//        }
-//    };
-//
-//
-//    void w_Joint_getType(Joint *t, int *out_type)
-//    {
-//        *out_type = t->getType();
-//    }
-//
-//    bool4 w_Joint_getBodies(Joint *t, Body **out_b1, Body **out_b2)
-//    {
-//        return wrap_catchexcept([&]() {
-//            *out_b1 = t->getBodyA();
-//            *out_b2 = t->getBodyB();
-//        });
-//    }
-//
-//    int w_Joint_getAnchors(Joint *t)
-//    {
-//        t->joint->GetAnchorA().x;
-//        lua_remove(L, 1);
-//        return t->getAnchors(L);
-//    }
-//
-//    int w_Joint_getReactionForce(Joint *t)
-//    {
-//        Joint *t = luax_checkjoint(L, 1);
-//        lua_remove(L, 1);
-//        return t->getReactionForce(L);
-//    }
-//
-//    int w_Joint_getReactionTorque(Joint *t)
-//    {
-//        Joint *t = luax_checkjoint(L, 1);
-//        float inv_dt = (float)luaL_checknumber(L, 2);
-//        lua_pushnumber(L, t->getReactionTorque(inv_dt));
-//        return 1;
-//    }
-//
-//    int w_Joint_getCollideConnected(Joint *t)
-//    {
-//        Joint *t = luax_checkjoint(L, 1);
-//        luax_pushboolean(L, t->getCollideConnected());
-//        return 1;
-//    }
-//
-//    int w_Joint_setUserData(Joint *t)
-//    {
-//        Joint *t = luax_checkjoint(L, 1);
-//        lua_remove(L, 1);
-//        return t->setUserData(L);
-//    }
-//
-//    int w_Joint_getUserData(Joint *t)
-//    {
-//        Joint *t = luax_checkjoint(L, 1);
-//        lua_remove(L, 1);
-//        return t->getUserData(L);
-//    }
-//
-//    int w_Joint_destroy(Joint *t)
-//    {
-//        Joint *t = luax_checkjoint(L, 1);
-//        wrap_catchexcept([&]() { t->destroyJoint(); });
-//        return 0;
-//    }
-//
-//    int w_Joint_isDestroyed(Joint *t)
-//    {
-//        Joint *t = luax_checktype<Joint>(L, 1, PHYSICS_JOINT_ID);
-//        luax_pushboolean(L, !t->isValid());
-//        return 1;
-//    }
-//
-//#pragma endregion
+
+#pragma region type - Joint
+
+
+    void wrap_love_dll_type_Joint_getType(Joint *t, int *out_type)
+    {
+        *out_type = t->getType();
+    }
+
+    bool4 wrap_love_dll_type_Joint_getBodies(Joint *t, Body **out_b1, Body **out_b2)
+    {
+        return wrap_catchexcept([&]() {
+            *out_b1 = t->getBodyA();
+            *out_b2 = t->getBodyB();
+        });
+    }
+
+    void wrap_love_dll_type_Joint_getReactionTorque(Joint *t, float inv_dt, float* out_torque)
+    {
+		*out_torque = t->getReactionTorque(inv_dt);
+    }
+
+	void wrap_love_dll_type_Joint_getCollideConnected(Joint *t, bool4 *out_c)
+    {
+        *out_c = t->getCollideConnected();
+    }
+
+    bool4 wrap_love_dll_type_Joint_destroy(Joint *t)
+    {
+		return wrap_catchexcept([&]() { t->destroyJoint(); });
+    }
+
+	void wrap_love_dll_type_Joint_isDestroyed(Joint *t, bool4 *out_destroyed)
+    {
+        *out_destroyed = !t->isValid();
+    }
+
+	// FIXME:
+	// hack to access private member :
+	class WrapJoint : public Joint
+	{
+	public:
+		void getAnchors()
+		{
+			//Physics::scaleUp(joint->GetAnchorA().x);
+			//Physics::scaleUp(joint->GetAnchorA().y);
+			//Physics::scaleUp(joint->GetAnchorB().x);
+			//Physics::scaleUp(joint->GetAnchorB().y);
+		}
+	};
+
+	//// FIXME: because the params is lua_State *L, we need hack it.
+	//void w_Joint_getAnchors(Joint *t)
+	//{
+	//	t->joint->GetAnchorA().x;
+	//	lua_remove(L, 1);
+	//	return t->getAnchors(L);
+	//}
+
+	//// FIXME: because the params is lua_State *L, we need hack it.
+	//void w_Joint_getReactionForce(Joint *t)
+	//{
+	//	Joint *t = luax_checkjoint(L, 1);
+	//	lua_remove(L, 1);
+	//	return t->getReactionForce(L);
+	//}
+
+#pragma endregion
+
+
+#pragma region type - MotorJoint
+	using love::physics::box2d::MotorJoint;
+	void wrap_love_dll_type_MotorJoint_setLinearOffset(MotorJoint *t, float x, float y)
+	{
+		t->setLinearOffset(x, y);
+	}
+
+	void wrap_love_dll_type_MotorJoint_setAngularOffset(MotorJoint *t, float angularOffset)
+	{
+		t->setAngularOffset(angularOffset);
+	}
+
+	void wrap_love_dll_type_MotorJoint_getAngularOffset(MotorJoint *t, float *out_angularOffset)
+	{
+		*out_angularOffset = t->getAngularOffset();
+	}
+
+	bool4 wrap_love_dll_type_MotorJoint_setMaxForce(MotorJoint *t, float maxForce)
+	{
+		return wrap_catchexcept([&]() { t->setMaxForce(maxForce); });
+	}
+
+	void wrap_love_dll_type_MotorJoint_getMaxForce(MotorJoint *t, float* out_maxForce)
+	{
+		*out_maxForce = t->getMaxForce();
+	}
+
+	bool4 wrap_love_dll_type_MotorJoint_setMaxTorque(MotorJoint *t, float torque)
+	{
+		return wrap_catchexcept([&]() { t->setMaxTorque(torque); });
+	}
+
+	void wrap_love_dll_type_MotorJoint_getMaxTorque(MotorJoint *t, float* out_torque)
+	{
+		*out_torque = t->getMaxTorque();
+	}
+
+	bool4 wrap_love_dll_type_MotorJoint_setCorrectionFactor(MotorJoint *t, float factor)
+	{
+		return wrap_catchexcept([&]() { t->setCorrectionFactor(factor); });
+	}
+
+	void wrap_love_dll_type_MotorJoint_getCorrectionFactor(MotorJoint *t, float* out_factor)
+	{
+		*out_factor = t->getCorrectionFactor();
+	}
+
+
+	//// FIXME: because the params is lua_State *L, we need hack it.
+	//void wrap_love_dll_type_MotorJoint_getLinearOffset(MotorJoint *t)
+	//{
+	//	MotorJoint *t = luax_checkmotorjoint(L, 1);
+	//	return t->getLinearOffset(L);
+	//}
+
+#pragma endregion
+
+
+#pragma region type - MouseJoint
+	using love::physics::box2d::MouseJoint;
+	void w_MouseJoint_setTarget(MouseJoint *t, float x, float y)
+	{
+		t->setTarget(x, y);
+	}
+	void w_MouseJoint_setMaxForce(MouseJoint *t, float force)
+	{
+		t->setMaxForce(force);
+	}
+
+	void w_MouseJoint_getMaxForce(MouseJoint *t, float* out_force)
+	{
+		*out_force = t->getMaxForce();
+	}
+
+	bool4 w_MouseJoint_setFrequency(MouseJoint *t, float frequency)
+	{
+		return wrap_catchexcept([&]() { t->setFrequency(frequency); });
+	}
+
+	void w_MouseJoint_getFrequency(MouseJoint *t, float* out_frequency)
+	{
+		*out_frequency = t->getFrequency();
+	}
+
+	void w_MouseJoint_setDampingRatio(MouseJoint *t, float ratio)
+	{
+		t->setDampingRatio(ratio);
+	}
+
+	void w_MouseJoint_getDampingRatio(MouseJoint *t, float* out_ratio)
+	{
+		*out_ratio = t->getDampingRatio();
+	}
+
+
+	//// FIXME: because the params is lua_State *L, we need hack it.
+	//void w_MouseJoint_getTarget(MouseJoint *t)
+	//{
+	//	MouseJoint *t = luax_checkmousejoint(L, 1);
+	//	lua_remove(L, 1);
+	//	return t->getTarget(L);
+	//}
+
+#pragma endregion
+
+#pragma region type - Physics - *new* region
+
+#pragma endregion
+
+#pragma region type - Physics
+
+	using love::physics::box2d::PolygonShape;
+	using love::physics::box2d::RevoluteJoint;
+	using love::physics::box2d::PulleyJoint;
+	using love::physics::box2d::WeldJoint;
+	using love::physics::box2d::WheelJoint;
+	using love::physics::box2d::RopeJoint;
+	using love::physics::box2d::PrismaticJoint;
+	
+	
+	bool4 wrap_love_dll_physics_newWorld(float gx, float gy, bool4 sleep, World** out_world)
+	{
+		return wrap_catchexcept( [&]() { 
+			*out_world = physicsInstance->newWorld(gx, gy, sleep);
+			(*out_world)->retain();
+		});
+	}
+
+	bool4 wrap_love_dll_physics_newBody(World* world, float x, float y, int type_bodyType, Body **out_body)
+	{
+		return wrap_catchexcept( [&]() { 
+			*out_body = physicsInstance->newBody(world, x, y, (Body::Type)type_bodyType);
+			(*out_body)->retain();
+		});
+	}
+
+	bool4 wrap_love_dll_physics_newFixture(Body *body, Shape *shape, float density, Fixture **out_fixture)
+	{
+		return wrap_catchexcept( [&]() {
+			*out_fixture = physicsInstance->newFixture(body, shape, density); 
+			(*out_fixture)->retain();
+		});
+	}
+
+	bool4 wrap_love_dll_physics_newCircleShape(float x, float y, float radius, CircleShape **out_shape)
+	{
+		return wrap_catchexcept( [&]() { 
+			*out_shape = physicsInstance->newCircleShape(x, y, radius);
+			(*out_shape)->retain();
+		});
+	}
+
+	bool4 wrap_love_dll_physics_newRectangleShape(float x, float y, float w, float h, float angle, PolygonShape **out_shape)
+	{
+		return wrap_catchexcept( [&]() { 
+			*out_shape = physicsInstance->newRectangleShape(x, y, w, h, angle);
+			(*out_shape)->retain();
+		});
+	}
+
+	bool4 wrap_love_dll_physics_newEdgeShape(float x1, float y1, float x2, float y2, EdgeShape **out_shape)
+	{
+		return wrap_catchexcept( [&]() { 
+			*out_shape = physicsInstance->newEdgeShape(x1, y1, x2, y2);
+			(*out_shape)->retain();
+		});
+	}
+
+	bool4 wrap_love_dll_physics_newDistanceJoint(Body *body1, Body *body2, float x1, float y1, float x2, float y2, bool4 collideConnected, DistanceJoint **out_joint)
+	{
+		return wrap_catchexcept( [&]() {
+			(*out_joint) = physicsInstance->newDistanceJoint(body1, body2, x1, y1, x2, y2, collideConnected);
+			(*out_joint)->retain();
+		});
+	}
+
+	bool4 wrap_love_dll_physics_newMouseJoint(Body *body, float x, float y, MouseJoint **out_joint)
+	{
+		return wrap_catchexcept( [&]() {
+			*out_joint = physicsInstance->newMouseJoint(body, x, y); 
+			(*out_joint)->retain();
+		});
+	}
+
+	bool4 wrap_love_dll_physics_newRevoluteJoint(Body *body1, Body *body2, Float2 pA, Float2 pB, bool collideConnected, RevoluteJoint **out_joint)
+	{
+		return wrap_catchexcept( [&]() {
+			*out_joint = physicsInstance->newRevoluteJoint(body1, body2, pA.x, pA.y, pB.x, pB.y, collideConnected);
+			(*out_joint)->retain();
+		});
+	}
+	bool4 wrap_love_dll_physics_newRevoluteJoint_referenceAngle(Body *body1, Body *body2, Float2 pA, Float2 pB, bool collideConnected, float referenceAngle, RevoluteJoint **out_joint)
+	{
+		return wrap_catchexcept([&]() {
+			*out_joint = physicsInstance->newRevoluteJoint(body1, body2, pA.x, pA.y, pB.x, pB.y, collideConnected, referenceAngle);
+			(*out_joint)->retain();
+		});
+	}
+
+	bool4 wrap_love_dll_physics_newPrismaticJoint(Body *body1, Body *body2, Float2 pA, Float2 pB, Float2 angle, bool collideConnected, PrismaticJoint **out_joint)
+	{
+		return wrap_catchexcept( [&]() {
+			*out_joint = physicsInstance->newPrismaticJoint(body1, body2, 
+				pA.x, pA.y, pB.x, pB.y, angle.x, angle.y,
+				collideConnected);
+			(*out_joint)->retain();
+		});
+	}
+
+	bool4 wrap_love_dll_physics_newPrismaticJoint_referenceAngle(Body *body1, Body *body2, Float2 pA, Float2 pB, Float2 angle, bool collideConnected, float referenceAngle, PrismaticJoint **out_joint)
+	{
+		return wrap_catchexcept([&]() {
+			*out_joint = physicsInstance->newPrismaticJoint(body1, body2,
+				pA.x, pA.y, pB.x, pB.y, angle.x, angle.y,
+				collideConnected, referenceAngle);
+			(*out_joint)->retain();
+		});
+	}
+
+	bool4 wrap_love_dll_physics_newPulleyJoint(Body *body1, Body *body2, Float2 g1, Float2 g2, Float2 pA, Float2 pB, float ratio, bool collideConnected, PulleyJoint **out_joint)
+	{
+		return wrap_catchexcept( [&]() {
+			*out_joint = physicsInstance->newPulleyJoint(body1, body2,
+				b2Vec2(g1.x, g1.y),
+				b2Vec2(g2.x, g2.y), b2Vec2(pA.x, pA.y), b2Vec2(pB.x, pB.y), ratio, collideConnected);
+			(*out_joint)->retain();
+		});
+	}
+
+	bool4 wrap_love_dll_physics_newGearJoint(Joint *joint1, Joint *joint2, float ratio, bool collideConnected, GearJoint **out_joint)
+	{
+		return wrap_catchexcept( [&]() {
+			*out_joint = physicsInstance->newGearJoint(joint1, joint2, ratio, collideConnected);
+			(*out_joint)->retain();
+		});
+	}
+
+	bool4 wrap_love_dll_physics_newFrictionJoint(Body *body1, Body *body2, Float2 pA, Float2 pB, bool collideConnected, FrictionJoint **out_joint)
+	{
+		return wrap_catchexcept([&]() {
+			*out_joint = physicsInstance->newFrictionJoint(body1, body2, pA.x, pA.y, pB.x, pB.y, collideConnected);
+			(*out_joint)->retain();
+		});
+	}
+
+	bool4 wrap_love_dll_physics_newWeldJoint(Body *body1, Body *body2, Float2 pA, Float2 pB, bool collideConnected, WeldJoint **out_joint)
+	{
+		return wrap_catchexcept([&]() {
+			*out_joint = physicsInstance->newWeldJoint(body1, body2, pA.x, pA.y, pB.x, pB.y, collideConnected);
+			(*out_joint)->retain();
+		});
+	}
+
+	bool4 wrap_love_dll_physics_newWeldJoint_referenceAngle(Body *body1, Body *body2, Float2 pA, Float2 pB, bool collideConnected, float referenceAngle, WeldJoint **out_joint)
+	{
+		return wrap_catchexcept([&]() {
+			*out_joint = physicsInstance->newWeldJoint(body1, body2, pA.x, pA.y, pB.x, pB.y, collideConnected, referenceAngle);
+			(*out_joint)->retain();
+		});
+	}
+
+	bool4 wrap_love_dll_physics_newWheelJoint(Body *body1, Body *body2, Float2 pA, Float2 pB, Float2 angle, bool collideConnected, WheelJoint **out_joint)
+	{
+		return wrap_catchexcept([&]() {
+			*out_joint = physicsInstance->newWheelJoint(body1, body2,
+				pA.x, pA.y, pB.x, pB.y, angle.x, angle.y,
+				collideConnected);
+			(*out_joint)->retain();
+		});
+	}
+
+	bool4 wrap_love_dll_physics_newRopeJoint(Body *body1, Body *body2, Float2 pA, Float2 pB, float maxLength, bool collideConnected, RopeJoint **out_joint)
+	{
+		return wrap_catchexcept([&]() {
+			*out_joint = physicsInstance->newRopeJoint(body1, body2,
+				pA.x, pA.y, pB.x, pB.y,
+				maxLength, collideConnected);
+			(*out_joint)->retain();
+		});
+	}
+
+	bool4 wrap_love_dll_physics_newMotorJoint(Body *body1, Body *body2, float correctionFactor, bool collideConnected, MotorJoint **out_joint)
+	{
+		return wrap_catchexcept([&]() {
+			*out_joint = physicsInstance->newMotorJoint(body1, body2, correctionFactor, collideConnected);
+			(*out_joint)->retain();
+		});
+	}
+
+	bool4 wrap_love_dll_physics_open_love_physics()
+	{
+		physicsInstance = Module::getInstance<love::physics::box2d::Physics>(Module::M_PHYSICS);
+		if (physicsInstance == nullptr)
+		{
+			return wrap_catchexcept([&]() {
+				physicsInstance = new love::physics::box2d::Physics();
+				Module::registerInstance(physicsInstance);
+			});
+		}
+
+		// init code ...
+
+		return true;
+	}
+
+	bool4 wrap_love_dll_physics_setMeter(float meter)
+	{
+		return wrap_catchexcept([&]() { Physics::setMeter(meter); });
+
+	}
+	void wrap_love_dll_physics_getMeter(float *out_meter)
+	{
+		*out_meter = Physics::getMeter();
+	}
+
+	//// FIXME: because the params is lua_State *L, we need hack it.
+	//void w_getDistance()
+	//{
+	//	return physicsInstance->getDistance(L);
+	//}
+
+
+	//// FIXME: because the params is lua_State *L, we need hack it.
+	//bool4 wrap_love_dll_physics_newPolygonShape()
+	//{
+	//	int ret = 0;
+	//	wrap_catchexcept([&]() { ret = physicsInstance->newPolygonShape(L); });
+	//	return ret;
+	//}
+
+	//// FIXME: because the params is lua_State *L, we need hack it.
+	//bool4 wrap_love_dll_physics_newChainShape()
+	//{
+	//	int ret = 0;
+	//	wrap_catchexcept([&]() { ret = physicsInstance->newChainShape(L); });
+	//	return ret;
+	//}
+
+#pragma endregion
+
+#pragma region type - PolygonShape
+
+	void w_PolygonShape_validate(PolygonShape *t, bool4 *out_validate)
+	{
+		*out_validate = t->validate();
+	}
+
+	//// FIXME: because the params is lua_State *L, we need hack it.
+	//void w_PolygonShape_getPoints(PolygonShape *t)
+	//{
+	//	= luax_checkpolygonshape(L, 1);
+	//	lua_remove(L, 1);
+	//	return t->getPoints(L);
+	//}
+#pragma endregion
+
+#pragma region type - PrismaticJoin
+
+	void w_PrismaticJoint_getJointTranslation(PrismaticJoint *t, float *out_translation)
+	{
+		*out_translation = t->getJointTranslation();
+	}
+
+	void w_PrismaticJoint_getJointSpeed(PrismaticJoint *t, float *out_speed)
+	{
+		*out_speed = t->getJointSpeed();
+	}
+
+	void w_PrismaticJoint_setMotorEnabled(PrismaticJoint *t, bool4 ebabled)
+	{
+		t->setMotorEnabled(ebabled);
+	}
+
+	void w_PrismaticJoint_isMotorEnabled(PrismaticJoint *t, bool4 *out_enabled)
+	{
+		*out_enabled = t->isMotorEnabled();
+	}
+
+	void w_PrismaticJoint_setMaxMotorForce(PrismaticJoint *t, float force)
+	{
+		t->setMaxMotorForce(force);
+	}
+
+	void w_PrismaticJoint_setMotorSpeed(PrismaticJoint *t, float speed)
+	{
+		t->setMotorSpeed(speed);
+	}
+
+	void w_PrismaticJoint_getMotorSpeed(PrismaticJoint *t, float *out_speed)
+	{
+		*out_speed = t->getMotorSpeed();
+	}
+
+	void w_PrismaticJoint_getMotorForce(PrismaticJoint *t, float inv_dt, float *out_force)
+	{
+		*out_force = t->getMotorForce(inv_dt);
+	}
+
+	void w_PrismaticJoint_getMaxMotorForce(PrismaticJoint *t, float *out_force)
+	{
+		*out_force = t->getMaxMotorForce();
+	}
+
+	void w_PrismaticJoint_setLimitsEnabled(PrismaticJoint *t, bool4 enabled)
+	{
+		t->setLimitsEnabled(enabled);
+	}
+
+	void w_PrismaticJoint_areLimitsEnabled(PrismaticJoint *t, bool4 *out_enabled)
+	{
+		*out_enabled = t->areLimitsEnabled();
+	}
+
+	bool4 w_PrismaticJoint_setUpperLimit(PrismaticJoint *t, float limit)
+	{
+		return wrap_catchexcept([&]() { t->setUpperLimit(limit); });
+	}
+
+	bool4 w_PrismaticJoint_setLowerLimit(PrismaticJoint *t, float limit)
+	{
+		return wrap_catchexcept([&]() { t->setLowerLimit(limit); });
+	}
+
+	bool4 w_PrismaticJoint_setLimits(PrismaticJoint *t, float lowerLimit, float upperLimit)
+	{
+		return wrap_catchexcept([&]() { t->setLimits(lowerLimit, upperLimit); });
+	}
+
+	void w_PrismaticJoint_getLowerLimit(PrismaticJoint *t, float *out_limit)
+	{
+		*out_limit = t->getLowerLimit();
+	}
+
+	void w_PrismaticJoint_getUpperLimit(PrismaticJoint *t, float *out_limit)
+	{
+		*out_limit = t->getUpperLimit();
+	}
+
+	void w_PrismaticJoint_getReferenceAngle(PrismaticJoint *t, float *out_angle)
+	{
+		*out_angle = t->getReferenceAngle();
+	}
+
+	//// FIXME: because the params is lua_State *L, we need hack it.
+	//void w_PrismaticJoint_getLimits(PrismaticJoint *t)
+	//{
+	//	lua_remove(L, 1);
+	//	return t->getLimits(L);
+	//}
+
+	//// FIXME: because the params is lua_State *L, we need hack it.
+	//void w_PrismaticJoint_getAxis(PrismaticJoint *t)
+	//{
+	//	return t->getAxis(L);
+	//}
+
+#pragma endregion
+
+#pragma region type - PulleyJoint
+	
+	
+	void w_PulleyJoint_getLengthA(PulleyJoint *t, float *out_lengthA)
+	{
+		*out_lengthA = t->getLengthA();
+	}
+
+	void w_PulleyJoint_getLengthB(PulleyJoint *t, float *out_lengthB)
+	{
+		*out_lengthB = t->getLengthB();
+	}
+
+	void w_PulleyJoint_getRatio(PulleyJoint *t, float *out_ratio)
+	{
+		*out_ratio = t->getRatio();
+	}
+
+	//// FIXME: because the params is lua_State *L, we need hack it.
+	//void w_PulleyJoint_getGroundAnchors(PulleyJoint *t)
+	//{
+	//	= luax_checkpulleyjoint(L, 1);
+	//	lua_remove(L, 1);
+	//	return t->getGroundAnchors(L);
+	//}
+
+#pragma endregion
+
+#pragma region type - RevoluteJoint
+
+	void wrap_love_dll_type_RevoluteJoint_getJointAngle(RevoluteJoint *t, float *out_angle)
+	{
+		*out_angle = t->getJointAngle();
+	}
+
+	void wrap_love_dll_type_RevoluteJoint_getJointSpeed(RevoluteJoint *t, float *out_speed)
+	{
+		*out_speed = t->getJointSpeed();
+	}
+
+	void wrap_love_dll_type_RevoluteJoint_setMotorEnabled(RevoluteJoint *t, bool4 enabled)
+	{
+		t->setMotorEnabled(enabled);
+	}
+
+	void wrap_love_dll_type_RevoluteJoint_isMotorEnabled(RevoluteJoint *t, bool4* out_enabled)
+	{
+		*out_enabled = t->isMotorEnabled();
+	}
+
+	void wrap_love_dll_type_RevoluteJoint_setMaxMotorTorque(RevoluteJoint *t, float torque)
+	{
+		t->setMaxMotorTorque(torque);
+	}
+
+	void wrap_love_dll_type_RevoluteJoint_setMotorSpeed(RevoluteJoint *t, float speed)
+	{
+		t->setMotorSpeed(speed);
+	}
+
+	void wrap_love_dll_type_RevoluteJoint_getMotorSpeed(RevoluteJoint *t, float *out_speed)
+	{
+		*out_speed = t->getMotorSpeed();
+	}
+
+	void wrap_love_dll_type_RevoluteJoint_getMotorTorque(RevoluteJoint *t, float inv_dt, float *out_torque)
+	{
+		*out_torque = t->getMotorTorque(inv_dt);
+	}
+
+	void wrap_love_dll_type_RevoluteJoint_getMaxMotorTorque(RevoluteJoint *t, float *out_torque)
+	{
+		*out_torque = t->getMaxMotorTorque();
+	}
+
+	void wrap_love_dll_type_RevoluteJoint_setLimitsEnabled(RevoluteJoint *t, bool4 enabled)
+	{
+		t->setLimitsEnabled(enabled);
+	}
+
+	void wrap_love_dll_type_RevoluteJoint_areLimitsEnabled(RevoluteJoint *t, bool4* out_enabled)
+	{
+		*out_enabled = t->areLimitsEnabled();
+	}
+
+	bool4 wrap_love_dll_type_RevoluteJoint_setUpperLimit(RevoluteJoint *t, float limit)
+	{
+		return wrap_catchexcept([&]() { t->setUpperLimit(limit); });
+	}
+
+	bool4 wrap_love_dll_type_RevoluteJoint_setLowerLimit(RevoluteJoint *t, float limit)
+	{
+		return wrap_catchexcept([&]() { t->setLowerLimit(limit); });
+	}
+
+	bool4 wrap_love_dll_type_RevoluteJoint_setLimits(RevoluteJoint *t, float lowerLimit, float upperLimit)
+	{
+		return wrap_catchexcept([&]() { t->setLimits(lowerLimit, upperLimit); });
+	}
+
+	void wrap_love_dll_type_RevoluteJoint_getLowerLimit(RevoluteJoint *t, float *out_limit)
+	{
+		*out_limit = t->getLowerLimit();
+	}
+
+	void wrap_love_dll_type_RevoluteJoint_getUpperLimit(RevoluteJoint *t, float *out_limit)
+	{
+		*out_limit = t->getUpperLimit();
+	}
+
+	void wrap_love_dll_type_RevoluteJoint_getReferenceAngle(RevoluteJoint *t, float *out_angle)
+	{
+		*out_angle = t->getReferenceAngle();
+	}
+
+	//// FIXME: because the params is lua_State *L, we need hack it.
+	//void wrap_love_dll_type_RevoluteJoint_getLimits(RevoluteJoint *t)
+	//{
+	//	return t->getLimits(L);
+	//}
+
+#pragma endregion
+
+#pragma region type - RopeJoint
+#pragma endregion
+
+#pragma region type - Shape
+#pragma endregion
+
+#pragma region type - WeldJoint
+#pragma endregion
+
+#pragma region type - WheelJoint
+#pragma endregion
+
+#pragma region type - World
+#pragma endregion
 }
 }
 
