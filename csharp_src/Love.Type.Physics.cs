@@ -1,5 +1,7 @@
 
 #region Physics
+using System;
+
 namespace Love
 {
 
@@ -79,19 +81,19 @@ namespace Love
             return out_result;
         }
 
-        public int GetType()
+        public BodyType GetBodyType()
         {
             int out_body_type;
             Love2dDll.wrap_love_dll_type_Body_getType(p, out out_body_type);
-            return out_body_type;
+            return (BodyType)out_body_type;
         }
 
-        public void ApplyLinearImpulse_xy(float jx, float jy)
+        public void ApplyLinearImpulse(float jx, float jy)
         {
             Love2dDll.wrap_love_dll_type_Body_applyLinearImpulse_xy(p, jx, jy);
         }
 
-        public void ApplyLinearImpulse_xy_offset(float jx, float jy, float ox, float oy)
+        public void ApplyLinearImpulse(float jx, float jy, float ox, float oy)
         {
             Love2dDll.wrap_love_dll_type_Body_applyLinearImpulse_xy_offset(p, jx, jy, ox, oy);
         }
@@ -106,12 +108,12 @@ namespace Love
             Love2dDll.wrap_love_dll_type_Body_applyTorque(p, torque);
         }
 
-        public void ApplyForce_xy(float fx, float fy)
+        public void ApplyForce(float fx, float fy)
         {
             Love2dDll.wrap_love_dll_type_Body_applyForce_xy(p, fx, fy);
         }
 
-        public void ApplyForce_xy_offset(float fx, float fy, float ox, float oy)
+        public void ApplyForce(float fx, float fy, float ox, float oy)
         {
             Love2dDll.wrap_love_dll_type_Body_applyForce_xy_offset(p, fx, fy, ox, oy);
         }
@@ -283,11 +285,11 @@ namespace Love
             return out_result;
         }
 
-        public IntPtr GetWorld()
+        public World GetWorld()
         {
-            IntPtr out_world;
+            System.IntPtr out_world;
             Love2dDll.wrap_love_dll_type_Body_getWorld(p, out out_world);
-            return out_world;
+            return NewObject<World>(out_world);
         }
 
         public void Destroy()
@@ -302,9 +304,23 @@ namespace Love
             return out_result;
         }
 
-        // TODO: finishe function wrap_love_dll_type_Body_getFixtureList
-        // TODO: finishe function wrap_love_dll_type_Body_getJointList
-        // TODO: finishe function wrap_love_dll_type_Body_getContactList
+        public Fixture[] GetFixtureList()
+        {
+            Love2dDll.wrap_love_dll_type_Body_getFixtureList(p, out var pfixtures, out int fixture_length);
+            return DllTool.ReadIntPtrsWithConvertAndRelease<Fixture>(pfixtures, fixture_length);
+        }
+
+        public Joint[] GetJointList()
+        {
+            Love2dDll.wrap_love_dll_type_Body_getJointList(p, out var pfixtures, out int fixture_length);
+            return DllTool.ReadIntPtrsWithConvertAndRelease<Joint>(pfixtures, fixture_length);
+        }
+
+        public Contact[] GetContactList()
+        {
+            Love2dDll.wrap_love_dll_type_Body_getContactList(p, out var pfixtures, out int fixture_length);
+            return DllTool.ReadIntPtrsWithConvertAndRelease<Contact>(pfixtures, fixture_length);
+        }
     }
     public class Contact : LoveObject
     {
@@ -312,6 +328,7 @@ namespace Love
         /// disable construct
         /// </summary>
         protected Contact() { }
+
         public float GetFriction()
         {
             float out_friction;
@@ -377,8 +394,18 @@ namespace Love
             return out_speed;
         }
 
-        // TODO: finishe function wrap_love_dll_type_Contact_getChildren
-        // TODO: finishe function wrap_love_dll_type_Contact_getFixtures
+        public void GetChildren(out int indexA, out int indexB)
+        {
+            Love2dDll.wrap_love_dll_type_Contact_getChildren(p, out indexA, out indexB);
+        }
+
+        public void GetFixtures(out Fixture fixtureA, out Fixture fixtureB)
+        {
+            Love2dDll.wrap_love_dll_type_Contact_getFixtures(p, out var pa, out var pb);
+            fixtureA = NewObject<Fixture>(pa);
+            fixtureB = NewObject<Fixture>(pb);
+        }
+
         public bool IsDestroyed()
         {
             bool out_result;
@@ -386,8 +413,17 @@ namespace Love
             return out_result;
         }
 
-        // TODO: finishe function wrap_love_dll_type_Contact_getPositions
-        // TODO: finishe function wrap_love_dll_type_Contact_getNormal
+        public Vector2[] GetPositions()
+        {
+            Love2dDll.wrap_love_dll_type_Contact_getPositions(p, out var pointList, out var pointListLength);
+            return DllTool.ReadVector2sAndRelease(pointList, pointListLength);
+        }
+
+        public Vector2 GetNormal()
+        {
+            Love2dDll.wrap_love_dll_type_Contact_getNormal(p, out float nx, out float ny);
+            return new Vector2(nx, ny);
+        }
     }
     public class Fixture : LoveObject
     {
@@ -395,11 +431,12 @@ namespace Love
         /// disable construct
         /// </summary>
         protected Fixture() { }
-        public int GetType()
+
+        public ShapeType GetShapeType()
         {
             int out_fixture_type;
             Love2dDll.wrap_love_dll_type_Fixture_getType(p, out out_fixture_type);
-            return out_fixture_type;
+            return (ShapeType)out_fixture_type;
         }
 
         public void SetFriction(float friction)
@@ -450,18 +487,18 @@ namespace Love
             return out_result;
         }
 
-        public IntPtr GetBody()
+        public Body GetBody()
         {
-            IntPtr out_body;
+            System.IntPtr out_body;
             Love2dDll.wrap_love_dll_type_Fixture_getBody(p, out out_body);
-            return out_body;
+            return NewObject<Body>(out_body);
         }
 
-        public IntPtr GetShape()
+        public Shape GetShape()
         {
-            IntPtr out_shape;
+            System.IntPtr out_shape;
             Love2dDll.wrap_love_dll_type_Fixture_getShape(p, out out_shape);
-            return out_shape;
+            return NewObject<Shape>(out_shape);
         }
 
         public bool TestPoint(float x, float y)
@@ -476,7 +513,11 @@ namespace Love
             Love2dDll.wrap_love_dll_type_Fixture_setFilterData(p, categories, mask, group);
         }
 
-        // TODO: finishe function wrap_love_dll_type_Fixture_getFilterData
+        public void GetFilterData(out float categories, out float mask, out float group)
+        {
+            Love2dDll.wrap_love_dll_type_Fixture_getFilterData(p, out categories, out mask, out group);
+        }
+
         public int GetGroupIndex()
         {
             int out_index;
@@ -501,33 +542,48 @@ namespace Love
             return out_result;
         }
 
-        // TODO: finishe function wrap_love_dll_type_Fixture_rayCast
-        public void SetCategory(UInt16 categories)
+        public bool RayCast(float x1, float y1, float x2, float y2, float maxFraction, int childIndex, out Vector2 pos, out float fraction)
+        {
+            Love2dDll.wrap_love_dll_type_Fixture_rayCast(p, x1, y1, x2, y2, maxFraction, childIndex, out bool out_result, out pos, out fraction);
+            return out_result;
+        }
+
+        public void SetCategory(ushort categories)
         {
             Love2dDll.wrap_love_dll_type_Fixture_setCategory(p, categories);
         }
 
-        public UInt16 GetCategory()
+        public ushort GetCategory()
         {
-            UInt16 out_categories;
+            ushort out_categories;
             Love2dDll.wrap_love_dll_type_Fixture_getCategory(p, out out_categories);
             return out_categories;
         }
 
-        public void SetMask(UInt16 masks)
+        public void SetMask(ushort masks)
         {
             Love2dDll.wrap_love_dll_type_Fixture_setMask(p, masks);
         }
 
-        public UInt16 GetMask()
+        public ushort GetMask()
         {
             UInt16 out_mask;
             Love2dDll.wrap_love_dll_type_Fixture_getMask(p, out out_mask);
             return out_mask;
         }
 
-        // TODO: finishe function wrap_love_dll_type_Fixture_getBoundingBox
-        // TODO: finishe function wrap_love_dll_type_Fixture_getMassData
+        public RectangleF GetBoundingBox(int childIndex)
+        {
+            Love2dDll.wrap_love_dll_type_Fixture_getBoundingBox(p, childIndex,
+                out float lx, out float ly, out float ux, out float uy);
+            return new RectangleF(lx, ly, ux - lx, uy - ly);
+        }
+
+        public void GetMassData(out Vector2 center, out float mass, out float rotationalInertia)
+        {
+            Love2dDll.wrap_love_dll_type_Fixture_getMassData(p, out center, out mass, out rotationalInertia);
+        }
+
     }
     public class Shape : LoveObject
     {
@@ -563,19 +619,23 @@ namespace Love
             return out_result;
         }
 
-        public void RayCast(Vector2 p1, Vector2 p2, float maxFraction, Vector2 trans, float tr, int childIndex, WrapShapeRayCastCallbackDelegate callback)
+        public delegate float RayCastCallBack(float nx, float ny, float fraction);
+
+        public void RayCast(Vector2 p1, Vector2 p2, float maxFraction, Vector2 trans, float tr, int childIndex, RayCastCallBack callback)
         {
-            Love2dDll.wrap_love_dll_type_Shape_rayCast(p, p1, p2, maxFraction, trans, tr, childIndex, callback);
+            Love2dDll.wrap_love_dll_type_Shape_rayCast(p, p1, p2, maxFraction, trans, tr, childIndex, (nx, ny, fraction) => callback(nx, ny, fraction));
         }
 
-        public void ComputeAABB(float x, float y, float r, int childIndex, WrapShapeComputeAABBCallbackDelegate callback)
+        public delegate float ComputeAABBCallback(float lx, float ly, float ux, float uy);
+        public void ComputeAABB(float x, float y, float r, int childIndex, ComputeAABBCallback callback)
         {
-            Love2dDll.wrap_love_dll_type_Shape_computeAABB(p, x, y, r, childIndex, callback);
+            Love2dDll.wrap_love_dll_type_Shape_computeAABB(p, x, y, r, childIndex, (lx, ly, ux, uy) => callback(lx, ly, ux, uy));
         }
 
-        public void ComputeMass(float density, WrapShapeComputeMassCallbackDelegate callback)
+        public delegate float ComputeMassCallback(float x, float y, float mass, float inertia);
+        public void ComputeMass(float density, ComputeMassCallback callback)
         {
-            Love2dDll.wrap_love_dll_type_Shape_computeMass(p, density, callback);
+            Love2dDll.wrap_love_dll_type_Shape_computeMass(p, density, (x, y, m, inertia) => callback(x, y, m, inertia));
         }
 
     }
@@ -585,14 +645,21 @@ namespace Love
         /// disable construct
         /// </summary>
         protected Joint() { }
-        public int GetType()
+
+        public JointType GetJointType()
         {
             int out_type;
             Love2dDll.wrap_love_dll_type_Joint_getType(p, out out_type);
-            return out_type;
+            return (JointType)out_type;
         }
 
-        // TODO: finishe function wrap_love_dll_type_Joint_getBodies
+        public void GetBodies(out Body bodyA, out Body bodyB)
+        {
+            Love2dDll.wrap_love_dll_type_Joint_getBodies(p, out var pa, out var pb);
+            bodyA = NewObject<Body>(pa);
+            bodyB = NewObject<Body>(pb);
+        }
+
         public float GetReactionTorque(float inv_dt)
         {
             float out_torque;
@@ -619,8 +686,46 @@ namespace Love
             return out_destroyed;
         }
 
-        // TODO: finishe function wrap_love_dll_type_Joint_getAnchors
-        // TODO: finishe function wrap_love_dll_type_Joint_getReactionForce
+        public void GetAnchors(out float x1, out float y1, out float x2, out float y2)
+        {
+            Love2dDll.wrap_love_dll_type_Joint_getAnchors(p, out x1, out y1, out x2, out y2);
+        }
+
+        public Vector2 GetReactionForce(float dt)
+        {
+            Love2dDll.wrap_love_dll_type_Joint_getReactionForce(p, dt, out float x, out float y);
+            return new Vector2(x, y);
+        }
+
+        internal static Joint JointRetainToRegularJoint(Joint joint)
+        {
+            switch (joint.GetJointType())
+            {
+                case JointType.Distance: RetainLoveObject(joint.p); return NewObject<DistanceJoint>(joint.p);
+                case JointType.Revolute: RetainLoveObject(joint.p); return NewObject<RevoluteJoint>(joint.p);
+                case JointType.Prismatic: RetainLoveObject(joint.p); return NewObject<PrismaticJoint>(joint.p);
+                case JointType.Mouse: RetainLoveObject(joint.p); return NewObject<MouseJoint>(joint.p);
+                case JointType.Pulley: RetainLoveObject(joint.p); return NewObject<PulleyJoint>(joint.p);
+                case JointType.Gear: RetainLoveObject(joint.p); return NewObject<GearJoint>(joint.p);
+                case JointType.Friction: RetainLoveObject(joint.p); return NewObject<FrictionJoint>(joint.p);
+                case JointType.Weld: RetainLoveObject(joint.p); return NewObject<WeldJoint>(joint.p);
+                case JointType.Wheel: RetainLoveObject(joint.p); return NewObject<WheelJoint>(joint.p);
+                case JointType.Rope: RetainLoveObject(joint.p); return NewObject<RopeJoint>(joint.p);
+                case JointType.Motor: RetainLoveObject(joint.p); return NewObject<MotorJoint>(joint.p);
+            }
+
+            return null;
+        }
+        internal static Joint[] JointRetainToRegularJoint(Joint[] jointList)
+        {
+            Joint[] finalList = new Joint[jointList.Length];
+            for (int i = 0; i < jointList.Length; i++)
+            {
+                finalList[i] = JointRetainToRegularJoint(jointList[i]);
+            }
+            return finalList;
+        }
+
     }
     public class World : LoveObject
     {
@@ -690,32 +795,115 @@ namespace Love
             return out_validate;
         }
 
-        public void Update(float dt, int velocityiterations, int positioniterations, WrapWorldContactCallbackDelegate beginContact, WrapWorldContactCallbackDelegate endContact, WrapWorldContactCallbackDelegate preSolve, WrapWorldContactCallbackDelegate postSolve, WrapWorldContactFilterCallbackDelegate filter)
+        public delegate void WorldContactCallback(Fixture fixtureA, Fixture fixtureB, Contact contact);
+        public delegate void WorldContactPostSolveCallback(Fixture fixtureA, Fixture fixtureB, Contact contact, Vector2[] impluseArray);
+        public delegate bool WorldContactFilterCallback(Fixture fixtureA, Fixture fixtureB);
+
+        WorldContactCallback beginContact;
+        WorldContactCallback endContact;
+        WorldContactCallback preSolve;
+        WorldContactPostSolveCallback postSolve;
+
+        public void SetCallbacks(
+            WorldContactCallback beginContact,
+            WorldContactCallback endContact,
+            WorldContactCallback preSolve,
+            WorldContactPostSolveCallback postSolve)
         {
-            Love2dDll.wrap_love_dll_type_World_update(p, dt, velocityiterations, positioniterations, beginContact, endContact, preSolve, postSolve, filter);
+            this.beginContact = beginContact;
+            this.endContact = endContact;
+            this.preSolve = preSolve;
+            this.postSolve = postSolve;
         }
 
-        // TODO: finishe function wrap_love_dll_type_World_getGravity
-        // TODO: finishe function wrap_love_dll_type_World_getBodies
-        // TODO: finishe function wrap_love_dll_type_World_getJoints
-        // TODO: finishe function wrap_love_dll_type_World_getContacts
-        public void QueryBoundingBox(float topLeftX, float topLeftY, float bottomRightX, float bottomRightY, WrapWorldQueryBoundingBoxCallbackDelegate callback)
+        public void GetCallbacks(
+            out WorldContactCallback beginContact,
+            out WorldContactCallback endContact,
+            out WorldContactCallback preSolve,
+            out WorldContactPostSolveCallback postSolve)
         {
-            Love2dDll.wrap_love_dll_type_World_queryBoundingBox(p, topLeftX, topLeftY, bottomRightX, bottomRightY, callback);
+            beginContact = this.beginContact;
+            endContact = this.endContact;
+            preSolve = this.preSolve;
+            postSolve = this.postSolve;
         }
 
-        public void RayCast(float x1, float y1, float x2, float y2, WrapWorldRayCastCallbackDelegate callback)
+        WorldContactFilterCallback filterCallback;
+        public WorldContactFilterCallback GetContactFilter()
         {
-            Love2dDll.wrap_love_dll_type_World_rayCast(p, x1, y1, x2, y2, callback);
+            return filterCallback;
+        }
+        public void SetContactFilter(WorldContactFilterCallback filterCallback)
+        {
+            this.filterCallback = filterCallback;
+        }
+
+        public void Update(float dt, int velocityiterations = 8, int positioniterations = 3)
+        {
+            WrapWorldContactCallbackDelegate _beginContact = (a, b, c, _, __) => beginContact(NewObject<Fixture>(a), NewObject<Fixture>(b), NewObject<Contact>(c));
+            WrapWorldContactCallbackDelegate _endContact = (a, b, c, _, __) => endContact(NewObject<Fixture>(a), NewObject<Fixture>(b), NewObject<Contact>(c));
+            WrapWorldContactCallbackDelegate _preSolve = (a, b, c, _, __) => preSolve(NewObject<Fixture>(a), NewObject<Fixture>(b), NewObject<Contact>(c));
+            WrapWorldContactCallbackDelegate _postSolve = (a, b, c, impArray, impArrayLength) => postSolve(NewObject<Fixture>(a), NewObject<Fixture>(b), NewObject<Contact>(c),
+                    DllTool.ReadVector2sAndRelease(impArray, impArrayLength));
+            WrapWorldContactFilterCallbackDelegate _filter = (a, b) => filterCallback(NewObject<Fixture>(a), NewObject<Fixture>(b));
+            Love2dDll.wrap_love_dll_type_World_update(p, dt, velocityiterations, positioniterations,
+                beginContact != null ? _beginContact : null,
+                endContact != null ? _endContact : null,
+                preSolve != null ? _preSolve : null,
+                postSolve != null ? _postSolve : null,
+                filterCallback != null ? _filter : null
+                );
+        }
+
+        public delegate bool QueryBoundingBoxCallback(Fixture pfixture);
+
+        public Vector2 GetGravity()
+        {
+            Love2dDll.wrap_love_dll_type_World_getGravity(p, out float x, out float y);
+            return new Vector2(x, y);
+        }
+
+        public Body[] GetBodies()
+        {
+            Love2dDll.wrap_love_dll_type_World_getBodies(p, out var bodyList, out var bodyListLength);
+            return DllTool.ReadIntPtrsWithConvertAndRelease<Body>(bodyList, bodyListLength);
+        }
+
+        public Joint[] GetJoints()
+        {
+            Love2dDll.wrap_love_dll_type_World_getJoints(p, out var jointList, out var jointListLength);
+            var jlist = DllTool.ReadIntPtrsWithConvertAndRelease<Joint>(jointList, jointListLength);
+            return Joint.JointRetainToRegularJoint(jlist);
+        }
+
+        public Contact[] GetContacts()
+        {
+            Love2dDll.wrap_love_dll_type_World_getContacts(p, out var contactList, out var contactListLength);
+            return DllTool.ReadIntPtrsWithConvertAndRelease<Contact>(contactList, contactListLength);
+        }
+
+        public void QueryBoundingBox(float topLeftX, float topLeftY, float bottomRightX, float bottomRightY, QueryBoundingBoxCallback callback)
+        {
+            Love2dDll.wrap_love_dll_type_World_queryBoundingBox(p, topLeftX, topLeftY, bottomRightX, bottomRightY, (pf) => callback(NewObject<Fixture>(pf)) );
+        }
+
+
+        public delegate float RayCastCallback(Fixture pfixture, float x, float y, float nx, float ny, float fraction);
+
+        public void RayCast(float x1, float y1, float x2, float y2, RayCastCallback callback)
+        {
+            Love2dDll.wrap_love_dll_type_World_rayCast(p, x1, y1, x2, y2, (pf, x, y, nx, ny, fraction) => callback(NewObject<Fixture>(pf), x, y, nx, ny, fraction));
         }
 
     }
-    public class physics : LoveObject
+
+    public class Physics : LoveObject
     {
         /// <summary>
         /// disable construct
         /// </summary>
-        protected physics() { }
+        protected Physics() { }
+
         // TODO: finishe function wrap_love_dll_physics_newWorld
         // TODO: finishe function wrap_love_dll_physics_newBody
         // TODO: finishe function wrap_love_dll_physics_newFixture
@@ -749,6 +937,7 @@ namespace Love
         /// disable construct
         /// </summary>
         protected ChainShape() { }
+
         public void SetNextVertex_nil()
         {
             Love2dDll.wrap_love_dll_type_ChainShape_setNextVertex_nil(p);
@@ -769,11 +958,11 @@ namespace Love
             Love2dDll.wrap_love_dll_type_ChainShape_setPreviousVertex(p, x, y);
         }
 
-        public IntPtr GetChildEdge(int index)
+        public EdgeShape GetChildEdge(int index)
         {
             IntPtr out_edgeShape;
             Love2dDll.wrap_love_dll_type_ChainShape_getChildEdge(p, index, out out_edgeShape);
-            return out_edgeShape;
+            return  NewObject<EdgeShape>(out_edgeShape);
         }
 
         public int GetVertexCount()
@@ -790,9 +979,23 @@ namespace Love
             return out_point;
         }
 
-        // TODO: finishe function wrap_love_dll_type_ChainShape_getNextVertex
-        // TODO: finishe function wrap_love_dll_type_ChainShape_getPreviousVertex
-        // TODO: finishe function wrap_love_dll_type_ChainShape_getPoints
+        public bool GetNextVertex(out Vector2 point)
+        {
+            Love2dDll.wrap_love_dll_type_ChainShape_getNextVertex(p, out var hasNextVertex, out point);
+            return hasNextVertex;
+        }
+
+        public bool GetPreviousVertex(out Vector2 point)
+        {
+            Love2dDll.wrap_love_dll_type_ChainShape_getPreviousVertex(p, out var hasPrevVertex, out point);
+            return hasPrevVertex;
+        }
+
+        public Vector2[] GetPoints()
+        {
+            Love2dDll.wrap_love_dll_type_ChainShape_getPoints(p, out var plist, out var plistLen);
+            return DllTool.ReadVector2sAndRelease(plist, plistLen);
+        }
     }
     public class CircleShape : Shape
     {
@@ -851,9 +1054,22 @@ namespace Love
             Love2dDll.wrap_love_dll_type_EdgeShape_setPreviousVertex(p, x, y);
         }
 
-        // TODO: finishe function wrap_love_dll_type_EdgeShape_getNextVertex
-        // TODO: finishe function wrap_love_dll_type_EdgeShape_getPreviousVertex
-        // TODO: finishe function wrap_love_dll_type_EdgeShape_getPoints
+        public bool GetNextVertex(out Vector2 point)
+        {
+            Love2dDll.wrap_love_dll_type_EdgeShape_getNextVertex(p, out var hasNextVertex, out point);
+            return hasNextVertex;
+        }
+
+        public bool GetPreviousVertex(out Vector2 point)
+        {
+            Love2dDll.wrap_love_dll_type_EdgeShape_getPreviousVertex(p, out var hasPrevVertex, out point);
+            return hasPrevVertex;
+        }
+
+        public void GetPoints(out float x1, out float y1, out float x2, out float y2)
+        {
+            Love2dDll.wrap_love_dll_type_EdgeShape_getPoints(p, out x1, out y1, out x2, out y2);
+        }
     }
     public class PolygonShape : Shape
     {
@@ -868,7 +1084,11 @@ namespace Love
             return out_validate;
         }
 
-        // TODO: finishe function wrap_love_dll_type_PolygonShape_getPoints
+        public Vector2[] GetPoints()
+        {
+            Love2dDll.wrap_love_dll_type_PolygonShape_getPoints(p, out var plist, out var plistLen);
+            return DllTool.ReadVector2sAndRelease(plist, plistLen);
+        }
     }
     public class DistanceJoint : Joint
     {
@@ -962,7 +1182,12 @@ namespace Love
             return out_ration;
         }
 
-        // TODO: finishe function wrap_love_dll_type_GearJoint_getJoints
+        public void GetJoints(out Joint j1, out Joint j2)
+        {
+            Love2dDll.wrap_love_dll_type_GearJoint_getJoints(p, out var pj1, out var pj2);
+            j1 = JointRetainToRegularJoint(NewObject<Joint>(pj1));
+            j2 = JointRetainToRegularJoint(NewObject<Joint>(pj2));
+        }
     }
     public class MotorJoint : Joint
     {
@@ -1023,7 +1248,11 @@ namespace Love
             return out_factor;
         }
 
-        // TODO: finishe function wrap_love_dll_type_MotorJoint_getLinearOffset
+        public Vector2 GetLinearOffset()
+        {
+            Love2dDll.wrap_love_dll_type_MotorJoint_getLinearOffset(p, out float x, out float y);
+            return new Vector2(x, y);
+        }
     }
     public class MouseJoint : Joint
     {
@@ -1072,7 +1301,13 @@ namespace Love
             return out_ratio;
         }
 
-        // TODO: finishe function wrap_love_dll_type_MouseJoint_getTarget
+
+        public Vector2 GetTarget()
+        {
+            Love2dDll.wrap_love_dll_type_MouseJoint_getTarget(p, out float x, out float y);
+            return new Vector2(x, y);
+        }
+
     }
     public class PrismaticJoint : Joint
     {
@@ -1185,8 +1420,15 @@ namespace Love
             return out_angle;
         }
 
-        // TODO: finishe function wrap_love_dll_type_PrismaticJoint_getLimits
-        // TODO: finishe function wrap_love_dll_type_PrismaticJoint_getAxis
+        public void GetLimits(out float lowerLimit, out float upperLimit)
+        {
+            Love2dDll.wrap_love_dll_type_PrismaticJoint_getLimits(p, out lowerLimit, out upperLimit);
+        }
+
+        public void GetAxis(out float axisX, out float axisY)
+        {
+            Love2dDll.wrap_love_dll_type_PrismaticJoint_getAxis(p, out axisX, out axisY);
+        }
     }
     public class PulleyJoint : Joint
     {
@@ -1215,7 +1457,10 @@ namespace Love
             return out_ratio;
         }
 
-        // TODO: finishe function wrap_love_dll_type_PulleyJoint_getGroundAnchors
+        public void GetGroundAnchors(out float x1, out float y1, out float x2, out float y2)
+        {
+            Love2dDll.wrap_love_dll_type_PulleyJoint_getGroundAnchors(p, out x1, out y1, out x2, out y2);
+        }
     }
     public class RevoluteJoint : Joint
     {
@@ -1328,7 +1573,31 @@ namespace Love
             return out_angle;
         }
 
-        // TODO: finishe function wrap_love_dll_type_RevoluteJoint_getLimits
+        public void GetLimits(out float lowerLimit, out float upperLimit)
+        {
+            Love2dDll.wrap_love_dll_type_RevoluteJoint_getLimits(p, out lowerLimit, out upperLimit);
+        }
+    }
+
+
+    public class RopeJoint : Joint
+    {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected RopeJoint() { }
+
+        public float GetMaxLength()
+        {
+            Love2dDll.wrap_love_dll_type_RopeJoint_getMaxLength(p, out float maxLength);
+            return maxLength;
+        }
+
+        public void SetMaxLength(float maxLength)
+        {
+            Love2dDll.wrap_love_dll_type_RopeJoint_setMaxLength(p, maxLength);
+        }
+
     }
     public class WeldJoint : Joint
     {
@@ -1455,7 +1724,10 @@ namespace Love
             return out_ratio;
         }
 
-        // TODO: finishe function wrap_love_dll_type_WheelJoint_getAxis
+        public void GetAxis(out float axisX, out float axisY)
+        {
+            Love2dDll.wrap_love_dll_type_WheelJoint_getAxis(p, out axisX, out axisY);
+        }
     }
 
 
@@ -1463,18 +1735,6 @@ namespace Love
 
 
 
-
-    // TODO : __ dont forget it 
-    public class RopeJoint : Joint
-    {
-        /// <summary>
-        /// disable construct
-        /// </summary>
-        protected RopeJoint() { }
-
-
-
-    }
 }
 #endregion
 

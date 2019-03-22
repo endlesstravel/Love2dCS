@@ -35,6 +35,7 @@ namespace Love
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate bool WrapWorldContactFilterCallbackDelegate(IntPtr fixtureA, IntPtr fixtureB);
 
+
     class Love2dDll
     {
         //[MethodImpl(MethodImplOptions.AggressiveInlining)] // .NET 4.5
@@ -88,6 +89,12 @@ namespace Love
         internal static void wrap_love_dll_release_obj(IntPtr p)
         {
             _wrap_love_dll_release_obj(p);
+        }
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_retain_obj")]
+        internal extern static void _wrap_love_dll_retain_obj(IntPtr p);
+        internal static void wrap_love_dll_retain_obj(IntPtr p) // danger !!!!
+        {
+            _wrap_love_dll_retain_obj(p);
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_delete")]
         internal extern static void _wrap_love_dll_delete(IntPtr p);
@@ -3712,8 +3719,6 @@ namespace Love
 
 
 
-
-
         #region Physic
 
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_getTransform")]
@@ -4368,8 +4373,8 @@ namespace Love
         }
 
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Contact_getChildren")]
-        internal extern static void _wrap_love_dll_type_Contact_getChildren(IntPtr pContact, out float childA, out float childB);
-        internal static void wrap_love_dll_type_Contact_getChildren(IntPtr pContact, out float childA, out float childB)
+        internal extern static void _wrap_love_dll_type_Contact_getChildren(IntPtr pContact, out int childA, out int childB);
+        internal static void wrap_love_dll_type_Contact_getChildren(IntPtr pContact, out int childA, out int childB)
         {
             _wrap_love_dll_type_Contact_getChildren(pContact, out childA, out childB);
         }
@@ -4571,10 +4576,10 @@ namespace Love
         }
 
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_rayCast")]
-        internal extern static bool _wrap_love_dll_type_Fixture_rayCast(IntPtr pFixture, bool[] hasHit, float x1, float y1, float x2, float y2, float maxFraction, int childIndex, out Vector2 pos, out float fraction);
-        internal static bool wrap_love_dll_type_Fixture_rayCast(IntPtr pFixture, bool[] hasHit, float x1, float y1, float x2, float y2, float maxFraction, int childIndex, out Vector2 pos, out float fraction)
+        internal extern static bool _wrap_love_dll_type_Fixture_rayCast(IntPtr pFixture, float x1, float y1, float x2, float y2, float maxFraction, int childIndex, out bool out_hasHit, out Vector2 pos, out float fraction);
+        internal static bool wrap_love_dll_type_Fixture_rayCast(IntPtr pFixture, float x1, float y1, float x2, float y2, float maxFraction, int childIndex, out bool out_hasHit, out Vector2 pos, out float fraction)
         {
-            return CheckCAPIException(_wrap_love_dll_type_Fixture_rayCast(pFixture, hasHit, x1, y1, x2, y2, maxFraction, childIndex, out pos, out fraction));
+            return CheckCAPIException(_wrap_love_dll_type_Fixture_rayCast(pFixture, x1, y1, x2, y2, maxFraction, childIndex, out out_hasHit, out pos, out fraction));
         }
 
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_setCategory")]
@@ -4606,10 +4611,10 @@ namespace Love
         }
 
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_getBoundingBox")]
-        internal extern static bool _wrap_love_dll_type_Fixture_getBoundingBox(IntPtr pFixture, int childIndex, out float topLeftX, out float topLeftY, out float bottomRightX, out float bottomRightY);
-        internal static bool wrap_love_dll_type_Fixture_getBoundingBox(IntPtr pFixture, int childIndex, out float topLeftX, out float topLeftY, out float bottomRightX, out float bottomRightY)
+        internal extern static bool _wrap_love_dll_type_Fixture_getBoundingBox(IntPtr pFixture, int childIndex, out float lx, out float ly, out float ux, out float uy);
+        internal static bool wrap_love_dll_type_Fixture_getBoundingBox(IntPtr pFixture, int childIndex, out float lx, out float ly, out float ux, out float uy)
         {
-            return CheckCAPIException(_wrap_love_dll_type_Fixture_getBoundingBox(pFixture, childIndex, out topLeftX, out topLeftY, out bottomRightX, out bottomRightY));
+            return CheckCAPIException(_wrap_love_dll_type_Fixture_getBoundingBox(pFixture, childIndex, out lx, out ly, out ux, out uy));
         }
 
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_getMassData")]
@@ -5318,6 +5323,22 @@ namespace Love
         {
             _wrap_love_dll_type_RevoluteJoint_getLimits(pRevoluteJoint, out lowerLimit, out upperLimit);
         }
+        //
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_RopeJoint_getMaxLength")]
+        internal extern static void _wrap_love_dll_type_RopeJoint_getMaxLength(IntPtr pWeldJoint, out float out_maxLength);
+        internal static void wrap_love_dll_type_RopeJoint_getMaxLength(IntPtr pWeldJoint, out float out_maxLength)
+        {
+            _wrap_love_dll_type_RopeJoint_getMaxLength(pWeldJoint, out out_maxLength);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_RopeJoint_setMaxLength")]
+        internal extern static void _wrap_love_dll_type_RopeJoint_setMaxLength(IntPtr pWeldJoint, float maxLength);
+        internal static void wrap_love_dll_type_RopeJoint_setMaxLength(IntPtr pWeldJoint, float maxLength)
+        {
+            _wrap_love_dll_type_RopeJoint_setMaxLength(pWeldJoint, maxLength);
+        }
+        //
 
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_WeldJoint_setFrequency")]
         internal extern static void _wrap_love_dll_type_WeldJoint_setFrequency(IntPtr pWeldJoint, float frequency);

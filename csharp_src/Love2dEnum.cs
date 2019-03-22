@@ -5,6 +5,8 @@
     /// </summary>
     public enum BodyType
     {
+        Invalid,
+
         /// <summary>
         /// Static bodies do not move.
         /// </summary>
@@ -26,6 +28,8 @@
     /// </summary>
     public enum JointType
     {
+        Invalid,
+
         Distance = 1,
 
         Revolute,
@@ -55,6 +59,8 @@
     /// </summary>
     public enum ShapeType
     {
+        Invalid,
+
         Circle = 1,
 
         Polygon,

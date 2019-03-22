@@ -35,6 +35,15 @@ namespace Love
             return obj;
         }
 
+        /// <summary>
+        /// danger !!!!!
+        /// </summary>
+        /// <param name="p"></param>
+        internal static void RetainLoveObject(IntPtr p)
+        {
+            Love2dDll.wrap_love_dll_retain_obj(p);
+        }
+
         // real pointer
         internal IntPtr p;
 

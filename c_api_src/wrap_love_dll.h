@@ -234,7 +234,7 @@ namespace wrap
 #pragma region delete release region
 	extern "C" LOVE_EXPORT void wrap_love_dll_last_error(WrapString **out_errormsg);
     extern "C" LOVE_EXPORT void wrap_love_dll_release_obj(Object *p);
-    // extern "C" LOVE_EXPORT void wrap_love_dll_retain_obj(Object *p);
+    extern "C" LOVE_EXPORT void wrap_love_dll_retain_obj(Object *p);
 	extern "C" LOVE_EXPORT void wrap_love_dll_delete(void *p);
 	extern "C" LOVE_EXPORT void wrap_love_dll_delete_array(void *p);
     extern "C" LOVE_EXPORT void wrap_love_dll_delete_WrapString(WrapString *ws);
@@ -1180,12 +1180,12 @@ namespace wrap
 	extern "C" LOVE_EXPORT void wrap_love_dll_type_Fixture_setGroupIndex(Fixture *t, int index);
 	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Fixture_destroy(Fixture *t);
 	extern "C" LOVE_EXPORT void wrap_love_dll_type_Fixture_isDestroyed(Fixture *t, bool4 *out_result);
-	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Fixture_rayCast(Fixture *t, bool4 *hasHit, float x1, float y1, float x2, float y2, float maxFraction, int childIndex, Float2 *out_pos, float *out_fraction);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Fixture_rayCast(Fixture *t, float x1, float y1, float x2, float y2, float maxFraction, int childIndex, bool4 *out_hasHit, Float2 *out_pos, float *out_fraction);
 	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Fixture_setCategory(Fixture *t, uint16 categories);
 	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Fixture_getCategory(Fixture *t, uint16 *out_categories);
 	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Fixture_setMask(Fixture *t, uint16 masks);
 	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Fixture_getMask(Fixture *t, uint16 *out_mask);
-	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Fixture_getBoundingBox(Fixture *t, int childIndex, float *out_topLeftX, float *out_topLeftY, float *out_bottomRightX, float *out_bottomRightY);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Fixture_getBoundingBox(Fixture *t, int childIndex, float *out_lx, float *out_ly, float *out_ux, float *out_uy);
 	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Fixture_getMassData(Fixture *t, Float2 *out_center, float *out_mass, float *out_rotationalInertia);
 	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_FrictionJoint_setMaxForce(FrictionJoint *t, float maxForce);
 	extern "C" LOVE_EXPORT void wrap_love_dll_type_FrictionJoint_getMaxForce(FrictionJoint *t, float *out_maxForce);
@@ -1287,6 +1287,8 @@ namespace wrap
 	extern "C" LOVE_EXPORT void wrap_love_dll_type_RevoluteJoint_getUpperLimit(RevoluteJoint *t, float *out_limit);
 	extern "C" LOVE_EXPORT void wrap_love_dll_type_RevoluteJoint_getReferenceAngle(RevoluteJoint *t, float *out_angle);
 	extern "C" LOVE_EXPORT void wrap_love_dll_type_RevoluteJoint_getLimits(RevoluteJoint *t, float *out_lowerLimit, float *out_upperLimit);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_RopeJoint_getMaxLength(RopeJoint *t, float *out_maxLength);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_RopeJoint_setMaxLength(RopeJoint *t, float maxLength);
 	extern "C" LOVE_EXPORT void wrap_love_dll_type_WeldJoint_setFrequency(WeldJoint *t, float frequency);
 	extern "C" LOVE_EXPORT void wrap_love_dll_type_WeldJoint_getFrequency(WeldJoint *t, float *out_frequency);
 	extern "C" LOVE_EXPORT void wrap_love_dll_type_WeldJoint_setDampingRatio(WeldJoint *t, float ratio);

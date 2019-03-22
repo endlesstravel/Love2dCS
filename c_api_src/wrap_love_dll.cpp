@@ -233,12 +233,12 @@ namespace wrap
 
 #pragma region delete release region
 
-    // part of C resonse for retain
+    // part of C resonse for retain, except Phyhics.Convert Joint..
     // part of C# response for release
-    //void wrap_love_dll_retain_obj(Object *p)
-    //{
-    //    p->retain();
-    //}
+    void wrap_love_dll_retain_obj(Object *p)
+    {
+        p->retain();
+    }
 
 	void wrap_love_dll_release_obj(Object *p)
 	{
@@ -7042,7 +7042,7 @@ namespace wrap
         *out_speed = t->getTangentSpeed();
     }
 
-    void wrap_love_dll_type_Contact_getChildren(Contact *t, float *out_childA, float *out_childB)
+    void wrap_love_dll_type_Contact_getChildren(Contact *t, int *out_childA, int *out_childB)
     {
         int a, b;
         t->getChildren(a, b);
@@ -7262,7 +7262,7 @@ namespace wrap
 	};
 
 	// FIXME: because the params is lua_State *L, we need hack it.
-	bool4 wrap_love_dll_type_Fixture_rayCast(Fixture *t, bool4 *hasHit, float x1, float y1, float x2, float y2, float maxFraction, int childIndex, Float2 *out_pos, float *out_fraction)
+	bool4 wrap_love_dll_type_Fixture_rayCast(Fixture *t, float x1, float y1, float x2, float y2, float maxFraction, int childIndex, bool4 *out_hasHit, Float2 *out_pos, float *out_fraction)
 	{
 		return wrap_catchexcept([&]() {
 			auto fixture = ((WrapFixtureHack*)t)->wrap_getFixture();
@@ -7276,7 +7276,7 @@ namespace wrap
 			input.p2.Set(p2x, p2y);
 			input.maxFraction = maxFraction;
 			b2RayCastOutput output;
-			if (!(*hasHit = fixture->RayCast(&output, input, childIndex)))
+			if (!(*out_hasHit = fixture->RayCast(&output, input, childIndex)))
 				return; // Nothing hit.
 
 			out_pos->x = output.normal.x;
@@ -7328,16 +7328,16 @@ namespace wrap
 	}
 
 	// FIXME: because the params is lua_State *L, we need hack it.
-	bool4 wrap_love_dll_type_Fixture_getBoundingBox(Fixture *t, int childIndex, float *out_topLeftX, float *out_topLeftY, float *out_bottomRightX, float *out_bottomRightY)
+	bool4 wrap_love_dll_type_Fixture_getBoundingBox(Fixture *t, int childIndex, float *out_lx, float *out_ly, float *out_ux, float *out_uy)
 	{
 		return wrap_catchexcept([&]() {
 			auto fixture = ((WrapFixtureHack*)t)->wrap_getFixture();
 			b2AABB box = fixture->GetAABB(childIndex);
 			box = Physics::scaleUp(box);
-			*out_topLeftX = box.lowerBound.x;
-			*out_topLeftY = box.lowerBound.y;
-			*out_bottomRightX = box.upperBound.x;
-			*out_bottomRightY = box.upperBound.y;
+			*out_lx = box.lowerBound.x;
+			*out_ly = box.lowerBound.y;
+			*out_ux = box.upperBound.x;
+			*out_uy = box.upperBound.y;
 		});
 	}
 
@@ -8172,6 +8172,15 @@ namespace wrap
 #pragma endregion
 
 #pragma region type - RopeJoint
+	void wrap_love_dll_type_RopeJoint_getMaxLength(RopeJoint *t, float *out_maxLength)
+	{
+		*out_maxLength = t->getMaxLength();
+	}
+
+	void wrap_love_dll_type_RopeJoint_setMaxLength(RopeJoint *t, float maxLength)
+	{
+		t->setMaxLength(maxLength);
+	}
 #pragma endregion
 
 
@@ -8350,6 +8359,9 @@ namespace wrap
 
 		void ProcessContactOrSolve(b2Contact *contact, const b2ContactImpulse *impulse, WrapContactCallbackFunc func)
 		{
+			if (func == nullptr)
+				return;
+
 			// Fixtures should be memoized, if we created them
 			Fixture *a = (Fixture *)Memoizer::find(contact->GetFixtureA());
 			Fixture *b = (Fixture *)Memoizer::find(contact->GetFixtureB());
