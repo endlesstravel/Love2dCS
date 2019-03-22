@@ -6347,15 +6347,6 @@ namespace wrap
 
 #pragma endregion
 
-	using love::physics::box2d::MotorJoint;
-	using love::physics::box2d::MouseJoint;
-	using love::physics::box2d::PolygonShape;
-	using love::physics::box2d::RevoluteJoint;
-	using love::physics::box2d::PulleyJoint;
-	using love::physics::box2d::WeldJoint;
-	using love::physics::box2d::WheelJoint;
-	using love::physics::box2d::RopeJoint;
-	using love::physics::box2d::PrismaticJoint;
 
 #pragma region type - Body
 
@@ -6915,26 +6906,26 @@ namespace wrap
 
 #pragma region type - EdgeShape
 
-    void wrap_love_dll_EdgeShape_setNextVertex_nil(EdgeShape *t)
+    void wrap_love_dll_type_EdgeShape_setNextVertex_nil(EdgeShape *t)
     {
         t->setNextVertex();
     }
 
-    void wrap_love_dll_EdgeShape_setNextVertex(EdgeShape *t, float x, float y)
+    void wrap_love_dll_type_EdgeShape_setNextVertex(EdgeShape *t, float x, float y)
     {
         t->setNextVertex(x, y);
     }
 
-    void wrap_love_dll_EdgeShape_setPreviousVertex_nil(EdgeShape *t)
+    void wrap_love_dll_type_EdgeShape_setPreviousVertex_nil(EdgeShape *t)
     {
         t->setPreviousVertex();
     }
-    void wrap_love_dll_EdgeShape_setPreviousVertex(EdgeShape *t, float x, float y)
+    void wrap_love_dll_type_EdgeShape_setPreviousVertex(EdgeShape *t, float x, float y)
     {
         t->setPreviousVertex(x, y);
     }
 
-    void wrap_love_dll_EdgeShape_getNextVertex(EdgeShape *t, bool4 *out_hasNextVertex, Float2 *out_result)
+    void wrap_love_dll_type_EdgeShape_getNextVertex(EdgeShape *t, bool4 *out_hasNextVertex, Float2 *out_result)
     {
         float x, y;
         if (*out_hasNextVertex = t->getNextVertex(x, y))
@@ -6944,7 +6935,7 @@ namespace wrap
         }
     }
 
-    void wrap_love_dll_EdgeShape_getPreviousVertex(EdgeShape *t, bool4 *out_hasPrevVertex, Float2 *out_result)
+    void wrap_love_dll_type_EdgeShape_getPreviousVertex(EdgeShape *t, bool4 *out_hasPrevVertex, Float2 *out_result)
     {
         float x, y;
         if (*out_hasPrevVertex = t->getPreviousVertex(x, y))
@@ -6955,7 +6946,7 @@ namespace wrap
     }
 
 	// FIXME: because the params is lua_State *L, we need hack it.
-	void wrap_love_dll_EdgeShape_getPoints(EdgeShape *t, float *out_x1, float *out_y1, float *out_x2, float *out_y2)
+	void wrap_love_dll_type_EdgeShape_getPoints(EdgeShape *t, float *out_x1, float *out_y1, float *out_x2, float *out_y2)
 	{
 		auto shape = ((WrapShapeHack*)t)->wrap_getShap();
 		b2EdgeShape *e = (b2EdgeShape *)shape;
@@ -7479,7 +7470,7 @@ namespace wrap
 	};
 
 	// FIXME: because the params is lua_State *L, we need hack it.
-	void wrap_love_dll_Joint_getAnchors(Joint *t, float *out_x1, float *out_y1, float *out_x2, float *out_y2)
+	void wrap_love_dll_type_Joint_getAnchors(Joint *t, float *out_x1, float *out_y1, float *out_x2, float *out_y2)
 	{
 		auto joint = ((WrapJointHack*)t)->wrap_getJoint();
 		*out_x1 = Physics::scaleUp(joint->GetAnchorA().x);
@@ -7489,7 +7480,7 @@ namespace wrap
 	}
 
 	// FIXME: because the params is lua_State *L, we need hack it.
-	void wrap_love_dll_Joint_getReactionForce(Joint *t, float dt, float *out_x, float *out_y)
+	void wrap_love_dll_type_Joint_getReactionForce(Joint *t, float dt, float *out_x, float *out_y)
 	{
 		auto joint = ((WrapJointHack*)t)->wrap_getJoint();
 		b2Vec2 v = Physics::scaleUp(joint->GetReactionForce(dt));
@@ -7687,20 +7678,20 @@ namespace wrap
 		});
 	}
 
-	bool4 wrap_love_dll_physics_newRevoluteJoint(Body *body1, Body *body2, Float2 pA, Float2 pB, bool collideConnected, RevoluteJoint **out_joint)
+	bool4 wrap_love_dll_physics_newRevoluteJoint(Body *body1, Body *body2, Float2 pA, Float2 pB, bool4 collideConnected, RevoluteJoint **out_joint)
 	{
 		return wrap_catchexcept([&]() {
 			*out_joint = physicsInstance->newRevoluteJoint(body1, body2, pA.x, pA.y, pB.x, pB.y, collideConnected);
 		});
 	}
-	bool4 wrap_love_dll_physics_newRevoluteJoint_referenceAngle(Body *body1, Body *body2, Float2 pA, Float2 pB, bool collideConnected, float referenceAngle, RevoluteJoint **out_joint)
+	bool4 wrap_love_dll_physics_newRevoluteJoint_referenceAngle(Body *body1, Body *body2, Float2 pA, Float2 pB, bool4 collideConnected, float referenceAngle, RevoluteJoint **out_joint)
 	{
 		return wrap_catchexcept([&]() {
 			*out_joint = physicsInstance->newRevoluteJoint(body1, body2, pA.x, pA.y, pB.x, pB.y, collideConnected, referenceAngle);
 		});
 	}
 
-	bool4 wrap_love_dll_physics_newPrismaticJoint(Body *body1, Body *body2, Float2 pA, Float2 pB, Float2 angle, bool collideConnected, PrismaticJoint **out_joint)
+	bool4 wrap_love_dll_physics_newPrismaticJoint(Body *body1, Body *body2, Float2 pA, Float2 pB, Float2 angle, bool4 collideConnected, PrismaticJoint **out_joint)
 	{
 		return wrap_catchexcept([&]() {
 			*out_joint = physicsInstance->newPrismaticJoint(body1, body2,
@@ -7709,7 +7700,7 @@ namespace wrap
 		});
 	}
 
-	bool4 wrap_love_dll_physics_newPrismaticJoint_referenceAngle(Body *body1, Body *body2, Float2 pA, Float2 pB, Float2 angle, bool collideConnected, float referenceAngle, PrismaticJoint **out_joint)
+	bool4 wrap_love_dll_physics_newPrismaticJoint_referenceAngle(Body *body1, Body *body2, Float2 pA, Float2 pB, Float2 angle, bool4 collideConnected, float referenceAngle, PrismaticJoint **out_joint)
 	{
 		return wrap_catchexcept([&]() {
 			*out_joint = physicsInstance->newPrismaticJoint(body1, body2,
@@ -7718,7 +7709,7 @@ namespace wrap
 		});
 	}
 
-	bool4 wrap_love_dll_physics_newPulleyJoint(Body *body1, Body *body2, Float2 g1, Float2 g2, Float2 pA, Float2 pB, float ratio, bool collideConnected, PulleyJoint **out_joint)
+	bool4 wrap_love_dll_physics_newPulleyJoint(Body *body1, Body *body2, Float2 g1, Float2 g2, Float2 pA, Float2 pB, float ratio, bool4 collideConnected, PulleyJoint **out_joint)
 	{
 		return wrap_catchexcept([&]() {
 			*out_joint = physicsInstance->newPulleyJoint(body1, body2,
@@ -7727,35 +7718,35 @@ namespace wrap
 		});
 	}
 
-	bool4 wrap_love_dll_physics_newGearJoint(Joint *joint1, Joint *joint2, float ratio, bool collideConnected, GearJoint **out_joint)
+	bool4 wrap_love_dll_physics_newGearJoint(Joint *joint1, Joint *joint2, float ratio, bool4 collideConnected, GearJoint **out_joint)
 	{
 		return wrap_catchexcept([&]() {
 			*out_joint = physicsInstance->newGearJoint(joint1, joint2, ratio, collideConnected);
 		});
 	}
 
-	bool4 wrap_love_dll_physics_newFrictionJoint(Body *body1, Body *body2, Float2 pA, Float2 pB, bool collideConnected, FrictionJoint **out_joint)
+	bool4 wrap_love_dll_physics_newFrictionJoint(Body *body1, Body *body2, Float2 pA, Float2 pB, bool4 collideConnected, FrictionJoint **out_joint)
 	{
 		return wrap_catchexcept([&]() {
 			*out_joint = physicsInstance->newFrictionJoint(body1, body2, pA.x, pA.y, pB.x, pB.y, collideConnected);
 		});
 	}
 
-	bool4 wrap_love_dll_physics_newWeldJoint(Body *body1, Body *body2, Float2 pA, Float2 pB, bool collideConnected, WeldJoint **out_joint)
+	bool4 wrap_love_dll_physics_newWeldJoint(Body *body1, Body *body2, Float2 pA, Float2 pB, bool4 collideConnected, WeldJoint **out_joint)
 	{
 		return wrap_catchexcept([&]() {
 			*out_joint = physicsInstance->newWeldJoint(body1, body2, pA.x, pA.y, pB.x, pB.y, collideConnected);
 		});
 	}
 
-	bool4 wrap_love_dll_physics_newWeldJoint_referenceAngle(Body *body1, Body *body2, Float2 pA, Float2 pB, bool collideConnected, float referenceAngle, WeldJoint **out_joint)
+	bool4 wrap_love_dll_physics_newWeldJoint_referenceAngle(Body *body1, Body *body2, Float2 pA, Float2 pB, bool4 collideConnected, float referenceAngle, WeldJoint **out_joint)
 	{
 		return wrap_catchexcept([&]() {
 			*out_joint = physicsInstance->newWeldJoint(body1, body2, pA.x, pA.y, pB.x, pB.y, collideConnected, referenceAngle);
 		});
 	}
 
-	bool4 wrap_love_dll_physics_newWheelJoint(Body *body1, Body *body2, Float2 pA, Float2 pB, Float2 angle, bool collideConnected, WheelJoint **out_joint)
+	bool4 wrap_love_dll_physics_newWheelJoint(Body *body1, Body *body2, Float2 pA, Float2 pB, Float2 angle, bool4 collideConnected, WheelJoint **out_joint)
 	{
 		return wrap_catchexcept([&]() {
 			*out_joint = physicsInstance->newWheelJoint(body1, body2,
@@ -7764,7 +7755,7 @@ namespace wrap
 		});
 	}
 
-	bool4 wrap_love_dll_physics_newRopeJoint(Body *body1, Body *body2, Float2 pA, Float2 pB, float maxLength, bool collideConnected, RopeJoint **out_joint)
+	bool4 wrap_love_dll_physics_newRopeJoint(Body *body1, Body *body2, Float2 pA, Float2 pB, float maxLength, bool4 collideConnected, RopeJoint **out_joint)
 	{
 		return wrap_catchexcept([&]() {
 			*out_joint = physicsInstance->newRopeJoint(body1, body2,
@@ -7773,7 +7764,7 @@ namespace wrap
 		});
 	}
 
-	bool4 wrap_love_dll_physics_newMotorJoint(Body *body1, Body *body2, float correctionFactor, bool collideConnected, MotorJoint **out_joint)
+	bool4 wrap_love_dll_physics_newMotorJoint(Body *body1, Body *body2, float correctionFactor, bool4 collideConnected, MotorJoint **out_joint)
 	{
 		return wrap_catchexcept([&]() {
 			*out_joint = physicsInstance->newMotorJoint(body1, body2, correctionFactor, collideConnected);
@@ -8522,7 +8513,7 @@ namespace wrap
 	}
 
 	// FIXME: because the params is lua_State *L, we need hack it.
-	void wrap_love_dll_typeWorld_getGravity(World *t, float *out_x, float *out_y)
+	void wrap_love_dll_type_World_getGravity(World *t, float *out_x, float *out_y)
 	{
 		auto b2w = ((WrapHackWorld*)t)->wrap_getWorld();
 		auto g = b2w->GetGravity();
@@ -8531,7 +8522,7 @@ namespace wrap
 	}
 
 	// FIXME: because the params is lua_State *L, we need hack it.
-	bool4 wrap_love_dll_typeWorld_getBodies(World *t, Body ***out_bodyList, int *out_bodyListLenght)
+	bool4 wrap_love_dll_type_World_getBodies(World *t, Body ***out_bodyList, int *out_bodyListLenght)
 	{
 		return wrap_catchexcept([&]() {
 			auto b2w = ((WrapHackWorld*)t)->wrap_getWorld();
@@ -8562,7 +8553,7 @@ namespace wrap
 	}
 
 	// FIXME: because the params is lua_State *L, we need hack it.
-	bool4 wrap_love_dll_typeWorld_getJoints(World *t, Joint ***out_jointList, int *out_jointListLenght)
+	bool4 wrap_love_dll_type_World_getJoints(World *t, Joint ***out_jointList, int *out_jointListLenght)
 	{
 		return wrap_catchexcept([&]() {
 			auto b2w = ((WrapHackWorld*)t)->wrap_getWorld();
@@ -8589,7 +8580,7 @@ namespace wrap
 	}
 
 	// FIXME: because the params is lua_State *L, we need hack it.
-	bool4 wrap_love_dll_typeWorld_getContacts(World *t, Contact ***out_contactList, int *out_contactListLenght)
+	bool4 wrap_love_dll_type_World_getContacts(World *t, Contact ***out_contactList, int *out_contactListLenght)
 	{
 		return wrap_catchexcept([&]() {
 			auto b2w = ((WrapHackWorld*)t)->wrap_getWorld();
@@ -8634,7 +8625,7 @@ namespace wrap
 	};
 
 	// FIXME: because the params is lua_State *L, we need hack it.
-	bool4 wrap_love_dll_typeWorld_queryBoundingBox(World *t, float topLeftX, float topLeftY, float bottomRightX, float bottomRightY, WrapQueryBoundingBoxCallbackFunc callback)
+	bool4 wrap_love_dll_type_World_queryBoundingBox(World *t, float topLeftX, float topLeftY, float bottomRightX, float bottomRightY, WrapQueryBoundingBoxCallbackFunc callback)
 	{
 		return wrap_catchexcept([&]() {
 			auto b2w = ((WrapHackWorld*)t)->wrap_getWorld();
@@ -8665,7 +8656,7 @@ namespace wrap
 	};
 
 	// FIXME: because the params is lua_State *L, we need hack it.
-	bool4 wrap_love_dll_typeWorld_rayCast(World *t, float x1, float y1, float x2, float y2, WrapRayCastCallbackFunc callback)
+	bool4 wrap_love_dll_type_World_rayCast(World *t, float x1, float y1, float x2, float y2, WrapRayCastCallbackFunc callback)
 	{
 		return wrap_catchexcept([&]() {
 			auto b2w = ((WrapHackWorld*)t)->wrap_getWorld();

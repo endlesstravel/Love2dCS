@@ -13,6 +13,28 @@ using BytePtr = System.IntPtr;
 
 namespace Love
 {
+    
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	internal delegate float WrapShapeComputeMassCallbackDelegate(float x, float y, float mass, float inertia);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    internal delegate float WrapShapeComputeAABBCallbackDelegate(float lx, float ly, float ux, float uy);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    internal delegate float WrapShapeRayCastCallbackDelegate(float nx, float ny, float fraction);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    internal delegate float WrapWorldRayCastCallbackDelegate(IntPtr pfixture, float x, float y, float nx, float ny, float fraction);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    internal delegate bool WrapWorldQueryBoundingBoxCallbackDelegate(IntPtr pfixture);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    internal delegate void WrapWorldContactCallbackDelegate(IntPtr fixtureA, IntPtr fixtureB, IntPtr contact, IntPtr impluseArray, int impluseArrayLength);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    internal delegate bool WrapWorldContactFilterCallbackDelegate(IntPtr fixtureA, IntPtr fixtureB);
+
     class Love2dDll
     {
         //[MethodImpl(MethodImplOptions.AggressiveInlining)] // .NET 4.5
@@ -3654,7 +3676,1903 @@ namespace Love
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         #region Physic
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_getTransform")]
+        internal extern static void _wrap_love_dll_type_Body_getTransform(IntPtr pBody, out Vector3 pos);
+        internal static void wrap_love_dll_type_Body_getTransform(IntPtr pBody, out Vector3 pos)
+        {
+            _wrap_love_dll_type_Body_getTransform(pBody, out pos);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_getLinearVelocity")]
+        internal extern static void _wrap_love_dll_type_Body_getLinearVelocity(IntPtr pBody, out Vector2 result);
+        internal static void wrap_love_dll_type_Body_getLinearVelocity(IntPtr pBody, out Vector2 result)
+        {
+            _wrap_love_dll_type_Body_getLinearVelocity(pBody, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_getWorldCenter")]
+        internal extern static void _wrap_love_dll_type_Body_getWorldCenter(IntPtr pBody, out Vector2 result);
+        internal static void wrap_love_dll_type_Body_getWorldCenter(IntPtr pBody, out Vector2 result)
+        {
+            _wrap_love_dll_type_Body_getWorldCenter(pBody, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_getLocalCenter")]
+        internal extern static void _wrap_love_dll_type_Body_getLocalCenter(IntPtr pBody, out Vector2 result);
+        internal static void wrap_love_dll_type_Body_getLocalCenter(IntPtr pBody, out Vector2 result)
+        {
+            _wrap_love_dll_type_Body_getLocalCenter(pBody, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_getAngularVelocity")]
+        internal extern static void _wrap_love_dll_type_Body_getAngularVelocity(IntPtr pBody, out float result);
+        internal static void wrap_love_dll_type_Body_getAngularVelocity(IntPtr pBody, out float result)
+        {
+            _wrap_love_dll_type_Body_getAngularVelocity(pBody, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_getMass")]
+        internal extern static void _wrap_love_dll_type_Body_getMass(IntPtr pBody, out float result);
+        internal static void wrap_love_dll_type_Body_getMass(IntPtr pBody, out float result)
+        {
+            _wrap_love_dll_type_Body_getMass(pBody, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_getInertia")]
+        internal extern static void _wrap_love_dll_type_Body_getInertia(IntPtr pBody, out float result);
+        internal static void wrap_love_dll_type_Body_getInertia(IntPtr pBody, out float result)
+        {
+            _wrap_love_dll_type_Body_getInertia(pBody, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_getAngularDamping")]
+        internal extern static void _wrap_love_dll_type_Body_getAngularDamping(IntPtr pBody, out float result);
+        internal static void wrap_love_dll_type_Body_getAngularDamping(IntPtr pBody, out float result)
+        {
+            _wrap_love_dll_type_Body_getAngularDamping(pBody, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_getLinearDamping")]
+        internal extern static void _wrap_love_dll_type_Body_getLinearDamping(IntPtr pBody, out float result);
+        internal static void wrap_love_dll_type_Body_getLinearDamping(IntPtr pBody, out float result)
+        {
+            _wrap_love_dll_type_Body_getLinearDamping(pBody, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_getGravityScale")]
+        internal extern static void _wrap_love_dll_type_Body_getGravityScale(IntPtr pBody, out float result);
+        internal static void wrap_love_dll_type_Body_getGravityScale(IntPtr pBody, out float result)
+        {
+            _wrap_love_dll_type_Body_getGravityScale(pBody, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_getType")]
+        internal extern static void _wrap_love_dll_type_Body_getType(IntPtr pBody, out int body_type);
+        internal static void wrap_love_dll_type_Body_getType(IntPtr pBody, out int body_type)
+        {
+            _wrap_love_dll_type_Body_getType(pBody, out body_type);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_applyLinearImpulse_xy")]
+        internal extern static void _wrap_love_dll_type_Body_applyLinearImpulse_xy(IntPtr pBody, float jx, float jy);
+        internal static void wrap_love_dll_type_Body_applyLinearImpulse_xy(IntPtr pBody, float jx, float jy)
+        {
+            _wrap_love_dll_type_Body_applyLinearImpulse_xy(pBody, jx, jy);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_applyLinearImpulse_xy_offset")]
+        internal extern static void _wrap_love_dll_type_Body_applyLinearImpulse_xy_offset(IntPtr pBody, float jx, float jy, float ox, float oy);
+        internal static void wrap_love_dll_type_Body_applyLinearImpulse_xy_offset(IntPtr pBody, float jx, float jy, float ox, float oy)
+        {
+            _wrap_love_dll_type_Body_applyLinearImpulse_xy_offset(pBody, jx, jy, ox, oy);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_applyAngularImpulse")]
+        internal extern static void _wrap_love_dll_type_Body_applyAngularImpulse(IntPtr pBody, float i);
+        internal static void wrap_love_dll_type_Body_applyAngularImpulse(IntPtr pBody, float i)
+        {
+            _wrap_love_dll_type_Body_applyAngularImpulse(pBody, i);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_applyTorque")]
+        internal extern static void _wrap_love_dll_type_Body_applyTorque(IntPtr pBody, float torque);
+        internal static void wrap_love_dll_type_Body_applyTorque(IntPtr pBody, float torque)
+        {
+            _wrap_love_dll_type_Body_applyTorque(pBody, torque);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_applyForce_xy")]
+        internal extern static void _wrap_love_dll_type_Body_applyForce_xy(IntPtr pBody, float fx, float fy);
+        internal static void wrap_love_dll_type_Body_applyForce_xy(IntPtr pBody, float fx, float fy)
+        {
+            _wrap_love_dll_type_Body_applyForce_xy(pBody, fx, fy);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_applyForce_xy_offset")]
+        internal extern static void _wrap_love_dll_type_Body_applyForce_xy_offset(IntPtr pBody, float fx, float fy, float ox, float oy);
+        internal static void wrap_love_dll_type_Body_applyForce_xy_offset(IntPtr pBody, float fx, float fy, float ox, float oy)
+        {
+            _wrap_love_dll_type_Body_applyForce_xy_offset(pBody, fx, fy, ox, oy);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_setX")]
+        internal extern static bool _wrap_love_dll_type_Body_setX(IntPtr pBody, float x);
+        internal static bool wrap_love_dll_type_Body_setX(IntPtr pBody, float x)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Body_setX(pBody, x));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_setY")]
+        internal extern static bool _wrap_love_dll_type_Body_setY(IntPtr pBody, float y);
+        internal static bool wrap_love_dll_type_Body_setY(IntPtr pBody, float y)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Body_setY(pBody, y));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_setLinearVelocity")]
+        internal extern static void _wrap_love_dll_type_Body_setLinearVelocity(IntPtr pBody, float x, float y);
+        internal static void wrap_love_dll_type_Body_setLinearVelocity(IntPtr pBody, float x, float y)
+        {
+            _wrap_love_dll_type_Body_setLinearVelocity(pBody, x, y);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_setAngle")]
+        internal extern static bool _wrap_love_dll_type_Body_setAngle(IntPtr pBody, float angle);
+        internal static bool wrap_love_dll_type_Body_setAngle(IntPtr pBody, float angle)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Body_setAngle(pBody, angle));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_setAngularVelocity")]
+        internal extern static void _wrap_love_dll_type_Body_setAngularVelocity(IntPtr pBody, float angleVelocity);
+        internal static void wrap_love_dll_type_Body_setAngularVelocity(IntPtr pBody, float angleVelocity)
+        {
+            _wrap_love_dll_type_Body_setAngularVelocity(pBody, angleVelocity);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_setPosition")]
+        internal extern static bool _wrap_love_dll_type_Body_setPosition(IntPtr pBody, float x, float y);
+        internal static bool wrap_love_dll_type_Body_setPosition(IntPtr pBody, float x, float y)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Body_setPosition(pBody, x, y));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_resetMassData")]
+        internal extern static bool _wrap_love_dll_type_Body_resetMassData(IntPtr pBody);
+        internal static bool wrap_love_dll_type_Body_resetMassData(IntPtr pBody)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Body_resetMassData(pBody));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_setMass")]
+        internal extern static bool _wrap_love_dll_type_Body_setMass(IntPtr pBody, float m);
+        internal static bool wrap_love_dll_type_Body_setMass(IntPtr pBody, float m)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Body_setMass(pBody, m));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_setInertia")]
+        internal extern static bool _wrap_love_dll_type_Body_setInertia(IntPtr pBody, float inertia);
+        internal static bool wrap_love_dll_type_Body_setInertia(IntPtr pBody, float inertia)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Body_setInertia(pBody, inertia));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_setAngularDamping")]
+        internal extern static void _wrap_love_dll_type_Body_setAngularDamping(IntPtr pBody, float angularDamping);
+        internal static void wrap_love_dll_type_Body_setAngularDamping(IntPtr pBody, float angularDamping)
+        {
+            _wrap_love_dll_type_Body_setAngularDamping(pBody, angularDamping);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_setLinearDamping")]
+        internal extern static void _wrap_love_dll_type_Body_setLinearDamping(IntPtr pBody, float linerDamping);
+        internal static void wrap_love_dll_type_Body_setLinearDamping(IntPtr pBody, float linerDamping)
+        {
+            _wrap_love_dll_type_Body_setLinearDamping(pBody, linerDamping);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_setGravityScale")]
+        internal extern static void _wrap_love_dll_type_Body_setGravityScale(IntPtr pBody, float scale);
+        internal static void wrap_love_dll_type_Body_setGravityScale(IntPtr pBody, float scale)
+        {
+            _wrap_love_dll_type_Body_setGravityScale(pBody, scale);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_setType")]
+        internal extern static bool _wrap_love_dll_type_Body_setType(IntPtr pBody, int body_type);
+        internal static bool wrap_love_dll_type_Body_setType(IntPtr pBody, int body_type)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Body_setType(pBody, body_type));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_getWorldPoint")]
+        internal extern static void _wrap_love_dll_type_Body_getWorldPoint(IntPtr pBody, float x, float y, out Vector2 result);
+        internal static void wrap_love_dll_type_Body_getWorldPoint(IntPtr pBody, float x, float y, out Vector2 result)
+        {
+            _wrap_love_dll_type_Body_getWorldPoint(pBody, x, y, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_getWorldVector")]
+        internal extern static void _wrap_love_dll_type_Body_getWorldVector(IntPtr pBody, float x, float y, out Vector2 result);
+        internal static void wrap_love_dll_type_Body_getWorldVector(IntPtr pBody, float x, float y, out Vector2 result)
+        {
+            _wrap_love_dll_type_Body_getWorldVector(pBody, x, y, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_getLocalPoint")]
+        internal extern static void _wrap_love_dll_type_Body_getLocalPoint(IntPtr pBody, float x, float y, out Vector2 result);
+        internal static void wrap_love_dll_type_Body_getLocalPoint(IntPtr pBody, float x, float y, out Vector2 result)
+        {
+            _wrap_love_dll_type_Body_getLocalPoint(pBody, x, y, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_getLocalVector")]
+        internal extern static void _wrap_love_dll_type_Body_getLocalVector(IntPtr pBody, float x, float y, out Vector2 result);
+        internal static void wrap_love_dll_type_Body_getLocalVector(IntPtr pBody, float x, float y, out Vector2 result)
+        {
+            _wrap_love_dll_type_Body_getLocalVector(pBody, x, y, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_getLinearVelocityFromWorldPoint")]
+        internal extern static void _wrap_love_dll_type_Body_getLinearVelocityFromWorldPoint(IntPtr pBody, float x, float y, out Vector2 result);
+        internal static void wrap_love_dll_type_Body_getLinearVelocityFromWorldPoint(IntPtr pBody, float x, float y, out Vector2 result)
+        {
+            _wrap_love_dll_type_Body_getLinearVelocityFromWorldPoint(pBody, x, y, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_getLinearVelocityFromLocalPoint")]
+        internal extern static void _wrap_love_dll_type_Body_getLinearVelocityFromLocalPoint(IntPtr pBody, float x, float y, out Vector2 result);
+        internal static void wrap_love_dll_type_Body_getLinearVelocityFromLocalPoint(IntPtr pBody, float x, float y, out Vector2 result)
+        {
+            _wrap_love_dll_type_Body_getLinearVelocityFromLocalPoint(pBody, x, y, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_isBullet")]
+        internal extern static void _wrap_love_dll_type_Body_isBullet(IntPtr pBody, out bool result);
+        internal static void wrap_love_dll_type_Body_isBullet(IntPtr pBody, out bool result)
+        {
+            _wrap_love_dll_type_Body_isBullet(pBody, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_setBullet")]
+        internal extern static void _wrap_love_dll_type_Body_setBullet(IntPtr pBody, bool b);
+        internal static void wrap_love_dll_type_Body_setBullet(IntPtr pBody, bool b)
+        {
+            _wrap_love_dll_type_Body_setBullet(pBody, b);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_isActive")]
+        internal extern static void _wrap_love_dll_type_Body_isActive(IntPtr pBody, out bool result);
+        internal static void wrap_love_dll_type_Body_isActive(IntPtr pBody, out bool result)
+        {
+            _wrap_love_dll_type_Body_isActive(pBody, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_isAwake")]
+        internal extern static void _wrap_love_dll_type_Body_isAwake(IntPtr pBody, out bool result);
+        internal static void wrap_love_dll_type_Body_isAwake(IntPtr pBody, out bool result)
+        {
+            _wrap_love_dll_type_Body_isAwake(pBody, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_setSleepingAllowed")]
+        internal extern static void _wrap_love_dll_type_Body_setSleepingAllowed(IntPtr pBody, bool b);
+        internal static void wrap_love_dll_type_Body_setSleepingAllowed(IntPtr pBody, bool b)
+        {
+            _wrap_love_dll_type_Body_setSleepingAllowed(pBody, b);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_isSleepingAllowed")]
+        internal extern static void _wrap_love_dll_type_Body_isSleepingAllowed(IntPtr pBody, out bool result);
+        internal static void wrap_love_dll_type_Body_isSleepingAllowed(IntPtr pBody, out bool result)
+        {
+            _wrap_love_dll_type_Body_isSleepingAllowed(pBody, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_setActive")]
+        internal extern static bool _wrap_love_dll_type_Body_setActive(IntPtr pBody, bool b);
+        internal static bool wrap_love_dll_type_Body_setActive(IntPtr pBody, bool b)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Body_setActive(pBody, b));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_setAwake")]
+        internal extern static void _wrap_love_dll_type_Body_setAwake(IntPtr pBody, bool b);
+        internal static void wrap_love_dll_type_Body_setAwake(IntPtr pBody, bool b)
+        {
+            _wrap_love_dll_type_Body_setAwake(pBody, b);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_setFixedRotation")]
+        internal extern static bool _wrap_love_dll_type_Body_setFixedRotation(IntPtr pBody, bool b);
+        internal static bool wrap_love_dll_type_Body_setFixedRotation(IntPtr pBody, bool b)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Body_setFixedRotation(pBody, b));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_isFixedRotation")]
+        internal extern static void _wrap_love_dll_type_Body_isFixedRotation(IntPtr pBody, out bool result);
+        internal static void wrap_love_dll_type_Body_isFixedRotation(IntPtr pBody, out bool result)
+        {
+            _wrap_love_dll_type_Body_isFixedRotation(pBody, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_getWorld")]
+        internal extern static void _wrap_love_dll_type_Body_getWorld(IntPtr pBody, out IntPtr world);
+        internal static void wrap_love_dll_type_Body_getWorld(IntPtr pBody, out IntPtr world)
+        {
+            _wrap_love_dll_type_Body_getWorld(pBody, out world);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_destroy")]
+        internal extern static bool _wrap_love_dll_type_Body_destroy(IntPtr pBody);
+        internal static bool wrap_love_dll_type_Body_destroy(IntPtr pBody)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Body_destroy(pBody));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_isDestroyed")]
+        internal extern static void _wrap_love_dll_type_Body_isDestroyed(IntPtr pBody, out bool result);
+        internal static void wrap_love_dll_type_Body_isDestroyed(IntPtr pBody, out bool result)
+        {
+            _wrap_love_dll_type_Body_isDestroyed(pBody, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_getFixtureList")]
+        internal extern static bool _wrap_love_dll_type_Body_getFixtureList(IntPtr pBody, out IntPtr fixtures, out int fixtures_length);
+        internal static bool wrap_love_dll_type_Body_getFixtureList(IntPtr pBody, out IntPtr fixtures, out int fixtures_length)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Body_getFixtureList(pBody, out fixtures, out fixtures_length));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_getJointList")]
+        internal extern static bool _wrap_love_dll_type_Body_getJointList(IntPtr pBody, out IntPtr joints, out int joints_length);
+        internal static bool wrap_love_dll_type_Body_getJointList(IntPtr pBody, out IntPtr joints, out int joints_length)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Body_getJointList(pBody, out joints, out joints_length));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Body_getContactList")]
+        internal extern static bool _wrap_love_dll_type_Body_getContactList(IntPtr pBody, out IntPtr contacts, out int contacts_length);
+        internal static bool wrap_love_dll_type_Body_getContactList(IntPtr pBody, out IntPtr contacts, out int contacts_length)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Body_getContactList(pBody, out contacts, out contacts_length));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Shape_getType")]
+        internal extern static void _wrap_love_dll_type_Shape_getType(IntPtr pShape, out int shapeType);
+        internal static void wrap_love_dll_type_Shape_getType(IntPtr pShape, out int shapeType)
+        {
+            _wrap_love_dll_type_Shape_getType(pShape, out shapeType);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Shape_getRadius")]
+        internal extern static void _wrap_love_dll_type_Shape_getRadius(IntPtr pShape, out float radius);
+        internal static void wrap_love_dll_type_Shape_getRadius(IntPtr pShape, out float radius)
+        {
+            _wrap_love_dll_type_Shape_getRadius(pShape, out radius);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Shape_getChildCount")]
+        internal extern static void _wrap_love_dll_type_Shape_getChildCount(IntPtr pShape, out float childCount);
+        internal static void wrap_love_dll_type_Shape_getChildCount(IntPtr pShape, out float childCount)
+        {
+            _wrap_love_dll_type_Shape_getChildCount(pShape, out childCount);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Shape_testPoint")]
+        internal extern static void _wrap_love_dll_type_Shape_testPoint(IntPtr pShape, float tx, float ty, float tr, float px, float py, out bool result);
+        internal static void wrap_love_dll_type_Shape_testPoint(IntPtr pShape, float tx, float ty, float tr, float px, float py, out bool result)
+        {
+            _wrap_love_dll_type_Shape_testPoint(pShape, tx, ty, tr, px, py, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Shape_rayCast")]
+        internal extern static bool _wrap_love_dll_type_Shape_rayCast(IntPtr pShape, Vector2 p1, Vector2 p2, float maxFraction, Vector2 trans, float tr, int childIndex, WrapShapeRayCastCallbackDelegate callback);
+        internal static bool wrap_love_dll_type_Shape_rayCast(IntPtr pShape, Vector2 p1, Vector2 p2, float maxFraction, Vector2 trans, float tr, int childIndex, WrapShapeRayCastCallbackDelegate callback)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Shape_rayCast(pShape, p1, p2, maxFraction, trans, tr, childIndex, callback));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Shape_computeAABB")]
+        internal extern static bool _wrap_love_dll_type_Shape_computeAABB(IntPtr pShape, float x, float y, float r, int childIndex, WrapShapeComputeAABBCallbackDelegate callback);
+        internal static bool wrap_love_dll_type_Shape_computeAABB(IntPtr pShape, float x, float y, float r, int childIndex, WrapShapeComputeAABBCallbackDelegate callback)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Shape_computeAABB(pShape, x, y, r, childIndex, callback));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Shape_computeMass")]
+        internal extern static void _wrap_love_dll_type_Shape_computeMass(IntPtr pShape, float density, WrapShapeComputeMassCallbackDelegate callback);
+        internal static void wrap_love_dll_type_Shape_computeMass(IntPtr pShape, float density, WrapShapeComputeMassCallbackDelegate callback)
+        {
+            _wrap_love_dll_type_Shape_computeMass(pShape, density, callback);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_ChainShape_setNextVertex_nil")]
+        internal extern static void _wrap_love_dll_type_ChainShape_setNextVertex_nil(IntPtr pChainShape);
+        internal static void wrap_love_dll_type_ChainShape_setNextVertex_nil(IntPtr pChainShape)
+        {
+            _wrap_love_dll_type_ChainShape_setNextVertex_nil(pChainShape);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_ChainShape_setNextVertex")]
+        internal extern static bool _wrap_love_dll_type_ChainShape_setNextVertex(IntPtr pChainShape, float x, float y);
+        internal static bool wrap_love_dll_type_ChainShape_setNextVertex(IntPtr pChainShape, float x, float y)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_ChainShape_setNextVertex(pChainShape, x, y));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_ChainShape_setPreviousVertex_nil")]
+        internal extern static void _wrap_love_dll_type_ChainShape_setPreviousVertex_nil(IntPtr pChainShape);
+        internal static void wrap_love_dll_type_ChainShape_setPreviousVertex_nil(IntPtr pChainShape)
+        {
+            _wrap_love_dll_type_ChainShape_setPreviousVertex_nil(pChainShape);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_ChainShape_setPreviousVertex")]
+        internal extern static bool _wrap_love_dll_type_ChainShape_setPreviousVertex(IntPtr pChainShape, float x, float y);
+        internal static bool wrap_love_dll_type_ChainShape_setPreviousVertex(IntPtr pChainShape, float x, float y)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_ChainShape_setPreviousVertex(pChainShape, x, y));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_ChainShape_getChildEdge")]
+        internal extern static bool _wrap_love_dll_type_ChainShape_getChildEdge(IntPtr pChainShape, int index, out IntPtr edgeShape);
+        internal static bool wrap_love_dll_type_ChainShape_getChildEdge(IntPtr pChainShape, int index, out IntPtr edgeShape)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_ChainShape_getChildEdge(pChainShape, index, out edgeShape));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_ChainShape_getVertexCount")]
+        internal extern static void _wrap_love_dll_type_ChainShape_getVertexCount(IntPtr pChainShape, out int count);
+        internal static void wrap_love_dll_type_ChainShape_getVertexCount(IntPtr pChainShape, out int count)
+        {
+            _wrap_love_dll_type_ChainShape_getVertexCount(pChainShape, out count);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_ChainShape_getPoint")]
+        internal extern static bool _wrap_love_dll_type_ChainShape_getPoint(IntPtr pChainShape, int index, out Vector2 point);
+        internal static bool wrap_love_dll_type_ChainShape_getPoint(IntPtr pChainShape, int index, out Vector2 point)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_ChainShape_getPoint(pChainShape, index, out point));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_ChainShape_getNextVertex")]
+        internal extern static void _wrap_love_dll_type_ChainShape_getNextVertex(IntPtr pChainShape, out bool hasNextVertex, out Vector2 result);
+        internal static void wrap_love_dll_type_ChainShape_getNextVertex(IntPtr pChainShape, out bool hasNextVertex, out Vector2 result)
+        {
+            _wrap_love_dll_type_ChainShape_getNextVertex(pChainShape, out hasNextVertex, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_ChainShape_getPreviousVertex")]
+        internal extern static void _wrap_love_dll_type_ChainShape_getPreviousVertex(IntPtr pChainShape, out bool hasPrevVertex, out Vector2 result);
+        internal static void wrap_love_dll_type_ChainShape_getPreviousVertex(IntPtr pChainShape, out bool hasPrevVertex, out Vector2 result)
+        {
+            _wrap_love_dll_type_ChainShape_getPreviousVertex(pChainShape, out hasPrevVertex, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_ChainShape_getPoints")]
+        internal extern static void _wrap_love_dll_type_ChainShape_getPoints(IntPtr pChainShape, out IntPtr points, out int points_length);
+        internal static void wrap_love_dll_type_ChainShape_getPoints(IntPtr pChainShape, out IntPtr points, out int points_length)
+        {
+            _wrap_love_dll_type_ChainShape_getPoints(pChainShape, out points, out points_length);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_CircleShape_getRadius")]
+        internal extern static void _wrap_love_dll_type_CircleShape_getRadius(IntPtr pCircleShape, out float radius);
+        internal static void wrap_love_dll_type_CircleShape_getRadius(IntPtr pCircleShape, out float radius)
+        {
+            _wrap_love_dll_type_CircleShape_getRadius(pCircleShape, out radius);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_CircleShape_setRadius")]
+        internal extern static void _wrap_love_dll_type_CircleShape_setRadius(IntPtr pCircleShape, float r);
+        internal static void wrap_love_dll_type_CircleShape_setRadius(IntPtr pCircleShape, float r)
+        {
+            _wrap_love_dll_type_CircleShape_setRadius(pCircleShape, r);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_CircleShape_getPoint")]
+        internal extern static void _wrap_love_dll_type_CircleShape_getPoint(IntPtr pCircleShape, out Vector2 point);
+        internal static void wrap_love_dll_type_CircleShape_getPoint(IntPtr pCircleShape, out Vector2 point)
+        {
+            _wrap_love_dll_type_CircleShape_getPoint(pCircleShape, out point);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_CircleShape_setPoint")]
+        internal extern static void _wrap_love_dll_type_CircleShape_setPoint(IntPtr pCircleShape, float x, float y);
+        internal static void wrap_love_dll_type_CircleShape_setPoint(IntPtr pCircleShape, float x, float y)
+        {
+            _wrap_love_dll_type_CircleShape_setPoint(pCircleShape, x, y);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_EdgeShape_setNextVertex_nil")]
+        internal extern static void _wrap_love_dll_type_EdgeShape_setNextVertex_nil(IntPtr pEdgeShape);
+        internal static void wrap_love_dll_type_EdgeShape_setNextVertex_nil(IntPtr pEdgeShape)
+        {
+            _wrap_love_dll_type_EdgeShape_setNextVertex_nil(pEdgeShape);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_EdgeShape_setNextVertex")]
+        internal extern static void _wrap_love_dll_type_EdgeShape_setNextVertex(IntPtr pEdgeShape, float x, float y);
+        internal static void wrap_love_dll_type_EdgeShape_setNextVertex(IntPtr pEdgeShape, float x, float y)
+        {
+            _wrap_love_dll_type_EdgeShape_setNextVertex(pEdgeShape, x, y);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_EdgeShape_setPreviousVertex_nil")]
+        internal extern static void _wrap_love_dll_type_EdgeShape_setPreviousVertex_nil(IntPtr pEdgeShape);
+        internal static void wrap_love_dll_type_EdgeShape_setPreviousVertex_nil(IntPtr pEdgeShape)
+        {
+            _wrap_love_dll_type_EdgeShape_setPreviousVertex_nil(pEdgeShape);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_EdgeShape_setPreviousVertex")]
+        internal extern static void _wrap_love_dll_type_EdgeShape_setPreviousVertex(IntPtr pEdgeShape, float x, float y);
+        internal static void wrap_love_dll_type_EdgeShape_setPreviousVertex(IntPtr pEdgeShape, float x, float y)
+        {
+            _wrap_love_dll_type_EdgeShape_setPreviousVertex(pEdgeShape, x, y);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_EdgeShape_getNextVertex")]
+        internal extern static void _wrap_love_dll_type_EdgeShape_getNextVertex(IntPtr pEdgeShape, out bool hasNextVertex, out Vector2 result);
+        internal static void wrap_love_dll_type_EdgeShape_getNextVertex(IntPtr pEdgeShape, out bool hasNextVertex, out Vector2 result)
+        {
+            _wrap_love_dll_type_EdgeShape_getNextVertex(pEdgeShape, out hasNextVertex, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_EdgeShape_getPreviousVertex")]
+        internal extern static void _wrap_love_dll_type_EdgeShape_getPreviousVertex(IntPtr pEdgeShape, out bool hasPrevVertex, out Vector2 result);
+        internal static void wrap_love_dll_type_EdgeShape_getPreviousVertex(IntPtr pEdgeShape, out bool hasPrevVertex, out Vector2 result)
+        {
+            _wrap_love_dll_type_EdgeShape_getPreviousVertex(pEdgeShape, out hasPrevVertex, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_EdgeShape_getPoints")]
+        internal extern static void _wrap_love_dll_type_EdgeShape_getPoints(IntPtr pEdgeShape, out float x1, out float y1, out float x2, out float y2);
+        internal static void wrap_love_dll_type_EdgeShape_getPoints(IntPtr pEdgeShape, out float x1, out float y1, out float x2, out float y2)
+        {
+            _wrap_love_dll_type_EdgeShape_getPoints(pEdgeShape, out x1, out y1, out x2, out y2);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_PolygonShape_validate")]
+        internal extern static void _wrap_love_dll_type_PolygonShape_validate(IntPtr pPolygonShape, out bool validate);
+        internal static void wrap_love_dll_type_PolygonShape_validate(IntPtr pPolygonShape, out bool validate)
+        {
+            _wrap_love_dll_type_PolygonShape_validate(pPolygonShape, out validate);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_PolygonShape_getPoints")]
+        internal extern static void _wrap_love_dll_type_PolygonShape_getPoints(IntPtr pPolygonShape, out IntPtr pointList, out int pointListLength);
+        internal static void wrap_love_dll_type_PolygonShape_getPoints(IntPtr pPolygonShape, out IntPtr pointList, out int pointListLength)
+        {
+            _wrap_love_dll_type_PolygonShape_getPoints(pPolygonShape, out pointList, out pointListLength);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Contact_getFriction")]
+        internal extern static void _wrap_love_dll_type_Contact_getFriction(IntPtr pContact, out float friction);
+        internal static void wrap_love_dll_type_Contact_getFriction(IntPtr pContact, out float friction)
+        {
+            _wrap_love_dll_type_Contact_getFriction(pContact, out friction);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Contact_getRestitution")]
+        internal extern static void _wrap_love_dll_type_Contact_getRestitution(IntPtr pContact, out float restitution);
+        internal static void wrap_love_dll_type_Contact_getRestitution(IntPtr pContact, out float restitution)
+        {
+            _wrap_love_dll_type_Contact_getRestitution(pContact, out restitution);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Contact_isEnabled")]
+        internal extern static void _wrap_love_dll_type_Contact_isEnabled(IntPtr pContact, out bool result);
+        internal static void wrap_love_dll_type_Contact_isEnabled(IntPtr pContact, out bool result)
+        {
+            _wrap_love_dll_type_Contact_isEnabled(pContact, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Contact_isTouching")]
+        internal extern static void _wrap_love_dll_type_Contact_isTouching(IntPtr pContact, out bool result);
+        internal static void wrap_love_dll_type_Contact_isTouching(IntPtr pContact, out bool result)
+        {
+            _wrap_love_dll_type_Contact_isTouching(pContact, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Contact_setFriction")]
+        internal extern static void _wrap_love_dll_type_Contact_setFriction(IntPtr pContact, float friction);
+        internal static void wrap_love_dll_type_Contact_setFriction(IntPtr pContact, float friction)
+        {
+            _wrap_love_dll_type_Contact_setFriction(pContact, friction);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Contact_setRestitution")]
+        internal extern static void _wrap_love_dll_type_Contact_setRestitution(IntPtr pContact, float restitution);
+        internal static void wrap_love_dll_type_Contact_setRestitution(IntPtr pContact, float restitution)
+        {
+            _wrap_love_dll_type_Contact_setRestitution(pContact, restitution);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Contact_setEnabled")]
+        internal extern static void _wrap_love_dll_type_Contact_setEnabled(IntPtr pContact, bool enabled);
+        internal static void wrap_love_dll_type_Contact_setEnabled(IntPtr pContact, bool enabled)
+        {
+            _wrap_love_dll_type_Contact_setEnabled(pContact, enabled);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Contact_resetFriction")]
+        internal extern static void _wrap_love_dll_type_Contact_resetFriction(IntPtr pContact);
+        internal static void wrap_love_dll_type_Contact_resetFriction(IntPtr pContact)
+        {
+            _wrap_love_dll_type_Contact_resetFriction(pContact);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Contact_resetRestitution")]
+        internal extern static void _wrap_love_dll_type_Contact_resetRestitution(IntPtr pContact);
+        internal static void wrap_love_dll_type_Contact_resetRestitution(IntPtr pContact)
+        {
+            _wrap_love_dll_type_Contact_resetRestitution(pContact);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Contact_setTangentSpeed")]
+        internal extern static void _wrap_love_dll_type_Contact_setTangentSpeed(IntPtr pContact, float speed);
+        internal static void wrap_love_dll_type_Contact_setTangentSpeed(IntPtr pContact, float speed)
+        {
+            _wrap_love_dll_type_Contact_setTangentSpeed(pContact, speed);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Contact_getTangentSpeed")]
+        internal extern static void _wrap_love_dll_type_Contact_getTangentSpeed(IntPtr pContact, out float speed);
+        internal static void wrap_love_dll_type_Contact_getTangentSpeed(IntPtr pContact, out float speed)
+        {
+            _wrap_love_dll_type_Contact_getTangentSpeed(pContact, out speed);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Contact_getChildren")]
+        internal extern static void _wrap_love_dll_type_Contact_getChildren(IntPtr pContact, out float childA, out float childB);
+        internal static void wrap_love_dll_type_Contact_getChildren(IntPtr pContact, out float childA, out float childB)
+        {
+            _wrap_love_dll_type_Contact_getChildren(pContact, out childA, out childB);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Contact_getFixtures")]
+        internal extern static bool _wrap_love_dll_type_Contact_getFixtures(IntPtr pContact, out IntPtr a, out IntPtr b);
+        internal static bool wrap_love_dll_type_Contact_getFixtures(IntPtr pContact, out IntPtr a, out IntPtr b)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Contact_getFixtures(pContact, out a, out b));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Contact_isDestroyed")]
+        internal extern static void _wrap_love_dll_type_Contact_isDestroyed(IntPtr pContact, out bool result);
+        internal static void wrap_love_dll_type_Contact_isDestroyed(IntPtr pContact, out bool result)
+        {
+            _wrap_love_dll_type_Contact_isDestroyed(pContact, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Contact_getPositions")]
+        internal extern static void _wrap_love_dll_type_Contact_getPositions(IntPtr pContact, out IntPtr pointList, out int pointListLength);
+        internal static void wrap_love_dll_type_Contact_getPositions(IntPtr pContact, out IntPtr pointList, out int pointListLength)
+        {
+            _wrap_love_dll_type_Contact_getPositions(pContact, out pointList, out pointListLength);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Contact_getNormal")]
+        internal extern static void _wrap_love_dll_type_Contact_getNormal(IntPtr pContact, out float nx, out float ny);
+        internal static void wrap_love_dll_type_Contact_getNormal(IntPtr pContact, out float nx, out float ny)
+        {
+            _wrap_love_dll_type_Contact_getNormal(pContact, out nx, out ny);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_DistanceJoint_setLength")]
+        internal extern static void _wrap_love_dll_type_DistanceJoint_setLength(IntPtr pDistanceJoint, float length);
+        internal static void wrap_love_dll_type_DistanceJoint_setLength(IntPtr pDistanceJoint, float length)
+        {
+            _wrap_love_dll_type_DistanceJoint_setLength(pDistanceJoint, length);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_DistanceJoint_getLength")]
+        internal extern static void _wrap_love_dll_type_DistanceJoint_getLength(IntPtr pDistanceJoint, out float length);
+        internal static void wrap_love_dll_type_DistanceJoint_getLength(IntPtr pDistanceJoint, out float length)
+        {
+            _wrap_love_dll_type_DistanceJoint_getLength(pDistanceJoint, out length);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_DistanceJoint_setFrequency")]
+        internal extern static void _wrap_love_dll_type_DistanceJoint_setFrequency(IntPtr pDistanceJoint, float frequency);
+        internal static void wrap_love_dll_type_DistanceJoint_setFrequency(IntPtr pDistanceJoint, float frequency)
+        {
+            _wrap_love_dll_type_DistanceJoint_setFrequency(pDistanceJoint, frequency);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_DistanceJoint_getFrequency")]
+        internal extern static void _wrap_love_dll_type_DistanceJoint_getFrequency(IntPtr pDistanceJoint, out float frequency);
+        internal static void wrap_love_dll_type_DistanceJoint_getFrequency(IntPtr pDistanceJoint, out float frequency)
+        {
+            _wrap_love_dll_type_DistanceJoint_getFrequency(pDistanceJoint, out frequency);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_DistanceJoint_setDampingRatio")]
+        internal extern static void _wrap_love_dll_type_DistanceJoint_setDampingRatio(IntPtr pDistanceJoint, float dampingRatio);
+        internal static void wrap_love_dll_type_DistanceJoint_setDampingRatio(IntPtr pDistanceJoint, float dampingRatio)
+        {
+            _wrap_love_dll_type_DistanceJoint_setDampingRatio(pDistanceJoint, dampingRatio);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_DistanceJoint_getDampingRatio")]
+        internal extern static void _wrap_love_dll_type_DistanceJoint_getDampingRatio(IntPtr pDistanceJoint, out float dampingRatio);
+        internal static void wrap_love_dll_type_DistanceJoint_getDampingRatio(IntPtr pDistanceJoint, out float dampingRatio)
+        {
+            _wrap_love_dll_type_DistanceJoint_getDampingRatio(pDistanceJoint, out dampingRatio);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_getType")]
+        internal extern static void _wrap_love_dll_type_Fixture_getType(IntPtr pFixture, out int fixture_type);
+        internal static void wrap_love_dll_type_Fixture_getType(IntPtr pFixture, out int fixture_type)
+        {
+            _wrap_love_dll_type_Fixture_getType(pFixture, out fixture_type);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_setFriction")]
+        internal extern static void _wrap_love_dll_type_Fixture_setFriction(IntPtr pFixture, float friction);
+        internal static void wrap_love_dll_type_Fixture_setFriction(IntPtr pFixture, float friction)
+        {
+            _wrap_love_dll_type_Fixture_setFriction(pFixture, friction);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_setRestitution")]
+        internal extern static void _wrap_love_dll_type_Fixture_setRestitution(IntPtr pFixture, float restitution);
+        internal static void wrap_love_dll_type_Fixture_setRestitution(IntPtr pFixture, float restitution)
+        {
+            _wrap_love_dll_type_Fixture_setRestitution(pFixture, restitution);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_setDensity")]
+        internal extern static bool _wrap_love_dll_type_Fixture_setDensity(IntPtr pFixture, float density);
+        internal static bool wrap_love_dll_type_Fixture_setDensity(IntPtr pFixture, float density)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Fixture_setDensity(pFixture, density));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_setSensor")]
+        internal extern static void _wrap_love_dll_type_Fixture_setSensor(IntPtr pFixture, bool sensor);
+        internal static void wrap_love_dll_type_Fixture_setSensor(IntPtr pFixture, bool sensor)
+        {
+            _wrap_love_dll_type_Fixture_setSensor(pFixture, sensor);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_getFriction")]
+        internal extern static void _wrap_love_dll_type_Fixture_getFriction(IntPtr pFixture, out float result);
+        internal static void wrap_love_dll_type_Fixture_getFriction(IntPtr pFixture, out float result)
+        {
+            _wrap_love_dll_type_Fixture_getFriction(pFixture, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_getRestitution")]
+        internal extern static void _wrap_love_dll_type_Fixture_getRestitution(IntPtr pFixture, out float result);
+        internal static void wrap_love_dll_type_Fixture_getRestitution(IntPtr pFixture, out float result)
+        {
+            _wrap_love_dll_type_Fixture_getRestitution(pFixture, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_getDensity")]
+        internal extern static void _wrap_love_dll_type_Fixture_getDensity(IntPtr pFixture, out float result);
+        internal static void wrap_love_dll_type_Fixture_getDensity(IntPtr pFixture, out float result)
+        {
+            _wrap_love_dll_type_Fixture_getDensity(pFixture, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_isSensor")]
+        internal extern static void _wrap_love_dll_type_Fixture_isSensor(IntPtr pFixture, out bool result);
+        internal static void wrap_love_dll_type_Fixture_isSensor(IntPtr pFixture, out bool result)
+        {
+            _wrap_love_dll_type_Fixture_isSensor(pFixture, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_getBody")]
+        internal extern static void _wrap_love_dll_type_Fixture_getBody(IntPtr pFixture, out IntPtr body);
+        internal static void wrap_love_dll_type_Fixture_getBody(IntPtr pFixture, out IntPtr body)
+        {
+            _wrap_love_dll_type_Fixture_getBody(pFixture, out body);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_getShape")]
+        internal extern static void _wrap_love_dll_type_Fixture_getShape(IntPtr pFixture, out IntPtr shape);
+        internal static void wrap_love_dll_type_Fixture_getShape(IntPtr pFixture, out IntPtr shape)
+        {
+            _wrap_love_dll_type_Fixture_getShape(pFixture, out shape);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_testPoint")]
+        internal extern static void _wrap_love_dll_type_Fixture_testPoint(IntPtr pFixture, float x, float y, out bool result);
+        internal static void wrap_love_dll_type_Fixture_testPoint(IntPtr pFixture, float x, float y, out bool result)
+        {
+            _wrap_love_dll_type_Fixture_testPoint(pFixture, x, y, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_setFilterData")]
+        internal extern static void _wrap_love_dll_type_Fixture_setFilterData(IntPtr pFixture, float categories, float mask, float group);
+        internal static void wrap_love_dll_type_Fixture_setFilterData(IntPtr pFixture, float categories, float mask, float group)
+        {
+            _wrap_love_dll_type_Fixture_setFilterData(pFixture, categories, mask, group);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_getFilterData")]
+        internal extern static void _wrap_love_dll_type_Fixture_getFilterData(IntPtr pFixture, out float categories, out float mask, out float group);
+        internal static void wrap_love_dll_type_Fixture_getFilterData(IntPtr pFixture, out float categories, out float mask, out float group)
+        {
+            _wrap_love_dll_type_Fixture_getFilterData(pFixture, out categories, out mask, out group);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_getGroupIndex")]
+        internal extern static void _wrap_love_dll_type_Fixture_getGroupIndex(IntPtr pFixture, out int index);
+        internal static void wrap_love_dll_type_Fixture_getGroupIndex(IntPtr pFixture, out int index)
+        {
+            _wrap_love_dll_type_Fixture_getGroupIndex(pFixture, out index);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_setGroupIndex")]
+        internal extern static void _wrap_love_dll_type_Fixture_setGroupIndex(IntPtr pFixture, int index);
+        internal static void wrap_love_dll_type_Fixture_setGroupIndex(IntPtr pFixture, int index)
+        {
+            _wrap_love_dll_type_Fixture_setGroupIndex(pFixture, index);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_destroy")]
+        internal extern static bool _wrap_love_dll_type_Fixture_destroy(IntPtr pFixture);
+        internal static bool wrap_love_dll_type_Fixture_destroy(IntPtr pFixture)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Fixture_destroy(pFixture));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_isDestroyed")]
+        internal extern static void _wrap_love_dll_type_Fixture_isDestroyed(IntPtr pFixture, out bool result);
+        internal static void wrap_love_dll_type_Fixture_isDestroyed(IntPtr pFixture, out bool result)
+        {
+            _wrap_love_dll_type_Fixture_isDestroyed(pFixture, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_rayCast")]
+        internal extern static bool _wrap_love_dll_type_Fixture_rayCast(IntPtr pFixture, bool[] hasHit, float x1, float y1, float x2, float y2, float maxFraction, int childIndex, out Vector2 pos, out float fraction);
+        internal static bool wrap_love_dll_type_Fixture_rayCast(IntPtr pFixture, bool[] hasHit, float x1, float y1, float x2, float y2, float maxFraction, int childIndex, out Vector2 pos, out float fraction)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Fixture_rayCast(pFixture, hasHit, x1, y1, x2, y2, maxFraction, childIndex, out pos, out fraction));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_setCategory")]
+        internal extern static bool _wrap_love_dll_type_Fixture_setCategory(IntPtr pFixture, UInt16 categories);
+        internal static bool wrap_love_dll_type_Fixture_setCategory(IntPtr pFixture, UInt16 categories)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Fixture_setCategory(pFixture, categories));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_getCategory")]
+        internal extern static bool _wrap_love_dll_type_Fixture_getCategory(IntPtr pFixture, out UInt16 categories);
+        internal static bool wrap_love_dll_type_Fixture_getCategory(IntPtr pFixture, out UInt16 categories)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Fixture_getCategory(pFixture, out categories));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_setMask")]
+        internal extern static bool _wrap_love_dll_type_Fixture_setMask(IntPtr pFixture, UInt16 masks);
+        internal static bool wrap_love_dll_type_Fixture_setMask(IntPtr pFixture, UInt16 masks)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Fixture_setMask(pFixture, masks));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_getMask")]
+        internal extern static bool _wrap_love_dll_type_Fixture_getMask(IntPtr pFixture, out UInt16 mask);
+        internal static bool wrap_love_dll_type_Fixture_getMask(IntPtr pFixture, out UInt16 mask)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Fixture_getMask(pFixture, out mask));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_getBoundingBox")]
+        internal extern static bool _wrap_love_dll_type_Fixture_getBoundingBox(IntPtr pFixture, int childIndex, out float topLeftX, out float topLeftY, out float bottomRightX, out float bottomRightY);
+        internal static bool wrap_love_dll_type_Fixture_getBoundingBox(IntPtr pFixture, int childIndex, out float topLeftX, out float topLeftY, out float bottomRightX, out float bottomRightY)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Fixture_getBoundingBox(pFixture, childIndex, out topLeftX, out topLeftY, out bottomRightX, out bottomRightY));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Fixture_getMassData")]
+        internal extern static bool _wrap_love_dll_type_Fixture_getMassData(IntPtr pFixture, out Vector2 center, out float mass, out float rotationalInertia);
+        internal static bool wrap_love_dll_type_Fixture_getMassData(IntPtr pFixture, out Vector2 center, out float mass, out float rotationalInertia)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Fixture_getMassData(pFixture, out center, out mass, out rotationalInertia));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_FrictionJoint_setMaxForce")]
+        internal extern static bool _wrap_love_dll_type_FrictionJoint_setMaxForce(IntPtr pFrictionJoint, float maxForce);
+        internal static bool wrap_love_dll_type_FrictionJoint_setMaxForce(IntPtr pFrictionJoint, float maxForce)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_FrictionJoint_setMaxForce(pFrictionJoint, maxForce));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_FrictionJoint_getMaxForce")]
+        internal extern static void _wrap_love_dll_type_FrictionJoint_getMaxForce(IntPtr pFrictionJoint, out float maxForce);
+        internal static void wrap_love_dll_type_FrictionJoint_getMaxForce(IntPtr pFrictionJoint, out float maxForce)
+        {
+            _wrap_love_dll_type_FrictionJoint_getMaxForce(pFrictionJoint, out maxForce);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_FrictionJoint_setMaxTorque")]
+        internal extern static bool _wrap_love_dll_type_FrictionJoint_setMaxTorque(IntPtr pFrictionJoint, float maxTorque);
+        internal static bool wrap_love_dll_type_FrictionJoint_setMaxTorque(IntPtr pFrictionJoint, float maxTorque)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_FrictionJoint_setMaxTorque(pFrictionJoint, maxTorque));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_FrictionJoint_getMaxTorque")]
+        internal extern static void _wrap_love_dll_type_FrictionJoint_getMaxTorque(IntPtr pFrictionJoint, out float maxTorque);
+        internal static void wrap_love_dll_type_FrictionJoint_getMaxTorque(IntPtr pFrictionJoint, out float maxTorque)
+        {
+            _wrap_love_dll_type_FrictionJoint_getMaxTorque(pFrictionJoint, out maxTorque);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_GearJoint_setRatio")]
+        internal extern static bool _wrap_love_dll_type_GearJoint_setRatio(IntPtr pGearJoint, float ration);
+        internal static bool wrap_love_dll_type_GearJoint_setRatio(IntPtr pGearJoint, float ration)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_GearJoint_setRatio(pGearJoint, ration));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_GearJoint_getRatio")]
+        internal extern static void _wrap_love_dll_type_GearJoint_getRatio(IntPtr pGearJoint, out float ration);
+        internal static void wrap_love_dll_type_GearJoint_getRatio(IntPtr pGearJoint, out float ration)
+        {
+            _wrap_love_dll_type_GearJoint_getRatio(pGearJoint, out ration);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_GearJoint_getJoints")]
+        internal extern static bool _wrap_love_dll_type_GearJoint_getJoints(IntPtr pGearJoint, out IntPtr j1, out IntPtr j2);
+        internal static bool wrap_love_dll_type_GearJoint_getJoints(IntPtr pGearJoint, out IntPtr j1, out IntPtr j2)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_GearJoint_getJoints(pGearJoint, out j1, out j2));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Joint_getType")]
+        internal extern static void _wrap_love_dll_type_Joint_getType(IntPtr pJoint, out int type);
+        internal static void wrap_love_dll_type_Joint_getType(IntPtr pJoint, out int type)
+        {
+            _wrap_love_dll_type_Joint_getType(pJoint, out type);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Joint_getBodies")]
+        internal extern static bool _wrap_love_dll_type_Joint_getBodies(IntPtr pJoint, out IntPtr b1, out IntPtr b2);
+        internal static bool wrap_love_dll_type_Joint_getBodies(IntPtr pJoint, out IntPtr b1, out IntPtr b2)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Joint_getBodies(pJoint, out b1, out b2));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Joint_getReactionTorque")]
+        internal extern static void _wrap_love_dll_type_Joint_getReactionTorque(IntPtr pJoint, float inv_dt, out float torque);
+        internal static void wrap_love_dll_type_Joint_getReactionTorque(IntPtr pJoint, float inv_dt, out float torque)
+        {
+            _wrap_love_dll_type_Joint_getReactionTorque(pJoint, inv_dt, out torque);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Joint_getCollideConnected")]
+        internal extern static void _wrap_love_dll_type_Joint_getCollideConnected(IntPtr pJoint, out bool c);
+        internal static void wrap_love_dll_type_Joint_getCollideConnected(IntPtr pJoint, out bool c)
+        {
+            _wrap_love_dll_type_Joint_getCollideConnected(pJoint, out c);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Joint_destroy")]
+        internal extern static bool _wrap_love_dll_type_Joint_destroy(IntPtr pJoint);
+        internal static bool wrap_love_dll_type_Joint_destroy(IntPtr pJoint)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Joint_destroy(pJoint));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Joint_isDestroyed")]
+        internal extern static void _wrap_love_dll_type_Joint_isDestroyed(IntPtr pJoint, out bool destroyed);
+        internal static void wrap_love_dll_type_Joint_isDestroyed(IntPtr pJoint, out bool destroyed)
+        {
+            _wrap_love_dll_type_Joint_isDestroyed(pJoint, out destroyed);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Joint_getAnchors")]
+        internal extern static void _wrap_love_dll_type_Joint_getAnchors(IntPtr pJoint, out float x1, out float y1, out float x2, out float y2);
+        internal static void wrap_love_dll_type_Joint_getAnchors(IntPtr pJoint, out float x1, out float y1, out float x2, out float y2)
+        {
+            _wrap_love_dll_type_Joint_getAnchors(pJoint, out x1, out y1, out x2, out y2);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Joint_getReactionForce")]
+        internal extern static void _wrap_love_dll_type_Joint_getReactionForce(IntPtr pJoint, float dt, out float x, out float y);
+        internal static void wrap_love_dll_type_Joint_getReactionForce(IntPtr pJoint, float dt, out float x, out float y)
+        {
+            _wrap_love_dll_type_Joint_getReactionForce(pJoint, dt, out x, out y);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_MotorJoint_setLinearOffset")]
+        internal extern static void _wrap_love_dll_type_MotorJoint_setLinearOffset(IntPtr pMotorJoint, float x, float y);
+        internal static void wrap_love_dll_type_MotorJoint_setLinearOffset(IntPtr pMotorJoint, float x, float y)
+        {
+            _wrap_love_dll_type_MotorJoint_setLinearOffset(pMotorJoint, x, y);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_MotorJoint_setAngularOffset")]
+        internal extern static void _wrap_love_dll_type_MotorJoint_setAngularOffset(IntPtr pMotorJoint, float angularOffset);
+        internal static void wrap_love_dll_type_MotorJoint_setAngularOffset(IntPtr pMotorJoint, float angularOffset)
+        {
+            _wrap_love_dll_type_MotorJoint_setAngularOffset(pMotorJoint, angularOffset);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_MotorJoint_getAngularOffset")]
+        internal extern static void _wrap_love_dll_type_MotorJoint_getAngularOffset(IntPtr pMotorJoint, out float angularOffset);
+        internal static void wrap_love_dll_type_MotorJoint_getAngularOffset(IntPtr pMotorJoint, out float angularOffset)
+        {
+            _wrap_love_dll_type_MotorJoint_getAngularOffset(pMotorJoint, out angularOffset);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_MotorJoint_setMaxForce")]
+        internal extern static bool _wrap_love_dll_type_MotorJoint_setMaxForce(IntPtr pMotorJoint, float maxForce);
+        internal static bool wrap_love_dll_type_MotorJoint_setMaxForce(IntPtr pMotorJoint, float maxForce)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_MotorJoint_setMaxForce(pMotorJoint, maxForce));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_MotorJoint_getMaxForce")]
+        internal extern static void _wrap_love_dll_type_MotorJoint_getMaxForce(IntPtr pMotorJoint, out float maxForce);
+        internal static void wrap_love_dll_type_MotorJoint_getMaxForce(IntPtr pMotorJoint, out float maxForce)
+        {
+            _wrap_love_dll_type_MotorJoint_getMaxForce(pMotorJoint, out maxForce);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_MotorJoint_setMaxTorque")]
+        internal extern static bool _wrap_love_dll_type_MotorJoint_setMaxTorque(IntPtr pMotorJoint, float torque);
+        internal static bool wrap_love_dll_type_MotorJoint_setMaxTorque(IntPtr pMotorJoint, float torque)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_MotorJoint_setMaxTorque(pMotorJoint, torque));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_MotorJoint_getMaxTorque")]
+        internal extern static void _wrap_love_dll_type_MotorJoint_getMaxTorque(IntPtr pMotorJoint, out float torque);
+        internal static void wrap_love_dll_type_MotorJoint_getMaxTorque(IntPtr pMotorJoint, out float torque)
+        {
+            _wrap_love_dll_type_MotorJoint_getMaxTorque(pMotorJoint, out torque);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_MotorJoint_setCorrectionFactor")]
+        internal extern static bool _wrap_love_dll_type_MotorJoint_setCorrectionFactor(IntPtr pMotorJoint, float factor);
+        internal static bool wrap_love_dll_type_MotorJoint_setCorrectionFactor(IntPtr pMotorJoint, float factor)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_MotorJoint_setCorrectionFactor(pMotorJoint, factor));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_MotorJoint_getCorrectionFactor")]
+        internal extern static void _wrap_love_dll_type_MotorJoint_getCorrectionFactor(IntPtr pMotorJoint, out float factor);
+        internal static void wrap_love_dll_type_MotorJoint_getCorrectionFactor(IntPtr pMotorJoint, out float factor)
+        {
+            _wrap_love_dll_type_MotorJoint_getCorrectionFactor(pMotorJoint, out factor);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_MotorJoint_getLinearOffset")]
+        internal extern static void _wrap_love_dll_type_MotorJoint_getLinearOffset(IntPtr pMotorJoint, out float x, out float y);
+        internal static void wrap_love_dll_type_MotorJoint_getLinearOffset(IntPtr pMotorJoint, out float x, out float y)
+        {
+            _wrap_love_dll_type_MotorJoint_getLinearOffset(pMotorJoint, out x, out y);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_MouseJoint_setTarget")]
+        internal extern static void _wrap_love_dll_type_MouseJoint_setTarget(IntPtr pMouseJoint, float x, float y);
+        internal static void wrap_love_dll_type_MouseJoint_setTarget(IntPtr pMouseJoint, float x, float y)
+        {
+            _wrap_love_dll_type_MouseJoint_setTarget(pMouseJoint, x, y);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_MouseJoint_setMaxForce")]
+        internal extern static void _wrap_love_dll_type_MouseJoint_setMaxForce(IntPtr pMouseJoint, float force);
+        internal static void wrap_love_dll_type_MouseJoint_setMaxForce(IntPtr pMouseJoint, float force)
+        {
+            _wrap_love_dll_type_MouseJoint_setMaxForce(pMouseJoint, force);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_MouseJoint_getMaxForce")]
+        internal extern static void _wrap_love_dll_type_MouseJoint_getMaxForce(IntPtr pMouseJoint, out float force);
+        internal static void wrap_love_dll_type_MouseJoint_getMaxForce(IntPtr pMouseJoint, out float force)
+        {
+            _wrap_love_dll_type_MouseJoint_getMaxForce(pMouseJoint, out force);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_MouseJoint_setFrequency")]
+        internal extern static bool _wrap_love_dll_type_MouseJoint_setFrequency(IntPtr pMouseJoint, float frequency);
+        internal static bool wrap_love_dll_type_MouseJoint_setFrequency(IntPtr pMouseJoint, float frequency)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_MouseJoint_setFrequency(pMouseJoint, frequency));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_MouseJoint_getFrequency")]
+        internal extern static void _wrap_love_dll_type_MouseJoint_getFrequency(IntPtr pMouseJoint, out float frequency);
+        internal static void wrap_love_dll_type_MouseJoint_getFrequency(IntPtr pMouseJoint, out float frequency)
+        {
+            _wrap_love_dll_type_MouseJoint_getFrequency(pMouseJoint, out frequency);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_MouseJoint_setDampingRatio")]
+        internal extern static void _wrap_love_dll_type_MouseJoint_setDampingRatio(IntPtr pMouseJoint, float ratio);
+        internal static void wrap_love_dll_type_MouseJoint_setDampingRatio(IntPtr pMouseJoint, float ratio)
+        {
+            _wrap_love_dll_type_MouseJoint_setDampingRatio(pMouseJoint, ratio);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_MouseJoint_getDampingRatio")]
+        internal extern static void _wrap_love_dll_type_MouseJoint_getDampingRatio(IntPtr pMouseJoint, out float ratio);
+        internal static void wrap_love_dll_type_MouseJoint_getDampingRatio(IntPtr pMouseJoint, out float ratio)
+        {
+            _wrap_love_dll_type_MouseJoint_getDampingRatio(pMouseJoint, out ratio);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_MouseJoint_getTarget")]
+        internal extern static void _wrap_love_dll_type_MouseJoint_getTarget(IntPtr pMouseJoint, out float x, out float y);
+        internal static void wrap_love_dll_type_MouseJoint_getTarget(IntPtr pMouseJoint, out float x, out float y)
+        {
+            _wrap_love_dll_type_MouseJoint_getTarget(pMouseJoint, out x, out y);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_physics_newWorld")]
+        internal extern static bool _wrap_love_dll_physics_newWorld(float gx, float gy, bool sleep, out IntPtr world);
+        internal static bool wrap_love_dll_physics_newWorld(float gx, float gy, bool sleep, out IntPtr world)
+        {
+            return CheckCAPIException(_wrap_love_dll_physics_newWorld(gx, gy, sleep, out world));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_physics_newBody")]
+        internal extern static bool _wrap_love_dll_physics_newBody(IntPtr world, float x, float y, int type_bodyType, out IntPtr body);
+        internal static bool wrap_love_dll_physics_newBody(IntPtr world, float x, float y, int type_bodyType, out IntPtr body)
+        {
+            return CheckCAPIException(_wrap_love_dll_physics_newBody(world, x, y, type_bodyType, out body));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_physics_newFixture")]
+        internal extern static bool _wrap_love_dll_physics_newFixture(IntPtr body, IntPtr shape, float density, out IntPtr fixture);
+        internal static bool wrap_love_dll_physics_newFixture(IntPtr body, IntPtr shape, float density, out IntPtr fixture)
+        {
+            return CheckCAPIException(_wrap_love_dll_physics_newFixture(body, shape, density, out fixture));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_physics_newCircleShape")]
+        internal extern static bool _wrap_love_dll_physics_newCircleShape(float x, float y, float radius, out IntPtr shape);
+        internal static bool wrap_love_dll_physics_newCircleShape(float x, float y, float radius, out IntPtr shape)
+        {
+            return CheckCAPIException(_wrap_love_dll_physics_newCircleShape(x, y, radius, out shape));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_physics_newRectangleShape")]
+        internal extern static bool _wrap_love_dll_physics_newRectangleShape(float x, float y, float w, float h, float angle, out IntPtr shape);
+        internal static bool wrap_love_dll_physics_newRectangleShape(float x, float y, float w, float h, float angle, out IntPtr shape)
+        {
+            return CheckCAPIException(_wrap_love_dll_physics_newRectangleShape(x, y, w, h, angle, out shape));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_physics_newEdgeShape")]
+        internal extern static bool _wrap_love_dll_physics_newEdgeShape(float x1, float y1, float x2, float y2, out IntPtr shape);
+        internal static bool wrap_love_dll_physics_newEdgeShape(float x1, float y1, float x2, float y2, out IntPtr shape)
+        {
+            return CheckCAPIException(_wrap_love_dll_physics_newEdgeShape(x1, y1, x2, y2, out shape));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_physics_newDistanceJoint")]
+        internal extern static bool _wrap_love_dll_physics_newDistanceJoint(IntPtr body1, IntPtr body2, float x1, float y1, float x2, float y2, bool collideConnected, out IntPtr joint);
+        internal static bool wrap_love_dll_physics_newDistanceJoint(IntPtr body1, IntPtr body2, float x1, float y1, float x2, float y2, bool collideConnected, out IntPtr joint)
+        {
+            return CheckCAPIException(_wrap_love_dll_physics_newDistanceJoint(body1, body2, x1, y1, x2, y2, collideConnected, out joint));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_physics_newMouseJoint")]
+        internal extern static bool _wrap_love_dll_physics_newMouseJoint(IntPtr body, float x, float y, out IntPtr joint);
+        internal static bool wrap_love_dll_physics_newMouseJoint(IntPtr body, float x, float y, out IntPtr joint)
+        {
+            return CheckCAPIException(_wrap_love_dll_physics_newMouseJoint(body, x, y, out joint));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_physics_newRevoluteJoint")]
+        internal extern static bool _wrap_love_dll_physics_newRevoluteJoint(IntPtr body1, IntPtr body2, Vector2 pA, Vector2 pB, bool collideConnected, out IntPtr joint);
+        internal static bool wrap_love_dll_physics_newRevoluteJoint(IntPtr body1, IntPtr body2, Vector2 pA, Vector2 pB, bool collideConnected, out IntPtr joint)
+        {
+            return CheckCAPIException(_wrap_love_dll_physics_newRevoluteJoint(body1, body2, pA, pB, collideConnected, out joint));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_physics_newRevoluteJoint_referenceAngle")]
+        internal extern static bool _wrap_love_dll_physics_newRevoluteJoint_referenceAngle(IntPtr body1, IntPtr body2, Vector2 pA, Vector2 pB, bool collideConnected, float referenceAngle, out IntPtr joint);
+        internal static bool wrap_love_dll_physics_newRevoluteJoint_referenceAngle(IntPtr body1, IntPtr body2, Vector2 pA, Vector2 pB, bool collideConnected, float referenceAngle, out IntPtr joint)
+        {
+            return CheckCAPIException(_wrap_love_dll_physics_newRevoluteJoint_referenceAngle(body1, body2, pA, pB, collideConnected, referenceAngle, out joint));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_physics_newPrismaticJoint")]
+        internal extern static bool _wrap_love_dll_physics_newPrismaticJoint(IntPtr body1, IntPtr body2, Vector2 pA, Vector2 pB, Vector2 angle, bool collideConnected, out IntPtr joint);
+        internal static bool wrap_love_dll_physics_newPrismaticJoint(IntPtr body1, IntPtr body2, Vector2 pA, Vector2 pB, Vector2 angle, bool collideConnected, out IntPtr joint)
+        {
+            return CheckCAPIException(_wrap_love_dll_physics_newPrismaticJoint(body1, body2, pA, pB, angle, collideConnected, out joint));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_physics_newPrismaticJoint_referenceAngle")]
+        internal extern static bool _wrap_love_dll_physics_newPrismaticJoint_referenceAngle(IntPtr body1, IntPtr body2, Vector2 pA, Vector2 pB, Vector2 angle, bool collideConnected, float referenceAngle, out IntPtr joint);
+        internal static bool wrap_love_dll_physics_newPrismaticJoint_referenceAngle(IntPtr body1, IntPtr body2, Vector2 pA, Vector2 pB, Vector2 angle, bool collideConnected, float referenceAngle, out IntPtr joint)
+        {
+            return CheckCAPIException(_wrap_love_dll_physics_newPrismaticJoint_referenceAngle(body1, body2, pA, pB, angle, collideConnected, referenceAngle, out joint));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_physics_newPulleyJoint")]
+        internal extern static bool _wrap_love_dll_physics_newPulleyJoint(IntPtr body1, IntPtr body2, Vector2 g1, Vector2 g2, Vector2 pA, Vector2 pB, float ratio, bool collideConnected, out IntPtr joint);
+        internal static bool wrap_love_dll_physics_newPulleyJoint(IntPtr body1, IntPtr body2, Vector2 g1, Vector2 g2, Vector2 pA, Vector2 pB, float ratio, bool collideConnected, out IntPtr joint)
+        {
+            return CheckCAPIException(_wrap_love_dll_physics_newPulleyJoint(body1, body2, g1, g2, pA, pB, ratio, collideConnected, out joint));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_physics_newGearJoint")]
+        internal extern static bool _wrap_love_dll_physics_newGearJoint(IntPtr joint1, IntPtr joint2, float ratio, bool collideConnected, out IntPtr joint);
+        internal static bool wrap_love_dll_physics_newGearJoint(IntPtr joint1, IntPtr joint2, float ratio, bool collideConnected, out IntPtr joint)
+        {
+            return CheckCAPIException(_wrap_love_dll_physics_newGearJoint(joint1, joint2, ratio, collideConnected, out joint));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_physics_newFrictionJoint")]
+        internal extern static bool _wrap_love_dll_physics_newFrictionJoint(IntPtr body1, IntPtr body2, Vector2 pA, Vector2 pB, bool collideConnected, out IntPtr joint);
+        internal static bool wrap_love_dll_physics_newFrictionJoint(IntPtr body1, IntPtr body2, Vector2 pA, Vector2 pB, bool collideConnected, out IntPtr joint)
+        {
+            return CheckCAPIException(_wrap_love_dll_physics_newFrictionJoint(body1, body2, pA, pB, collideConnected, out joint));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_physics_newWeldJoint")]
+        internal extern static bool _wrap_love_dll_physics_newWeldJoint(IntPtr body1, IntPtr body2, Vector2 pA, Vector2 pB, bool collideConnected, out IntPtr joint);
+        internal static bool wrap_love_dll_physics_newWeldJoint(IntPtr body1, IntPtr body2, Vector2 pA, Vector2 pB, bool collideConnected, out IntPtr joint)
+        {
+            return CheckCAPIException(_wrap_love_dll_physics_newWeldJoint(body1, body2, pA, pB, collideConnected, out joint));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_physics_newWeldJoint_referenceAngle")]
+        internal extern static bool _wrap_love_dll_physics_newWeldJoint_referenceAngle(IntPtr body1, IntPtr body2, Vector2 pA, Vector2 pB, bool collideConnected, float referenceAngle, out IntPtr joint);
+        internal static bool wrap_love_dll_physics_newWeldJoint_referenceAngle(IntPtr body1, IntPtr body2, Vector2 pA, Vector2 pB, bool collideConnected, float referenceAngle, out IntPtr joint)
+        {
+            return CheckCAPIException(_wrap_love_dll_physics_newWeldJoint_referenceAngle(body1, body2, pA, pB, collideConnected, referenceAngle, out joint));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_physics_newWheelJoint")]
+        internal extern static bool _wrap_love_dll_physics_newWheelJoint(IntPtr body1, IntPtr body2, Vector2 pA, Vector2 pB, Vector2 angle, bool collideConnected, out IntPtr joint);
+        internal static bool wrap_love_dll_physics_newWheelJoint(IntPtr body1, IntPtr body2, Vector2 pA, Vector2 pB, Vector2 angle, bool collideConnected, out IntPtr joint)
+        {
+            return CheckCAPIException(_wrap_love_dll_physics_newWheelJoint(body1, body2, pA, pB, angle, collideConnected, out joint));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_physics_newRopeJoint")]
+        internal extern static bool _wrap_love_dll_physics_newRopeJoint(IntPtr body1, IntPtr body2, Vector2 pA, Vector2 pB, float maxLength, bool collideConnected, out IntPtr joint);
+        internal static bool wrap_love_dll_physics_newRopeJoint(IntPtr body1, IntPtr body2, Vector2 pA, Vector2 pB, float maxLength, bool collideConnected, out IntPtr joint)
+        {
+            return CheckCAPIException(_wrap_love_dll_physics_newRopeJoint(body1, body2, pA, pB, maxLength, collideConnected, out joint));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_physics_newMotorJoint")]
+        internal extern static bool _wrap_love_dll_physics_newMotorJoint(IntPtr body1, IntPtr body2, float correctionFactor, bool collideConnected, out IntPtr joint);
+        internal static bool wrap_love_dll_physics_newMotorJoint(IntPtr body1, IntPtr body2, float correctionFactor, bool collideConnected, out IntPtr joint)
+        {
+            return CheckCAPIException(_wrap_love_dll_physics_newMotorJoint(body1, body2, correctionFactor, collideConnected, out joint));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_physics_newPolygonShape")]
+        internal extern static bool _wrap_love_dll_physics_newPolygonShape(Vector2[] pointList, int pointListLength, out IntPtr shape);
+        internal static bool wrap_love_dll_physics_newPolygonShape(Vector2[] pointList, int pointListLength, out IntPtr shape)
+        {
+            return CheckCAPIException(_wrap_love_dll_physics_newPolygonShape(pointList, pointListLength, out shape));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_physics_newChainShape")]
+        internal extern static bool _wrap_love_dll_physics_newChainShape(bool loop, Vector2[] pointList, int pointListLength, out IntPtr shape);
+        internal static bool wrap_love_dll_physics_newChainShape(bool loop, Vector2[] pointList, int pointListLength, out IntPtr shape)
+        {
+            return CheckCAPIException(_wrap_love_dll_physics_newChainShape(loop, pointList, pointListLength, out shape));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_physics_open_love_physics")]
+        internal extern static bool _wrap_love_dll_physics_open_love_physics();
+        internal static bool wrap_love_dll_physics_open_love_physics()
+        {
+            return CheckCAPIException(_wrap_love_dll_physics_open_love_physics());
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_physics_setMeter")]
+        internal extern static bool _wrap_love_dll_physics_setMeter(float meter);
+        internal static bool wrap_love_dll_physics_setMeter(float meter)
+        {
+            return CheckCAPIException(_wrap_love_dll_physics_setMeter(meter));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_physics_getMeter")]
+        internal extern static void _wrap_love_dll_physics_getMeter(out float meter);
+        internal static void wrap_love_dll_physics_getMeter(out float meter)
+        {
+            _wrap_love_dll_physics_getMeter(out meter);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_physics_getDistance")]
+        internal extern static bool _wrap_love_dll_physics_getDistance(IntPtr fixtureA, IntPtr fixtureB);
+        internal static bool wrap_love_dll_physics_getDistance(IntPtr fixtureA, IntPtr fixtureB)
+        {
+            return CheckCAPIException(_wrap_love_dll_physics_getDistance(fixtureA, fixtureB));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_PrismaticJoint_getJointTranslation")]
+        internal extern static void _wrap_love_dll_type_PrismaticJoint_getJointTranslation(IntPtr pPrismaticJoint, out float translation);
+        internal static void wrap_love_dll_type_PrismaticJoint_getJointTranslation(IntPtr pPrismaticJoint, out float translation)
+        {
+            _wrap_love_dll_type_PrismaticJoint_getJointTranslation(pPrismaticJoint, out translation);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_PrismaticJoint_getJointSpeed")]
+        internal extern static void _wrap_love_dll_type_PrismaticJoint_getJointSpeed(IntPtr pPrismaticJoint, out float speed);
+        internal static void wrap_love_dll_type_PrismaticJoint_getJointSpeed(IntPtr pPrismaticJoint, out float speed)
+        {
+            _wrap_love_dll_type_PrismaticJoint_getJointSpeed(pPrismaticJoint, out speed);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_PrismaticJoint_setMotorEnabled")]
+        internal extern static void _wrap_love_dll_type_PrismaticJoint_setMotorEnabled(IntPtr pPrismaticJoint, bool ebabled);
+        internal static void wrap_love_dll_type_PrismaticJoint_setMotorEnabled(IntPtr pPrismaticJoint, bool ebabled)
+        {
+            _wrap_love_dll_type_PrismaticJoint_setMotorEnabled(pPrismaticJoint, ebabled);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_PrismaticJoint_isMotorEnabled")]
+        internal extern static void _wrap_love_dll_type_PrismaticJoint_isMotorEnabled(IntPtr pPrismaticJoint, out bool enabled);
+        internal static void wrap_love_dll_type_PrismaticJoint_isMotorEnabled(IntPtr pPrismaticJoint, out bool enabled)
+        {
+            _wrap_love_dll_type_PrismaticJoint_isMotorEnabled(pPrismaticJoint, out enabled);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_PrismaticJoint_setMaxMotorForce")]
+        internal extern static void _wrap_love_dll_type_PrismaticJoint_setMaxMotorForce(IntPtr pPrismaticJoint, float force);
+        internal static void wrap_love_dll_type_PrismaticJoint_setMaxMotorForce(IntPtr pPrismaticJoint, float force)
+        {
+            _wrap_love_dll_type_PrismaticJoint_setMaxMotorForce(pPrismaticJoint, force);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_PrismaticJoint_setMotorSpeed")]
+        internal extern static void _wrap_love_dll_type_PrismaticJoint_setMotorSpeed(IntPtr pPrismaticJoint, float speed);
+        internal static void wrap_love_dll_type_PrismaticJoint_setMotorSpeed(IntPtr pPrismaticJoint, float speed)
+        {
+            _wrap_love_dll_type_PrismaticJoint_setMotorSpeed(pPrismaticJoint, speed);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_PrismaticJoint_getMotorSpeed")]
+        internal extern static void _wrap_love_dll_type_PrismaticJoint_getMotorSpeed(IntPtr pPrismaticJoint, out float speed);
+        internal static void wrap_love_dll_type_PrismaticJoint_getMotorSpeed(IntPtr pPrismaticJoint, out float speed)
+        {
+            _wrap_love_dll_type_PrismaticJoint_getMotorSpeed(pPrismaticJoint, out speed);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_PrismaticJoint_getMotorForce")]
+        internal extern static void _wrap_love_dll_type_PrismaticJoint_getMotorForce(IntPtr pPrismaticJoint, float inv_dt, out float force);
+        internal static void wrap_love_dll_type_PrismaticJoint_getMotorForce(IntPtr pPrismaticJoint, float inv_dt, out float force)
+        {
+            _wrap_love_dll_type_PrismaticJoint_getMotorForce(pPrismaticJoint, inv_dt, out force);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_PrismaticJoint_getMaxMotorForce")]
+        internal extern static void _wrap_love_dll_type_PrismaticJoint_getMaxMotorForce(IntPtr pPrismaticJoint, out float force);
+        internal static void wrap_love_dll_type_PrismaticJoint_getMaxMotorForce(IntPtr pPrismaticJoint, out float force)
+        {
+            _wrap_love_dll_type_PrismaticJoint_getMaxMotorForce(pPrismaticJoint, out force);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_PrismaticJoint_setLimitsEnabled")]
+        internal extern static void _wrap_love_dll_type_PrismaticJoint_setLimitsEnabled(IntPtr pPrismaticJoint, bool enabled);
+        internal static void wrap_love_dll_type_PrismaticJoint_setLimitsEnabled(IntPtr pPrismaticJoint, bool enabled)
+        {
+            _wrap_love_dll_type_PrismaticJoint_setLimitsEnabled(pPrismaticJoint, enabled);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_PrismaticJoint_areLimitsEnabled")]
+        internal extern static void _wrap_love_dll_type_PrismaticJoint_areLimitsEnabled(IntPtr pPrismaticJoint, out bool enabled);
+        internal static void wrap_love_dll_type_PrismaticJoint_areLimitsEnabled(IntPtr pPrismaticJoint, out bool enabled)
+        {
+            _wrap_love_dll_type_PrismaticJoint_areLimitsEnabled(pPrismaticJoint, out enabled);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_PrismaticJoint_setUpperLimit")]
+        internal extern static bool _wrap_love_dll_type_PrismaticJoint_setUpperLimit(IntPtr pPrismaticJoint, float limit);
+        internal static bool wrap_love_dll_type_PrismaticJoint_setUpperLimit(IntPtr pPrismaticJoint, float limit)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_PrismaticJoint_setUpperLimit(pPrismaticJoint, limit));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_PrismaticJoint_setLowerLimit")]
+        internal extern static bool _wrap_love_dll_type_PrismaticJoint_setLowerLimit(IntPtr pPrismaticJoint, float limit);
+        internal static bool wrap_love_dll_type_PrismaticJoint_setLowerLimit(IntPtr pPrismaticJoint, float limit)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_PrismaticJoint_setLowerLimit(pPrismaticJoint, limit));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_PrismaticJoint_setLimits")]
+        internal extern static bool _wrap_love_dll_type_PrismaticJoint_setLimits(IntPtr pPrismaticJoint, float lowerLimit, float upperLimit);
+        internal static bool wrap_love_dll_type_PrismaticJoint_setLimits(IntPtr pPrismaticJoint, float lowerLimit, float upperLimit)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_PrismaticJoint_setLimits(pPrismaticJoint, lowerLimit, upperLimit));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_PrismaticJoint_getLowerLimit")]
+        internal extern static void _wrap_love_dll_type_PrismaticJoint_getLowerLimit(IntPtr pPrismaticJoint, out float limit);
+        internal static void wrap_love_dll_type_PrismaticJoint_getLowerLimit(IntPtr pPrismaticJoint, out float limit)
+        {
+            _wrap_love_dll_type_PrismaticJoint_getLowerLimit(pPrismaticJoint, out limit);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_PrismaticJoint_getUpperLimit")]
+        internal extern static void _wrap_love_dll_type_PrismaticJoint_getUpperLimit(IntPtr pPrismaticJoint, out float limit);
+        internal static void wrap_love_dll_type_PrismaticJoint_getUpperLimit(IntPtr pPrismaticJoint, out float limit)
+        {
+            _wrap_love_dll_type_PrismaticJoint_getUpperLimit(pPrismaticJoint, out limit);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_PrismaticJoint_getReferenceAngle")]
+        internal extern static void _wrap_love_dll_type_PrismaticJoint_getReferenceAngle(IntPtr pPrismaticJoint, out float angle);
+        internal static void wrap_love_dll_type_PrismaticJoint_getReferenceAngle(IntPtr pPrismaticJoint, out float angle)
+        {
+            _wrap_love_dll_type_PrismaticJoint_getReferenceAngle(pPrismaticJoint, out angle);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_PrismaticJoint_getLimits")]
+        internal extern static void _wrap_love_dll_type_PrismaticJoint_getLimits(IntPtr pPrismaticJoint, out float lowerLimit, out float upperLimit);
+        internal static void wrap_love_dll_type_PrismaticJoint_getLimits(IntPtr pPrismaticJoint, out float lowerLimit, out float upperLimit)
+        {
+            _wrap_love_dll_type_PrismaticJoint_getLimits(pPrismaticJoint, out lowerLimit, out upperLimit);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_PrismaticJoint_getAxis")]
+        internal extern static void _wrap_love_dll_type_PrismaticJoint_getAxis(IntPtr pPrismaticJoint, out float axisX, out float axisY);
+        internal static void wrap_love_dll_type_PrismaticJoint_getAxis(IntPtr pPrismaticJoint, out float axisX, out float axisY)
+        {
+            _wrap_love_dll_type_PrismaticJoint_getAxis(pPrismaticJoint, out axisX, out axisY);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_PulleyJoint_getLengthA")]
+        internal extern static void _wrap_love_dll_type_PulleyJoint_getLengthA(IntPtr pPulleyJoint, out float lengthA);
+        internal static void wrap_love_dll_type_PulleyJoint_getLengthA(IntPtr pPulleyJoint, out float lengthA)
+        {
+            _wrap_love_dll_type_PulleyJoint_getLengthA(pPulleyJoint, out lengthA);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_PulleyJoint_getLengthB")]
+        internal extern static void _wrap_love_dll_type_PulleyJoint_getLengthB(IntPtr pPulleyJoint, out float lengthB);
+        internal static void wrap_love_dll_type_PulleyJoint_getLengthB(IntPtr pPulleyJoint, out float lengthB)
+        {
+            _wrap_love_dll_type_PulleyJoint_getLengthB(pPulleyJoint, out lengthB);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_PulleyJoint_getRatio")]
+        internal extern static void _wrap_love_dll_type_PulleyJoint_getRatio(IntPtr pPulleyJoint, out float ratio);
+        internal static void wrap_love_dll_type_PulleyJoint_getRatio(IntPtr pPulleyJoint, out float ratio)
+        {
+            _wrap_love_dll_type_PulleyJoint_getRatio(pPulleyJoint, out ratio);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_PulleyJoint_getGroundAnchors")]
+        internal extern static void _wrap_love_dll_type_PulleyJoint_getGroundAnchors(IntPtr pPulleyJoint, out float x1, out float y1, out float x2, out float y2);
+        internal static void wrap_love_dll_type_PulleyJoint_getGroundAnchors(IntPtr pPulleyJoint, out float x1, out float y1, out float x2, out float y2)
+        {
+            _wrap_love_dll_type_PulleyJoint_getGroundAnchors(pPulleyJoint, out x1, out y1, out x2, out y2);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_RevoluteJoint_getJointAngle")]
+        internal extern static void _wrap_love_dll_type_RevoluteJoint_getJointAngle(IntPtr pRevoluteJoint, out float angle);
+        internal static void wrap_love_dll_type_RevoluteJoint_getJointAngle(IntPtr pRevoluteJoint, out float angle)
+        {
+            _wrap_love_dll_type_RevoluteJoint_getJointAngle(pRevoluteJoint, out angle);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_RevoluteJoint_getJointSpeed")]
+        internal extern static void _wrap_love_dll_type_RevoluteJoint_getJointSpeed(IntPtr pRevoluteJoint, out float speed);
+        internal static void wrap_love_dll_type_RevoluteJoint_getJointSpeed(IntPtr pRevoluteJoint, out float speed)
+        {
+            _wrap_love_dll_type_RevoluteJoint_getJointSpeed(pRevoluteJoint, out speed);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_RevoluteJoint_setMotorEnabled")]
+        internal extern static void _wrap_love_dll_type_RevoluteJoint_setMotorEnabled(IntPtr pRevoluteJoint, bool enabled);
+        internal static void wrap_love_dll_type_RevoluteJoint_setMotorEnabled(IntPtr pRevoluteJoint, bool enabled)
+        {
+            _wrap_love_dll_type_RevoluteJoint_setMotorEnabled(pRevoluteJoint, enabled);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_RevoluteJoint_isMotorEnabled")]
+        internal extern static void _wrap_love_dll_type_RevoluteJoint_isMotorEnabled(IntPtr pRevoluteJoint, out bool enabled);
+        internal static void wrap_love_dll_type_RevoluteJoint_isMotorEnabled(IntPtr pRevoluteJoint, out bool enabled)
+        {
+            _wrap_love_dll_type_RevoluteJoint_isMotorEnabled(pRevoluteJoint, out enabled);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_RevoluteJoint_setMaxMotorTorque")]
+        internal extern static void _wrap_love_dll_type_RevoluteJoint_setMaxMotorTorque(IntPtr pRevoluteJoint, float torque);
+        internal static void wrap_love_dll_type_RevoluteJoint_setMaxMotorTorque(IntPtr pRevoluteJoint, float torque)
+        {
+            _wrap_love_dll_type_RevoluteJoint_setMaxMotorTorque(pRevoluteJoint, torque);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_RevoluteJoint_setMotorSpeed")]
+        internal extern static void _wrap_love_dll_type_RevoluteJoint_setMotorSpeed(IntPtr pRevoluteJoint, float speed);
+        internal static void wrap_love_dll_type_RevoluteJoint_setMotorSpeed(IntPtr pRevoluteJoint, float speed)
+        {
+            _wrap_love_dll_type_RevoluteJoint_setMotorSpeed(pRevoluteJoint, speed);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_RevoluteJoint_getMotorSpeed")]
+        internal extern static void _wrap_love_dll_type_RevoluteJoint_getMotorSpeed(IntPtr pRevoluteJoint, out float speed);
+        internal static void wrap_love_dll_type_RevoluteJoint_getMotorSpeed(IntPtr pRevoluteJoint, out float speed)
+        {
+            _wrap_love_dll_type_RevoluteJoint_getMotorSpeed(pRevoluteJoint, out speed);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_RevoluteJoint_getMotorTorque")]
+        internal extern static void _wrap_love_dll_type_RevoluteJoint_getMotorTorque(IntPtr pRevoluteJoint, float inv_dt, out float torque);
+        internal static void wrap_love_dll_type_RevoluteJoint_getMotorTorque(IntPtr pRevoluteJoint, float inv_dt, out float torque)
+        {
+            _wrap_love_dll_type_RevoluteJoint_getMotorTorque(pRevoluteJoint, inv_dt, out torque);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_RevoluteJoint_getMaxMotorTorque")]
+        internal extern static void _wrap_love_dll_type_RevoluteJoint_getMaxMotorTorque(IntPtr pRevoluteJoint, out float torque);
+        internal static void wrap_love_dll_type_RevoluteJoint_getMaxMotorTorque(IntPtr pRevoluteJoint, out float torque)
+        {
+            _wrap_love_dll_type_RevoluteJoint_getMaxMotorTorque(pRevoluteJoint, out torque);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_RevoluteJoint_setLimitsEnabled")]
+        internal extern static void _wrap_love_dll_type_RevoluteJoint_setLimitsEnabled(IntPtr pRevoluteJoint, bool enabled);
+        internal static void wrap_love_dll_type_RevoluteJoint_setLimitsEnabled(IntPtr pRevoluteJoint, bool enabled)
+        {
+            _wrap_love_dll_type_RevoluteJoint_setLimitsEnabled(pRevoluteJoint, enabled);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_RevoluteJoint_areLimitsEnabled")]
+        internal extern static void _wrap_love_dll_type_RevoluteJoint_areLimitsEnabled(IntPtr pRevoluteJoint, out bool enabled);
+        internal static void wrap_love_dll_type_RevoluteJoint_areLimitsEnabled(IntPtr pRevoluteJoint, out bool enabled)
+        {
+            _wrap_love_dll_type_RevoluteJoint_areLimitsEnabled(pRevoluteJoint, out enabled);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_RevoluteJoint_setUpperLimit")]
+        internal extern static bool _wrap_love_dll_type_RevoluteJoint_setUpperLimit(IntPtr pRevoluteJoint, float limit);
+        internal static bool wrap_love_dll_type_RevoluteJoint_setUpperLimit(IntPtr pRevoluteJoint, float limit)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_RevoluteJoint_setUpperLimit(pRevoluteJoint, limit));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_RevoluteJoint_setLowerLimit")]
+        internal extern static bool _wrap_love_dll_type_RevoluteJoint_setLowerLimit(IntPtr pRevoluteJoint, float limit);
+        internal static bool wrap_love_dll_type_RevoluteJoint_setLowerLimit(IntPtr pRevoluteJoint, float limit)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_RevoluteJoint_setLowerLimit(pRevoluteJoint, limit));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_RevoluteJoint_setLimits")]
+        internal extern static bool _wrap_love_dll_type_RevoluteJoint_setLimits(IntPtr pRevoluteJoint, float lowerLimit, float upperLimit);
+        internal static bool wrap_love_dll_type_RevoluteJoint_setLimits(IntPtr pRevoluteJoint, float lowerLimit, float upperLimit)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_RevoluteJoint_setLimits(pRevoluteJoint, lowerLimit, upperLimit));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_RevoluteJoint_getLowerLimit")]
+        internal extern static void _wrap_love_dll_type_RevoluteJoint_getLowerLimit(IntPtr pRevoluteJoint, out float limit);
+        internal static void wrap_love_dll_type_RevoluteJoint_getLowerLimit(IntPtr pRevoluteJoint, out float limit)
+        {
+            _wrap_love_dll_type_RevoluteJoint_getLowerLimit(pRevoluteJoint, out limit);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_RevoluteJoint_getUpperLimit")]
+        internal extern static void _wrap_love_dll_type_RevoluteJoint_getUpperLimit(IntPtr pRevoluteJoint, out float limit);
+        internal static void wrap_love_dll_type_RevoluteJoint_getUpperLimit(IntPtr pRevoluteJoint, out float limit)
+        {
+            _wrap_love_dll_type_RevoluteJoint_getUpperLimit(pRevoluteJoint, out limit);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_RevoluteJoint_getReferenceAngle")]
+        internal extern static void _wrap_love_dll_type_RevoluteJoint_getReferenceAngle(IntPtr pRevoluteJoint, out float angle);
+        internal static void wrap_love_dll_type_RevoluteJoint_getReferenceAngle(IntPtr pRevoluteJoint, out float angle)
+        {
+            _wrap_love_dll_type_RevoluteJoint_getReferenceAngle(pRevoluteJoint, out angle);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_RevoluteJoint_getLimits")]
+        internal extern static void _wrap_love_dll_type_RevoluteJoint_getLimits(IntPtr pRevoluteJoint, out float lowerLimit, out float upperLimit);
+        internal static void wrap_love_dll_type_RevoluteJoint_getLimits(IntPtr pRevoluteJoint, out float lowerLimit, out float upperLimit)
+        {
+            _wrap_love_dll_type_RevoluteJoint_getLimits(pRevoluteJoint, out lowerLimit, out upperLimit);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_WeldJoint_setFrequency")]
+        internal extern static void _wrap_love_dll_type_WeldJoint_setFrequency(IntPtr pWeldJoint, float frequency);
+        internal static void wrap_love_dll_type_WeldJoint_setFrequency(IntPtr pWeldJoint, float frequency)
+        {
+            _wrap_love_dll_type_WeldJoint_setFrequency(pWeldJoint, frequency);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_WeldJoint_getFrequency")]
+        internal extern static void _wrap_love_dll_type_WeldJoint_getFrequency(IntPtr pWeldJoint, out float frequency);
+        internal static void wrap_love_dll_type_WeldJoint_getFrequency(IntPtr pWeldJoint, out float frequency)
+        {
+            _wrap_love_dll_type_WeldJoint_getFrequency(pWeldJoint, out frequency);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_WeldJoint_setDampingRatio")]
+        internal extern static void _wrap_love_dll_type_WeldJoint_setDampingRatio(IntPtr pWeldJoint, float ratio);
+        internal static void wrap_love_dll_type_WeldJoint_setDampingRatio(IntPtr pWeldJoint, float ratio)
+        {
+            _wrap_love_dll_type_WeldJoint_setDampingRatio(pWeldJoint, ratio);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_WeldJoint_getDampingRatio")]
+        internal extern static void _wrap_love_dll_type_WeldJoint_getDampingRatio(IntPtr pWeldJoint, out float ratio);
+        internal static void wrap_love_dll_type_WeldJoint_getDampingRatio(IntPtr pWeldJoint, out float ratio)
+        {
+            _wrap_love_dll_type_WeldJoint_getDampingRatio(pWeldJoint, out ratio);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_WeldJoint_getReferenceAngle")]
+        internal extern static void _wrap_love_dll_type_WeldJoint_getReferenceAngle(IntPtr pWeldJoint, out float angle);
+        internal static void wrap_love_dll_type_WeldJoint_getReferenceAngle(IntPtr pWeldJoint, out float angle)
+        {
+            _wrap_love_dll_type_WeldJoint_getReferenceAngle(pWeldJoint, out angle);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_WheelJoint_getJointTranslation")]
+        internal extern static void _wrap_love_dll_type_WheelJoint_getJointTranslation(IntPtr pWheelJoint, out float translation);
+        internal static void wrap_love_dll_type_WheelJoint_getJointTranslation(IntPtr pWheelJoint, out float translation)
+        {
+            _wrap_love_dll_type_WheelJoint_getJointTranslation(pWheelJoint, out translation);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_WheelJoint_getJointSpeed")]
+        internal extern static void _wrap_love_dll_type_WheelJoint_getJointSpeed(IntPtr pWheelJoint, out float speed);
+        internal static void wrap_love_dll_type_WheelJoint_getJointSpeed(IntPtr pWheelJoint, out float speed)
+        {
+            _wrap_love_dll_type_WheelJoint_getJointSpeed(pWheelJoint, out speed);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_WheelJoint_setMotorEnabled")]
+        internal extern static void _wrap_love_dll_type_WheelJoint_setMotorEnabled(IntPtr pWheelJoint, bool enabled);
+        internal static void wrap_love_dll_type_WheelJoint_setMotorEnabled(IntPtr pWheelJoint, bool enabled)
+        {
+            _wrap_love_dll_type_WheelJoint_setMotorEnabled(pWheelJoint, enabled);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_WheelJoint_isMotorEnabled")]
+        internal extern static void _wrap_love_dll_type_WheelJoint_isMotorEnabled(IntPtr pWheelJoint, out bool enabled);
+        internal static void wrap_love_dll_type_WheelJoint_isMotorEnabled(IntPtr pWheelJoint, out bool enabled)
+        {
+            _wrap_love_dll_type_WheelJoint_isMotorEnabled(pWheelJoint, out enabled);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_WheelJoint_setMotorSpeed")]
+        internal extern static void _wrap_love_dll_type_WheelJoint_setMotorSpeed(IntPtr pWheelJoint, float speed);
+        internal static void wrap_love_dll_type_WheelJoint_setMotorSpeed(IntPtr pWheelJoint, float speed)
+        {
+            _wrap_love_dll_type_WheelJoint_setMotorSpeed(pWheelJoint, speed);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_WheelJoint_getMotorSpeed")]
+        internal extern static void _wrap_love_dll_type_WheelJoint_getMotorSpeed(IntPtr pWheelJoint, out float speed);
+        internal static void wrap_love_dll_type_WheelJoint_getMotorSpeed(IntPtr pWheelJoint, out float speed)
+        {
+            _wrap_love_dll_type_WheelJoint_getMotorSpeed(pWheelJoint, out speed);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_WheelJoint_setMaxMotorTorque")]
+        internal extern static void _wrap_love_dll_type_WheelJoint_setMaxMotorTorque(IntPtr pWheelJoint, float torque);
+        internal static void wrap_love_dll_type_WheelJoint_setMaxMotorTorque(IntPtr pWheelJoint, float torque)
+        {
+            _wrap_love_dll_type_WheelJoint_setMaxMotorTorque(pWheelJoint, torque);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_WheelJoint_getMaxMotorTorque")]
+        internal extern static void _wrap_love_dll_type_WheelJoint_getMaxMotorTorque(IntPtr pWheelJoint, out float torque);
+        internal static void wrap_love_dll_type_WheelJoint_getMaxMotorTorque(IntPtr pWheelJoint, out float torque)
+        {
+            _wrap_love_dll_type_WheelJoint_getMaxMotorTorque(pWheelJoint, out torque);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_WheelJoint_getMotorTorque")]
+        internal extern static void _wrap_love_dll_type_WheelJoint_getMotorTorque(IntPtr pWheelJoint, float inv_dt, out float torque);
+        internal static void wrap_love_dll_type_WheelJoint_getMotorTorque(IntPtr pWheelJoint, float inv_dt, out float torque)
+        {
+            _wrap_love_dll_type_WheelJoint_getMotorTorque(pWheelJoint, inv_dt, out torque);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_WheelJoint_setSpringFrequency")]
+        internal extern static void _wrap_love_dll_type_WheelJoint_setSpringFrequency(IntPtr pWheelJoint, float frequency);
+        internal static void wrap_love_dll_type_WheelJoint_setSpringFrequency(IntPtr pWheelJoint, float frequency)
+        {
+            _wrap_love_dll_type_WheelJoint_setSpringFrequency(pWheelJoint, frequency);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_WheelJoint_getSpringFrequency")]
+        internal extern static void _wrap_love_dll_type_WheelJoint_getSpringFrequency(IntPtr pWheelJoint, out float frequency);
+        internal static void wrap_love_dll_type_WheelJoint_getSpringFrequency(IntPtr pWheelJoint, out float frequency)
+        {
+            _wrap_love_dll_type_WheelJoint_getSpringFrequency(pWheelJoint, out frequency);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_WheelJoint_setSpringDampingRatio")]
+        internal extern static void _wrap_love_dll_type_WheelJoint_setSpringDampingRatio(IntPtr pWheelJoint, float ratio);
+        internal static void wrap_love_dll_type_WheelJoint_setSpringDampingRatio(IntPtr pWheelJoint, float ratio)
+        {
+            _wrap_love_dll_type_WheelJoint_setSpringDampingRatio(pWheelJoint, ratio);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_WheelJoint_getSpringDampingRatio")]
+        internal extern static void _wrap_love_dll_type_WheelJoint_getSpringDampingRatio(IntPtr pWheelJoint, out float ratio);
+        internal static void wrap_love_dll_type_WheelJoint_getSpringDampingRatio(IntPtr pWheelJoint, out float ratio)
+        {
+            _wrap_love_dll_type_WheelJoint_getSpringDampingRatio(pWheelJoint, out ratio);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_WheelJoint_getAxis")]
+        internal extern static void _wrap_love_dll_type_WheelJoint_getAxis(IntPtr pWheelJoint, out float axisX, out float axisY);
+        internal static void wrap_love_dll_type_WheelJoint_getAxis(IntPtr pWheelJoint, out float axisX, out float axisY)
+        {
+            _wrap_love_dll_type_WheelJoint_getAxis(pWheelJoint, out axisX, out axisY);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_World_setGravity")]
+        internal extern static void _wrap_love_dll_type_World_setGravity(IntPtr pWorld, float gx, float gy);
+        internal static void wrap_love_dll_type_World_setGravity(IntPtr pWorld, float gx, float gy)
+        {
+            _wrap_love_dll_type_World_setGravity(pWorld, gx, gy);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_World_translateOrigin")]
+        internal extern static bool _wrap_love_dll_type_World_translateOrigin(IntPtr pWorld, float x, float y);
+        internal static bool wrap_love_dll_type_World_translateOrigin(IntPtr pWorld, float x, float y)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_World_translateOrigin(pWorld, x, y));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_World_setSleepingAllowed")]
+        internal extern static void _wrap_love_dll_type_World_setSleepingAllowed(IntPtr pWorld, bool allowed);
+        internal static void wrap_love_dll_type_World_setSleepingAllowed(IntPtr pWorld, bool allowed)
+        {
+            _wrap_love_dll_type_World_setSleepingAllowed(pWorld, allowed);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_World_isSleepingAllowed")]
+        internal extern static void _wrap_love_dll_type_World_isSleepingAllowed(IntPtr pWorld, out bool allowed);
+        internal static void wrap_love_dll_type_World_isSleepingAllowed(IntPtr pWorld, out bool allowed)
+        {
+            _wrap_love_dll_type_World_isSleepingAllowed(pWorld, out allowed);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_World_isLocked")]
+        internal extern static void _wrap_love_dll_type_World_isLocked(IntPtr pWorld, out bool locked);
+        internal static void wrap_love_dll_type_World_isLocked(IntPtr pWorld, out bool locked)
+        {
+            _wrap_love_dll_type_World_isLocked(pWorld, out locked);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_World_getBodyCount")]
+        internal extern static void _wrap_love_dll_type_World_getBodyCount(IntPtr pWorld, out int count);
+        internal static void wrap_love_dll_type_World_getBodyCount(IntPtr pWorld, out int count)
+        {
+            _wrap_love_dll_type_World_getBodyCount(pWorld, out count);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_World_getJointCount")]
+        internal extern static void _wrap_love_dll_type_World_getJointCount(IntPtr pWorld, out int count);
+        internal static void wrap_love_dll_type_World_getJointCount(IntPtr pWorld, out int count)
+        {
+            _wrap_love_dll_type_World_getJointCount(pWorld, out count);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_World_getContactCount")]
+        internal extern static void _wrap_love_dll_type_World_getContactCount(IntPtr pWorld, out int count);
+        internal static void wrap_love_dll_type_World_getContactCount(IntPtr pWorld, out int count)
+        {
+            _wrap_love_dll_type_World_getContactCount(pWorld, out count);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_World_destroy")]
+        internal extern static bool _wrap_love_dll_type_World_destroy(IntPtr pWorld);
+        internal static bool wrap_love_dll_type_World_destroy(IntPtr pWorld)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_World_destroy(pWorld));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_World_isDestroyed")]
+        internal extern static void _wrap_love_dll_type_World_isDestroyed(IntPtr pWorld, out bool validate);
+        internal static void wrap_love_dll_type_World_isDestroyed(IntPtr pWorld, out bool validate)
+        {
+            _wrap_love_dll_type_World_isDestroyed(pWorld, out validate);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_World_update")]
+        internal extern static bool _wrap_love_dll_type_World_update(IntPtr pWorld, float dt, int velocityiterations, int positioniterations, WrapWorldContactCallbackDelegate beginContact, WrapWorldContactCallbackDelegate endContact, WrapWorldContactCallbackDelegate preSolve, WrapWorldContactCallbackDelegate postSolve, WrapWorldContactFilterCallbackDelegate filter);
+        internal static bool wrap_love_dll_type_World_update(IntPtr pWorld, float dt, int velocityiterations, int positioniterations, WrapWorldContactCallbackDelegate beginContact, WrapWorldContactCallbackDelegate endContact, WrapWorldContactCallbackDelegate preSolve, WrapWorldContactCallbackDelegate postSolve, WrapWorldContactFilterCallbackDelegate filter)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_World_update(pWorld, dt, velocityiterations, positioniterations, beginContact, endContact, preSolve, postSolve, filter));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_World_getGravity")]
+        internal extern static void _wrap_love_dll_type_World_getGravity(IntPtr pWorld, out float x, out float y);
+        internal static void wrap_love_dll_type_World_getGravity(IntPtr pWorld, out float x, out float y)
+        {
+            _wrap_love_dll_type_World_getGravity(pWorld, out x, out y);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_World_getBodies")]
+        internal extern static bool _wrap_love_dll_type_World_getBodies(IntPtr pWorld, out IntPtr bodyList, out int bodyListLenght);
+        internal static bool wrap_love_dll_type_World_getBodies(IntPtr pWorld, out IntPtr bodyList, out int bodyListLenght)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_World_getBodies(pWorld, out bodyList, out bodyListLenght));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_World_getJoints")]
+        internal extern static bool _wrap_love_dll_type_World_getJoints(IntPtr pWorld, out IntPtr jointList, out int jointListLenght);
+        internal static bool wrap_love_dll_type_World_getJoints(IntPtr pWorld, out IntPtr jointList, out int jointListLenght)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_World_getJoints(pWorld, out jointList, out jointListLenght));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_World_getContacts")]
+        internal extern static bool _wrap_love_dll_type_World_getContacts(IntPtr pWorld, out IntPtr contactList, out int contactListLenght);
+        internal static bool wrap_love_dll_type_World_getContacts(IntPtr pWorld, out IntPtr contactList, out int contactListLenght)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_World_getContacts(pWorld, out contactList, out contactListLenght));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_World_queryBoundingBox")]
+        internal extern static bool _wrap_love_dll_type_World_queryBoundingBox(IntPtr pWorld, float topLeftX, float topLeftY, float bottomRightX, float bottomRightY, WrapWorldQueryBoundingBoxCallbackDelegate callback);
+        internal static bool wrap_love_dll_type_World_queryBoundingBox(IntPtr pWorld, float topLeftX, float topLeftY, float bottomRightX, float bottomRightY, WrapWorldQueryBoundingBoxCallbackDelegate callback)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_World_queryBoundingBox(pWorld, topLeftX, topLeftY, bottomRightX, bottomRightY, callback));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_World_rayCast")]
+        internal extern static bool _wrap_love_dll_type_World_rayCast(IntPtr pWorld, float x1, float y1, float x2, float y2, WrapWorldRayCastCallbackDelegate callback);
+        internal static bool wrap_love_dll_type_World_rayCast(IntPtr pWorld, float x1, float y1, float x2, float y2, WrapWorldRayCastCallbackDelegate callback)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_World_rayCast(pWorld, x1, y1, x2, y2, callback));
+        }
+
+
+
         #endregion
     }
 
