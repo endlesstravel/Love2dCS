@@ -1039,6 +1039,9 @@ namespace wrap
 	/// [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 	/// public delegate double CallbackDelegate(double x);
 
+	typedef float(__stdcall *WrapShapeMassCallbackFunc)(float x, float y, float mass, float inertia);
+	typedef float(__stdcall *WrapShapeAABBCallbackFunc)(float lx, float ly, float ux, float uy);
+	typedef float(__stdcall *WrapShapeRayCastCallbackFunc)(float nx, float ny, float fraction);
 	typedef float(__stdcall *WrapRayCastCallbackFunc)(Fixture* fixture, float x, float y, float nx, float ny, float fraction);
 	typedef bool4(__stdcall *WrapQueryBoundingBoxCallbackFunc)(Fixture*);
 	typedef void(__stdcall *WrapContactCallbackFunc)(Fixture *a, Fixture *b, Contact *contact, Float2* impluse, int impluseLength);

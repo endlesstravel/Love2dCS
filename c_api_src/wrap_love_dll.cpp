@@ -6347,6 +6347,15 @@ namespace wrap
 
 #pragma endregion
 
+	using love::physics::box2d::MotorJoint;
+	using love::physics::box2d::MouseJoint;
+	using love::physics::box2d::PolygonShape;
+	using love::physics::box2d::RevoluteJoint;
+	using love::physics::box2d::PulleyJoint;
+	using love::physics::box2d::WeldJoint;
+	using love::physics::box2d::WheelJoint;
+	using love::physics::box2d::RopeJoint;
+	using love::physics::box2d::PrismaticJoint;
 
 #pragma region type - Body
 
@@ -6616,7 +6625,7 @@ namespace wrap
         *out_world = t->getWorld();
         (*out_world)->retain();
     }
-	
+
     bool4 wrap_love_dll_type_Body_destroy(Body *t)
     {
         return wrap_catchexcept([&]() { t->destroy(); });
@@ -6714,6 +6723,84 @@ namespace wrap
 	}
 #pragma endregion
 
+#pragma region type - Shape
+	void wrap_love_dll_type_Shape_getType(Shape *t, int *out_shapeType)
+	{
+		*out_shapeType = t->getType();
+	}
+
+	void wrap_love_dll_type_Shape_getRadius(Shape *t, float *out_radius)
+	{
+		*out_radius = t->getRadius();
+	}
+
+	void wrap_love_dll_type_Shape_getChildCount(Shape *t, float *out_childCount)
+	{
+		*out_childCount = t->getChildCount();
+	}
+
+	void wrap_love_dll_type_Shape_testPoint(Shape *t, float tx, float ty, float tr, float px, float py, bool4 *out_result)
+	{
+		*out_result = t->testPoint(tx, ty, tr, px, py);
+	}
+
+	class WrapShapeHack : Shape
+	{
+	public:
+		b2Shape* wrap_getShap()
+		{
+			return shape;
+		}
+	};
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	bool4 wrap_love_dll_type_Shape_rayCast(Shape *t, Float2 p1, Float2 p2, float maxFraction, Float2 trans, float tr, int childIndex, WrapShapeRayCastCallbackFunc callback)
+	{
+		return wrap_catchexcept([&]() {
+			auto shape = ((WrapShapeHack*)t)->wrap_getShap();
+			b2RayCastInput input;
+			input.p1.Set(Physics::scaleDown(p1.x), Physics::scaleDown(p1.y));
+			input.p2.Set(Physics::scaleDown(p2.x), Physics::scaleDown(p2.y));
+			input.maxFraction = maxFraction;
+			b2Transform transform(b2Vec2(trans.x, trans.y), b2Rot(tr));
+			b2RayCastOutput output;
+			if (!shape->RayCast(&output, input, transform, childIndex))
+				return; // No hit.
+
+			callback(output.normal.x, output.normal.y, output.fraction);
+		});
+	}
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	bool4 wrap_love_dll_type_Shape_computeAABB(Shape *t, float x, float y, float r, int childIndex, WrapShapeAABBCallbackFunc callback)
+	{
+		return wrap_catchexcept([&]() {
+			auto shape = ((WrapShapeHack*)t)->wrap_getShap();
+
+			b2Transform transform(b2Vec2(Physics::scaleDown(x), Physics::scaleDown(y)), b2Rot(Physics::scaleDown(r)));
+			b2AABB box;
+			shape->ComputeAABB(&box, transform, childIndex);
+			box = Physics::scaleUp(box);
+			callback(box.lowerBound.x, box.lowerBound.y, box.upperBound.x, box.upperBound.y);
+		});
+	}
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	void wrap_love_dll_type_Shape_computeMass(Shape *t, float density, WrapShapeMassCallbackFunc callback)
+	{
+		auto shape = ((WrapShapeHack*)t)->wrap_getShap();
+		b2MassData data;
+		shape->ComputeMass(&data, density);
+		b2Vec2 center = Physics::scaleUp(data.center);
+
+		callback(
+			center.x,
+			center.y,
+			data.mass,
+			Physics::scaleUp(Physics::scaleUp(data.I)));
+	}
+#pragma endregion
+
 #pragma region type - ChainShape
 
     void wrap_love_dll_type_ChainShape_setNextVertex_nil(ChainShape *c)
@@ -6738,7 +6825,7 @@ namespace wrap
 
     bool4 wrap_love_dll_type_ChainShape_getChildEdge(ChainShape *c, int index, EdgeShape **out_edgeShape)
     {
-        return wrap_catchexcept([&](){ 
+        return wrap_catchexcept([&](){
 			*out_edgeShape = c->getChildEdge(index);
 			(*out_edgeShape)->retain();
 		});
@@ -6826,11 +6913,88 @@ namespace wrap
 
 #pragma endregion
 
-#pragma region type - Contact
+#pragma region type - EdgeShape
 
-    // TODO:
-    // { "getPositions", w_Contact_getPositions },
-    // { "getNormal", w_Contact_getNormal },
+    void wrap_love_dll_EdgeShape_setNextVertex_nil(EdgeShape *t)
+    {
+        t->setNextVertex();
+    }
+
+    void wrap_love_dll_EdgeShape_setNextVertex(EdgeShape *t, float x, float y)
+    {
+        t->setNextVertex(x, y);
+    }
+
+    void wrap_love_dll_EdgeShape_setPreviousVertex_nil(EdgeShape *t)
+    {
+        t->setPreviousVertex();
+    }
+    void wrap_love_dll_EdgeShape_setPreviousVertex(EdgeShape *t, float x, float y)
+    {
+        t->setPreviousVertex(x, y);
+    }
+
+    void wrap_love_dll_EdgeShape_getNextVertex(EdgeShape *t, bool4 *out_hasNextVertex, Float2 *out_result)
+    {
+        float x, y;
+        if (*out_hasNextVertex = t->getNextVertex(x, y))
+        {
+            out_result->x = x;
+            out_result->y = y;
+        }
+    }
+
+    void wrap_love_dll_EdgeShape_getPreviousVertex(EdgeShape *t, bool4 *out_hasPrevVertex, Float2 *out_result)
+    {
+        float x, y;
+        if (*out_hasPrevVertex = t->getPreviousVertex(x, y))
+        {
+            out_result->x = x;
+            out_result->y = y;
+        }
+    }
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	void wrap_love_dll_EdgeShape_getPoints(EdgeShape *t, float *out_x1, float *out_y1, float *out_x2, float *out_y2)
+	{
+		auto shape = ((WrapShapeHack*)t)->wrap_getShap();
+		b2EdgeShape *e = (b2EdgeShape *)shape;
+		b2Vec2 v1 = Physics::scaleUp(e->m_vertex1);
+		b2Vec2 v2 = Physics::scaleUp(e->m_vertex2);
+		*out_x1 = v1.x;
+		*out_y1 = v1.y;
+		*out_x2 = v2.x;
+		*out_y2 = v2.y;
+	}
+
+#pragma endregion
+
+#pragma region type - PolygonShape
+
+	void wrap_love_dll_type_PolygonShape_validate(PolygonShape *t, bool4 *out_validate)
+	{
+		*out_validate = t->validate();
+	}
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	void wrap_love_dll_type_PolygonShape_getPoints(PolygonShape *t, Float2 **out_pointList, int *out_pointListLength)
+	{
+		auto shape = ((WrapShapeHack*)t)->wrap_getShap();
+		b2PolygonShape *p = (b2PolygonShape *)shape;
+		int count = p->GetVertexCount();
+
+		*out_pointListLength = count;
+		*out_pointList = new Float2[count];
+		for (int i = 0; i < count; i++)
+		{
+			b2Vec2 v = Physics::scaleUp(p->GetVertex(i));
+			(*out_pointList)[i].x = v.x;
+			(*out_pointList)[i].y = v.y;
+		}
+	}
+#pragma endregion
+
+#pragma region type - Contact
 
     void wrap_love_dll_type_Contact_getFriction(Contact *t, float *out_friction)
     {
@@ -6912,6 +7076,50 @@ namespace wrap
     }
 
 
+	// FIXME:
+	// hack to access private member :
+	class WrapContactHack : public Object
+	{
+	private:
+
+		// The Box2D contact.
+		b2Contact *contact;
+	public:
+		b2Contact* wrap_getContact()
+		{
+			return contact;
+		}
+	};
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	void wrap_love_dll_type_Contact_getPositions(Contact *t, Float2 **out_pointList, int *out_pointListLength)
+	{
+		auto contact = ((WrapContactHack*)t)->wrap_getContact();
+		b2WorldManifold manifold;
+		contact->GetWorldManifold(&manifold);
+		int points = contact->GetManifold()->pointCount;
+
+		*out_pointListLength = points;
+		*out_pointList = new Float2[points];
+		for (int i = 0; i < points; i++)
+		{
+			b2Vec2 position = Physics::scaleUp(manifold.points[i]);
+			(*out_pointList)[i].x = position.x;
+			(*out_pointList)[i].y = position.y;
+		}
+	}
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	void wrap_love_dll_type_Contact_getNormal(Contact *t, float *out_nx, float *out_ny)
+	{
+		auto contact = ((WrapContactHack*)t)->wrap_getContact();
+		b2WorldManifold manifold;
+		contact->GetWorldManifold(&manifold);
+
+		*out_nx = manifold.normal.x;
+		*out_ny = manifold.normal.y;
+	}
+
 #pragma endregion
 
 #pragma region type - DistanceJoint
@@ -6948,52 +7156,6 @@ namespace wrap
 
 #pragma endregion
 
-
-#pragma region type - EdgeShape
-
-    void w_EdgeShape_setNextVertex_nil(EdgeShape *t)
-    {
-        t->setNextVertex();
-    }
-
-    void w_EdgeShape_setNextVertex(EdgeShape *t, float x, float y)
-    {
-        t->setNextVertex(x, y);
-    }
-
-    void w_EdgeShape_setPreviousVertex_nil(EdgeShape *t)
-    {
-        t->setPreviousVertex();
-    }
-    void w_EdgeShape_setPreviousVertex(EdgeShape *t, float x, float y)
-    {
-        t->setPreviousVertex(x, y);
-    }
-
-    void w_EdgeShape_getNextVertex(EdgeShape *t, bool4 *out_hasNextVertex, Float2 *out_result)
-    {
-        float x, y;
-        if (*out_hasNextVertex = t->getNextVertex(x, y))
-        {
-            out_result->x = x;
-            out_result->y = y;
-        }
-    }
-
-    void w_EdgeShape_getPreviousVertex(EdgeShape *t, bool4 *out_hasPrevVertex, Float2 *out_result)
-    {
-        float x, y;
-        if (*out_hasPrevVertex = t->getPreviousVertex(x, y))
-        {
-            out_result->x = x;
-            out_result->y = y;
-        }
-    }
-
-    // TODO:
-    // { "getPoints", w_EdgeShape_getPoints },
-
-#pragma endregion
 
 #pragma region type - Fixture
 
@@ -7075,7 +7237,7 @@ namespace wrap
         *out_mask = v[1];
         *out_group = v[2];
     }
-	
+
     void wrap_love_dll_type_Fixture_getGroupIndex(Fixture *t, int *out_index)
     {
         *out_index = t->getGroupIndex();
@@ -7099,60 +7261,12 @@ namespace wrap
 
 	// FIXME:
 	// hack to access private member :
-	class WrapFixture : public Fixture
+	class WrapFixtureHack : public Fixture
 	{
 	public:
-		bool4 RayCast(b2RayCastOutput* output, const b2RayCastInput& input, int32 childIndex)
+		b2Fixture* wrap_getFixture()
 		{
-			fixture->RayCast(output, input, childIndex);
-			return true;
-		}
-
-		void setCategory(uint16 categories)
-		{
-			b2Filter f = fixture->GetFilterData();
-			f.categoryBits = categories;
-			fixture->SetFilterData(f);
-		}
-
-		uint16 getCategory()
-		{
-			b2Filter f = fixture->GetFilterData();
-			return f.categoryBits;
-		}
-
-		void setMask(uint16 masks)
-		{
-			b2Filter f = fixture->GetFilterData();
-			f.maskBits = ~masks;
-			fixture->SetFilterData(f);
-		}
-
-		uint16 getMask()
-		{
-			b2Filter f = fixture->GetFilterData();
-			return ~f.maskBits;
-		}
-
-		void getBoundingBox(int childIndex, float *out_topLeftX, float *out_topLeftY, float *out_bottomRightX, float *out_bottomRightY)
-		{
-			b2AABB box = fixture->GetAABB(childIndex);
-			box = Physics::scaleUp(box);
-			*out_topLeftX = box.lowerBound.x;
-			*out_topLeftY = box.lowerBound.y;
-			*out_bottomRightX = box.upperBound.x;
-			*out_bottomRightY = box.upperBound.y;
-		}
-
-		void getMassData(Float2 *out_center, float *out_mass, float *out_rotationalInertia)
-		{
-			b2MassData data;
-			fixture->GetMassData(&data);
-			b2Vec2 center = Physics::scaleUp(data.center);
-			out_center->x = center.x;
-			out_center->y = center.y;
-			*out_mass = data.mass;
-			*out_rotationalInertia = data.I;
+			return fixture;
 		}
 	};
 
@@ -7160,8 +7274,7 @@ namespace wrap
 	bool4 wrap_love_dll_type_Fixture_rayCast(Fixture *t, bool4 *hasHit, float x1, float y1, float x2, float y2, float maxFraction, int childIndex, Float2 *out_pos, float *out_fraction)
 	{
 		return wrap_catchexcept([&]() {
-
-			WrapFixture* tt = (WrapFixture*)t;
+			auto fixture = ((WrapFixtureHack*)t)->wrap_getFixture();
 
 			float p1x = Physics::scaleDown(x1);
 			float p1y = Physics::scaleDown(y1);
@@ -7172,7 +7285,7 @@ namespace wrap
 			input.p2.Set(p2x, p2y);
 			input.maxFraction = maxFraction;
 			b2RayCastOutput output;
-			if (!(*hasHit = tt->RayCast(&output, input, childIndex)))
+			if (!(*hasHit = fixture->RayCast(&output, input, childIndex)))
 				return; // Nothing hit.
 
 			out_pos->x = output.normal.x;
@@ -7185,8 +7298,10 @@ namespace wrap
 	bool4 wrap_love_dll_type_Fixture_setCategory(Fixture *t, uint16 categories)
 	{
 		return wrap_catchexcept([&]() {
-			WrapFixture* tt = (WrapFixture*)t;
-			tt->setCategory(categories);
+			auto fixture = ((WrapFixtureHack*)t)->wrap_getFixture();
+			b2Filter f = fixture->GetFilterData();
+			f.categoryBits = categories;
+			fixture->SetFilterData(f);
 		});
 	}
 
@@ -7194,17 +7309,20 @@ namespace wrap
 	bool4 wrap_love_dll_type_Fixture_getCategory(Fixture *t, uint16 *out_categories)
 	{
 		return wrap_catchexcept([&]() {
-			WrapFixture* tt = (WrapFixture*)t;
-			*out_categories = tt->getCategory();
+			auto fixture = ((WrapFixtureHack*)t)->wrap_getFixture();
+			b2Filter f = fixture->GetFilterData();
+			*out_categories = f.categoryBits;
 		});
 	}
 
 	// FIXME: because the params is lua_State *L, we need hack it.
-	bool4 wrap_love_dll_type_Fixture_setMask(Fixture *t, uint16 mask)
+	bool4 wrap_love_dll_type_Fixture_setMask(Fixture *t, uint16 masks)
 	{
 		return wrap_catchexcept([&]() {
-			WrapFixture* tt = (WrapFixture*)t;
-			tt->setMask(mask);
+			auto fixture = ((WrapFixtureHack*)t)->wrap_getFixture();
+			b2Filter f = fixture->GetFilterData();
+			f.maskBits = ~masks;
+			fixture->SetFilterData(f);
 		});
 	}
 
@@ -7212,8 +7330,9 @@ namespace wrap
 	bool4 wrap_love_dll_type_Fixture_getMask(Fixture *t, uint16 *out_mask)
 	{
 		return wrap_catchexcept([&]() {
-			WrapFixture* tt = (WrapFixture*)t;
-			*out_mask = tt->getMask();
+			auto fixture = ((WrapFixtureHack*)t)->wrap_getFixture();
+			b2Filter f = fixture->GetFilterData();
+			*out_mask = ~f.maskBits;
 		});
 	}
 
@@ -7221,8 +7340,13 @@ namespace wrap
 	bool4 wrap_love_dll_type_Fixture_getBoundingBox(Fixture *t, int childIndex, float *out_topLeftX, float *out_topLeftY, float *out_bottomRightX, float *out_bottomRightY)
 	{
 		return wrap_catchexcept([&]() {
-			WrapFixture* tt = (WrapFixture*)t;
-			tt->getBoundingBox(childIndex, out_topLeftX, out_topLeftY, out_bottomRightX, out_bottomRightY);
+			auto fixture = ((WrapFixtureHack*)t)->wrap_getFixture();
+			b2AABB box = fixture->GetAABB(childIndex);
+			box = Physics::scaleUp(box);
+			*out_topLeftX = box.lowerBound.x;
+			*out_topLeftY = box.lowerBound.y;
+			*out_bottomRightX = box.upperBound.x;
+			*out_bottomRightY = box.upperBound.y;
 		});
 	}
 
@@ -7230,8 +7354,14 @@ namespace wrap
 	bool4 wrap_love_dll_type_Fixture_getMassData(Fixture *t, Float2 *out_center, float *out_mass, float *out_rotationalInertia)
 	{
 		return wrap_catchexcept([&]() {
-			WrapFixture* tt = (WrapFixture*)t;
-			tt->getMassData(out_center, out_mass, out_rotationalInertia);
+			auto fixture = ((WrapFixtureHack*)t)->wrap_getFixture();
+			b2MassData data;
+			fixture->GetMassData(&data);
+			b2Vec2 center = Physics::scaleUp(data.center);
+			out_center->x = center.x;
+			out_center->y = center.y;
+			*out_mass = data.mass;
+			*out_rotationalInertia = data.I;
 		});
 	}
 
@@ -7324,39 +7454,53 @@ namespace wrap
 
 	// FIXME:
 	// hack to access private member :
-	class WrapJoint : public Joint
+	class WrapJointHack : public Joint
 	{
+	protected:
+
+		World *world;
+
+		love::physics::box2d::jointudata *udata;
+	private:
+
+		// A Joint must be destroyed *before* the bodies it acts upon,
+		// and the world they reside in. We therefore need refs
+		// parents and associations to prevent wrong destruction order.
+		Body *body1, *body2;
+
+
+		// The Box2D joint object.
+		b2Joint *joint;
 	public:
-		void getAnchors()
+		b2Joint* wrap_getJoint()
 		{
-			//Physics::scaleUp(joint->GetAnchorA().x);
-			//Physics::scaleUp(joint->GetAnchorA().y);
-			//Physics::scaleUp(joint->GetAnchorB().x);
-			//Physics::scaleUp(joint->GetAnchorB().y);
+			return joint;
 		}
 	};
 
-	//// FIXME: because the params is lua_State *L, we need hack it.
-	//void w_Joint_getAnchors(Joint *t)
-	//{
-	//	t->joint->GetAnchorA().x;
-	//	lua_remove(L, 1);
-	//	return t->getAnchors(L);
-	//}
+	// FIXME: because the params is lua_State *L, we need hack it.
+	void wrap_love_dll_Joint_getAnchors(Joint *t, float *out_x1, float *out_y1, float *out_x2, float *out_y2)
+	{
+		auto joint = ((WrapJointHack*)t)->wrap_getJoint();
+		*out_x1 = Physics::scaleUp(joint->GetAnchorA().x);
+		*out_y1 = Physics::scaleUp(joint->GetAnchorA().y);
+		*out_x2 = Physics::scaleUp(joint->GetAnchorB().x);
+		*out_y2 = Physics::scaleUp(joint->GetAnchorB().y);
+	}
 
-	//// FIXME: because the params is lua_State *L, we need hack it.
-	//void w_Joint_getReactionForce(Joint *t)
-	//{
-	//	Joint *t = luax_checkjoint(L, 1);
-	//	lua_remove(L, 1);
-	//	return t->getReactionForce(L);
-	//}
+	// FIXME: because the params is lua_State *L, we need hack it.
+	void wrap_love_dll_Joint_getReactionForce(Joint *t, float dt, float *out_x, float *out_y)
+	{
+		auto joint = ((WrapJointHack*)t)->wrap_getJoint();
+		b2Vec2 v = Physics::scaleUp(joint->GetReactionForce(dt));
+		*out_x = v.x;
+		*out_y = v.y;
+	}
 
 #pragma endregion
 
 
 #pragma region type - MotorJoint
-	using love::physics::box2d::MotorJoint;
 	void wrap_love_dll_type_MotorJoint_setLinearOffset(MotorJoint *t, float x, float y)
 	{
 		t->setLinearOffset(x, y);
@@ -7402,19 +7546,33 @@ namespace wrap
 		*out_factor = t->getCorrectionFactor();
 	}
 
+	// FIXME:
+	// hack to access private member :
+	class WrapMotorJointHack : public Joint
+	{
+	private:
 
-	//// FIXME: because the params is lua_State *L, we need hack it.
-	//void wrap_love_dll_type_MotorJoint_getLinearOffset(MotorJoint *t)
-	//{
-	//	MotorJoint *t = luax_checkmotorjoint(L, 1);
-	//	return t->getLinearOffset(L);
-	//}
+		// The Box2D MotorJoint object.
+		b2MotorJoint *joint;
+	public:
+		b2MotorJoint* wrap_getJoint()
+		{
+			return joint;
+		}
+	};
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	void wrap_love_dll_type_MotorJoint_getLinearOffset(MotorJoint *t, float *out_x, float *out_y)
+	{
+		auto joint = ((WrapMotorJointHack*)t)->wrap_getJoint();
+		*out_x = Physics::scaleUp(joint->GetLinearOffset().x);
+		*out_y = Physics::scaleUp(joint->GetLinearOffset().y);
+	}
 
 #pragma endregion
 
 
 #pragma region type - MouseJoint
-	using love::physics::box2d::MouseJoint;
 	void wrap_love_dll_type_MouseJoint_setTarget(MouseJoint *t, float x, float y)
 	{
 		t->setTarget(x, y);
@@ -7449,118 +7607,105 @@ namespace wrap
 		*out_ratio = t->getDampingRatio();
 	}
 
+	class WrapMouseJointHack : public Joint
+	{
+	private:
+		// The Box2D MouseJoint object.
+		b2MouseJoint *joint;
+	public:
+		b2MouseJoint* wrap_getJoint()
+		{
+			return joint;
+		}
+	};
 
-	//// FIXME: because the params is lua_State *L, we need hack it.
-	//void wrap_love_dll_type_MouseJoint_getTarget(MouseJoint *t)
-	//{
-	//	MouseJoint *t = luax_checkmousejoint(L, 1);
-	//	lua_remove(L, 1);
-	//	return t->getTarget(L);
-	//}
+	// FIXME: because the params is lua_State *L, we need hack it.
+	void wrap_love_dll_type_MouseJoint_getTarget(MouseJoint *t, float *out_x, float *out_y)
+	{
+		auto joint = ((WrapMouseJointHack*)t)->wrap_getJoint();
+		*out_x = Physics::scaleUp(joint->GetTarget().x);
+		*out_y = Physics::scaleUp(joint->GetTarget().y);
+	}
 
 #pragma endregion
 
 #pragma region type - Physics - *new* region
 
-#pragma endregion
-
-#pragma region type - Physics
-
-	using love::physics::box2d::PolygonShape;
-	using love::physics::box2d::RevoluteJoint;
-	using love::physics::box2d::PulleyJoint;
-	using love::physics::box2d::WeldJoint;
-	using love::physics::box2d::WheelJoint;
-	using love::physics::box2d::RopeJoint;
-	using love::physics::box2d::PrismaticJoint;
-	
-	
 	bool4 wrap_love_dll_physics_newWorld(float gx, float gy, bool4 sleep, World** out_world)
 	{
-		return wrap_catchexcept( [&]() { 
+		return wrap_catchexcept([&]() {
 			*out_world = physicsInstance->newWorld(gx, gy, sleep);
-			(*out_world)->retain();
 		});
 	}
 
 	bool4 wrap_love_dll_physics_newBody(World* world, float x, float y, int type_bodyType, Body **out_body)
 	{
-		return wrap_catchexcept( [&]() { 
+		return wrap_catchexcept([&]() {
 			*out_body = physicsInstance->newBody(world, x, y, (Body::Type)type_bodyType);
-			(*out_body)->retain();
 		});
 	}
 
 	bool4 wrap_love_dll_physics_newFixture(Body *body, Shape *shape, float density, Fixture **out_fixture)
 	{
-		return wrap_catchexcept( [&]() {
-			*out_fixture = physicsInstance->newFixture(body, shape, density); 
-			(*out_fixture)->retain();
+		return wrap_catchexcept([&]() {
+			*out_fixture = physicsInstance->newFixture(body, shape, density);
 		});
 	}
 
 	bool4 wrap_love_dll_physics_newCircleShape(float x, float y, float radius, CircleShape **out_shape)
 	{
-		return wrap_catchexcept( [&]() { 
+		return wrap_catchexcept([&]() {
 			*out_shape = physicsInstance->newCircleShape(x, y, radius);
-			(*out_shape)->retain();
 		});
 	}
 
 	bool4 wrap_love_dll_physics_newRectangleShape(float x, float y, float w, float h, float angle, PolygonShape **out_shape)
 	{
-		return wrap_catchexcept( [&]() { 
+		return wrap_catchexcept([&]() {
 			*out_shape = physicsInstance->newRectangleShape(x, y, w, h, angle);
-			(*out_shape)->retain();
 		});
 	}
 
 	bool4 wrap_love_dll_physics_newEdgeShape(float x1, float y1, float x2, float y2, EdgeShape **out_shape)
 	{
-		return wrap_catchexcept( [&]() { 
+		return wrap_catchexcept([&]() {
 			*out_shape = physicsInstance->newEdgeShape(x1, y1, x2, y2);
-			(*out_shape)->retain();
 		});
 	}
 
 	bool4 wrap_love_dll_physics_newDistanceJoint(Body *body1, Body *body2, float x1, float y1, float x2, float y2, bool4 collideConnected, DistanceJoint **out_joint)
 	{
-		return wrap_catchexcept( [&]() {
+		return wrap_catchexcept([&]() {
 			(*out_joint) = physicsInstance->newDistanceJoint(body1, body2, x1, y1, x2, y2, collideConnected);
-			(*out_joint)->retain();
 		});
 	}
 
 	bool4 wrap_love_dll_physics_newMouseJoint(Body *body, float x, float y, MouseJoint **out_joint)
 	{
-		return wrap_catchexcept( [&]() {
-			*out_joint = physicsInstance->newMouseJoint(body, x, y); 
-			(*out_joint)->retain();
+		return wrap_catchexcept([&]() {
+			*out_joint = physicsInstance->newMouseJoint(body, x, y);
 		});
 	}
 
 	bool4 wrap_love_dll_physics_newRevoluteJoint(Body *body1, Body *body2, Float2 pA, Float2 pB, bool collideConnected, RevoluteJoint **out_joint)
 	{
-		return wrap_catchexcept( [&]() {
+		return wrap_catchexcept([&]() {
 			*out_joint = physicsInstance->newRevoluteJoint(body1, body2, pA.x, pA.y, pB.x, pB.y, collideConnected);
-			(*out_joint)->retain();
 		});
 	}
 	bool4 wrap_love_dll_physics_newRevoluteJoint_referenceAngle(Body *body1, Body *body2, Float2 pA, Float2 pB, bool collideConnected, float referenceAngle, RevoluteJoint **out_joint)
 	{
 		return wrap_catchexcept([&]() {
 			*out_joint = physicsInstance->newRevoluteJoint(body1, body2, pA.x, pA.y, pB.x, pB.y, collideConnected, referenceAngle);
-			(*out_joint)->retain();
 		});
 	}
 
 	bool4 wrap_love_dll_physics_newPrismaticJoint(Body *body1, Body *body2, Float2 pA, Float2 pB, Float2 angle, bool collideConnected, PrismaticJoint **out_joint)
 	{
-		return wrap_catchexcept( [&]() {
-			*out_joint = physicsInstance->newPrismaticJoint(body1, body2, 
+		return wrap_catchexcept([&]() {
+			*out_joint = physicsInstance->newPrismaticJoint(body1, body2,
 				pA.x, pA.y, pB.x, pB.y, angle.x, angle.y,
 				collideConnected);
-			(*out_joint)->retain();
 		});
 	}
 
@@ -7570,25 +7715,22 @@ namespace wrap
 			*out_joint = physicsInstance->newPrismaticJoint(body1, body2,
 				pA.x, pA.y, pB.x, pB.y, angle.x, angle.y,
 				collideConnected, referenceAngle);
-			(*out_joint)->retain();
 		});
 	}
 
 	bool4 wrap_love_dll_physics_newPulleyJoint(Body *body1, Body *body2, Float2 g1, Float2 g2, Float2 pA, Float2 pB, float ratio, bool collideConnected, PulleyJoint **out_joint)
 	{
-		return wrap_catchexcept( [&]() {
+		return wrap_catchexcept([&]() {
 			*out_joint = physicsInstance->newPulleyJoint(body1, body2,
 				b2Vec2(g1.x, g1.y),
 				b2Vec2(g2.x, g2.y), b2Vec2(pA.x, pA.y), b2Vec2(pB.x, pB.y), ratio, collideConnected);
-			(*out_joint)->retain();
 		});
 	}
 
 	bool4 wrap_love_dll_physics_newGearJoint(Joint *joint1, Joint *joint2, float ratio, bool collideConnected, GearJoint **out_joint)
 	{
-		return wrap_catchexcept( [&]() {
+		return wrap_catchexcept([&]() {
 			*out_joint = physicsInstance->newGearJoint(joint1, joint2, ratio, collideConnected);
-			(*out_joint)->retain();
 		});
 	}
 
@@ -7596,7 +7738,6 @@ namespace wrap
 	{
 		return wrap_catchexcept([&]() {
 			*out_joint = physicsInstance->newFrictionJoint(body1, body2, pA.x, pA.y, pB.x, pB.y, collideConnected);
-			(*out_joint)->retain();
 		});
 	}
 
@@ -7604,7 +7745,6 @@ namespace wrap
 	{
 		return wrap_catchexcept([&]() {
 			*out_joint = physicsInstance->newWeldJoint(body1, body2, pA.x, pA.y, pB.x, pB.y, collideConnected);
-			(*out_joint)->retain();
 		});
 	}
 
@@ -7612,7 +7752,6 @@ namespace wrap
 	{
 		return wrap_catchexcept([&]() {
 			*out_joint = physicsInstance->newWeldJoint(body1, body2, pA.x, pA.y, pB.x, pB.y, collideConnected, referenceAngle);
-			(*out_joint)->retain();
 		});
 	}
 
@@ -7622,7 +7761,6 @@ namespace wrap
 			*out_joint = physicsInstance->newWheelJoint(body1, body2,
 				pA.x, pA.y, pB.x, pB.y, angle.x, angle.y,
 				collideConnected);
-			(*out_joint)->retain();
 		});
 	}
 
@@ -7632,7 +7770,6 @@ namespace wrap
 			*out_joint = physicsInstance->newRopeJoint(body1, body2,
 				pA.x, pA.y, pB.x, pB.y,
 				maxLength, collideConnected);
-			(*out_joint)->retain();
 		});
 	}
 
@@ -7640,9 +7777,75 @@ namespace wrap
 	{
 		return wrap_catchexcept([&]() {
 			*out_joint = physicsInstance->newMotorJoint(body1, body2, correctionFactor, collideConnected);
-			(*out_joint)->retain();
 		});
 	}
+
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	bool4 wrap_love_dll_physics_newPolygonShape(Float2 *pointList, int pointListLength, PolygonShape **out_shape)
+	{
+		return wrap_catchexcept([&]() {
+			if (pointListLength < 3)
+				throw love::Exception("Expected a minimum of 3 vertices, got %d.", pointListLength);
+			else if (pointListLength > b2_maxPolygonVertices)
+				throw love::Exception("Expected a maximum of %d vertices, got %d.", b2_maxPolygonVertices, pointListLength);
+
+			b2Vec2 vecs[b2_maxPolygonVertices];
+			for (int i = 0; i < pointListLength; i++)
+			{
+				vecs[i] = Physics::scaleDown(b2Vec2(pointList[i].x, pointList[i].y));
+			}
+
+			b2PolygonShape *s = new b2PolygonShape();
+
+			try
+			{
+				s->Set(vecs, pointListLength);
+			}
+			catch (love::Exception &)
+			{
+				delete s;
+				throw;
+			}
+
+			*out_shape = new PolygonShape(s);
+		});
+	}
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	bool4 wrap_love_dll_physics_newChainShape(bool4 loop, Float2 *pointList, int pointListLength, ChainShape **out_shape)
+	{
+		return wrap_catchexcept([&]() {
+			b2Vec2 *vecs = new b2Vec2[pointListLength];
+			for (int i = 0; i < pointListLength; i++)
+			{
+				vecs[i] = Physics::scaleDown(b2Vec2(pointList[i].x, pointList[i].y));
+			}
+			b2ChainShape *s = new b2ChainShape();
+
+			try
+			{
+				if (loop)
+					s->CreateLoop(vecs, pointListLength);
+				else
+					s->CreateChain(vecs, pointListLength);
+			}
+			catch (love::Exception &)
+			{
+				delete[] vecs;
+				delete s;
+				throw;
+			}
+
+			delete[] vecs;
+
+			*out_shape = new ChainShape(s);
+		});
+	}
+#pragma endregion
+
+#pragma region type - Physics
+
 
 	bool4 wrap_love_dll_physics_open_love_physics()
 	{
@@ -7670,46 +7873,31 @@ namespace wrap
 		*out_meter = Physics::getMeter();
 	}
 
-	//// FIXME: because the params is lua_State *L, we need hack it.
-	//void w_getDistance()
-	//{
-	//	return physicsInstance->getDistance(L);
-	//}
-
-
-	//// FIXME: because the params is lua_State *L, we need hack it.
-	//bool4 wrap_love_dll_physics_newPolygonShape()
-	//{
-	//	int ret = 0;
-	//	wrap_catchexcept([&]() { ret = physicsInstance->newPolygonShape(L); });
-	//	return ret;
-	//}
-
-	//// FIXME: because the params is lua_State *L, we need hack it.
-	//bool4 wrap_love_dll_physics_newChainShape()
-	//{
-	//	int ret = 0;
-	//	wrap_catchexcept([&]() { ret = physicsInstance->newChainShape(L); });
-	//	return ret;
-	//}
-
-#pragma endregion
-
-#pragma region type - PolygonShape
-
-	void wrap_love_dll_type_PolygonShape_validate(PolygonShape *t, bool4 *out_validate)
+	// FIXME: because the params is lua_State *L, we need hack it.
+	bool4 wrap_love_dll_physics_getDistance(Fixture *fixtureA, Fixture *fixtureB)
 	{
-		*out_validate = t->validate();
-	}
+		return wrap_catchexcept([&]() {
+			auto fixtureAA = ((WrapFixtureHack*)fixtureA)->wrap_getFixture();
+			auto fixtureBB = ((WrapFixtureHack*)fixtureB)->wrap_getFixture();
 
-	//// FIXME: because the params is lua_State *L, we need hack it.
-	//void wrap_love_dll_type_PolygonShape_getPoints(PolygonShape *t)
-	//{
-	//	= luax_checkpolygonshape(L, 1);
-	//	lua_remove(L, 1);
-	//	return t->getPoints(L);
-	//}
+			b2DistanceProxy pA, pB;
+			b2DistanceInput i;
+			b2DistanceOutput o;
+			b2SimplexCache c;
+			c.count = 0;
+
+			pA.Set(fixtureAA->GetShape(), 0);
+			pB.Set(fixtureBB->GetShape(), 0);
+			i.proxyA = pA;
+			i.proxyB = pB;
+			i.transformA = fixtureAA->GetBody()->GetTransform();
+			i.transformB = fixtureBB->GetBody()->GetTransform();
+			i.useRadii = true;
+			b2Distance(&o, &c, &i);
+		});
+	}
 #pragma endregion
+
 
 #pragma region type - PrismaticJoin
 
@@ -7798,24 +7986,45 @@ namespace wrap
 		*out_angle = t->getReferenceAngle();
 	}
 
-	//// FIXME: because the params is lua_State *L, we need hack it.
-	//void wrap_love_dll_type_PrismaticJoint_getLimits(PrismaticJoint *t)
-	//{
-	//	lua_remove(L, 1);
-	//	return t->getLimits(L);
-	//}
+	class WrapPrismaticJointHack : public Joint
+	{
+	public:
+		static love::Type type;
+	private:
 
-	//// FIXME: because the params is lua_State *L, we need hack it.
-	//void wrap_love_dll_type_PrismaticJoint_getAxis(PrismaticJoint *t)
-	//{
-	//	return t->getAxis(L);
-	//}
+		// The Box2D revolute joint object.
+		b2PrismaticJoint *joint;
+	public:
+		b2PrismaticJoint* wrap_getJoint()
+		{
+			return joint;
+		}
+	};
+
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	void wrap_love_dll_type_PrismaticJoint_getLimits(PrismaticJoint *t, float *out_lowerLimit, float *out_upperLimit)
+	{
+		auto joint = ((WrapPrismaticJointHack*)t)->wrap_getJoint();
+		*out_lowerLimit = Physics::scaleUp(joint->GetLowerLimit());
+		*out_upperLimit = Physics::scaleUp(joint->GetUpperLimit());
+	}
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	void wrap_love_dll_type_PrismaticJoint_getAxis(PrismaticJoint *t, float *out_axisX, float *out_axisY)
+	{
+		auto joint = ((WrapPrismaticJointHack*)t)->wrap_getJoint();
+		b2Vec2 axis = joint->GetLocalAxisA();
+		t->getBodyA()->getWorldVector(axis.x, axis.y, axis.x, axis.y);
+		*out_axisX = axis.x;
+		*out_axisY = axis.y;
+	}
 
 #pragma endregion
 
 #pragma region type - PulleyJoint
-	
-	
+
+
 	void wrap_love_dll_type_PulleyJoint_getLengthA(PulleyJoint *t, float *out_lengthA)
 	{
 		*out_lengthA = t->getLengthA();
@@ -7831,13 +8040,31 @@ namespace wrap
 		*out_ratio = t->getRatio();
 	}
 
-	//// FIXME: because the params is lua_State *L, we need hack it.
-	//void wrap_love_dll_type_PulleyJoint_getGroundAnchors(PulleyJoint *t)
-	//{
-	//	= luax_checkpulleyjoint(L, 1);
-	//	lua_remove(L, 1);
-	//	return t->getGroundAnchors(L);
-	//}
+	class WrapPulleyJointHack : public Joint
+	{
+	public:
+		static love::Type type;
+	private:
+
+		// The Box2D revolute joint object.
+		b2PulleyJoint *joint;
+	public:
+		b2PulleyJoint* wrap_getJoint()
+		{
+			return joint;
+		}
+	};
+
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	void wrap_love_dll_type_PulleyJoint_getGroundAnchors(PulleyJoint *t, float *out_x1, float *out_y1, float *out_x2, float *out_y2)
+	{
+		auto joint = ((WrapPulleyJointHack*)t)->wrap_getJoint();
+		*out_x1 = Physics::scaleUp(joint->GetGroundAnchorA().x);
+		*out_y1 = Physics::scaleUp(joint->GetGroundAnchorA().y);
+		*out_x2 = Physics::scaleUp(joint->GetGroundAnchorB().x);
+		*out_y2 = Physics::scaleUp(joint->GetGroundAnchorB().y);
+	}
 
 #pragma endregion
 
@@ -7928,64 +8155,34 @@ namespace wrap
 		*out_angle = t->getReferenceAngle();
 	}
 
-	//// FIXME: because the params is lua_State *L, we need hack it.
-	//void wrap_love_dll_type_RevoluteJoint_getLimits(RevoluteJoint *t)
-	//{
-	//	return t->getLimits(L);
-	//}
+	class WrapRevoluteJointHack : public Joint
+	{
+	public:
+		static love::Type type;
+	private:
+
+		// The Box2D revolute joint object.
+		b2RevoluteJoint *joint;
+	public:
+		b2RevoluteJoint* wrap_getJoint()
+		{
+			return joint;
+		}
+	};
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	void wrap_love_dll_type_RevoluteJoint_getLimits(RevoluteJoint *t, float *out_lowerLimit, float *out_upperLimit)
+	{
+		auto joint = ((WrapRevoluteJointHack*)t)->wrap_getJoint();
+		*out_lowerLimit = joint->GetLowerLimit();
+		*out_upperLimit = joint->GetUpperLimit();
+	}
 
 #pragma endregion
 
 #pragma region type - RopeJoint
 #pragma endregion
 
-#pragma region type - Shape
-	void wrap_love_dll_type_Shape_getType(Shape *t, int *out_shapeType)
-	{
-		*out_shapeType = t->getType();
-	}
-
-	void wrap_love_dll_type_Shape_getRadius(Shape *t, float *out_radius)
-	{
-		*out_radius = t->getRadius();
-	}
-
-	void wrap_love_dll_type_Shape_getChildCount(Shape *t, float *out_childCount)
-	{
-		*out_childCount = t->getChildCount();
-	}
-
-	void wrap_love_dll_type_Shape_testPoint(Shape *t, float tx, float ty, float tr, float px, float py, bool4 *out_result)
-	{
-		*out_result = t->testPoint(tx, ty, tr, px, py);
-	}
-
-	//// FIXME: because the params is lua_State *L, we need hack it.
-	//void wrap_love_dll_type_Shape_rayCast(Shape *t)
-	//{
-	//	Shape *t = luax_checkshape(L, 1);
-	//	lua_remove(L, 1);
-	//	int ret = 0;
-	//	luax_catchexcept(L, [&]() { ret = t->rayCast(L); });
-	//	return ret;
-	//}
-
-	//// FIXME: because the params is lua_State *L, we need hack it.
-	//void wrap_love_dll_type_Shape_computeAABB(Shape *t)
-	//{
-	//	Shape *t = luax_checkshape(L, 1);
-	//	lua_remove(L, 1);
-	//	return t->computeAABB(L);
-	//}
-
-	//// FIXME: because the params is lua_State *L, we need hack it.
-	//void wrap_love_dll_type_Shape_computeMass(Shape *t)
-	//{
-	//	Shape *t = luax_checkshape(L, 1);
-	//	lua_remove(L, 1);
-	//	return t->computeMass(L);
-	//}
-#pragma endregion
 
 #pragma region type - WeldJoint
 	void wrap_love_dll_type_WeldJoint_setFrequency(WeldJoint *t, float frequency)
@@ -8081,13 +8278,32 @@ namespace wrap
 		*out_ratio = t->getSpringDampingRatio();
 	}
 
-	//// FIXME: because the params is lua_State *L, we need hack it.
-	//void wrap_love_dll_type_WheelJoint_getAxis(WheelJoint *t)
-	//{
-	//	WheelJoint *t = luax_checkwheeljoint(L, 1);
-	//	lua_remove(L, 1);
-	//	return t->getAxis(L);
-	//}
+	class WrapWheelJointHack : Joint
+	{
+	public:
+
+		static love::Type type;
+	private:
+
+		// The Box2D wheel joint object.
+		b2WheelJoint *joint;
+
+	public:
+		b2WheelJoint* wrap_getJoint()
+		{
+			return joint;
+		}
+	};
+
+	// FIXME: because the params is lua_State *L, we need hack it.
+	void wrap_love_dll_type_WheelJoint_getAxis(WheelJoint *t, float *out_axisX, float *out_axisY)
+	{
+		auto joint = ((WrapWheelJointHack*)t)->wrap_getJoint();
+		b2Vec2 axis = joint->GetLocalAxisA();
+		t->getBodyA()->getWorldVector(axis.x, axis.y, axis.x, axis.y);
+		*out_axisX = axis.x;
+		*out_axisY = axis.y;
+	}
 
 #pragma endregion
 
@@ -8108,7 +8324,7 @@ namespace wrap
 			WrapContactCallbackFunc preSolve,
 			WrapContactCallbackFunc postSolve,
 			WrapContactFilterFunc filter
-			): 
+			):
 			beginContact(beginContact),
 			endContact(endContact),
 			preSolve(preSolve),
@@ -8141,7 +8357,7 @@ namespace wrap
 			ProcessContactOrSolve(contact, impulse, postSolve);
 		}
 
-		bool ProcessContactOrSolve(b2Contact *contact, const b2ContactImpulse *impulse, WrapContactCallbackFunc func)
+		void ProcessContactOrSolve(b2Contact *contact, const b2ContactImpulse *impulse, WrapContactCallbackFunc func)
 		{
 			// Fixtures should be memoized, if we created them
 			Fixture *a = (Fixture *)Memoizer::find(contact->GetFixtureA());
@@ -8171,8 +8387,6 @@ namespace wrap
 			a->retain();
 			b->retain();
 			func(a, b, cobj, impulseArray, impulseCount);
-
-			delete[] impulseArray;
 		}
 
 		// From b2ContactFilter
@@ -8296,7 +8510,7 @@ namespace wrap
 		WrapContactFilterFunc filter
 		)
 	{
-		return wrap_catchexcept([&]() { 
+		return wrap_catchexcept([&]() {
 			WrapWorldCallBackClass callBack(beginContact, endContact, preSolve, postSolve, filter);
 			auto b2w = ((WrapHackWorld*)t)->wrap_getWorld();
 			b2w->SetContactFilter(&callBack);
