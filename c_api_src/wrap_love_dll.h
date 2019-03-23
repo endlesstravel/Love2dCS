@@ -1245,7 +1245,7 @@ namespace wrap
 	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_open_love_physics();
 	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_setMeter(float meter);
 	extern "C" LOVE_EXPORT void wrap_love_dll_physics_getMeter(float *out_meter);
-	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_getDistance(Fixture *fixtureA, Fixture *fixtureB);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_getDistance(Fixture *fixtureA, Fixture *fixtureB, float *out_distance, Float2 *out_pa, Float2 *out_pb);
 	extern "C" LOVE_EXPORT void wrap_love_dll_type_PrismaticJoint_getJointTranslation(PrismaticJoint *t, float *out_translation);
 	extern "C" LOVE_EXPORT void wrap_love_dll_type_PrismaticJoint_getJointSpeed(PrismaticJoint *t, float *out_speed);
 	extern "C" LOVE_EXPORT void wrap_love_dll_type_PrismaticJoint_setMotorEnabled(PrismaticJoint *t, bool4 ebabled);

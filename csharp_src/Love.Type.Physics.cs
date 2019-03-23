@@ -904,32 +904,163 @@ namespace Love
         /// </summary>
         protected Physics() { }
 
-        // TODO: finishe function wrap_love_dll_physics_newWorld
-        // TODO: finishe function wrap_love_dll_physics_newBody
-        // TODO: finishe function wrap_love_dll_physics_newFixture
-        // TODO: finishe function wrap_love_dll_physics_newCircleShape
-        // TODO: finishe function wrap_love_dll_physics_newRectangleShape
-        // TODO: finishe function wrap_love_dll_physics_newEdgeShape
-        // TODO: finishe function wrap_love_dll_physics_newDistanceJoint
-        // TODO: finishe function wrap_love_dll_physics_newMouseJoint
-        // TODO: finishe function wrap_love_dll_physics_newRevoluteJoint
-        // TODO: finishe function wrap_love_dll_physics_newRevoluteJoint_referenceAngle
-        // TODO: finishe function wrap_love_dll_physics_newPrismaticJoint
-        // TODO: finishe function wrap_love_dll_physics_newPrismaticJoint_referenceAngle
-        // TODO: finishe function wrap_love_dll_physics_newPulleyJoint
-        // TODO: finishe function wrap_love_dll_physics_newGearJoint
-        // TODO: finishe function wrap_love_dll_physics_newFrictionJoint
-        // TODO: finishe function wrap_love_dll_physics_newWeldJoint
-        // TODO: finishe function wrap_love_dll_physics_newWeldJoint_referenceAngle
-        // TODO: finishe function wrap_love_dll_physics_newWheelJoint
-        // TODO: finishe function wrap_love_dll_physics_newRopeJoint
-        // TODO: finishe function wrap_love_dll_physics_newMotorJoint
-        // TODO: finishe function wrap_love_dll_physics_newPolygonShape
-        // TODO: finishe function wrap_love_dll_physics_newChainShape
-        // TODO: finishe function wrap_love_dll_physics_open_love_physics
-        // TODO: finishe function wrap_love_dll_physics_setMeter
-        // TODO: finishe function wrap_love_dll_physics_getMeter
-        // TODO: finishe function wrap_love_dll_physics_getDistance
+        public static World NewWorld(float gx, float gy, bool sleep)
+        {
+            Love2dDll.wrap_love_dll_physics_newWorld(gx, gy, sleep, out var pworld);
+            return NewObject<World>(pworld);
+        }
+
+        public static Body NewBody(World world, float x, float y, BodyType bodyType)
+        {
+            Love2dDll.wrap_love_dll_physics_newBody(world.p, x, y, (int)bodyType, out var pbody);
+            return NewObject<Body>(pbody);
+        }
+
+        public static Fixture NewFixture(Body body, Shape shape, float density)
+        {
+            Love2dDll.wrap_love_dll_physics_newFixture(body.p, shape.p, density, out var fixture);
+            return NewObject<Fixture>(fixture);
+        }
+
+        public static CircleShape NewCircleShape(float x, float y, float radius)
+        {
+            Love2dDll.wrap_love_dll_physics_newCircleShape(x, y, radius, out var shape);
+            return NewObject<CircleShape>(shape);
+        }
+
+        public static RectangleShape NewRectangleShape(float x, float y, float w, float h, float angle)
+        {
+            Love2dDll.wrap_love_dll_physics_newRectangleShape(x, y, w, h, angle, out var shape);
+            return NewObject<RectangleShape>(shape);
+        }
+        public static EdgeShape NewEdgeShape(float x1, float y1, float x2, float y2)
+        {
+            Love2dDll.wrap_love_dll_physics_newEdgeShape(x1, y1, x2, y2, out var shape);
+            return NewObject<EdgeShape>(shape);
+        }
+
+        public static DistanceJoint NewDistanceJoint(Body body1, Body body2, float x1, float y1, float x2, float y2, bool collideConnected = false)
+        {
+            Love2dDll.wrap_love_dll_physics_newDistanceJoint(body1.p, body2.p, x1, y1, x2, y2, collideConnected, out  var joint);
+            return NewObject<DistanceJoint>(joint);
+        }
+
+        public static MouseJoint NewMouseJoint(Body body, float x, float y)
+        {
+            Love2dDll.wrap_love_dll_physics_newMouseJoint(body.p, x, y, out var joint);
+            return NewObject<MouseJoint>(joint);
+        }
+
+        public static RevoluteJoint NewRevoluteJoint(Body body1, Body body2, Vector2 pA, Vector2 pB, bool collideConnected = false)
+        {
+            Love2dDll.wrap_love_dll_physics_newRevoluteJoint(body1.p, body2.p, pA, pB, collideConnected, out var joint);
+            return NewObject<RevoluteJoint>(joint);
+        }
+
+        public static RevoluteJoint NewRevoluteJoint(Body body1, Body body2, Vector2 pA, Vector2 pB, bool collideConnected = false, float referenceAngle = 0)
+        {
+            Love2dDll.wrap_love_dll_physics_newRevoluteJoint_referenceAngle(body1.p, body2.p, pA, pB, collideConnected, referenceAngle, out var joint);
+            return NewObject<RevoluteJoint>(joint);
+        }
+
+        public static PrismaticJoint NewPrismaticJoint(Body body1, Body body2, Vector2 pA, Vector2 pB, Vector2 angle, bool collideConnected = false)
+        {
+            Love2dDll.wrap_love_dll_physics_newPrismaticJoint(body1.p, body2.p, pA, pB, angle, collideConnected, out var joint);
+            return NewObject<PrismaticJoint>(joint);
+        }
+
+        public static PrismaticJoint NewPrismaticJoint(Body body1, Body body2, Vector2 pA, Vector2 pB, Vector2 angle, bool collideConnected = false, float referenceAngle = 0)
+        {
+            Love2dDll.wrap_love_dll_physics_newPrismaticJoint_referenceAngle(body1.p, body2.p, pA, pB, angle, collideConnected, referenceAngle, out var joint);
+            return NewObject<PrismaticJoint>(joint);
+        }
+
+        public static PulleyJoint NewPulleyJoint(Body body1, Body body2, Vector2 g1, Vector2 g2, Vector2 pA, Vector2 pB, float ratio = 1, bool collideConnected = false)
+        {
+            Love2dDll.wrap_love_dll_physics_newPulleyJoint(body1.p, body2.p, g1, g2, pA, pB, ratio, collideConnected, out var joint);
+            return NewObject<PulleyJoint>(joint);
+        }
+
+        public static GearJoint NewGearJoint(Joint joint1, Joint joint2, float ratio, bool collideConnected = false)
+        {
+            Love2dDll.wrap_love_dll_physics_newGearJoint(joint1.p, joint2.p, ratio, collideConnected, out var joint);
+            return NewObject<GearJoint>(joint);
+        }
+
+        public static FrictionJoint NewFrictionJoint(Body body1, Body body2, Vector2 pA, Vector2 pB, bool collideConnected = false)
+        {
+            Love2dDll.wrap_love_dll_physics_newFrictionJoint(body1.p, body1.p, pA, pB, collideConnected, out var joint);
+            return NewObject<FrictionJoint>(joint);
+        }
+
+        public static WeldJoint NewWeldJoint(Body body1, Body body2, Vector2 pA, Vector2 pB, bool collideConnected = false)
+        {
+            Love2dDll.wrap_love_dll_physics_newWeldJoint(body1.p, body1.p, pA, pB, collideConnected, out var joint);
+            return NewObject<WeldJoint>(joint);
+        }
+
+        public static WeldJoint NewWeldJoint(Body body1, Body body2, Vector2 pA, Vector2 pB, bool collideConnected = false, float referenceAngle = 0)
+        {
+            Love2dDll.wrap_love_dll_physics_newWeldJoint_referenceAngle(body1.p, body1.p, pA, pB, collideConnected, referenceAngle, out var joint);
+            return NewObject<WeldJoint>(joint);
+        }
+
+        public static WheelJoint NewWheelJoint(Body body1, Body body2, Vector2 pA, Vector2 pB, Vector2 angle, bool collideConnected = false)
+        {
+            Love2dDll.wrap_love_dll_physics_newWheelJoint(body1.p, body2.p, pA, pB, angle, collideConnected, out var joint);
+            return NewObject<WheelJoint>(joint);
+        }
+        public static RopeJoint NewRopeJoint(Body body1, Body body2, Vector2 pA, Vector2 pB, float maxLength, bool collideConnected = false)
+        {
+            Love2dDll.wrap_love_dll_physics_newRopeJoint(body1.p, body2.p, pA, pB, maxLength, collideConnected, out var joint);
+            return NewObject<RopeJoint>(joint);
+        }
+
+        public static MotorJoint NewMotorJoint(Body body1, Body body2, float correctionFactor = 0.3f, bool collideConnected = false)
+        {
+            Love2dDll.wrap_love_dll_physics_newMotorJoint(body1.p, body2.p, correctionFactor, collideConnected, out var joint);
+            return NewObject<MotorJoint>(joint);
+        }
+
+        public static PolygonShape NewPolygonShape(params Vector2[] pointList)
+        {
+            Love2dDll.wrap_love_dll_physics_newPolygonShape(pointList, pointList.Length, out var shape);
+            return NewObject<PolygonShape>(shape);
+        }
+        public static ChainShape NewChainShape(bool loop, params Vector2[] pointList)
+        {
+            Love2dDll.wrap_love_dll_physics_newChainShape(loop, pointList, pointList.Length, out var shape);
+            return NewObject<ChainShape>(shape);
+        }
+
+        public static bool Init()
+        {
+            return Love2dDll.wrap_love_dll_physics_open_love_physics();
+        }
+        public static void SetMeter(float meter)
+        {
+            Love2dDll.wrap_love_dll_physics_setMeter(meter);
+        }
+
+        public static float GetMeter()
+        {
+            Love2dDll.wrap_love_dll_physics_getMeter(out float meter);
+            return meter;
+        }
+
+        public static void GetDistance(Fixture fa, Fixture fb, out float distance, out Vector2 pa, out Vector2 pb)
+        {
+            Love2dDll.wrap_love_dll_physics_getDistance(fa.p, fb.p, out distance, out pa, out pb);
+        }
+    }
+
+    public class RectangleShape: Shape
+    {
+        /// <summary>
+        /// disable construct
+        /// </summary>
+        protected RectangleShape() { }
+
     }
     public class ChainShape : Shape
     {

@@ -5031,10 +5031,10 @@ namespace Love
         }
 
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_physics_getDistance")]
-        internal extern static bool _wrap_love_dll_physics_getDistance(IntPtr fixtureA, IntPtr fixtureB);
-        internal static bool wrap_love_dll_physics_getDistance(IntPtr fixtureA, IntPtr fixtureB)
+        internal extern static bool _wrap_love_dll_physics_getDistance(IntPtr fixtureA, IntPtr fixtureB, out float out_distance, out Vector2 out_pa, out Vector2 out_pb);
+        internal static bool wrap_love_dll_physics_getDistance(IntPtr fixtureA, IntPtr fixtureB, out float out_distance, out Vector2 out_pa, out Vector2 out_pb)
         {
-            return CheckCAPIException(_wrap_love_dll_physics_getDistance(fixtureA, fixtureB));
+            return CheckCAPIException(_wrap_love_dll_physics_getDistance(fixtureA, fixtureB, out out_distance, out out_pa, out out_pb));
         }
 
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_PrismaticJoint_getJointTranslation")]

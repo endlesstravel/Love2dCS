@@ -7865,7 +7865,7 @@ namespace wrap
 	}
 
 	// FIXME: because the params is lua_State *L, we need hack it.
-	bool4 wrap_love_dll_physics_getDistance(Fixture *fixtureA, Fixture *fixtureB)
+	bool4 wrap_love_dll_physics_getDistance(Fixture *fixtureA, Fixture *fixtureB, float *out_distance, Float2 *out_pa, Float2 *out_pb)
 	{
 		return wrap_catchexcept([&]() {
 			auto fixtureAA = ((WrapFixtureHack*)fixtureA)->wrap_getFixture();
@@ -7885,6 +7885,12 @@ namespace wrap
 			i.transformB = fixtureBB->GetBody()->GetTransform();
 			i.useRadii = true;
 			b2Distance(&o, &c, &i);
+
+			*out_distance = Physics::scaleUp(o.distance);
+			out_pa->x = Physics::scaleUp(o.pointA.x);
+			out_pa->y = Physics::scaleUp(o.pointA.y);
+			out_pb->x = Physics::scaleUp(o.pointB.x);
+			out_pb->y = Physics::scaleUp(o.pointB.y);
 		});
 	}
 #pragma endregion
