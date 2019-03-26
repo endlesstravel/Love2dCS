@@ -14,25 +14,25 @@ using BytePtr = System.IntPtr;
 namespace Love
 {
     
-	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	[UnmanagedFunctionPointer(CallingConvention.StdCall)]
 	internal delegate float WrapShapeComputeMassCallbackDelegate(float x, float y, float mass, float inertia);
 
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     internal delegate float WrapShapeComputeAABBCallbackDelegate(float lx, float ly, float ux, float uy);
 
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     internal delegate float WrapShapeRayCastCallbackDelegate(float nx, float ny, float fraction);
 
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     internal delegate float WrapWorldRayCastCallbackDelegate(IntPtr pfixture, float x, float y, float nx, float ny, float fraction);
 
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     internal delegate bool WrapWorldQueryBoundingBoxCallbackDelegate(IntPtr pfixture);
 
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     internal delegate void WrapWorldContactCallbackDelegate(IntPtr fixtureA, IntPtr fixtureB, IntPtr contact, IntPtr impluseArray, int impluseArrayLength);
 
-    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     internal delegate bool WrapWorldContactFilterCallbackDelegate(IntPtr fixtureA, IntPtr fixtureB);
 
 
@@ -1650,6 +1650,12 @@ namespace Love
         internal static bool wrap_love_dll_graphics_rectangle(int mode_type, float x, float y, float w, float h)
         {
             return CheckCAPIException(_wrap_love_dll_graphics_rectangle(mode_type, x, y, w, h));
+        }
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_rectangle_batch")]
+        internal extern static bool _wrap_love_dll_graphics_rectangle_batch(int mode_type, RectangleF[] rectArray, int rectArrayLenght);
+        internal static bool wrap_love_dll_graphics_rectangle_batch(int mode_type, RectangleF[] rectArray, int rectArrayLenght)
+        {
+            return CheckCAPIException(_wrap_love_dll_graphics_rectangle_batch(mode_type, rectArray, rectArrayLenght));
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_rectangle_with_rounded_corners")]
         internal extern static bool _wrap_love_dll_graphics_rectangle_with_rounded_corners(int mode_type, float x, float y, float w, float h, float rx, float ry, int points);

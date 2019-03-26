@@ -584,7 +584,8 @@ namespace wrap
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_draw_texture_quad(Quad *quad, Texture *texture, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_print(char* coloredStringListStr[], Float4 coloredStringListColor[], int coloredStringListLength, float x, float y, float angle, float sx, float sy, float ox, float oy, float kx, float ky);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_printf(pChar coloredStringListStr[], Float4 coloredStringListColor[], int coloredStringListLength, float x, float y, float wrap, int align_type, float angle, float sx, float sy, float ox, float oy, float kx, float ky);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_rectangle(int mode_type, float x, float y, float w, float h);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_rectangle(int mode_type, float x, float y, float w, float h);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_rectangle_batch(int mode_type, Float4 *rectArray, int rectArrayLenght);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_rectangle_with_rounded_corners(int mode_type, float x, float y, float w, float h, float rx, float ry, int points);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_circle(int mode_type, float x, float y, float radius, int points);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_ellipse(int mode_type, float x, float y, float a, float b, int points);
@@ -1151,7 +1152,7 @@ namespace wrap
 	extern "C" LOVE_EXPORT void wrap_love_dll_type_Contact_resetRestitution(Contact *t);
 	extern "C" LOVE_EXPORT void wrap_love_dll_type_Contact_setTangentSpeed(Contact *t, float speed);
 	extern "C" LOVE_EXPORT void wrap_love_dll_type_Contact_getTangentSpeed(Contact *t, float *out_speed);
-	extern "C" LOVE_EXPORT void wrap_love_dll_type_Contact_getChildren(Contact *t, float *out_childA, float *out_childB);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Contact_getChildren(Contact *t, int *out_childA, int *out_childB);
 	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Contact_getFixtures(Contact *t, Fixture **out_a, Fixture **out_b);
 	extern "C" LOVE_EXPORT void wrap_love_dll_type_Contact_isDestroyed(Contact *t, bool4 *out_result);
 	extern "C" LOVE_EXPORT void wrap_love_dll_type_Contact_getPositions(Contact *t, Float2 **out_pointList, int *out_pointListLength);

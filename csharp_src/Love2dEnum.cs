@@ -20,7 +20,7 @@
         /// <summary>
         /// Kinematic bodies only collide with dynamic bodies.
         /// </summary>
-        kinematic,
+        Kinematic,
     }
 
     /// <summary>

@@ -959,6 +959,32 @@ namespace Love
         }
 
         /// <summary>
+        /// Draws a circle.
+        /// </summary>
+        /// <param name="mode_type">How to draw the circle.</param>
+        /// <param name="center">The position of the center .</param>
+        /// <param name="radius">The radius of the circle.</param>
+        /// <param name="points">The number of segments used for drawing the circle. Note: The default variable for the segments parameter varies between different versions of LÖVE.</param>
+        /// <returns></returns>
+        public static void Circle(DrawMode mode_type, Vector2 center, float radius)
+        {
+            Circle(mode_type, center.x, center.y, radius);
+        }
+        /// <summary>
+        /// Draws a circle.
+        /// </summary>
+        /// <param name="mode_type">How to draw the circle.</param>
+        /// <param name="center">The position of the center .</param>
+        /// <param name="radius">The radius of the circle.</param>
+        /// <param name="points">The number of segments used for drawing the circle. Note: The default variable for the segments parameter varies between different versions of LÖVE.</param>
+        /// <returns></returns>
+        public static void Circle(DrawMode mode_type, Vector2 center, float radius, int point)
+        {
+            Circle(mode_type, center.x, center.y, radius, point);
+        }
+
+
+        /// <summary>
         /// Draws a rectangle.
         /// </summary>
         /// <param name="mode">How to draw the rectangle.</param>

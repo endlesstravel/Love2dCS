@@ -11,6 +11,19 @@ namespace Love
         /// disable construct
         /// </summary>
         protected Body() { }
+
+        public Vector2 GetPosition()
+        {
+            Vector3 t = GetTransform();
+            return new Vector2(t.x, t.y);
+        }
+
+        public float GetAngle()
+        {
+            Vector3 t = GetTransform();
+            return t.z;
+        }
+
         public Vector3 GetTransform()
         {
             Vector3 out_pos;
@@ -498,7 +511,7 @@ namespace Love
         {
             System.IntPtr out_shape;
             Love2dDll.wrap_love_dll_type_Fixture_getShape(p, out out_shape);
-            return NewObject<Shape>(out_shape);
+            return Shape.ShapeRetainToRegularShape(NewObject<Shape>(out_shape));
         }
 
         public bool TestPoint(float x, float y)
@@ -591,11 +604,11 @@ namespace Love
         /// disable construct
         /// </summary>
         protected Shape() { }
-        public int GetType()
+        public ShapeType GetShapeType()
         {
             int out_shapeType;
             Love2dDll.wrap_love_dll_type_Shape_getType(p, out out_shapeType);
-            return out_shapeType;
+            return (ShapeType)out_shapeType;
         }
 
         public float GetRadius()
@@ -636,6 +649,20 @@ namespace Love
         public void ComputeMass(float density, ComputeMassCallback callback)
         {
             Love2dDll.wrap_love_dll_type_Shape_computeMass(p, density, (x, y, m, inertia) => callback(x, y, m, inertia));
+        }
+
+
+        internal static Shape ShapeRetainToRegularShape(Shape shape)
+        {
+            switch (shape.GetShapeType())
+            {
+                case ShapeType.Chain: RetainLoveObject(shape.p); return NewObject<ChainShape>(shape.p);
+                case ShapeType.Circle: RetainLoveObject(shape.p); return NewObject<CircleShape>(shape.p);
+                case ShapeType.Edge: RetainLoveObject(shape.p); return NewObject<EdgeShape>(shape.p);
+                case ShapeType.Polygon: RetainLoveObject(shape.p); return NewObject<PolygonShape>(shape.p);
+            }
+
+            return null;
         }
 
     }
@@ -689,6 +716,21 @@ namespace Love
         public void GetAnchors(out float x1, out float y1, out float x2, out float y2)
         {
             Love2dDll.wrap_love_dll_type_Joint_getAnchors(p, out x1, out y1, out x2, out y2);
+        }
+        public void GetAnchors(out Vector2 p1, out Vector2 p2)
+        {
+            Love2dDll.wrap_love_dll_type_Joint_getAnchors(p, out float x1, out float y1, out float x2, out float y2);
+            p1 = new Vector2(x1, y1);
+            p2 = new Vector2(x2, y2);
+        }
+        public Vector2[] GetAnchors()
+        {
+            Love2dDll.wrap_love_dll_type_Joint_getAnchors(p, out float x1, out float y1, out float x2, out float y2);
+            return new Vector2[]
+            {
+                new Vector2(x1, y1),
+                new Vector2(x2, y2),
+            };
         }
 
         public Vector2 GetReactionForce(float dt)
@@ -904,13 +946,13 @@ namespace Love
         /// </summary>
         protected Physics() { }
 
-        public static World NewWorld(float gx, float gy, bool sleep)
+        public static World NewWorld(float gx = 0, float gy = 0, bool sleep = true)
         {
             Love2dDll.wrap_love_dll_physics_newWorld(gx, gy, sleep, out var pworld);
             return NewObject<World>(pworld);
         }
 
-        public static Body NewBody(World world, float x, float y, BodyType bodyType)
+        public static Body NewBody(World world, float x = 0, float y = 0, BodyType bodyType = BodyType.Static)
         {
             Love2dDll.wrap_love_dll_physics_newBody(world.p, x, y, (int)bodyType, out var pbody);
             return NewObject<Body>(pbody);
@@ -922,16 +964,25 @@ namespace Love
             return NewObject<Fixture>(fixture);
         }
 
+        public static CircleShape NewCircleShape(float radius)
+        {
+            return NewCircleShape(0, 0, radius);
+        }
+
         public static CircleShape NewCircleShape(float x, float y, float radius)
         {
             Love2dDll.wrap_love_dll_physics_newCircleShape(x, y, radius, out var shape);
             return NewObject<CircleShape>(shape);
         }
 
-        public static RectangleShape NewRectangleShape(float x, float y, float w, float h, float angle)
+        public static PolygonShape NewRectangleShape(float x, float y, float w, float h, float angle)
         {
             Love2dDll.wrap_love_dll_physics_newRectangleShape(x, y, w, h, angle, out var shape);
-            return NewObject<RectangleShape>(shape);
+            return NewObject<PolygonShape>(shape);
+        }
+        public static PolygonShape NewRectangleShape(float w, float h)
+        {
+            return NewRectangleShape(0, 0, w, h, 0);
         }
         public static EdgeShape NewEdgeShape(float x1, float y1, float x2, float y2)
         {
@@ -951,13 +1002,17 @@ namespace Love
             return NewObject<MouseJoint>(joint);
         }
 
+        public static RevoluteJoint NewRevoluteJoint(Body body1, Body body2, Vector2 pos, bool collideConnected = false)
+        {
+            return NewRevoluteJoint(body1, body2, pos, pos, collideConnected);
+        }
         public static RevoluteJoint NewRevoluteJoint(Body body1, Body body2, Vector2 pA, Vector2 pB, bool collideConnected = false)
         {
             Love2dDll.wrap_love_dll_physics_newRevoluteJoint(body1.p, body2.p, pA, pB, collideConnected, out var joint);
             return NewObject<RevoluteJoint>(joint);
         }
 
-        public static RevoluteJoint NewRevoluteJoint(Body body1, Body body2, Vector2 pA, Vector2 pB, bool collideConnected = false, float referenceAngle = 0)
+        public static RevoluteJoint NewRevoluteJoint(Body body1, Body body2, Vector2 pA, Vector2 pB, bool collideConnected, float referenceAngle = 0)
         {
             Love2dDll.wrap_love_dll_physics_newRevoluteJoint_referenceAngle(body1.p, body2.p, pA, pB, collideConnected, referenceAngle, out var joint);
             return NewObject<RevoluteJoint>(joint);
@@ -969,7 +1024,7 @@ namespace Love
             return NewObject<PrismaticJoint>(joint);
         }
 
-        public static PrismaticJoint NewPrismaticJoint(Body body1, Body body2, Vector2 pA, Vector2 pB, Vector2 angle, bool collideConnected = false, float referenceAngle = 0)
+        public static PrismaticJoint NewPrismaticJoint(Body body1, Body body2, Vector2 pA, Vector2 pB, Vector2 angle, bool collideConnected, float referenceAngle = 0)
         {
             Love2dDll.wrap_love_dll_physics_newPrismaticJoint_referenceAngle(body1.p, body2.p, pA, pB, angle, collideConnected, referenceAngle, out var joint);
             return NewObject<PrismaticJoint>(joint);
@@ -1054,14 +1109,6 @@ namespace Love
         }
     }
 
-    public class RectangleShape: Shape
-    {
-        /// <summary>
-        /// disable construct
-        /// </summary>
-        protected RectangleShape() { }
-
-    }
     public class ChainShape : Shape
     {
         /// <summary>
@@ -1200,6 +1247,12 @@ namespace Love
         public void GetPoints(out float x1, out float y1, out float x2, out float y2)
         {
             Love2dDll.wrap_love_dll_type_EdgeShape_getPoints(p, out x1, out y1, out x2, out y2);
+        }
+
+        public Vector2[] GetPoints()
+        {
+            GetPoints(out var x1, out var y1, out var x2, out var y2);
+            return new Vector2[] { new Vector2(x1, y1), new Vector2(x2, y2), };
         }
     }
     public class PolygonShape : Shape
@@ -1591,6 +1644,12 @@ namespace Love
         public void GetGroundAnchors(out float x1, out float y1, out float x2, out float y2)
         {
             Love2dDll.wrap_love_dll_type_PulleyJoint_getGroundAnchors(p, out x1, out y1, out x2, out y2);
+        }
+        public void GetGroundAnchors(out Vector2 p1, out Vector2 p2)
+        {
+            Love2dDll.wrap_love_dll_type_PulleyJoint_getGroundAnchors(p, out float x1, out float y1, out float x2, out float y2);
+            p1 = new Vector2(x1, y1);
+            p2 = new Vector2(x2, y2);
         }
     }
     public class RevoluteJoint : Joint

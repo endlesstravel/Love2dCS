@@ -2676,6 +2676,31 @@ namespace Love
             Love2dDll.wrap_love_dll_type_RandomGenerator_random(p, out out_result);
             return (float)out_result;
         }
+
+        /// <summary>
+        /// Get uniformly distributed pseudo-random integer within [min, max].
+        /// </summary>
+        /// <param name="min">The minimum possible value it should return.</param>
+        /// <param name="max">The maximum possible value it should return.</param>
+        /// <returns></returns>
+        public int Random(int min, int max)
+        {
+            float random = Random();
+            return Mathf.RoundToInt(random * (max - min) + min);
+        }
+
+        /// <summary>
+        /// Get uniformly distributed pseudo-random integer within [min, max].
+        /// </summary>
+        /// <param name="min">The minimum possible value it should return.</param>
+        /// <param name="max">The maximum possible value it should return.</param>
+        /// <returns></returns>
+        public float Random(float min, float max)
+        {
+            float random = Random();
+            return random * (max - min) + min;
+        }
+
         public float RandomNormal(double stddev, double mean)
         {
             double out_result = 0;
