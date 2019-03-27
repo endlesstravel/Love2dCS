@@ -14,8 +14,6 @@ namespace LovePhysicsTestBed
 
         public Test LoadTests()
         {
-            //Timer.EnableLimitMaxFPS(60);
-
             list = new List<Test>()
             {
                 new T10_RayCast(),
@@ -93,7 +91,7 @@ namespace LovePhysicsTestBed
             {
                 currentTest.Draw();
             }
-            Love.Misc.FPSGraph.FPSGraph.Draw();
+            Love.Misc.FPSGraph.Draw();
             DrawTextText();
         }
 
@@ -173,9 +171,36 @@ namespace LovePhysicsTestBed
             {
                 currentTest.MouseMoved();
             }
-            Love.Misc.FPSGraph.FPSGraph.Update(dt);
-            Love.Misc.FPSGraph.FPSGraph.Position = new Vector2(
-                0, Graphics.GetHeight() - Love.Misc.FPSGraph.FPSGraph.Size.height);
+            Love.Misc.FPSGraph.Update(dt);
+            Love.Misc.FPSGraph.Position = new Vector2(
+                0, Graphics.GetHeight() - Love.Misc.FPSGraph.Size.height);
+
+            foreach (var joy in Joystick.GetJoysticks())
+            {
+                for (int i = 0; i < joy.GetButtonCount(); i++)
+                {
+                    if (joy.IsPressed(i))
+                    {
+                        Console.WriteLine(joy.GetGUID() + " " + i + " is pressed");
+                    }
+                    if (joy.IsReleased(i))
+                    {
+                        Console.WriteLine(joy.GetGUID() + " " + i + " IsReleased");
+                    }
+                }
+
+                foreach (var gbtn in (GamepadButton[])System.Enum.GetValues(typeof(GamepadButton)))
+                {
+                    if (joy.IsGamepadPressed(gbtn))
+                    {
+                        Console.WriteLine(joy.GetGUID() + " " + gbtn + " ggg is pressed");
+                    }
+                    if (joy.IsGamepadReleased(gbtn))
+                    {
+                        Console.WriteLine(joy.GetGUID() + " " + gbtn + " ggg IsReleased");
+                    }
+                }
+            }
         }
 
         static void Main(string[] args)
@@ -262,7 +287,8 @@ namespace LovePhysicsTestBed
             Graphics.Push();
             Graphics.SetBackgroundColor(Color.Gray);
             Graphics.Scale(VScale, -VScale);
-            Graphics.Translate((Graphics.GetWidth() / 2 + VOffset.x) / VScale, (Graphics.GetHeight() / 2 + VOffset.y) / -VScale);
+            Graphics.Translate((Graphics.GetWidth() / 2 + VOffset.x) / VScale, 
+                (Graphics.GetHeight() / 2 + VOffset.y) / -VScale);
             Graphics.SetLineWidth(1 / VScale);
             Graphics.SetPointSize(2);
             DrawGrid();

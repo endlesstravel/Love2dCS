@@ -498,6 +498,7 @@ namespace Love
             {
                 Timer.Step();
                 Keyboard.Update();
+                Joystick.Step();
                 Event.Poll(scene);
 
                 scene.Update(Timer.GetDelta());
@@ -536,6 +537,8 @@ namespace Love
                     while (scene.ErrorHandler(e) == false)
                     {
                         Event.Poll(errorScene);
+                        Keyboard.Update();
+                        Joystick.Step();
                         Timer.Step();
 
                         errorScene.Update(Timer.GetDelta());

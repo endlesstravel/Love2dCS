@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Love.Misc.Moonshine;
-using Love.Misc.FPSGraph;
-using Love.Misc.QuadTree;
+using Love.Misc;
 
 namespace Love
 {

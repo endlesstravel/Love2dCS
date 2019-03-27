@@ -80,7 +80,7 @@ namespace LovePhysicsTestBed
 
         public override void Load()
         {
-            Physics.SetMeter(1);
+            //Physics.SetMeter(10);
             //m_world.SetGravity(0, -100);
             //float scale = 1 / Physics.GetMeter();
             {

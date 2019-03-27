@@ -243,7 +243,6 @@ namespace wrap
 
 #pragma region *new* region
 	extern "C" LOVE_EXPORT bool4 wrap_love_dll_luasupport_init(lua_State* L);
-	extern "C" LOVE_EXPORT bool4 wrap_love_dll_luasupport_loadFile(const char* filename);
 	extern "C" LOVE_EXPORT bool4 wrap_love_dll_luasupport_doString(const char* str);
 #pragma endregion
 
@@ -737,7 +736,6 @@ namespace wrap
 #pragma region type - Image
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Image_isCompressed(love::graphics::opengl::Image *i, bool4 *out_result);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Image_replacePixels(love::graphics::opengl::Image *i, ImageData *imgData, int slice, int mipmap, int x, int y, bool4 reloadmipmaps);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Image_getFlags(love::graphics::opengl::Image* i, bool4 *out_mipmaps, bool4 *out_linear);
 
 #pragma endregion
 

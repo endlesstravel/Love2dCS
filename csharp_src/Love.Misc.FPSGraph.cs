@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Love.Misc.FPSGraph
+namespace Love.Misc
 {
     public class FPSGraph
     {

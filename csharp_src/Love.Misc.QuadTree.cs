@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Love.Misc.QuadTree
+namespace Love.Misc
 {
     /// <summary>
     /// 一个矩形区域的象限划分：
