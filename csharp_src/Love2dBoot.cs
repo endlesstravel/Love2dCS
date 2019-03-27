@@ -493,10 +493,12 @@ namespace Love
         static void Loop(BootConfig bootConfig, Scene scene)
         {
             scene.Load();
+            Timer.Step(); // fix large delta on first frame
             while (true)
             {
                 Timer.Step();
                 Keyboard.Update();
+                Joystick.Step();
                 Event.Poll(scene);
 
                 scene.Update(Timer.GetDelta());
@@ -506,7 +508,16 @@ namespace Love
                 Graphics.Origin();
                 scene.Draw();
                 Graphics.Present();
-                Timer.Sleep(0.001f);
+                FPSCounter.Step();
+
+                if (Timer.IsLimitMaxFPS())
+                {
+                    Timer.SleepByMaxFPS();
+                }
+                else
+                {
+                    Timer.Sleep(0.001f); // max 1000 fps.
+                }
             }
         }
 
@@ -522,9 +533,12 @@ namespace Love
                 if (showErrorScreen)
                 {
                     var errorScene = new ErrorHandleScene(e);
+                    Timer.Step();
                     while (scene.ErrorHandler(e) == false)
                     {
                         Event.Poll(errorScene);
+                        Keyboard.Update();
+                        Joystick.Step();
                         Timer.Step();
 
                         errorScene.Update(Timer.GetDelta());

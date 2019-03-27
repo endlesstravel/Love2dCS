@@ -1,7 +1,7 @@
 ﻿/// <summary>
 /// Love.Mathf boost code
 /// <para>
-/// copy & adapt from XNA.Mathf
+/// copy adapt from XNA.Mathf
 /// </para>
 /// 
 /// </summary>

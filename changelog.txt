@@ -1,4 +1,8 @@
-﻿2018年12月30日
+﻿2019年3月27日
+1.添加了物理模块的支持
+2.修复了很多bug
+
+2018年12月30日
 添加了对 Lua 文件的支持： BootConfig.LuaOpen / BootConfig.LuaState / BootConfig.LuaLoveMainFile
 添加了 Lua.Update / Lua.Draw / Lua.DoString
 添加了 Keyboard.IsPressed / Keyboard.IsReleased

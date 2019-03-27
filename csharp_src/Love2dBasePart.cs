@@ -191,7 +191,7 @@ namespace Love
             IntPtr[] buffer = new IntPtr[size];
             for (int i = 0; i < size; i++)
             {
-                buffer[i] = Marshal.ReadIntPtr(p, i);
+                buffer[i] = Marshal.ReadIntPtr(p, i * IntPtr.Size);
             }
 
             Love2dDll.wrap_love_dll_delete_array(p);
@@ -203,7 +203,7 @@ namespace Love
             IntPtr[] buffer = new IntPtr[size];
             for (int i = 0; i < size; i++)
             {
-                buffer[i] = Marshal.ReadIntPtr(p, i);
+                buffer[i] = Marshal.ReadIntPtr(p, i * IntPtr.Size);
             }
 
             Love2dDll.wrap_love_dll_delete_array(p);
@@ -234,7 +234,7 @@ namespace Love
             uint[] buffer = new uint[size];
             for (int i = 0; i < size; i++)
             {
-                IntPtr offset = IntPtr.Add(p, Marshal.SizeOf(typeof(uint)) * size);
+                IntPtr offset = IntPtr.Add(p, Marshal.SizeOf(typeof(uint)) * i);
                 buffer[i] = (uint)Marshal.PtrToStructure(offset, typeof(uint));
             }
 
@@ -248,7 +248,7 @@ namespace Love
             long[] buffer = new long[size];
             for (int i = 0; i < size; i++)
             {
-                IntPtr offset = IntPtr.Add(p, Marshal.SizeOf(typeof(long)) * size);
+                IntPtr offset = IntPtr.Add(p, Marshal.SizeOf(typeof(long)) * i);
                 buffer[i] = (long)Marshal.PtrToStructure(offset, typeof(long));
             }
 
@@ -261,7 +261,7 @@ namespace Love
             double[] buffer = new double[size];
             for (int i = 0; i < size; i++)
             {
-                IntPtr offset = IntPtr.Add(p, Marshal.SizeOf(typeof(double)) * size);
+                IntPtr offset = IntPtr.Add(p, Marshal.SizeOf(typeof(double)) * i);
                 buffer[i] = (double)Marshal.PtrToStructure(offset, typeof(double));
             }
 
@@ -274,7 +274,7 @@ namespace Love
             Int4[] buffer = new Int4[size];
             for (int i = 0; i < size; i++)
             {
-                IntPtr offset = IntPtr.Add(p, Marshal.SizeOf(typeof(Int4)) * size);
+                IntPtr offset = IntPtr.Add(p, Marshal.SizeOf(typeof(Int4)) * i);
                 buffer[i] = (Int4)Marshal.PtrToStructure(offset, typeof(Int4));
             }
 
@@ -287,7 +287,7 @@ namespace Love
             Vector4[] buffer = new Vector4[size];
             for (int i = 0; i < size; i++)
             {
-                IntPtr offset = IntPtr.Add(p, Marshal.SizeOf(typeof(Vector4)) * size);
+                IntPtr offset = IntPtr.Add(p, Marshal.SizeOf(typeof(Vector4)) * i);
                 buffer[i] = (Vector4)Marshal.PtrToStructure(offset, typeof(Vector4));
             }
 
@@ -300,7 +300,7 @@ namespace Love
             Point[] buffer = new Point[size];
             for (int i = 0; i < size; i++)
             {
-                IntPtr offset = IntPtr.Add(p, Marshal.SizeOf(typeof(Point)) * size);
+                IntPtr offset = IntPtr.Add(p, Marshal.SizeOf(typeof(Point)) * i);
                 buffer[i] = (Point)Marshal.PtrToStructure(offset, typeof(Point));
             }
 
@@ -314,7 +314,7 @@ namespace Love
             Vector2[] buffer = new Vector2[size];
             for (int i = 0; i < size; i++)
             {
-                IntPtr offset = IntPtr.Add(p, Marshal.SizeOf(typeof(Vector2)) * size);
+                IntPtr offset = IntPtr.Add(p, Marshal.SizeOf(typeof(Vector2)) * i);
                 buffer[i] = (Vector2)Marshal.PtrToStructure(offset, typeof(Vector2));
             }
 
@@ -366,7 +366,7 @@ namespace Love
     /// <para>提供高精度计时功能。</para>
     /// <para>Provides high-resolution timing functionality.</para>
     /// </summary>
-    internal partial class Timer
+    public partial class Timer
     {
         public static bool Init()
         {
@@ -434,14 +434,60 @@ namespace Love
             return out_time;
         }
 
+        static bool useLimitMaxFps = false;
+        static float limitMaxFps = 30;
+        static double limitMaxFPSLastFrameSleepTime = 0;
+
+        /// <summary>
+        /// enable max fps
+        /// </summary>
+        public static void EnableLimitMaxFPS(float maxFPS)
+        {
+            if (maxFPS <= 0)
+            {
+                throw new ArgumentException("maxFPS should not <= 0 !");
+            }
+
+            useLimitMaxFps = true;
+            limitMaxFps = maxFPS;
+            limitMaxFPSLastFrameSleepTime = Timer.GetSystemTime();
+        }
+
+        /// <summary>
+        /// disable max fps
+        /// </summary>
+        public static void DisableLimitMaxFPS()
+        {
+            useLimitMaxFps = false;
+        }
+
+        public static bool IsLimitMaxFPS()
+        {
+            return useLimitMaxFps;
+        }
+
+        internal static void SleepByMaxFPS()
+        {
+            if (useLimitMaxFps)
+            {
+                double dt = Timer.GetSystemTime() - limitMaxFPSLastFrameSleepTime;
+                double limitTime = 1 / limitMaxFps;
+                double remainTime = limitTime - dt;
+                if (remainTime > 0.001)  // max 1000 fps.
+                {
+                    Sleep((float)remainTime);
+                }
+                limitMaxFPSLastFrameSleepTime = Timer.GetSystemTime();
+            }
+        }
 
         /// <summary>
         /// Returns the time of the system .
         /// </summary>
         /// <returns></returns>
-        public static float GetSystemTime()
+        public static double GetSystemTime()
         {
-            return (System.DateTime.Now.Ticks) / (float)System.TimeSpan.TicksPerSecond;
+            return (System.DateTime.Now.Ticks) / (double)System.TimeSpan.TicksPerSecond;
         }
     }
 
@@ -1348,7 +1394,7 @@ namespace Love
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_MOUSE_MOTION:
                     {
-                        scene.MouseMoved(out_float4.x, out_float4.y, out_float4.w, out_float4.z, out_bool);
+                        scene.MouseMoved(out_float4.x, out_float4.y, out_float4.z, out_float4.w, out_bool);
                     }
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_MOUSE_WHEEL:
@@ -1358,17 +1404,17 @@ namespace Love
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_TOUCH_MOVED:
                     {
-                        scene.TouchMoved(out_idx, out_float4.x, out_float4.y, out_float4.w, out_float4.z, out_float_value);
+                        scene.TouchMoved(out_idx, out_float4.x, out_float4.y, out_float4.z, out_float4.w, out_float_value);
                     }
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_TOUCH_PRESSED:
                     {
-                        scene.TouchPressed(out_idx, out_float4.x, out_float4.y, out_float4.w, out_float4.z, out_float_value);
+                        scene.TouchPressed(out_idx, out_float4.x, out_float4.y, out_float4.z, out_float4.w, out_float_value);
                     }
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_TOUCH_RELEASED:
                     {
-                        scene.TouchReleased(out_idx, out_float4.x, out_float4.y, out_float4.w, out_float4.z, out_float_value);
+                        scene.TouchReleased(out_idx, out_float4.x, out_float4.y, out_float4.z, out_float4.w, out_float_value);
                     }
                     break;
 
@@ -2858,6 +2904,19 @@ namespace Love
         }
 
         /// <summary>
+        /// Sets the background color.
+        /// </summary>
+        /// <param name="r">The red component (0-1).</param>
+        /// <param name="g">The green component (0-1).</param>
+        /// <param name="b">The blue component (0-1).</param>
+        /// <param name="a">The alpha component (0-1).</param>
+        public static void SetBackgroundColor(Color color)
+        {
+            Love2dDll.wrap_love_dll_graphics_setBackgroundColor(color.R, color.G, color.B, color.A);
+        }
+
+
+        /// <summary>
         /// Gets the current background color.
         /// </summary>
         public static Vector4 GetBackgroundColor()
@@ -3204,6 +3263,19 @@ namespace Love
         }
 
         /// <summary>
+        /// Translates the coordinate system in two dimensions.
+        /// <para>When this function is called with two numbers, dx, and dy, all the following drawing operations take effect as if their x and y coordinates were x+dx and y+dy.</para>
+        /// <para>Scale and translate are not commutative operations, therefore, calling them in different orders will change the outcome.</para>
+        /// <para>This change lasts until Scene.Draw exits or else a <see cref="Graphics.Pop "/> reverts to a previous <see cref="Graphics.Push"/> .</para>
+        /// <para>Translating using whole numbers will prevent tearing/blurring of images and fonts draw after translating.</para>
+        /// </summary>
+        /// <param name="offset"></param>
+        public static void Translate(Vector2 offset)
+        {
+            Translate(offset.x, offset.y);
+        }
+
+        /// <summary>
         /// Shears the coordinate system.
         /// </summary>
         /// <param name="kx"></param>
@@ -3362,6 +3434,16 @@ namespace Love
         }
 
         /// <summary>
+        /// Draws a rectangle.
+        /// </summary>
+        /// <param name="mode">How to draw the rectangle.</param>
+        /// <param name="rect">the rectangle array to draw.</param>
+        public static void Rectangle(DrawMode mode, RectangleF[] rectList)
+        {
+            Love2dDll.wrap_love_dll_graphics_rectangle_batch(((int)mode), rectList, rectList.Length);
+        }
+
+        /// <summary>
         /// Draws a rectangle with rounded corners.
         /// </summary>
         /// <param name="mode_type">How to draw the rectangle.</param>
@@ -3386,9 +3468,24 @@ namespace Love
         /// <param name="radius">The radius of the circle.</param>
         /// <param name="points">The number of segments used for drawing the circle. Note: The default variable for the segments parameter varies between different versions of LÖVE.</param>
         /// <returns></returns>
-        public static void Circle(DrawMode mode_type, float x, float y, float radius, int points = 10)
+        public static void Circle(DrawMode mode_type, float x, float y, float radius, int points)
         {
             Love2dDll.wrap_love_dll_graphics_circle((int)mode_type, x, y, radius, points);
+        }
+
+        /// <summary>
+        /// Draws a circle.
+        /// </summary>
+        /// <param name="mode_type">How to draw the circle.</param>
+        /// <param name="x">The position of the center along x-axis.</param>
+        /// <param name="y">The position of the center along y-axis.</param>
+        /// <param name="radius">The radius of the circle.</param>
+        /// <param name="points">The number of segments used for drawing the circle. Note: The default variable for the segments parameter varies between different versions of LÖVE.</param>
+        /// <returns></returns>
+        public static void Circle(DrawMode mode_type, float x, float y, float radius)
+        {
+            int point = (int)radius;
+            Love2dDll.wrap_love_dll_graphics_circle((int)mode_type, x, y, radius, point < 10 ? 10 : point);
         }
 
         /// <summary>

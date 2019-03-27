@@ -336,6 +336,15 @@ namespace Love
             this.uv = uv;
             this.color = color;
         }
+        /// <summary>
+        /// Mesh vertex.
+        /// </summary>
+        public Vertex(float x = 0, float y = 0, float u = 0, float v = 0, float r = 1, float g = 1, float b = 1, float a = 1)
+        {
+            pos = new Vector2(x, y);
+            uv = new Vector2(u, v);
+            color = new Vector4(r, g, b, a);
+        }
     }
 
 

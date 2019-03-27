@@ -35,6 +35,15 @@ namespace Love
             return obj;
         }
 
+        /// <summary>
+        /// danger !!!!!
+        /// </summary>
+        /// <param name="p"></param>
+        internal static void RetainLoveObject(IntPtr p)
+        {
+            Love2dDll.wrap_love_dll_retain_obj(p);
+        }
+
         // real pointer
         internal IntPtr p;
 
@@ -72,6 +81,27 @@ namespace Love
 
             return this.p == (obj as LoveObject).p;
         }
+
+        //public static bool operator ==(LoveObject lhs, LoveObject rhs)
+        //{
+        //    if (lhs == null && rhs == null)
+        //        return true;
+
+        //    if (lhs == null || rhs == null)
+        //        return false;
+
+        //    return lhs.p == rhs.p;
+        //}
+
+        //public static bool operator !=(LoveObject lhs, LoveObject rhs)
+        //{
+        //    if (lhs == null && rhs == null)
+        //        return false;
+        //    if (lhs == null || rhs == null)
+        //        return true;
+        //    return lhs.p != rhs.p;
+        //}
+
 
         /// <summary>
         /// 返回此实例的 IntPtr p 的哈希代码。
@@ -2667,6 +2697,31 @@ namespace Love
             Love2dDll.wrap_love_dll_type_RandomGenerator_random(p, out out_result);
             return (float)out_result;
         }
+
+        /// <summary>
+        /// Get uniformly distributed pseudo-random integer within [min, max].
+        /// </summary>
+        /// <param name="min">The minimum possible value it should return.</param>
+        /// <param name="max">The maximum possible value it should return.</param>
+        /// <returns></returns>
+        public int Random(int min, int max)
+        {
+            float random = Random();
+            return Mathf.RoundToInt(random * (max - min) + min);
+        }
+
+        /// <summary>
+        /// Get uniformly distributed pseudo-random integer within [min, max].
+        /// </summary>
+        /// <param name="min">The minimum possible value it should return.</param>
+        /// <param name="max">The maximum possible value it should return.</param>
+        /// <returns></returns>
+        public float Random(float min, float max)
+        {
+            float random = Random();
+            return random * (max - min) + min;
+        }
+
         public float RandomNormal(double stddev, double mean)
         {
             double out_result = 0;

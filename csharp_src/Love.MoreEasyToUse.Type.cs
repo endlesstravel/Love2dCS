@@ -245,4 +245,100 @@ namespace Love
             SendTexture(name, texture);
         }
     }
+
+    public partial class Joystick
+    {
+        static JoystickHelper joystickHelper = new JoystickHelper();
+        internal static void Step()
+        {
+            joystickHelper.Step();
+        }
+        public static bool IsPressed(Joystick joystick, int button)
+        {
+            return joystickHelper.IsPressed(joystick, button);
+        }
+        public static bool IsReleased(Joystick joystick, int button)
+        {
+            return joystickHelper.IsReleased(joystick, button);
+        }
+        public static bool IsGamepadPressed(Joystick joystick, GamepadButton gamepadButton)
+        {
+            return joystickHelper.IsGamepadPressed(joystick, gamepadButton);
+        }
+        public static bool IsGamepadReleased(Joystick joystick, GamepadButton gamepadButton)
+        {
+            return joystickHelper.IsGamepadReleased(joystick, gamepadButton);
+        }
+        public bool IsPressed(int button)
+        {
+            return joystickHelper.IsPressed(this, button);
+        }
+        public bool IsReleased(int button)
+        {
+            return joystickHelper.IsReleased(this, button);
+        }
+        public bool IsGamepadPressed(GamepadButton gamepadButton)
+        {
+            return joystickHelper.IsGamepadPressed(this, gamepadButton);
+        }
+        public bool IsGamepadReleased(GamepadButton gamepadButton)
+        {
+            return joystickHelper.IsGamepadReleased(this, gamepadButton);
+        }
+    }
+
+    class JoystickHelper
+    {
+        HashSet<string> lastPressedMemory = new HashSet<string>();
+        HashSet<string> currentPressedMemory = new HashSet<string>();
+
+        public void Step()
+        {
+            lastPressedMemory = currentPressedMemory;
+            currentPressedMemory = new HashSet<string>();
+            foreach (var joy in Joystick.GetJoysticks())
+            {
+                string guid = joy.GetGUID();
+                for (int i = 0; i < joy.GetButtonCount(); i++)
+                {
+                    if (joy.IsDown(i))
+                    {
+                        currentPressedMemory.Add(guid + i);
+                    }
+                }
+                foreach (var gbtn in (GamepadButton[])System.Enum.GetValues(typeof(GamepadButton)))
+                {
+                    if (joy.IsGamepadDown(gbtn))
+                    {
+                        currentPressedMemory.Add(guid + gbtn);
+                    }
+                }
+            }
+        }
+
+        public bool IsPressed(Joystick joystick, int button)
+        {
+            string name = joystick.GetGUID() + button;
+            return currentPressedMemory.Contains(name) && !lastPressedMemory.Contains(name);
+        }
+
+        public bool IsReleased(Joystick joystick, int button)
+        {
+            string name = joystick.GetGUID() + button;
+            return !currentPressedMemory.Contains(name) && lastPressedMemory.Contains(name);
+        }
+
+        public bool IsGamepadPressed(Joystick joystick, GamepadButton gamepadButton)
+        {
+            string name = joystick.GetGUID() + gamepadButton;
+            return currentPressedMemory.Contains(name) && !lastPressedMemory.Contains(name);
+        }
+
+        public bool IsGamepadReleased(Joystick joystick, GamepadButton gamepadButton)
+        {
+            string name = joystick.GetGUID() + gamepadButton;
+            return !currentPressedMemory.Contains(name) && lastPressedMemory.Contains(name);
+        }
+    }
+
 }

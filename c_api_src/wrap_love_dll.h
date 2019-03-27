@@ -70,6 +70,15 @@ using love::physics::box2d::DistanceJoint;
 using love::physics::box2d::Shape;
 using love::physics::box2d::FrictionJoint;
 using love::physics::box2d::GearJoint;
+using love::physics::box2d::MotorJoint;
+using love::physics::box2d::MouseJoint;
+using love::physics::box2d::PolygonShape;
+using love::physics::box2d::RevoluteJoint;
+using love::physics::box2d::PulleyJoint;
+using love::physics::box2d::WeldJoint;
+using love::physics::box2d::WheelJoint;
+using love::physics::box2d::RopeJoint;
+using love::physics::box2d::PrismaticJoint;
 using love::Memoizer;
 
 namespace love
@@ -225,7 +234,7 @@ namespace wrap
 #pragma region delete release region
 	extern "C" LOVE_EXPORT void wrap_love_dll_last_error(WrapString **out_errormsg);
     extern "C" LOVE_EXPORT void wrap_love_dll_release_obj(Object *p);
-    // extern "C" LOVE_EXPORT void wrap_love_dll_retain_obj(Object *p);
+    extern "C" LOVE_EXPORT void wrap_love_dll_retain_obj(Object *p);
 	extern "C" LOVE_EXPORT void wrap_love_dll_delete(void *p);
 	extern "C" LOVE_EXPORT void wrap_love_dll_delete_array(void *p);
     extern "C" LOVE_EXPORT void wrap_love_dll_delete_WrapString(WrapString *ws);
@@ -234,7 +243,6 @@ namespace wrap
 
 #pragma region *new* region
 	extern "C" LOVE_EXPORT bool4 wrap_love_dll_luasupport_init(lua_State* L);
-	extern "C" LOVE_EXPORT bool4 wrap_love_dll_luasupport_loadFile(const char* filename);
 	extern "C" LOVE_EXPORT bool4 wrap_love_dll_luasupport_doString(const char* str);
 #pragma endregion
 
@@ -575,7 +583,8 @@ namespace wrap
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_draw_texture_quad(Quad *quad, Texture *texture, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_print(char* coloredStringListStr[], Float4 coloredStringListColor[], int coloredStringListLength, float x, float y, float angle, float sx, float sy, float ox, float oy, float kx, float ky);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_printf(pChar coloredStringListStr[], Float4 coloredStringListColor[], int coloredStringListLength, float x, float y, float wrap, int align_type, float angle, float sx, float sy, float ox, float oy, float kx, float ky);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_rectangle(int mode_type, float x, float y, float w, float h);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_rectangle(int mode_type, float x, float y, float w, float h);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_rectangle_batch(int mode_type, Float4 *rectArray, int rectArrayLenght);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_rectangle_with_rounded_corners(int mode_type, float x, float y, float w, float h, float rx, float ry, int points);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_circle(int mode_type, float x, float y, float radius, int points);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_ellipse(int mode_type, float x, float y, float a, float b, int points);
@@ -727,7 +736,6 @@ namespace wrap
 #pragma region type - Image
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Image_isCompressed(love::graphics::opengl::Image *i, bool4 *out_result);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Image_replacePixels(love::graphics::opengl::Image *i, ImageData *imgData, int slice, int mipmap, int x, int y, bool4 reloadmipmaps);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Image_getFlags(love::graphics::opengl::Image* i, bool4 *out_mipmaps, bool4 *out_linear);
 
 #pragma endregion
 
@@ -1034,8 +1042,296 @@ namespace wrap
 
 #pragma endregion
 
+#pragma region type - callback func define
 
-#pragma region type - Body
+	/// [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	/// public delegate double CallbackDelegate(double x);
+
+	typedef float(__stdcall *WrapShapeMassCallbackFunc)(float x, float y, float mass, float inertia);
+	typedef float(__stdcall *WrapShapeAABBCallbackFunc)(float lx, float ly, float ux, float uy);
+	typedef float(__stdcall *WrapShapeRayCastCallbackFunc)(float nx, float ny, float fraction);
+	typedef float(__stdcall *WrapRayCastCallbackFunc)(Fixture* fixture, float x, float y, float nx, float ny, float fraction);
+	typedef bool4(__stdcall *WrapQueryBoundingBoxCallbackFunc)(Fixture*);
+	typedef void(__stdcall *WrapContactCallbackFunc)(Fixture *a, Fixture *b, Contact *contact, Float2* impluse, int impluseLength);
+	typedef bool4(__stdcall *WrapContactFilterFunc)(Fixture *a, Fixture *b);
+#pragma endregion
+
+#pragma region all physics
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_getTransform(Body *t, Float3 *out_pos);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_getLinearVelocity(Body *t, Float2 *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_getWorldCenter(Body *t, Float2 *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_getLocalCenter(Body *t, Float2 *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_getAngularVelocity(Body *t, float *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_getMass(Body *t, float *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_getInertia(Body *t, float *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_getAngularDamping(Body *t, float *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_getLinearDamping(Body *t, float *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_getGravityScale(Body *t, float *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_getType(Body *t, int *out_body_type);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_applyLinearImpulse_xy(Body *t, float jx, float jy);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_applyLinearImpulse_xy_offset(Body *t, float jx, float jy, float ox, float oy);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_applyAngularImpulse(Body *t, float i);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_applyTorque(Body *t, float torque);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_applyForce_xy(Body *t, float fx, float fy);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_applyForce_xy_offset(Body *t, float fx, float fy, float ox, float oy);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Body_setX(Body *t, float x);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Body_setY(Body *t, float y);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_setLinearVelocity(Body *t, float x, float y);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Body_setAngle(Body *t, float angle);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_setAngularVelocity(Body *t, float angleVelocity);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Body_setPosition(Body *t, float x, float y);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Body_resetMassData(Body *t);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Body_setMass(Body *t, float m);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Body_setInertia(Body *t, float inertia);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_setAngularDamping(Body *t, float angularDamping);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_setLinearDamping(Body *t, float linerDamping);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_setGravityScale(Body *t, float scale);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Body_setType(Body *t, int body_type);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_getWorldPoint(Body *t, float x, float y, Float2 *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_getWorldVector(Body *t, float x, float y, Float2 *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_getLocalPoint(Body *t, float x, float y, Float2 *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_getLocalVector(Body *t, float x, float y, Float2 *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_getLinearVelocityFromWorldPoint(Body *t, float x, float y, Float2 *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_getLinearVelocityFromLocalPoint(Body *t, float x, float y, Float2 *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_isBullet(Body *t, bool4 *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_setBullet(Body *t, bool4 b);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_isActive(Body *t, bool4 *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_isAwake(Body *t, bool4 *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_setSleepingAllowed(Body *t, bool4 b);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_isSleepingAllowed(Body *t, bool4 *out_result);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Body_setActive(Body *t, bool4 b);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_setAwake(Body *t, bool4 b);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Body_setFixedRotation(Body *t, bool4 b);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_isFixedRotation(Body *t, bool4 *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_getWorld(Body *t, World** out_world);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Body_destroy(Body *t);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Body_isDestroyed(Body *b, bool4 *out_result);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Body_getFixtureList(Body *t, Fixture ***out_fixtures, int *out_fixtures_length);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Body_getJointList(Body *t, Joint ***out_joints, int *out_joints_length);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Body_getContactList(Body *t, Contact*** out_contacts, int *out_contacts_length);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Shape_getType(Shape *t, int *out_shapeType);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Shape_getRadius(Shape *t, float *out_radius);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Shape_getChildCount(Shape *t, float *out_childCount);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Shape_testPoint(Shape *t, float tx, float ty, float tr, float px, float py, bool4 *out_result);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Shape_rayCast(Shape *t, Float2 p1, Float2 p2, float maxFraction, Float2 trans, float tr, int childIndex, WrapShapeRayCastCallbackFunc callback);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Shape_computeAABB(Shape *t, float x, float y, float r, int childIndex, WrapShapeAABBCallbackFunc callback);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Shape_computeMass(Shape *t, float density, WrapShapeMassCallbackFunc callback);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_ChainShape_setNextVertex_nil(ChainShape *c);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_ChainShape_setNextVertex(ChainShape *c, float x, float y);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_ChainShape_setPreviousVertex_nil(ChainShape *c);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_ChainShape_setPreviousVertex(ChainShape *c, float x, float y);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_ChainShape_getChildEdge(ChainShape *c, int index, EdgeShape **out_edgeShape);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_ChainShape_getVertexCount(ChainShape *c, int *out_count);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_ChainShape_getPoint(ChainShape *c, int index, Float2 *out_point);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_ChainShape_getNextVertex(ChainShape *c, bool4 *out_hasNextVertex, Float2 *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_ChainShape_getPreviousVertex(ChainShape *c, bool4 *out_hasPrevVertex, Float2 *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_ChainShape_getPoints(ChainShape *c, Float2 **out_points, int *out_points_length);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_CircleShape_getRadius(CircleShape *c, float *out_radius);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_CircleShape_setRadius(CircleShape *c, float r);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_CircleShape_getPoint(CircleShape *c, Float2 *out_point);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_CircleShape_setPoint(CircleShape *c, float x, float y);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_EdgeShape_setNextVertex_nil(EdgeShape *t);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_EdgeShape_setNextVertex(EdgeShape *t, float x, float y);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_EdgeShape_setPreviousVertex_nil(EdgeShape *t);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_EdgeShape_setPreviousVertex(EdgeShape *t, float x, float y);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_EdgeShape_getNextVertex(EdgeShape *t, bool4 *out_hasNextVertex, Float2 *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_EdgeShape_getPreviousVertex(EdgeShape *t, bool4 *out_hasPrevVertex, Float2 *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_EdgeShape_getPoints(EdgeShape *t, float *out_x1, float *out_y1, float *out_x2, float *out_y2);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_PolygonShape_validate(PolygonShape *t, bool4 *out_validate);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_PolygonShape_getPoints(PolygonShape *t, Float2 **out_pointList, int *out_pointListLength);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Contact_getFriction(Contact *t, float *out_friction);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Contact_getRestitution(Contact *t, float *out_restitution);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Contact_isEnabled(Contact *t, bool4 *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Contact_isTouching(Contact *t, bool4 *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Contact_setFriction(Contact *t, float friction);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Contact_setRestitution(Contact *t, float restitution);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Contact_setEnabled(Contact *t, bool4 enabled);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Contact_resetFriction(Contact *t);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Contact_resetRestitution(Contact *t);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Contact_setTangentSpeed(Contact *t, float speed);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Contact_getTangentSpeed(Contact *t, float *out_speed);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Contact_getChildren(Contact *t, int *out_childA, int *out_childB);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Contact_getFixtures(Contact *t, Fixture **out_a, Fixture **out_b);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Contact_isDestroyed(Contact *t, bool4 *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Contact_getPositions(Contact *t, Float2 **out_pointList, int *out_pointListLength);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Contact_getNormal(Contact *t, float *out_nx, float *out_ny);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_DistanceJoint_setLength(DistanceJoint *t, float length);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_DistanceJoint_getLength(DistanceJoint *t, float *out_length);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_DistanceJoint_setFrequency(DistanceJoint *t, float frequency);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_DistanceJoint_getFrequency(DistanceJoint *t, float *out_frequency);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_DistanceJoint_setDampingRatio(DistanceJoint *t, float dampingRatio);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_DistanceJoint_getDampingRatio(DistanceJoint *t, float *out_dampingRatio);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Fixture_getType(Fixture *t, int *out_fixture_type);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Fixture_setFriction(Fixture *t, float friction);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Fixture_setRestitution(Fixture *t, float restitution);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Fixture_setDensity(Fixture *t, float density);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Fixture_setSensor(Fixture *t, bool4 sensor);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Fixture_getFriction(Fixture *t, float *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Fixture_getRestitution(Fixture *t, float *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Fixture_getDensity(Fixture *t, float *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Fixture_isSensor(Fixture *t, bool4 *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Fixture_getBody(Fixture *t, Body **out_body);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Fixture_getShape(Fixture *t, Shape **out_shape);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Fixture_testPoint(Fixture *t, float x, float y, bool4 *out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Fixture_setFilterData(Fixture *t, float categories, float mask, float group);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Fixture_getFilterData(Fixture *t, float *out_categories, float *out_mask, float *out_group);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Fixture_getGroupIndex(Fixture *t, int *out_index);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Fixture_setGroupIndex(Fixture *t, int index);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Fixture_destroy(Fixture *t);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Fixture_isDestroyed(Fixture *t, bool4 *out_result);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Fixture_rayCast(Fixture *t, float x1, float y1, float x2, float y2, float maxFraction, int childIndex, bool4 *out_hasHit, Float2 *out_pos, float *out_fraction);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Fixture_setCategory(Fixture *t, uint16 categories);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Fixture_getCategory(Fixture *t, uint16 *out_categories);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Fixture_setMask(Fixture *t, uint16 masks);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Fixture_getMask(Fixture *t, uint16 *out_mask);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Fixture_getBoundingBox(Fixture *t, int childIndex, float *out_lx, float *out_ly, float *out_ux, float *out_uy);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Fixture_getMassData(Fixture *t, Float2 *out_center, float *out_mass, float *out_rotationalInertia);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_FrictionJoint_setMaxForce(FrictionJoint *t, float maxForce);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_FrictionJoint_getMaxForce(FrictionJoint *t, float *out_maxForce);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_FrictionJoint_setMaxTorque(FrictionJoint *t, float maxTorque);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_FrictionJoint_getMaxTorque(FrictionJoint *t, float *out_maxTorque);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_GearJoint_setRatio(GearJoint *t, float ration);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_GearJoint_getRatio(GearJoint *t, float *out_ration);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_GearJoint_getJoints(GearJoint *t, Joint** out_j1, Joint **out_j2);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Joint_getType(Joint *t, int *out_type);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Joint_getBodies(Joint *t, Body **out_b1, Body **out_b2);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Joint_getReactionTorque(Joint *t, float inv_dt, float* out_torque);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Joint_getCollideConnected(Joint *t, bool4 *out_c);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Joint_destroy(Joint *t);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Joint_isDestroyed(Joint *t, bool4 *out_destroyed);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Joint_getAnchors(Joint *t, float *out_x1, float *out_y1, float *out_x2, float *out_y2);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Joint_getReactionForce(Joint *t, float dt, float *out_x, float *out_y);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_MotorJoint_setLinearOffset(MotorJoint *t, float x, float y);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_MotorJoint_setAngularOffset(MotorJoint *t, float angularOffset);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_MotorJoint_getAngularOffset(MotorJoint *t, float *out_angularOffset);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_MotorJoint_setMaxForce(MotorJoint *t, float maxForce);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_MotorJoint_getMaxForce(MotorJoint *t, float* out_maxForce);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_MotorJoint_setMaxTorque(MotorJoint *t, float torque);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_MotorJoint_getMaxTorque(MotorJoint *t, float* out_torque);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_MotorJoint_setCorrectionFactor(MotorJoint *t, float factor);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_MotorJoint_getCorrectionFactor(MotorJoint *t, float* out_factor);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_MotorJoint_getLinearOffset(MotorJoint *t, float *out_x, float *out_y);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_MouseJoint_setTarget(MouseJoint *t, float x, float y);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_MouseJoint_setMaxForce(MouseJoint *t, float force);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_MouseJoint_getMaxForce(MouseJoint *t, float* out_force);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_MouseJoint_setFrequency(MouseJoint *t, float frequency);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_MouseJoint_getFrequency(MouseJoint *t, float* out_frequency);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_MouseJoint_setDampingRatio(MouseJoint *t, float ratio);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_MouseJoint_getDampingRatio(MouseJoint *t, float* out_ratio);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_MouseJoint_getTarget(MouseJoint *t, float *out_x, float *out_y);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_newWorld(float gx, float gy, bool4 sleep, World** out_world);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_newBody(World* world, float x, float y, int type_bodyType, Body **out_body);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_newFixture(Body *body, Shape *shape, float density, Fixture **out_fixture);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_newCircleShape(float x, float y, float radius, CircleShape **out_shape);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_newRectangleShape(float x, float y, float w, float h, float angle, PolygonShape **out_shape);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_newEdgeShape(float x1, float y1, float x2, float y2, EdgeShape **out_shape);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_newDistanceJoint(Body *body1, Body *body2, float x1, float y1, float x2, float y2, bool4 collideConnected, DistanceJoint **out_joint);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_newMouseJoint(Body *body, float x, float y, MouseJoint **out_joint);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_newRevoluteJoint(Body *body1, Body *body2, Float2 pA, Float2 pB, bool4 collideConnected, RevoluteJoint **out_joint);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_newRevoluteJoint_referenceAngle(Body *body1, Body *body2, Float2 pA, Float2 pB, bool4 collideConnected, float referenceAngle, RevoluteJoint **out_joint);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_newPrismaticJoint(Body *body1, Body *body2, Float2 pA, Float2 pB, Float2 angle, bool4 collideConnected, PrismaticJoint **out_joint);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_newPrismaticJoint_referenceAngle(Body *body1, Body *body2, Float2 pA, Float2 pB, Float2 angle, bool4 collideConnected, float referenceAngle, PrismaticJoint **out_joint);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_newPulleyJoint(Body *body1, Body *body2, Float2 g1, Float2 g2, Float2 pA, Float2 pB, float ratio, bool4 collideConnected, PulleyJoint **out_joint);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_newGearJoint(Joint *joint1, Joint *joint2, float ratio, bool4 collideConnected, GearJoint **out_joint);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_newFrictionJoint(Body *body1, Body *body2, Float2 pA, Float2 pB, bool4 collideConnected, FrictionJoint **out_joint);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_newWeldJoint(Body *body1, Body *body2, Float2 pA, Float2 pB, bool4 collideConnected, WeldJoint **out_joint);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_newWeldJoint_referenceAngle(Body *body1, Body *body2, Float2 pA, Float2 pB, bool4 collideConnected, float referenceAngle, WeldJoint **out_joint);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_newWheelJoint(Body *body1, Body *body2, Float2 pA, Float2 pB, Float2 angle, bool4 collideConnected, WheelJoint **out_joint);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_newRopeJoint(Body *body1, Body *body2, Float2 pA, Float2 pB, float maxLength, bool4 collideConnected, RopeJoint **out_joint);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_newMotorJoint(Body *body1, Body *body2, float correctionFactor, bool4 collideConnected, MotorJoint **out_joint);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_newPolygonShape(Float2 *pointList, int pointListLength, PolygonShape **out_shape);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_newChainShape(bool4 loop, Float2 *pointList, int pointListLength, ChainShape **out_shape);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_open_love_physics();
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_setMeter(float meter);
+	extern "C" LOVE_EXPORT void wrap_love_dll_physics_getMeter(float *out_meter);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_physics_getDistance(Fixture *fixtureA, Fixture *fixtureB, float *out_distance, Float2 *out_pa, Float2 *out_pb);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_PrismaticJoint_getJointTranslation(PrismaticJoint *t, float *out_translation);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_PrismaticJoint_getJointSpeed(PrismaticJoint *t, float *out_speed);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_PrismaticJoint_setMotorEnabled(PrismaticJoint *t, bool4 ebabled);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_PrismaticJoint_isMotorEnabled(PrismaticJoint *t, bool4 *out_enabled);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_PrismaticJoint_setMaxMotorForce(PrismaticJoint *t, float force);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_PrismaticJoint_setMotorSpeed(PrismaticJoint *t, float speed);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_PrismaticJoint_getMotorSpeed(PrismaticJoint *t, float *out_speed);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_PrismaticJoint_getMotorForce(PrismaticJoint *t, float inv_dt, float *out_force);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_PrismaticJoint_getMaxMotorForce(PrismaticJoint *t, float *out_force);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_PrismaticJoint_setLimitsEnabled(PrismaticJoint *t, bool4 enabled);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_PrismaticJoint_areLimitsEnabled(PrismaticJoint *t, bool4 *out_enabled);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_PrismaticJoint_setUpperLimit(PrismaticJoint *t, float limit);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_PrismaticJoint_setLowerLimit(PrismaticJoint *t, float limit);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_PrismaticJoint_setLimits(PrismaticJoint *t, float lowerLimit, float upperLimit);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_PrismaticJoint_getLowerLimit(PrismaticJoint *t, float *out_limit);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_PrismaticJoint_getUpperLimit(PrismaticJoint *t, float *out_limit);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_PrismaticJoint_getReferenceAngle(PrismaticJoint *t, float *out_angle);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_PrismaticJoint_getLimits(PrismaticJoint *t, float *out_lowerLimit, float *out_upperLimit);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_PrismaticJoint_getAxis(PrismaticJoint *t, float *out_axisX, float *out_axisY);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_PulleyJoint_getLengthA(PulleyJoint *t, float *out_lengthA);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_PulleyJoint_getLengthB(PulleyJoint *t, float *out_lengthB);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_PulleyJoint_getRatio(PulleyJoint *t, float *out_ratio);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_PulleyJoint_getGroundAnchors(PulleyJoint *t, float *out_x1, float *out_y1, float *out_x2, float *out_y2);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_RevoluteJoint_getJointAngle(RevoluteJoint *t, float *out_angle);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_RevoluteJoint_getJointSpeed(RevoluteJoint *t, float *out_speed);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_RevoluteJoint_setMotorEnabled(RevoluteJoint *t, bool4 enabled);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_RevoluteJoint_isMotorEnabled(RevoluteJoint *t, bool4* out_enabled);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_RevoluteJoint_setMaxMotorTorque(RevoluteJoint *t, float torque);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_RevoluteJoint_setMotorSpeed(RevoluteJoint *t, float speed);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_RevoluteJoint_getMotorSpeed(RevoluteJoint *t, float *out_speed);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_RevoluteJoint_getMotorTorque(RevoluteJoint *t, float inv_dt, float *out_torque);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_RevoluteJoint_getMaxMotorTorque(RevoluteJoint *t, float *out_torque);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_RevoluteJoint_setLimitsEnabled(RevoluteJoint *t, bool4 enabled);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_RevoluteJoint_areLimitsEnabled(RevoluteJoint *t, bool4* out_enabled);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_RevoluteJoint_setUpperLimit(RevoluteJoint *t, float limit);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_RevoluteJoint_setLowerLimit(RevoluteJoint *t, float limit);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_RevoluteJoint_setLimits(RevoluteJoint *t, float lowerLimit, float upperLimit);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_RevoluteJoint_getLowerLimit(RevoluteJoint *t, float *out_limit);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_RevoluteJoint_getUpperLimit(RevoluteJoint *t, float *out_limit);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_RevoluteJoint_getReferenceAngle(RevoluteJoint *t, float *out_angle);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_RevoluteJoint_getLimits(RevoluteJoint *t, float *out_lowerLimit, float *out_upperLimit);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_RopeJoint_getMaxLength(RopeJoint *t, float *out_maxLength);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_RopeJoint_setMaxLength(RopeJoint *t, float maxLength);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_WeldJoint_setFrequency(WeldJoint *t, float frequency);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_WeldJoint_getFrequency(WeldJoint *t, float *out_frequency);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_WeldJoint_setDampingRatio(WeldJoint *t, float ratio);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_WeldJoint_getDampingRatio(WeldJoint *t, float *out_ratio);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_WeldJoint_getReferenceAngle(WeldJoint *t, float *out_angle);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_WheelJoint_getJointTranslation(WheelJoint *t, float *out_translation);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_WheelJoint_getJointSpeed(WheelJoint *t, float *out_speed);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_WheelJoint_setMotorEnabled(WheelJoint *t, bool4 enabled);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_WheelJoint_isMotorEnabled(WheelJoint *t, bool4 *out_enabled);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_WheelJoint_setMotorSpeed(WheelJoint *t, float speed);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_WheelJoint_getMotorSpeed(WheelJoint *t, float *out_speed);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_WheelJoint_setMaxMotorTorque(WheelJoint *t, float torque);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_WheelJoint_getMaxMotorTorque(WheelJoint *t, float *out_torque);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_WheelJoint_getMotorTorque(WheelJoint *t, float inv_dt, float *out_torque);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_WheelJoint_setSpringFrequency(WheelJoint *t, float frequency);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_WheelJoint_getSpringFrequency(WheelJoint *t, float *out_frequency);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_WheelJoint_setSpringDampingRatio(WheelJoint *t, float ratio);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_WheelJoint_getSpringDampingRatio(WheelJoint *t, float *out_ratio);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_WheelJoint_getAxis(WheelJoint *t, float *out_axisX, float *out_axisY);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_World_setGravity(World *t, float gx, float gy);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_World_translateOrigin(World *t, float x, float y);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_World_setSleepingAllowed(World *t, bool4 allowed);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_World_isSleepingAllowed(World *t, bool4 *out_allowed);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_World_isLocked(World *t, bool4 *out_locked);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_World_getBodyCount(World *t, int *out_count);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_World_getJointCount(World *t, int *out_count);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_World_getContactCount(World *t, int *out_count);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_World_destroy(World *t);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_World_isDestroyed(World *t, bool4 *out_validate);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_World_update(
+		World *t, float dt, int velocityiterations, int positioniterations,
+		WrapContactCallbackFunc beginContact,
+		WrapContactCallbackFunc endContact,
+		WrapContactCallbackFunc preSolve,
+		WrapContactCallbackFunc postSolve,
+		WrapContactFilterFunc filter
+	);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_World_getGravity(World *t, float *out_x, float *out_y);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_World_getBodies(World *t, Body ***out_bodyList, int *out_bodyListLenght);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_World_getJoints(World *t, Joint ***out_jointList, int *out_jointListLenght);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_World_getContacts(World *t, Contact ***out_contactList, int *out_contactListLenght);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_World_queryBoundingBox(World *t, float topLeftX, float topLeftY, float bottomRightX, float bottomRightY, WrapQueryBoundingBoxCallbackFunc callback);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_World_rayCast(World *t, float x1, float y1, float x2, float y2, WrapRayCastCallbackFunc callback);
+
 #pragma endregion
 }
 }

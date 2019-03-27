@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Love.Misc.Moonshine
+namespace Love.Misc
 {
     /// <summary>
     /// Postprocessing effect repository for LÖVE.

@@ -1,5 +1,75 @@
 ﻿namespace Love
 {
+    /// <summary>
+    /// The types of a Body.
+    /// </summary>
+    public enum BodyType
+    {
+        Invalid,
+
+        /// <summary>
+        /// Static bodies do not move.
+        /// </summary>
+        Static = 1,
+
+        /// <summary>
+        /// Dynamic bodies collide with all bodies.
+        /// </summary>
+        Dynamic,
+
+        /// <summary>
+        /// Kinematic bodies only collide with dynamic bodies.
+        /// </summary>
+        Kinematic,
+    }
+
+    /// <summary>
+    /// Different types of joints.
+    /// </summary>
+    public enum JointType
+    {
+        Invalid,
+
+        Distance = 1,
+
+        Revolute,
+
+        Prismatic,
+
+        Mouse,
+
+        Pulley,
+
+        Gear,
+
+        Friction,
+
+        Weld,
+
+        Wheel,
+
+        Rope,
+
+        Motor,
+    }
+
+
+    /// <summary>
+    /// The different types of Shapes, as returned by Shape:getType.
+    /// </summary>
+    public enum ShapeType
+    {
+        Invalid,
+
+        Circle = 1,
+
+        Polygon,
+
+        Edge,
+
+        Chain,
+
+    }
 
     /// <summary>
     /// True Type hinting mode. See True Type official document for more information.
