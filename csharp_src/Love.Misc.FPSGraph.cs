@@ -87,7 +87,8 @@ namespace Love.Misc.FPSGraph
 
         public void UpdateFPS(float dt)
         {
-            var fps = 0.75f * 1 / dt + 0.25f * Timer.GetFPS();
+            //var fps = 0.75f * 1 / dt + 0.25f * Timer.GetFPS();
+            var fps = FPSCounter.GetFPS();
             UpdateGraph(fps, (Mathf.Floor(fps*10)/10).ToString("00.0"), dt);
         }
 
@@ -128,7 +129,7 @@ namespace Love.Misc.FPSGraph
             }
 
             Graphics.SetFont(FPSGraph_FONT);
-            Graphics.Print("MAX:" + maxVal.ToString("00.0") + "\nFPS:" + m_label, m_rect.x, m_rect.Top);
+            Graphics.Print("MAX:" + maxVal.ToString("00.0") + "\nFPS:" + FPSCounter.GetFPS(), m_rect.x, m_rect.Top);
         }
 
 

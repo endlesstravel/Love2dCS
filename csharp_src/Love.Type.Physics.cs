@@ -196,11 +196,21 @@ namespace Love
             Love2dDll.wrap_love_dll_type_Body_setType(p, body_type);
         }
 
+        public Vector2 GetWorldPoint(Vector2 input)
+        {
+            return GetWorldPoint(input.x, input.y);
+        }
+
         public Vector2 GetWorldPoint(float x, float y)
         {
             Vector2 out_result;
             Love2dDll.wrap_love_dll_type_Body_getWorldPoint(p, x, y, out out_result);
             return out_result;
+        }
+
+        public Vector2 GetWorldVector(Vector2 input)
+        {
+            return GetWorldVector(input.x, input.y);
         }
 
         public Vector2 GetWorldVector(float x, float y)
@@ -210,11 +220,21 @@ namespace Love
             return out_result;
         }
 
+        public Vector2 GetLocalPoint(Vector2 input)
+        {
+            return GetLocalPoint(input.x, input.y);
+        }
+
         public Vector2 GetLocalPoint(float x, float y)
         {
             Vector2 out_result;
             Love2dDll.wrap_love_dll_type_Body_getLocalPoint(p, x, y, out out_result);
             return out_result;
+        }
+
+        public Vector2 GetLocalVector(Vector2 input)
+        {
+            return GetLocalVector(input.x, input.y);
         }
 
         public Vector2 GetLocalVector(float x, float y)
@@ -687,6 +707,25 @@ namespace Love
             bodyB = NewObject<Body>(pb);
         }
 
+
+        public Body[] GetBodies()
+        {
+            GetBodies(out Body b1, out Body b2);
+            if (b1 != null && b2 != null)
+            {
+                return new Body[] { b1, b2 };
+            }
+            if (b1 != null && b2 == null)
+            {
+                return new Body[1] { b1 };
+            }
+            if (b1 == null && b2 != null)
+            {
+                return new Body[1] { b2 };
+            }
+            return new Body[0];
+        }
+
         public float GetReactionTorque(float inv_dt)
         {
             float out_torque;
@@ -775,6 +814,12 @@ namespace Love
         /// disable construct
         /// </summary>
         protected World() { }
+
+        public void DebugDraw()
+        {
+            PhysicsDebugWorldDraw.Draw(this);
+        }
+
         public void SetGravity(float gx, float gy)
         {
             Love2dDll.wrap_love_dll_type_World_setGravity(p, gx, gy);
@@ -984,6 +1029,10 @@ namespace Love
         {
             return NewRectangleShape(0, 0, w, h, 0);
         }
+        public static EdgeShape NewEdgeShape(Vector2 p1, Vector2 p2)
+        {
+            return NewEdgeShape(p1.x, p1.y, p2.x, p2.y);
+        }
         public static EdgeShape NewEdgeShape(float x1, float y1, float x2, float y2)
         {
             Love2dDll.wrap_love_dll_physics_newEdgeShape(x1, y1, x2, y2, out var shape);
@@ -1000,6 +1049,10 @@ namespace Love
         {
             Love2dDll.wrap_love_dll_physics_newMouseJoint(body.p, x, y, out var joint);
             return NewObject<MouseJoint>(joint);
+        }
+        public static MouseJoint NewMouseJoint(Body body, Vector2 pos)
+        {
+            return NewMouseJoint(body, pos.x, pos.y);
         }
 
         public static RevoluteJoint NewRevoluteJoint(Body body1, Body body2, Vector2 pos, bool collideConnected = false)
@@ -1036,7 +1089,7 @@ namespace Love
             return NewObject<PulleyJoint>(joint);
         }
 
-        public static GearJoint NewGearJoint(Joint joint1, Joint joint2, float ratio, bool collideConnected = false)
+        public static GearJoint NewGearJoint(Joint joint1, Joint joint2, float ratio = 1, bool collideConnected = false)
         {
             Love2dDll.wrap_love_dll_physics_newGearJoint(joint1.p, joint2.p, ratio, collideConnected, out var joint);
             return NewObject<GearJoint>(joint);
@@ -1044,19 +1097,19 @@ namespace Love
 
         public static FrictionJoint NewFrictionJoint(Body body1, Body body2, Vector2 pA, Vector2 pB, bool collideConnected = false)
         {
-            Love2dDll.wrap_love_dll_physics_newFrictionJoint(body1.p, body1.p, pA, pB, collideConnected, out var joint);
+            Love2dDll.wrap_love_dll_physics_newFrictionJoint(body1.p, body2.p, pA, pB, collideConnected, out var joint);
             return NewObject<FrictionJoint>(joint);
         }
 
         public static WeldJoint NewWeldJoint(Body body1, Body body2, Vector2 pA, Vector2 pB, bool collideConnected = false)
         {
-            Love2dDll.wrap_love_dll_physics_newWeldJoint(body1.p, body1.p, pA, pB, collideConnected, out var joint);
+            Love2dDll.wrap_love_dll_physics_newWeldJoint(body1.p, body2.p, pA, pB, collideConnected, out var joint);
             return NewObject<WeldJoint>(joint);
         }
 
-        public static WeldJoint NewWeldJoint(Body body1, Body body2, Vector2 pA, Vector2 pB, bool collideConnected = false, float referenceAngle = 0)
+        public static WeldJoint NewWeldJoint(Body body1, Body body2, Vector2 pA, Vector2 pB, bool collideConnected, float referenceAngle = 0)
         {
-            Love2dDll.wrap_love_dll_physics_newWeldJoint_referenceAngle(body1.p, body1.p, pA, pB, collideConnected, referenceAngle, out var joint);
+            Love2dDll.wrap_love_dll_physics_newWeldJoint_referenceAngle(body1.p, body2.p, pA, pB, collideConnected, referenceAngle, out var joint);
             return NewObject<WeldJoint>(joint);
         }
 
@@ -1079,6 +1132,11 @@ namespace Love
 
         public static PolygonShape NewPolygonShape(params Vector2[] pointList)
         {
+            if (pointList == null)
+            {
+                throw new Exception("pointList Should not null !");
+            }
+
             Love2dDll.wrap_love_dll_physics_newPolygonShape(pointList, pointList.Length, out var shape);
             return NewObject<PolygonShape>(shape);
         }
@@ -1447,6 +1505,10 @@ namespace Love
         public void SetTarget(float x, float y)
         {
             Love2dDll.wrap_love_dll_type_MouseJoint_setTarget(p, x, y);
+        }
+        public void SetTarget(Vector2 pos)
+        {
+            Love2dDll.wrap_love_dll_type_MouseJoint_setTarget(p, pos.x, pos.y);
         }
 
         public void SetMaxForce(float force)

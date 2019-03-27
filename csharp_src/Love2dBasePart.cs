@@ -434,6 +434,52 @@ namespace Love
             return out_time;
         }
 
+        static bool useLimitMaxFps = false;
+        static float limitMaxFps = 30;
+        static double limitMaxFPSLastFrameSleepTime = 0;
+
+        /// <summary>
+        /// enable max fps
+        /// </summary>
+        public static void EnableLimitMaxFPS(float maxFPS)
+        {
+            if (maxFPS <= 0)
+            {
+                throw new ArgumentException("maxFPS should not <= 0 !");
+            }
+
+            useLimitMaxFps = true;
+            limitMaxFps = maxFPS;
+            limitMaxFPSLastFrameSleepTime = Timer.GetSystemTime();
+        }
+
+        /// <summary>
+        /// disable max fps
+        /// </summary>
+        public static void DisableLimitMaxFPS()
+        {
+            useLimitMaxFps = false;
+        }
+
+        public static bool IsLimitMaxFPS()
+        {
+            return useLimitMaxFps;
+        }
+
+        internal static void SleepByMaxFPS()
+        {
+            if (useLimitMaxFps)
+            {
+                double dt = Timer.GetSystemTime() - limitMaxFPSLastFrameSleepTime;
+                double limitTime = 1 / limitMaxFps;
+                double remainTime = limitTime - dt;
+                if (remainTime > 0.001)  // max 1000 fps.
+                {
+                    Sleep((float)remainTime);
+                }
+                limitMaxFPSLastFrameSleepTime = Timer.GetSystemTime();
+            }
+        }
 
         /// <summary>
         /// Returns the time of the system .

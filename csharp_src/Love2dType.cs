@@ -82,6 +82,27 @@ namespace Love
             return this.p == (obj as LoveObject).p;
         }
 
+        //public static bool operator ==(LoveObject lhs, LoveObject rhs)
+        //{
+        //    if (lhs == null && rhs == null)
+        //        return true;
+
+        //    if (lhs == null || rhs == null)
+        //        return false;
+
+        //    return lhs.p == rhs.p;
+        //}
+
+        //public static bool operator !=(LoveObject lhs, LoveObject rhs)
+        //{
+        //    if (lhs == null && rhs == null)
+        //        return false;
+        //    if (lhs == null || rhs == null)
+        //        return true;
+        //    return lhs.p != rhs.p;
+        //}
+
+
         /// <summary>
         /// 返回此实例的 IntPtr p 的哈希代码。
         /// </summary>

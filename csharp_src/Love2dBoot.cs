@@ -507,11 +507,16 @@ namespace Love
                 Graphics.Origin();
                 scene.Draw();
                 Graphics.Present();
-
-
                 FPSCounter.Step();
-                //Console.WriteLine("fps:" + FPSCounter.GetFPS());
-                //Timer.Sleep(0.001f);
+
+                if (Timer.IsLimitMaxFPS())
+                {
+                    Timer.SleepByMaxFPS();
+                }
+                else
+                {
+                    Timer.Sleep(0.001f); // max 1000 fps.
+                }
             }
         }
 
