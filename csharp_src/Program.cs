@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Love;
 using Love.Misc;
 
-namespace Love
+namespace LoveTest
 {
     abstract class Stage
     {
@@ -12,8 +13,66 @@ namespace Love
         virtual public void OnDraw() { }
         virtual public void OnPause() { }
         virtual public void OnReOpne() { }
+        virtual public void OnTextEditing(string text, int start, int end) { }
+        virtual public void OnTextInput(string text) { }
     }
 
+    [StageName("Test SystemLove")]
+    class TestSystemLove : Stage
+    {
+        string url = "https://www.cnblogs.com";
+        string url2 = "C:/";
+        public override void OnUpdate(float dt)
+        {
+            if (Keyboard.IsDown(KeyConstant.LCtrl) && Keyboard.IsPressed(KeyConstant.C))
+            {
+                Special.SetClipboardText(text);
+            }
+            else if (Keyboard.IsDown(KeyConstant.LCtrl) && Keyboard.IsPressed(KeyConstant.V))
+            {
+
+                text = Special.GetClipboardText();
+            }
+
+            if (Keyboard.IsPressed(KeyConstant.U))
+            {
+                Special.OpenURL(url);
+            }
+            if (Keyboard.IsPressed(KeyConstant.L))
+            {
+                Special.OpenURL(url2);
+            }
+        }
+
+        string text = "init-test-text";
+        public override void OnDraw()
+        {
+
+            var sb = new List<string>();
+
+            Special.GetPowerInfo(out var state, out var percent, out var seconds);
+
+            sb.Add($"-------------------- stattus --------------------");
+            sb.Add($"OS name: {Special.GetOS()}");
+            if (Special.GetOS() == "Windows")
+            {
+                sb.Add($"GetWin32Handle: {Special.GetWin32Handle()}");
+            }
+            sb.Add($"Processor Count: {Special.GetProcessorCount()}");
+            sb.Add($"Power Info: {state}");
+            sb.Add($"Power Info percent: {percent}");
+            sb.Add($"Power Info seconds: {seconds}");
+            sb.Add($"-------------------- current clipboard text --------------------");
+            sb.Add($"{Special.GetClipboardText()}");
+            sb.Add($"-------------------- operator --------------------");
+            sb.Add($"[left-ctrl + c]: put text '{text}' to clipboard");
+            sb.Add($"[U]: open url {url}");
+            sb.Add($"[L]: open url {url2}");
+
+            Graphics.SetColor(0, 0, 0);
+            Graphics.Print(string.Join("\n", sb), 10, 10);
+        }
+    }
 
     [StageName("test image data")]
     class TestImageData : Stage
@@ -287,6 +346,7 @@ namespace Love
                 Keyboard.SetTextInput(!Keyboard.HasTextInput());
             }
         }
+        string keyPressedReleadedStr = "";
 
         public override void OnDraw()
         {
@@ -301,11 +361,19 @@ namespace Love
             sb.Add($"[T]: toogle Text Input");
 
             var keyThatWasDown = new List<KeyConstant>();
-            foreach(var key in Enum.GetValues( typeof(KeyConstant)) )
+            foreach(var key in (KeyConstant[])Enum.GetValues( typeof(KeyConstant)) )
             {
-                if (Keyboard.IsDown((KeyConstant)key))
+                if (Keyboard.IsDown(key))
                 {
-                    keyThatWasDown.Add((KeyConstant)key);
+                    keyThatWasDown.Add(key);
+                }
+                if (Keyboard.IsPressed(key))
+                {
+                    keyPressedReleadedStr += key.ToString() +  " is pressed \n";
+                }
+                if (Keyboard.IsReleased(key))
+                {
+                    keyPressedReleadedStr += key.ToString() + " is released \n";
                 }
             }
 
@@ -317,6 +385,7 @@ namespace Love
                 scancodeThatWasDown.Add(Keyboard.GetScancodeFromKey(key));
             }
             sb.Add($"scancode that down (convert from KeyConstant) : {string.Join(",", scancodeThatWasDown)}");
+            sb.Add($"{keyPressedReleadedStr}\n");
 
 
             Graphics.SetColor(0, 0, 0);
@@ -392,6 +461,8 @@ namespace Love
         {
             Graphics.SetColor(0, 0, 0);
 
+            bool hasPreviousPos = (Mouse.GetPreviousX() != Mouse.GetX() || Mouse.GetPreviousY() != Mouse.GetY());
+
             string[] str =
             {
                 "[A-L]: set cursor to different system curosr",
@@ -412,10 +483,14 @@ namespace Love
                 $"down 3: {Mouse.IsDown(3)}",
                 $"down 4: {Mouse.IsDown(4)}",
                 $"down 5: {Mouse.IsDown(5)}",
+                $"scrool X: {Mouse.GetScrollX()}",
+                $"scrool Y: {Mouse.GetScrollY()}",
+                $"has previous:  " + (hasPreviousPos ?  "true -> " + Mouse.GetPreviousX() + ", " + Mouse.GetPreviousY() : "false"),
                 "\n",
             };
 
             Graphics.Print(string.Join("\n", str), 10, 10);
+            //Graphics.Line(Mouse.GetPreviousX(), Mouse.GetPreviousY() ,Mouse.GetX(), Mouse.GetY());
         }
     }
 
@@ -910,6 +985,19 @@ namespace Love
     {
         float x = 0, y = 0;
         Text text;
+
+        string textInputStr = "on-text-input\n";
+
+        public override void OnTextEditing(string text, int start, int end)
+        {
+            Console.WriteLine($"OnTextEditing from {start} to {end}:" + text);
+        }
+
+        public override void OnTextInput(string text)
+        {
+            textInputStr += text + "\n";
+        }
+
         public override void OnLoad()
         {
             text = Graphics.NewText(Graphics.GetFont(), "hello LÖVE-2d-CS ?");
@@ -925,7 +1013,7 @@ namespace Love
         {
             Graphics.SetColor(1, 1, 1);
             Graphics.Draw(text, (int)x, (int)y);
-            Graphics.Print($"text width : {text.GetWidth()}", 0, 0);
+            Graphics.Print(textInputStr + $"\ntext width : {text.GetWidth()}", 0, 0);
         }
     }
 
@@ -990,7 +1078,6 @@ namespace Love
         Font bmfFont;
         public override void OnLoad()
         {
-
             imageFont = Graphics.NewImageFont("res/font_example.png", " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
             bmfFont = Graphics.NewBMFont("res/ch3500.fnt");
         }
@@ -1003,7 +1090,7 @@ namespace Love
         {
             Graphics.SetFont(imageFont);
             Graphics.Print("This is a test text", 0, 0);
-            Graphics.Print("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789?.,", 0, 100);
+            Graphics.Print("ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz0123456789?.,", 0, 100);
 
             Graphics.SetFont(bmfFont);
             Graphics.Printf("如烟往事俱忘却，心底无私天地宽。——陶铸\n不应当急于求成，应当去熟悉自己的研究对象，锲而不舍，时间会成全一切。凡事开始最难，然而更难的是何以善终。——莎士比亚\n", 0, 200, 500);
@@ -1162,6 +1249,7 @@ namespace Love
             AddStage(new TestVideo());
             AddStage(new TestStencil());
             AddStage(new TestText());
+            AddStage(new TestSystemLove());
             AddStage(new TestOther());
             AddStage(new TestJoystick());
             AddStage(new TestLua());
@@ -1239,7 +1327,22 @@ namespace Love
             {
                 Window.SetFullscreen(!Window.GetFullscreen());
             }
+        }
 
+        public override void TextEditing(string text, int start, int end)
+        {
+            if (currentStage != null)
+            {
+                currentStage.OnTextEditing(text, start, end);
+            }
+        }
+
+        public override void TextInput(string text)
+        {
+            if (currentStage != null)
+            {
+                currentStage.OnTextInput(text);
+            }
         }
 
         public override void Draw()
@@ -1291,8 +1394,9 @@ namespace Love
             {
                 WindowX = 100,
                 WindowY = 100,
-                WindowFullscreen = true,
-                WindowFullscreenType = FullscreenType.DeskTop,
+                //WindowFullscreen = true,
+                //WindowFullscreenType = FullscreenType.DeskTop,
+                WindowResizable = true,
                 WindowTitle = "test",
                 LuaLoveMainFile = "res.main",
             });

@@ -549,6 +549,53 @@ namespace Love
 
         #endregion
 
+        #region System
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_system_open_love_system_module")]
+        internal extern static bool _wrap_love_dll_system_open_love_system_module();
+        internal static bool wrap_love_dll_system_open_love_system_module()
+        {
+            return CheckCAPIException(_wrap_love_dll_system_open_love_system_module());
+        }
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_system_getOS")]
+        internal extern static void _wrap_love_dll_system_getOS(out IntPtr out_str);
+        internal static void wrap_love_dll_system_getOS(out IntPtr out_str)
+        {
+            _wrap_love_dll_system_getOS(out out_str);
+        }
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_system_getProcessorCount")]
+        internal extern static void _wrap_love_dll_system_getProcessorCount(out int count);
+        internal static void wrap_love_dll_system_getProcessorCount(out int count)
+        {
+            _wrap_love_dll_system_getProcessorCount(out count);
+        }
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_system_setClipboardText")]
+        internal extern static bool _wrap_love_dll_system_setClipboardText(byte[] text);
+        internal static bool wrap_love_dll_system_setClipboardText(byte[] text)
+        {
+            return CheckCAPIException(_wrap_love_dll_system_setClipboardText(text));
+        }
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_system_getClipboardText")]
+        internal extern static bool _wrap_love_dll_system_getClipboardText(out IntPtr out_str);
+        internal static bool wrap_love_dll_system_getClipboardText(out IntPtr out_str)
+        {
+            return CheckCAPIException(_wrap_love_dll_system_getClipboardText(out out_str));
+        }
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_system_getPowerInfo")]
+        internal extern static bool _wrap_love_dll_system_getPowerInfo(out int stateType, out int percent, out int seconds);
+        internal static bool wrap_love_dll_system_getPowerInfo(out int stateType, out int percent, out int seconds)
+        {
+            return CheckCAPIException(_wrap_love_dll_system_getPowerInfo(out stateType, out percent, out seconds));
+        }
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_system_openURL")]
+        internal extern static bool _wrap_love_dll_system_openURL(byte[] strUrl, out bool result);
+        internal static bool wrap_love_dll_system_openURL(byte[] strUrl, out bool result)
+        {
+            return CheckCAPIException(_wrap_love_dll_system_openURL(strUrl, out result));
+        }
+
+        #endregion
+
         #region mouse
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_open_love_mouse")]
         internal extern static bool _wrap_love_dll_open_love_mouse();

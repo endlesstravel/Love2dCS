@@ -402,13 +402,14 @@ namespace Love
         {
             var pos = 70;
             Graphics.Clear(89 / 255f, 157 / 255f, 220 / 255f);
-            Graphics.Printf(errorMsg, pos, pos, Graphics.GetWidth() - pos);
+            Graphics.Printf("Presse [ctrl + c] to paste error message to clipboard\n" + errorMsg, pos, pos, Graphics.GetWidth() - pos);
         }
 
         public override void KeyPressed(KeyConstant key, Scancode scancode, bool isRepeat)
         {
-            if (Keyboard.IsDown(KeyConstant.C) &&(Keyboard.IsDown(KeyConstant.LCtrl) || Keyboard.IsDown(KeyConstant.RCtrl)))
+            if (Keyboard.IsPressed(KeyConstant.C) &&(Keyboard.IsDown(KeyConstant.LCtrl) || Keyboard.IsDown(KeyConstant.RCtrl)))
             {
+                Special.SetClipboardText(errorMsg);
             }
         }
     }
@@ -453,6 +454,7 @@ namespace Love
                 Video.Init();
                 Window.Init();
                 Graphics.Init();
+                Special.Init();
 
                 if (bootConfig.WindowTitle != null)
                 {
@@ -490,16 +492,43 @@ namespace Love
             }
         }
 
+        /// <summary>
+        /// you should not manual call this function, Unless you know what you're doing
+        /// <para>event poll</para>
+        /// </summary>
+        static void SystemStep(Scene scene)
+        {
+            Mouse.RemeberPositionAsPrevious();
+            var box = new Event.EventQueueBox();
+            Event.Poll(box);
+
+            Timer.Step();
+            Keyboard.Step();
+            Joystick.Step();
+
+            var scrollValue = box.GetScrollValue();
+            if (scrollValue != null && scrollValue.HasValue)
+            {
+                var s = scrollValue.Value;
+                Mouse.SetScrollX(s.x);
+                Mouse.SetScrollY(s.y);
+            }
+            else
+            {
+                Mouse.SetScrollX(0);
+                Mouse.SetScrollY(0);
+            }
+
+            box.SceneHandleEvent(scene);
+        }
+
         static void Loop(BootConfig bootConfig, Scene scene)
         {
             scene.Load();
             Timer.Step(); // fix large delta on first frame
             while (true)
             {
-                Timer.Step();
-                Keyboard.Update();
-                Joystick.Step();
-                Event.Poll(scene);
+                SystemStep(scene);
 
                 scene.Update(Timer.GetDelta());
 
@@ -536,10 +565,7 @@ namespace Love
                     Timer.Step();
                     while (scene.ErrorHandler(e) == false)
                     {
-                        Event.Poll(errorScene);
-                        Keyboard.Update();
-                        Joystick.Step();
-                        Timer.Step();
+                        SystemStep(errorScene);
 
                         errorScene.Update(Timer.GetDelta());
 

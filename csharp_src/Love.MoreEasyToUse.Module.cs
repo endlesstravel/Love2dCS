@@ -9,28 +9,6 @@ using System.Runtime.InteropServices;
 namespace Love
 {
 
-    public partial class Event
-    {
-        /// <summary>
-        /// Returns an iterator for messages in the event queue.
-        /// </summary>
-        /// <param name="scene">event handler</param>
-        /// <returns></returns>
-        public static bool Poll(Scene scene)
-        {
-            return PollOrWait(scene, true);
-        }
-
-        /// <summary>
-        /// Like <see cref="Poll"/>, but blocks until there is an event in the queue.	
-        /// </summary>
-        /// <param name="scene">event handler</param>
-        /// <returns></returns>
-        public static bool Wait(Scene scene)
-        {
-            return PollOrWait(scene, false);
-        }
-    }
 
     public partial class Window
     {
@@ -692,33 +670,6 @@ namespace Love
             Love2dDll.inner_wrap_love_dll_type_ImageData_setPixels_float4(p, data);
         }
 
-    }
-    public partial class Mouse
-    {
-        /// <summary>
-        /// <para>Creates a new hardware Cursor object from an image file or ImageData.</para>
-        /// <para>Hardware cursors are framerate-independent and work the same way as normal operating system cursors. Unlike drawing an image at the mouse's current coordinates, hardware cursors never have visible lag between when the mouse is moved and when the cursor position updates, even at low framerates.</para>
-        /// <para>The hot spot is the point the operating system uses to determine what was clicked and at what position the mouse cursor is. For example, the normal arrow pointer normally has its hot spot at the top left of the image, but a crosshair cursor might have it in the middle.</para>
-        /// </summary>
-        /// <param name="filename">Path to the image to use for the new Cursor.</param>
-        /// <param name="hotX">The x-coordinate in the image of the cursor's hot spot.</param>
-        /// <param name="hotY">The y-coordinate in the image of the cursor's hot spot.</param>
-        /// <returns></returns>
-        public static Cursor NewCursor(string filename, int hotX, int hotY)
-        {
-            return NewCursor(Image.NewImageData(filename), hotX, hotY);
-        }
-
-        /// <summary>
-        /// Returns the current position of the mouse.
-        /// </summary>
-        /// <returns>The position of the mouse.</returns>
-        public static Vector2 GetPosition()
-        {
-            double out_x, out_y;
-            Love2dDll.wrap_love_dll_mouse_getPosition(out out_x, out out_y);
-            return new Vector2((float)out_x, (float)out_y);
-        }
     }
 
     public partial class Video

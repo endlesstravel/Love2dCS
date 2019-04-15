@@ -294,6 +294,7 @@ namespace wrap
 
 #pragma endregion
 
+
 #pragma region window
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_windows_open_love_window();
     extern "C" LOVE_EXPORT void wrap_love_dll_windows_getDisplayCount(int *out_count);
@@ -329,6 +330,19 @@ namespace wrap
     extern "C" LOVE_EXPORT void wrap_love_dll_windows_requestAttention(bool4 continuous);
     extern "C" LOVE_EXPORT void wrap_love_dll_windows_windowToPixelCoords(double *out_x, double *out_y);
     extern "C" LOVE_EXPORT void wrap_love_dll_windows_pixelToWindowCoords(double *x, double *y);
+
+#pragma endregion
+
+
+#pragma region System
+
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_system_open_love_system_module();
+	extern "C" LOVE_EXPORT void wrap_love_dll_system_getOS(WrapString **out_str);
+	extern "C" LOVE_EXPORT void wrap_love_dll_system_getProcessorCount(int *out_count);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_system_setClipboardText(char* text);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_system_getClipboardText(WrapString **out_str);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_system_getPowerInfo(int *out_stateType, int *out_percent, int *out_seconds);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_system_openURL(char* url, bool4 *out_result);
 
 #pragma endregion
 

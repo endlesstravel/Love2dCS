@@ -165,7 +165,7 @@ namespace Love
             }
         }
 
-        public void Update()
+        public void Step()
         {
             foreach (var key in keyConstants)
             {
@@ -179,7 +179,7 @@ namespace Love
         /// Checks whether a certain key is pressed.
         /// </summary>
         /// <param name="key">The key to check.</param>
-        public bool IsPresse(KeyConstant key)
+        public bool IsPressed(KeyConstant key)
         {
             int index = (int)key;
             return lastKeyStates[index] == false && keyStates[index] == true;
@@ -204,9 +204,9 @@ namespace Love
         /// <summary>
         /// Internal clled when call Boot.Run() for <see cref="IsPressed"/> and <see cref="IsReleased"/> .......
         /// </summary>
-        public static void Update()
+        internal static void Step()
         {
-            keyboardHelper.Update();
+            keyboardHelper.Step();
         }
 
         /// <summary>
@@ -215,7 +215,7 @@ namespace Love
         /// <param name="key">The key to check.</param>
         public static bool IsPressed(KeyConstant key)
         {
-            return keyboardHelper.IsPresse(key);
+            return keyboardHelper.IsPressed(key);
         }
 
         /// <summary>

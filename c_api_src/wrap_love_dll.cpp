@@ -16,6 +16,7 @@
 
 #include "common/Module.h"
 #include "modules/timer/Timer.h"
+#include "modules/system/sdl/System.h"
 #include "modules/window/sdl/Window.h"
 #include "modules/mouse/sdl/Mouse.h"
 #include "modules/keyboard/sdl/Keyboard.h"
@@ -104,7 +105,7 @@ using love::math::BezierCurve;
 using love::mouse::Cursor;
 
 
-//#define bool // ��ֹʹ�� bool��ֻ��ʹ�� bool4
+//#define bool // bool ---> bool4
 
 namespace love
 {
@@ -151,6 +152,7 @@ namespace wrap
 #pragma region
 	Timer *timerInstance = nullptr;
 	Window *windowInstance = nullptr;
+	system::System *systemInstance = nullptr;
 	Mouse *mouseInstance = nullptr;
 	Keyboard *keyboardInstance = nullptr;
 	touch::sdl::Touch *touchInstance = nullptr;
@@ -803,6 +805,9 @@ namespace wrap
     }
 #pragma endregion
 
+
+
+
 #pragma region window
 
 
@@ -1068,6 +1073,66 @@ namespace wrap
     {
         windowInstance->pixelToWindowCoords(x, y);
     }
+
+#pragma endregion
+
+#pragma region System
+
+	bool4 wrap_love_dll_system_open_love_system_module()
+	{
+		systemInstance = Module::getInstance<love::system::System>(Module::M_SYSTEM);
+		if (systemInstance == nullptr)
+		{
+			return wrap_catchexcept([&]() {
+				systemInstance = new love::system::sdl::System();
+				Module::registerInstance(systemInstance);
+			});
+		}
+		return true;
+	}
+
+	void wrap_love_dll_system_getOS(WrapString **out_str)
+	{
+		*out_str = new_WrapString(systemInstance->getOS());
+	}
+
+	void wrap_love_dll_system_getProcessorCount(int *out_count)
+	{
+		*out_count = systemInstance->getProcessorCount();
+	}
+
+	bool4 wrap_love_dll_system_setClipboardText(char* text)
+	{
+		return wrap_catchexcept([&]() {
+			if (text)
+			{
+				systemInstance->setClipboardText(text);
+			}
+		});
+	}
+
+	bool4 wrap_love_dll_system_getClipboardText(WrapString **out_str)
+	{
+		return wrap_catchexcept([&]() {
+			*out_str = new_WrapString(systemInstance->getClipboardText());
+		});
+	}
+
+	bool4 wrap_love_dll_system_getPowerInfo(int *out_stateType, int *out_percent, int *out_seconds)
+	{
+		return wrap_catchexcept([&]() {
+			*out_percent = -1;
+			*out_seconds = -1;
+			*out_stateType = systemInstance->getPowerInfo(*out_percent, *out_seconds);
+		});
+	}
+
+	bool4 wrap_love_dll_system_openURL(char* url, bool4 *out_result)
+	{
+		return wrap_catchexcept([&]() {
+			*out_result = systemInstance->openURL(url);
+		});
+	}
 
 #pragma endregion
 
