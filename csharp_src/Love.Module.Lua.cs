@@ -157,9 +157,11 @@ namespace Love
             {
                 var luaStackTop = RawOperate.GetTop();
                 var parameters = new object[argTypeList.Count];
-                if (argTypeList.Count < luaStackTop - 1)
+                if (luaStackTop - 1 < argTypeList.Count)
                 {
-                    throw new ArgumentException($"the require number of argument is{argTypeList.Count}, actual is {luaStackTop - 1}");
+                    var info = $"the function require number of argument is {argTypeList.Count}, actual is {luaStackTop - 1}";
+                    DoString($"error('{info}')");
+                    throw new ArgumentException(info);
                 }
 
                 for (int i = 0; i < argTypeList.Count && (i + 2) <= luaStackTop; i++)

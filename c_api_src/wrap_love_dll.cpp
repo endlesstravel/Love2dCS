@@ -593,7 +593,6 @@ namespace wrap
 		});
 	}
 
-
 	bool4 wrap_love_dll_luasupport_doString(const char* str)
 	{
 		return wrap_catchexcept([&]() {

@@ -1158,6 +1158,7 @@ namespace LoveTest
             Lua.DoString(" love.sharp.printLine(love.sharp.add(123, 456)) ");
             Lua.DoString(" love.sharp.printArrayLine({ 'aaa', 'bbb' }) ");
             Lua.DoString(" love.sharp.printArrayLineFloat({ 1, 2 }) ");
+            //Lua.DoString(" love.sharp.cos() "); // throw error
         }
 
         public override void OnUpdate(float dt)
