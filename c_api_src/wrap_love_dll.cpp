@@ -407,6 +407,7 @@ namespace wrap
 		{ 0, 0 }
 	};
 
+	WrapCSharpCommunicationFunc global_wrap_csharp_communicate_func;
 	lua_State *global_lua_state;
 
 	static int love_preload(lua_State *L, lua_CFunction f, const char *name)
@@ -523,7 +524,26 @@ namespace wrap
 		return 1;
 	}
 
-	bool4 wrap_love_dll_luasupport_init(lua_State* L)
+	static int privateCallTheCSharpCommunicateFunc(lua_State *L) {
+		if (global_wrap_csharp_communicate_func == nullptr)
+			return luaL_error(global_lua_state, "[error]: lua module not init yet !");
+
+		return global_wrap_csharp_communicate_func(new_WrapString(lua_tostring(global_lua_state, -1)));
+	}
+
+
+	// love.sharp["funcName"] = f
+	static void set_love_csharp_func(lua_State *L, lua_CFunction f, const char *funcName)
+	{
+		lua_getglobal(L, "love");
+		lua_getfield(L, -1, "sharp");
+		lua_pushstring(L, funcName);
+		lua_pushcfunction(L, f);
+		lua_settable(L, -3);
+		lua_pop(L, 2);
+	}
+
+	bool4 wrap_love_dll_luasupport_init(lua_State* L, WrapCSharpCommunicationFunc wccFunc)
 	{
 		return wrap_catchexcept([&]() {
 			if (L == nullptr)
@@ -536,8 +556,44 @@ namespace wrap
 				global_lua_state = L;
 			}
 			love_preload(global_lua_state, luaopen_love, "love");
+
+			// create love.sharp table
+			// love["sharp"] = { };
+			//lua_getglobal(global_lua_state, "love");
+			//lua_pushstring(global_lua_state, "sharp");
+			//lua_newtable(global_lua_state);
+			//lua_settable(global_lua_state, -3);
+			//lua_pop(global_lua_state, 1);
+			wrap_love_dll_luasupport_doString(" require('love'); ");
+			wrap_love_dll_luasupport_doString(" require('love.data'); ");
+			wrap_love_dll_luasupport_doString(" require('love.thread'); ");
+			wrap_love_dll_luasupport_doString(" require('love.timer'); ");
+			wrap_love_dll_luasupport_doString(" require('love.event'); ");
+			wrap_love_dll_luasupport_doString(" require('love.keyboard'); ");
+			wrap_love_dll_luasupport_doString(" require('love.joystick'); ");
+			wrap_love_dll_luasupport_doString(" require('love.mouse'); ");
+			wrap_love_dll_luasupport_doString(" require('love.touch'); ");
+			wrap_love_dll_luasupport_doString(" require('love.sound'); ");
+			wrap_love_dll_luasupport_doString(" require('love.system'); ");
+			wrap_love_dll_luasupport_doString(" require('love.audio'); ");
+			wrap_love_dll_luasupport_doString(" require('love.image'); ");
+			wrap_love_dll_luasupport_doString(" require('love.video'); ");
+			wrap_love_dll_luasupport_doString(" require('love.font'); ");
+			wrap_love_dll_luasupport_doString(" require('love.window'); ");
+			wrap_love_dll_luasupport_doString(" require('love.graphics'); ");
+			wrap_love_dll_luasupport_doString(" require('love.math'); ");
+			wrap_love_dll_luasupport_doString(" require('love.physics'); ");
+			wrap_love_dll_luasupport_doString(" love.sharp={}; ");
+
+
+			// register love.charp._private_csharp_ = [c function] into lua.
+			global_wrap_csharp_communicate_func = wccFunc;
+			set_love_csharp_func(global_lua_state, privateCallTheCSharpCommunicateFunc, "_private_sharp_func_");
+
+			wrap_love_dll_luasupport_doString(" setmetatable(love.sharp,{ __index = function(t, k) return function(...) love.sharp._private_sharp_func_(k, ...) end end})  ");
 		});
 	}
+
 
 	bool4 wrap_love_dll_luasupport_doString(const char* str)
 	{
@@ -547,6 +603,209 @@ namespace wrap
 				throw love::Exception("%s\n", lua_tostring(global_lua_state, -1));
 		});
 	}
+
+	bool4 wrap_love_dll_luasupport_doFile(const char* str)
+	{
+		return wrap_catchexcept([&]() {
+			int ret = luaL_dofile(global_lua_state, str);
+			if (ret != 0)
+				throw love::Exception("%s\n", lua_tostring(global_lua_state, -1));
+		});
+	}
+
+	void wrap_love_dll_luasupport_debugStackDump()
+	{
+		// 从栈底到栈顶依次遍历整个堆栈
+		lua_State* L = global_lua_state;
+		int i;
+		int top = lua_gettop(L);
+		for (i = 1; i <= top; ++i)
+		{
+			int t = lua_type(L, i);
+			switch (t)
+			{
+			case LUA_TSTRING:
+				printf("'%s'", lua_tostring(L, i));
+				break;
+			case LUA_TBOOLEAN:
+				printf(lua_toboolean(L, i) ? "true" : "false");
+				break;
+			case LUA_TNUMBER:
+				printf("'%g'", lua_tonumber(L, i));
+				break;
+			default:
+				printf("'%s'", lua_typename(L, t));
+				break;
+			}
+			printf("    ");
+		}
+		printf("\n");
+	}
+
+	void wrap_love_dll_luasupport_getTop(int* out_result)
+	{
+		*out_result = lua_gettop(global_lua_state);
+	}
+
+	void wrap_love_dll_luasupport_checkToString(int index, WrapString** out_result)
+	{
+		*out_result = new_WrapString(luax_checkstring(global_lua_state, index));
+	}
+
+	void wrap_love_dll_luasupport_checkToNumber(int index, float* out_result)
+	{
+		*out_result = luaL_checknumber(global_lua_state, index);
+	}
+
+	void wrap_love_dll_luasupport_checkToInteger(int index, int* out_result)
+	{
+		*out_result = luaL_checkinteger(global_lua_state, index);
+	}
+
+	void wrap_love_dll_luasupport_checkToBoolean(int index, bool4* out_result)
+	{
+		*out_result = luax_checkboolean(global_lua_state, index);
+	}
+
+	void wrap_love_dll_luasupport_isTable(int index, bool4* out_result)
+	{
+		*out_result = lua_istable(global_lua_state, index);
+	}
+
+	void wrap_love_dll_luasupport_pushInteger(int num)
+	{
+		lua_pushinteger(global_lua_state, num);
+	}
+
+	void wrap_love_dll_luasupport_pushNumber(float num)
+	{
+		lua_pushnumber(global_lua_state, num);
+	}
+
+	void wrap_love_dll_luasupport_pushBoolean(bool4 v)
+	{
+		lua_pushboolean(global_lua_state, v);
+	}
+
+	void wrap_love_dll_luasupport_pushString(char* str)
+	{
+		lua_pushstring(global_lua_state, str);
+	}
+
+	void wrap_love_dll_luasupport_pushIntegerArray(int* num, int num_length)
+	{
+		// void lua_createtable (lua_State *L, int narr, int nrec);  // 创建一个空的table并压入栈中，并预分配narr个array元素的空间和预分配nrec个非array元素的空间
+		lua_newtable(global_lua_state); // // lua_createtable的特例版，相当于调用 lua_createtable(L, 0, 0)
+		int tableIndex = lua_gettop(global_lua_state);
+		for (int i = 0; i < num_length; i++)
+		{
+			lua_pushinteger(global_lua_state, i); // k
+			lua_pushinteger(global_lua_state, num[i]); // v
+			lua_settable(global_lua_state, tableIndex); // 做一个等价于 t[k] = v 的操作， 这里 t 是给出的索引处的值， v 是栈顶的那个值， k 是栈顶之下的值。
+		}
+	}
+
+	void wrap_love_dll_luasupport_pushNumberArray(float* num, int num_length)
+	{
+		// void lua_createtable (lua_State *L, int narr, int nrec);  // 创建一个空的table并压入栈中，并预分配narr个array元素的空间和预分配nrec个非array元素的空间
+		lua_newtable(global_lua_state); // // lua_createtable的特例版，相当于调用 lua_createtable(L, 0, 0)
+		int tableIndex = lua_gettop(global_lua_state);
+		for (int i = 0; i < num_length; i++)
+		{
+			lua_pushinteger(global_lua_state, i); // k
+			lua_pushnumber(global_lua_state, num[i]); // v
+			lua_settable(global_lua_state, tableIndex); // 做一个等价于 t[k] = v 的操作， 这里 t 是给出的索引处的值， v 是栈顶的那个值， k 是栈顶之下的值。
+		}
+	}
+
+	void wrap_love_dll_luasupport_pushBooleanArray(bool4* num, int num_length)
+	{
+		// void lua_createtable (lua_State *L, int narr, int nrec);  // 创建一个空的table并压入栈中，并预分配narr个array元素的空间和预分配nrec个非array元素的空间
+		lua_newtable(global_lua_state); // // lua_createtable的特例版，相当于调用 lua_createtable(L, 0, 0)
+		int tableIndex = lua_gettop(global_lua_state);
+		for (int i = 0; i < num_length; i++)
+		{
+			lua_pushinteger(global_lua_state, i); // k
+			lua_pushboolean(global_lua_state, num[i]); // v
+			lua_settable(global_lua_state, tableIndex); // 做一个等价于 t[k] = v 的操作， 这里 t 是给出的索引处的值， v 是栈顶的那个值， k 是栈顶之下的值。
+		}
+	}
+
+	void wrap_love_dll_luasupport_pushStringArray(pChar coloredStringText[], int num_length)
+	{
+		// void lua_createtable (lua_State *L, int narr, int nrec);  // 创建一个空的table并压入栈中，并预分配narr个array元素的空间和预分配nrec个非array元素的空间
+		lua_newtable(global_lua_state); // // lua_createtable的特例版，相当于调用 lua_createtable(L, 0, 0)
+		int tableIndex = lua_gettop(global_lua_state);
+		for (int i = 0; i < num_length; i++)
+		{
+			lua_pushinteger(global_lua_state, i); // k
+			lua_pushstring(global_lua_state, str[i]); // v
+			lua_settable(global_lua_state, tableIndex); // 做一个等价于 t[k] = v 的操作， 这里 t 是给出的索引处的值， v 是栈顶的那个值， k 是栈顶之下的值。
+		}
+	}
+
+
+
+	void wrap_love_dll_luasupport_checkToArrayBoolean(int index, bool4** out_result, int* out_length)
+	{
+		int len = luax_objlen(global_lua_state, index);
+		bool4* resArray = new bool4[len];
+		for (int i = 0; i < len; i++)
+		{
+			lua_rawgeti(global_lua_state, index, i);
+			resArray[i] = luax_checkboolean(global_lua_state, -1);
+			lua_pop(global_lua_state, 1);
+		}
+
+		*out_result = resArray;
+		*out_length = len;
+	}
+
+	void wrap_love_dll_luasupport_checkToArrayInt(int index, int** out_result, int* out_length)
+	{
+		int len = luax_objlen(global_lua_state, index);
+		int* resArray = new int[len];
+		for (int i = 0; i < len; i++)
+		{
+			lua_rawgeti(global_lua_state, index, i);
+			resArray[i] = luaL_checkinteger(global_lua_state, -1);
+			lua_pop(global_lua_state, 1);
+		}
+
+		*out_result = resArray;
+		*out_length = len;
+	}
+
+	void wrap_love_dll_luasupport_checkToArrayNumber(int index, float** out_result, int* out_length)
+	{
+		int len = luax_objlen(global_lua_state, index);
+		float* resArray = new float[len];
+		for (int i = 0; i < len; i++)
+		{
+			lua_rawgeti(global_lua_state, index, i);
+			resArray[i] = luaL_checknumber(global_lua_state, -1);
+			lua_pop(global_lua_state, 1);
+		}
+
+		*out_result = resArray;
+		*out_length = len;
+	}
+
+	void wrap_love_dll_luasupport_checkToArrayString(int index, WrapSequenceString** out_result)
+	{
+		std::vector<std::string> items;
+		int len = luax_objlen(global_lua_state, index);
+		items.reserve(len);
+		for (int i = 0; i < len; i++)
+		{
+			lua_rawgeti(global_lua_state, index, i);
+			items[i] = luax_checkstring(global_lua_state, -1);
+			lua_pop(global_lua_state, 1);
+		}
+
+		*out_result = new_WrapSequenceString(items);
+	}
+
 
 #pragma endregion
 

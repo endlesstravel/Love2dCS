@@ -44,7 +44,7 @@ namespace Love
         /// </summary>
         /// <param name="x">Mouse x position, in pixels.</param>
         /// <param name="y">Mouse y position, in pixels.</param>
-        /// <param name="button">The button index that was pressed. 1 is the primary mouse button, 2 is the secondary mouse button and 3 is the middle button. Further buttons are mouse dependent.</param>
+        /// <param name="button">The index of a button to check. <see cref="Mouse.LeftButton"> is the primary mouse button, <see cref="Mouse.RightButton"> is the secondary mouse button and <see cref="Mouse.MiddleButton"> is the middle button. Further buttons are mouse dependant.</param>
         /// <param name="isTouch">True if the mouse button press originated from a touchscreen touch-press.</param>
         public virtual void MousePressed(float x, float y, int button, bool isTouch) { }
 
@@ -53,7 +53,7 @@ namespace Love
         /// </summary>
         /// <param name="x">Mouse x position, in pixels.</param>
         /// <param name="y">Mouse y position, in pixels.</param>
-        /// <param name="button">The button index that was pressed. 1 is the primary mouse button, 2 is the secondary mouse button and 3 is the middle button. Further buttons are mouse dependent.</param>
+        /// <param name="button">The index of a button to check. <see cref="Mouse.LeftButton"> is the primary mouse button, <see cref="Mouse.RightButton"> is the secondary mouse button and <see cref="Mouse.MiddleButton"> is the middle button. Further buttons are mouse dependant.</param>
         /// <param name="isTouch">True if the mouse button press originated from a touchscreen touch-press.</param>
         public virtual void MouseReleased(float x, float y, int button, bool isTouch) { }
 
@@ -325,20 +325,9 @@ namespace Love
         public int? WindowX, WindowY;
 
         /// <summary>
-        /// Lua module support, if it is ture, the LUA module will open
+        /// Show the Love2dCS warnning info on console.
         /// </summary>
-        public bool LuaOpen = true;
-
-        /// <summary>
-        /// Default is IntPtr.Zero, assigning to internal Lua state, will be injected love function.
-        /// if it is IntPtr.Zero, lua state will create automatic
-        /// </summary>
-        public IntPtr LuaState = IntPtr.Zero;
-
-        /// <summary>
-        /// if Lua module was supported, lua file to exec.
-        /// </summary>
-        public string LuaLoveMainFile = null;
+        public bool WarnningInfo = true;
     }
 
 
@@ -478,16 +467,16 @@ namespace Love
                 Window.SetMode(bootConfig.WindowWidth, bootConfig.WindowHeight, settings);
 
                 FileSystem.SetSource(Environment.CurrentDirectory);
-                Console.WriteLine($"FileSystem set source with path : {FileSystem.GetSource()}");
 
-                // init lua module
-                if (bootConfig.LuaOpen == true)
-                {
-                    Lua.Init(bootConfig.LuaState);
-                    if (bootConfig.LuaLoveMainFile != null)
-                    {
-                        Lua.LoadLoveMainFile(bootConfig.LuaLoveMainFile);
-                    }
+                if (bootConfig.WarnningInfo) {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.BackgroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"");
+                    Console.WriteLine($"[warnning] Mouse.IsDown() MousePressed() MouseReleased() has change the button based index as 0 !");
+                    Console.WriteLine($"(warnning will disapper after two version, or set WarnningInfo as false on bootConfig)");
+                    Console.WriteLine($"");
+                    Console.ResetColor();
+                    Console.WriteLine($"FileSystem set source with path : {FileSystem.GetSource()}");
                 }
             }
         }
@@ -500,24 +489,19 @@ namespace Love
         {
             Mouse.RemeberPositionAsPrevious();
             var box = new Event.EventQueueBox();
-            Event.Poll(box);
+            while (Event.Poll(box))
+            {
+                // nothing to do ...
+            }
 
             Timer.Step();
             Keyboard.Step();
             Joystick.Step();
+            FPSCounter.Step();
 
             var scrollValue = box.GetScrollValue();
-            if (scrollValue != null && scrollValue.HasValue)
-            {
-                var s = scrollValue.Value;
-                Mouse.SetScrollX(s.x);
-                Mouse.SetScrollY(s.y);
-            }
-            else
-            {
-                Mouse.SetScrollX(0);
-                Mouse.SetScrollY(0);
-            }
+            Mouse.SetScrollX(scrollValue.x);
+            Mouse.SetScrollY(scrollValue.y);
 
             box.SceneHandleEvent(scene);
         }
@@ -526,6 +510,7 @@ namespace Love
         {
             scene.Load();
             Timer.Step(); // fix large delta on first frame
+
             while (true)
             {
                 SystemStep(scene);
@@ -537,7 +522,6 @@ namespace Love
                 Graphics.Origin();
                 scene.Draw();
                 Graphics.Present();
-                FPSCounter.Step();
 
                 if (Timer.IsLimitMaxFPS())
                 {

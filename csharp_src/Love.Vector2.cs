@@ -10,6 +10,11 @@ namespace Love
     {
         #region Public Fields
 
+        public static Vector2 Right => new Vector2(1, 0);
+        public static Vector2 Left => new Vector2(-1, 0);
+        public static Vector2 Up => new Vector2(0, -1);
+        public static Vector2 Down => new Vector2(0, 1);
+
         public float X;
         public float Y;
 
@@ -233,6 +238,41 @@ namespace Love
         public float LengthSquared()
         {
             return (X * X) + (Y * Y);
+        }
+
+        /// <summary>
+        /// Calculate the new position of the point after the counterclockwise rotation angle(degrees).
+        /// </summary>
+        /// <param name="v">the base point</param>
+        /// <param name="degrees">the degrees to rotate</param>
+        /// <returns></returns>
+        public static Vector2 Rotate(Vector2 v, float degrees)
+        {
+            float radians = degrees * Mathf.Deg2Rad;
+            float sin = Mathf.Sin(radians);
+            float cos = Mathf.Cos(radians);
+            float tx = v.x;
+            float ty = v.y;
+            v.x = (cos * tx) - (sin * ty);
+            v.y = (sin * tx) + (cos * ty);
+            return v;
+        }
+
+        /// <summary>
+        /// Calculate the new position of the point after the counterclockwise rotation angle(radin).
+        /// </summary>
+        /// <param name="v">the base point</param>
+        /// <param name="radins">the radian to rotate</param>
+        /// <returns></returns>
+        public static Vector2 RotateRadian(Vector2 v, float radins)
+        {
+            float sin = Mathf.Sin(radins);
+            float cos = Mathf.Cos(radins);
+            float tx = v.x;
+            float ty = v.y;
+            v.x = (cos * tx) - (sin * ty);
+            v.y = (sin * tx) + (cos * ty);
+            return v;
         }
 
         public static Vector2 Lerp(Vector2 value1, Vector2 value2, float amount)

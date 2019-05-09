@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Love;
 using Love.Misc;
+using System.Linq;
 
 namespace LoveTest
 {
@@ -478,11 +479,12 @@ namespace LoveTest
                 $"Get Relative Mode   : {Mouse.GetRelativeMode()}",
                 $"Is Visible         : {Mouse.IsVisible()}",
                 $"Is Cursor Supported : {Mouse.IsCursorSupported()}",
-                $"down 1: {Mouse.IsDown(1)}",
-                $"down 2: {Mouse.IsDown(2)}",
-                $"down 3: {Mouse.IsDown(3)}",
-                $"down 4: {Mouse.IsDown(4)}",
-                $"down 5: {Mouse.IsDown(5)}",
+                $"down Mouse.LeftButton: {Mouse.IsDown(Mouse.LeftButton)}",
+                $"down Mouse.RightButton: {Mouse.IsDown(Mouse.RightButton)}",
+                $"down Mouse.MiddleButton: {Mouse.IsDown(Mouse.MiddleButton)}",
+                $"down Mouse.ExtendedButton1: {Mouse.IsDown(Mouse.ExtendedButton1)}",
+                $"down Mouse.ExtendedButton2: {Mouse.IsDown(Mouse.ExtendedButton2)}",
+                $"down Mouse.ExtendedButton3: {Mouse.IsDown(Mouse.ExtendedButton3)}",
                 $"scrool X: {Mouse.GetScrollX()}",
                 $"scrool Y: {Mouse.GetScrollY()}",
                 $"has previous:  " + (hasPreviousPos ?  "true -> " + Mouse.GetPreviousX() + ", " + Mouse.GetPreviousY() : "false"),
@@ -898,6 +900,12 @@ namespace LoveTest
             sb.Add($"--------------------------------------------------");
             sb.Add($"current source controled : { dictionary[currentControl] }");
             sb.Add($"[1-3] : switch control source index");
+            foreach (var s in sourceList)
+            {
+                sb.Add((currentControl == s ? "* ": "  ")
+                    + "playing : " + (s.IsPlaying()) + " "
+                    + dictionary[s]);
+            }
             sb.Add("\n");
             sb.Add($"playing : {currentControl.IsPlaying()}");
             sb.Add($"tell : {currentControl.Tell(TimeUnit.Seconds)}");
@@ -1126,12 +1134,21 @@ namespace LoveTest
     }
 
 
-    [StageName("test lua")]
+    [StageName("test lua 1")]
     class TestLua : Stage
     {
+        public override void OnLoad()
+        {
+            // res.main
+            //Lua.LoadFromString();
+            Lua.Load("res/main.lua");
+        }
+
         public override void OnUpdate(float dt)
         {
             Lua.Update(dt);
+
+            Lua.DoString(" love.sharp.boob(1); ");
         }
         public override void OnDraw()
         {
@@ -1199,7 +1216,7 @@ namespace LoveTest
             bool isDown = false;
             public void Update()
             {
-                if (lastIsDown == false && Mouse.IsDown(1))
+                if (lastIsDown == false && Mouse.IsDown(Mouse.LeftButton))
                 {
                     isDown = true;
                 }
@@ -1207,7 +1224,7 @@ namespace LoveTest
                 {
                     isDown = false;
                 }
-                lastIsDown = Mouse.IsDown(1);
+                lastIsDown = Mouse.IsDown(Mouse.LeftButton);
             }
 
             public bool IsHover()
@@ -1239,6 +1256,7 @@ namespace LoveTest
 
         public override void Load()
         {
+            AddStage(new TestLua());
             AddStage(new TestMouse());
             AddStage(new TestKeyborad());
             AddStage(new TestFile());
@@ -1252,7 +1270,6 @@ namespace LoveTest
             AddStage(new TestSystemLove());
             AddStage(new TestOther());
             AddStage(new TestJoystick());
-            AddStage(new TestLua());
         }
 
         public override void Update(float dt)
@@ -1390,16 +1407,22 @@ namespace LoveTest
 
         static void Main(string[] args)
         {
-            Boot.Run(new Program(), new BootConfig
+            try
             {
-                WindowX = 100,
-                WindowY = 100,
-                //WindowFullscreen = true,
-                //WindowFullscreenType = FullscreenType.DeskTop,
-                WindowResizable = true,
-                WindowTitle = "test",
-                LuaLoveMainFile = "res.main",
-            });
+                Boot.Run(new Program(), new BootConfig
+                {
+                    WindowX = 100,
+                    WindowY = 100,
+                    //WindowFullscreen = true,
+                    //WindowFullscreenType = FullscreenType.DeskTop,
+                    WindowResizable = true,
+                    WindowTitle = "test",
+                });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
     }
 

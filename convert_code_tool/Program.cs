@@ -205,8 +205,13 @@ namespace convert_code_tool
         }
 
         static Dictionary<string, CSParams> paramDict = new Dictionary<string, CSParams>() {
+            {"WrapString** out",  new CSParams(true, "IntPtr")},
+            {"char*",  new CSParams(false, "byte[]")},
+
             {"Body*", new CSParams(false, "IntPtr")},
             {"Body**", new CSParams(true, "IntPtr")},
+
+            {"WrapSequenceString** out", new CSParams(true, "IntPtr")},
 
 
             {"uint16", new CSParams(false, "UInt16")},
@@ -215,14 +220,17 @@ namespace convert_code_tool
             {"int", new CSParams(false, "int")},
             {"int*", new CSParams(false, "int[]")},
             {"int* out", new CSParams(true, "int")},
+            {"int** out", new CSParams(true, "IntPtr")},
 
             {"bool4", new CSParams(false, "bool")},
             {"bool4*", new CSParams(false, "bool[]")},
             {"bool4* out", new CSParams(true, "bool")},
+            {"bool4** out", new CSParams(true, "IntPtr")},
 
             {"float", new CSParams(false, "float")},
             {"float*", new CSParams(false, "float[]")},
             {"float* out", new CSParams(true, "float")},
+            {"float** out", new CSParams(true, "IntPtr")},
 
             {"Float2", new CSParams(false, "Vector2")},
             {"Float2*", new CSParams(false, "Vector2[]")},
@@ -431,6 +439,41 @@ namespace convert_code_tool
                     return sb.ToString();
                 }
             }
+            else
+            {
+                if(outPrs.Count() == 0) // no return value, type of them
+                {
+                    var ppp = prs;
+                    var paramsDef = string.Join(", ", ppp.Select(p => p.ToDefString()));
+                    var inputDef = string.Join(", ", ppp.Select(p => p.ToInputString()) );
+
+                    StringBuilder sb = new StringBuilder();
+                    sb.AppendLine($"    public static void {FuncStrHeadToUpper(tsd.methodName)}({paramsDef})");
+                    sb.AppendLine("    {");
+                    sb.AppendLine($"        Love2dDll.{funcName}({inputDef});");
+                    sb.AppendLine("    }");
+                    return sb.ToString();
+                }
+                else if(outPrs.Count() == 1) // no return value, type of them
+                {
+                    var ppp = inPrs;
+                    var paramsDef = string.Join(", ", ppp.Select(p => p.ToDefString()));
+                    var inputDef = string.Join(", ", ppp.Select(p => p.ToInputString()));
+                    if (!"".Equals(inputDef))
+                        inputDef += ", ";
+
+                    var outppp = outPrs.First(p => true);
+
+                    StringBuilder sb = new StringBuilder();
+                    sb.AppendLine($"    public static {outppp.ToCSParams().TypeString} {FuncStrHeadToUpper(tsd.methodName)}({paramsDef})");
+                    sb.AppendLine("    {");
+                    sb.AppendLine($"        {outppp.ToCSParams().TypeString} {outppp.ValueString};");
+                    sb.AppendLine($"        Love2dDll.{funcName}({inputDef}out {outppp.ValueString});");
+                    sb.AppendLine($"        return {outppp.ValueString};");
+                    sb.AppendLine("    }");
+                    return sb.ToString();
+                }
+            }
 
             return "    // TODO: finishe function " + funcName;
         }
@@ -523,7 +566,9 @@ namespace convert_code_tool
 
         static void Main(string[] args)
         {
-            GenCSImplement();
+            GenCSImplement(); // C# implement code
+            // GenCSDefine();
+            // GenCppDefine();
         }
     }
 }

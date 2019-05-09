@@ -188,7 +188,7 @@ namespace Love
                 EventData ed = new EventData(EventType.MousePressed);
                 ed.fx = x;
                 ed.fy = y;
-                ed.idx = button;
+                ed.idx = button - 1;
                 ed.flag = isTouch;
                 list.AddLast(ed);
             }
@@ -197,7 +197,7 @@ namespace Love
                 EventData ed = new EventData(EventType.MouseReleased);
                 ed.fx = x;
                 ed.fy = y;
-                ed.idx = button;
+                ed.idx = button - 1;
                 ed.flag = isTouch;
                 list.AddLast(ed);
             }
@@ -214,17 +214,19 @@ namespace Love
                 ed.idy = y;
                 list.AddLast(ed);
             }
-            public Point? GetScrollValue()
+            public Point GetScrollValue()
             {
+                Point svalue = new Point(0, 0);
                 foreach (var ed in list)
                 {
                     if (ed.type == EventType.WheelMoved)
                     {
-                        return new Point(ed.idx, ed.idy);
+                        svalue.x += ed.idx;
+                        svalue.y += ed.idy;
                     }
                 }
 
-                return null;
+                return svalue;
             }
             public void JoystickPressed(Joystick joystick, int button)
             {
@@ -381,10 +383,11 @@ namespace Love
 
             public bool SceneHandleEvent(Scene scene)
             {
-                if (list.Count > 0)
+                bool hasEventFlag = list.Count > 0;
+                while (list.Count > 0)
                 {
-                    var ed = list.Last.Value;
-                    list.RemoveLast();
+                    var ed = list.First.Value;
+                    list.RemoveFirst();
 
                     switch (ed.type)
                     {
@@ -529,13 +532,11 @@ namespace Love
                                 scene.LowMemory();
                             }
                             break;
-                        default: return false;
+                        default: break;
                     }
-
-                    return true;
                 }
 
-                return false;
+                return hasEventFlag;
             }
         }
 

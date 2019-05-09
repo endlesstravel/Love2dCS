@@ -1,7 +1,51 @@
 using System;
+using System.Collections.Generic;
 
 namespace Love
 {
+    public partial class Mouse
+    {
+        /// <summary>
+        /// The mouse left button
+        /// </summary>
+        public const int LeftButton = 0;
+
+        /// <summary>
+        /// The mouse right button
+        /// </summary>
+        public const int RightButton = 1;
+
+        /// <summary>
+        /// The mouse middle button
+        /// </summary>
+        public const int MiddleButton = 2;
+
+        /// <summary>
+        /// The first extended button
+        /// </summary>
+        public const int ExtendedButton1 = 3;
+
+        /// <summary>
+        /// The second extended button
+        /// </summary>
+        public const int ExtendedButton2 = 4;
+
+        /// <summary>
+        /// The third extended button
+        /// </summary>
+        public const int ExtendedButton3 = 5;
+
+        /// <summary>
+        /// The Fourth extended button
+        /// </summary>
+        public const int ExtendedButton4 = 6;
+
+        /// <summary>
+        /// The Fifth extended button
+        /// </summary>
+        public const int ExtendedButton5 = 7;
+    }
+
     /// <summary>
     /// Provides an interface to the user's mouse.
     /// </summary>
@@ -42,7 +86,7 @@ namespace Love
         }
 
         /// <summary>
-        /// Sets the current mouse cursor.
+        /// Sets the current mouse cursor. null to set as default cursor.
         /// </summary>
         /// <param name="cursor"></param>
         public static void SetCursor(Cursor cursor = null)
@@ -155,12 +199,12 @@ namespace Love
         /// Checks whether a certain button is down.
         /// <para>This function does not detect mouse wheel scrolling; you must use the love.wheelmoved (or love.mousepressed in version 0.9.2 and older) callback for that.</para>
         /// </summary>
-        /// <param name="buttonIndex">The index of a button to check. 1 is the primary mouse button, 2 is the secondary mouse button and 3 is the middle button. Further buttons are mouse dependant.</param>
+        /// <param name="buttonIndex">The index of a button to check. <see cref="Mouse.LeftButton"> is the primary mouse button, <see cref="Mouse.RightButton"> is the secondary mouse button and <see cref="Mouse.MiddleButton"> is the middle button. Further buttons are mouse dependant.</param>
         /// <returns>True if any specified button is down.</returns>
         public static bool IsDown(int buttonIndex)
         {
             bool out_result = false;
-            Love2dDll.wrap_love_dll_mouse_isDown(buttonIndex, out out_result);
+            Love2dDll.wrap_love_dll_mouse_isDown(buttonIndex + 1, out out_result);
             return out_result;
         }
 
@@ -233,6 +277,24 @@ namespace Love
 
     public partial class Mouse
     {
+        static readonly Dictionary<SystemCursor, Cursor> systemCursorDict = new Dictionary<SystemCursor, Cursor>();
+
+
+        /// <summary>
+        /// Sets the current mouse cursor to system cursor.
+        /// </summary>
+        /// <param name="systemCursor"></param>
+        public static void SetCursor(SystemCursor systemCursor)
+        {
+            if (!systemCursorDict.TryGetValue(systemCursor, out var cursorToUse))
+            {
+                cursorToUse = GetSystemCursor(systemCursor);
+                systemCursorDict.Add(systemCursor, cursorToUse);
+            }
+
+            SetCursor(cursorToUse);
+        }
+
         /// <summary>
         /// <para>Creates a new hardware Cursor object from an image file or ImageData.</para>
         /// <para>Hardware cursors are framerate-independent and work the same way as normal operating system cursors. Unlike drawing an image at the mouse's current coordinates, hardware cursors never have visible lag between when the mouse is moved and when the cursor position updates, even at low framerates.</para>

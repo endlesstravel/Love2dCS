@@ -95,21 +95,21 @@ namespace Love
 
         /// <summary>
         ///    <para>
-        ///       Creates a <see cref='System.Drawing.Size'/> with the coordinates of the specified <see cref='Love.Point'/> .
+        ///       Creates a <see cref='Size'/> with the coordinates of the specified <see cref='Love.Point'/> .
         ///    </para>
         /// </summary>
         public static explicit operator Size(Point p) => new Size(p.X, p.Y);
 
         /// <summary>
         ///    <para>
-        ///       Translates a <see cref='Love.Point'/> by a given <see cref='System.Drawing.Size'/> .
+        ///       Translates a <see cref='Love.Point'/> by a given <see cref='Point'/> .
         ///    </para>
         /// </summary>        
         public static Point operator +(Point pt, Size sz) => Add(pt, sz);
 
         /// <summary>
         ///    <para>
-        ///       Translates a <see cref='Love.Point'/> by the negative of a given <see cref='System.Drawing.Size'/> .
+        ///       Translates a <see cref='Love.Point'/> by the negative of a given <see cref='Point'/> .
         ///    </para>
         /// </summary>        
         public static Point operator -(Point pt, Size sz) => Subtract(pt, sz);
@@ -135,14 +135,14 @@ namespace Love
 
         /// <summary>
         ///    <para>
-        ///       Translates a <see cref='Love.Point'/> by a given <see cref='System.Drawing.Size'/> .
+        ///       Translates a <see cref='Love.Point'/> by a given <see cref='Point'/> .
         ///    </para>
         /// </summary>        
         public static Point Add(Point pt, Size sz) => new Point(unchecked(pt.X + sz.Width), unchecked(pt.Y + sz.Height));
 
         /// <summary>
         ///    <para>
-        ///       Translates a <see cref='Love.Point'/> by the negative of a given <see cref='System.Drawing.Size'/> .
+        ///       Translates a <see cref='Love.Point'/> by the negative of a given <see cref='Point'/> .
         ///    </para>
         /// </summary>        
         public static Point Subtract(Point pt, Size sz) => new Point(unchecked(pt.X - sz.Width), unchecked(pt.Y - sz.Height));

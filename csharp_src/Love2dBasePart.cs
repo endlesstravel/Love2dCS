@@ -217,6 +217,18 @@ namespace Love
             return tarray;
         }
 
+        public static bool[] ReadBooleansAndRelease(IntPtr p, long size)
+        {
+            bool[] buffer = new bool[size];
+            for (int i = 0; i < size; i++)
+            {
+                buffer[i] = Marshal.ReadInt32(p, i) != 0;
+            }
+
+            Love2dDll.wrap_love_dll_delete_array(p);
+            return buffer;
+        }
+
         public static int[] ReadInt32sAndRelease(IntPtr p, long size)
         {
             int[] buffer = new int[size];

@@ -441,7 +441,7 @@ namespace Love
 
         public override void MouseMoved(float x, float y, float dx, float dy, bool isTouch)
         {
-            if (Mouse.IsDown(1))
+            if (Mouse.IsDown(Mouse.LeftButton))
             {
                 float tx = x / Graphics.GetWidth();
                 float ty = y / Graphics.GetHeight();

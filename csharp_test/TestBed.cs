@@ -112,7 +112,7 @@ namespace LovePhysicsTestBed
 
         public override void MousePressed(float x, float y, int button, bool isTouch)
         {
-            if (button == 2)
+            if (button == Mouse.RightButton || button == Mouse.MiddleButton)
             {
                 startMousePoint = new Vector2(x, y);
                 if (currentTest != null)
@@ -123,7 +123,7 @@ namespace LovePhysicsTestBed
             }
 
 
-            if (button == 1)
+            if (button == Mouse.LeftButton)
             {
                 if (currentTest != null)
                 {
@@ -133,11 +133,11 @@ namespace LovePhysicsTestBed
         }
         public override void MouseReleased(float x, float y, int button, bool isTouch)
         {
-            if (button == 2)
+            if (button == Mouse.RightButton || button == Mouse.MiddleButton)
             {
                 isMoved = false;
             }
-            if (button == 1)
+            if (button == Mouse.LeftButton)
             {
                 if (currentTest != null)
                 {
@@ -159,6 +159,15 @@ namespace LovePhysicsTestBed
 
         public override void Update(float dt)
         {
+            if (isMoved)
+            {
+                Mouse.SetCursor(SystemCursor.SizeAll);
+            }
+            else
+            {
+                Mouse.SetCursor();
+            }
+
             if (currentTest != null && isMoved)
             {
                 currentTest.VOffset = startOffsetPoint + (Mouse.GetPosition() - startMousePoint);

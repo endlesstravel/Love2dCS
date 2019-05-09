@@ -241,9 +241,33 @@ namespace wrap
     extern "C" LOVE_EXPORT void wrap_love_dll_delete_WrapSequenceString(WrapSequenceString *ws);
 #pragma endregion
 
-#pragma region *new* region
-	extern "C" LOVE_EXPORT bool4 wrap_love_dll_luasupport_init(lua_State* L);
+#pragma region lua support
+	typedef int(__stdcall *WrapCSharpCommunicationFunc)(WrapString *functionName);
+
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_luasupport_init(lua_State* L, WrapCSharpCommunicationFunc wccFunc);
 	extern "C" LOVE_EXPORT bool4 wrap_love_dll_luasupport_doString(const char* str);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_luasupport_doFile(const char* str);
+
+	extern "C" LOVE_EXPORT void wrap_love_dll_luasupport_debugStackDump();
+	extern "C" LOVE_EXPORT void wrap_love_dll_luasupport_getTop(int* out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_luasupport_checkToString(int index, WrapString** out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_luasupport_checkToNumber(int index, float* out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_luasupport_checkToInteger(int index, int* out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_luasupport_checkToBoolean(int index, bool4* out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_luasupport_isTable(int index, bool4* out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_luasupport_pushInteger(int num);
+	extern "C" LOVE_EXPORT void wrap_love_dll_luasupport_pushNumber(float num);
+	extern "C" LOVE_EXPORT void wrap_love_dll_luasupport_pushBoolean(bool4 v);
+	extern "C" LOVE_EXPORT void wrap_love_dll_luasupport_pushString(char* str);
+	extern "C" LOVE_EXPORT void wrap_love_dll_luasupport_pushIntegerArray(int* num, int num_length);
+	extern "C" LOVE_EXPORT void wrap_love_dll_luasupport_pushNumberArray(float* num, int num_length);
+	extern "C" LOVE_EXPORT void wrap_love_dll_luasupport_pushBooleanArray(bool4* num, int num_length);
+
+	extern "C" LOVE_EXPORT void wrap_love_dll_luasupport_checkToArrayBoolean(int index, bool4** out_result, int* out_length);
+	extern "C" LOVE_EXPORT void wrap_love_dll_luasupport_checkToArrayInt(int index, int** out_result, int* out_length);
+	extern "C" LOVE_EXPORT void wrap_love_dll_luasupport_checkToArrayNumber(int index, float** out_result, int* out_length);
+	extern "C" LOVE_EXPORT void wrap_love_dll_luasupport_checkToArrayString(int index, WrapSequenceString** out_result);
+
 #pragma endregion
 
 #pragma region *new* region
@@ -1058,7 +1082,7 @@ namespace wrap
 
 #pragma region type - callback func define
 
-	/// [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+	/// [UnmanagedFunctionPointer(CallingConvention.Cdecl ? Stdcall)]
 	/// public delegate double CallbackDelegate(double x);
 
 	typedef float(__stdcall *WrapShapeMassCallbackFunc)(float x, float y, float mass, float inertia);

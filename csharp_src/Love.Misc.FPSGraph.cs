@@ -49,7 +49,7 @@ namespace Love.Misc
 
                 if (m_rect.Contains(Mouse.GetPosition()) || this.m_lastIsDown)
                 {
-                    if (Mouse.IsDown(1))
+                    if (Mouse.IsDown(Mouse.LeftButton))
                     {
                         this.m_lastIsDown = true;
                         this.m_rect.X = mouseX - this.m_dx;

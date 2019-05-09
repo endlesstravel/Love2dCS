@@ -35,6 +35,9 @@ namespace Love
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     internal delegate bool WrapWorldContactFilterCallbackDelegate(IntPtr fixtureA, IntPtr fixtureB);
 
+    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+    internal delegate int WrapCSharpCommunicationFuncDelegate(IntPtr strPtr);
+
 
     class Love2dDll
     {
@@ -132,10 +135,10 @@ namespace Love
         #region lua
 
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_luasupport_init")]
-        internal extern static bool _wrap_love_dll_luasupport_init(IntPtr L);
-        internal static bool wrap_love_dll_luasupport_init(IntPtr L)
+        internal extern static bool _wrap_love_dll_luasupport_init(IntPtr L, WrapCSharpCommunicationFuncDelegate wrapCSharpCommunicationFunc);
+        internal static bool wrap_love_dll_luasupport_init(IntPtr L, WrapCSharpCommunicationFuncDelegate func)
         {
-            return CheckCAPIException(_wrap_love_dll_luasupport_init(L));
+            return CheckCAPIException(_wrap_love_dll_luasupport_init(L, func));
         }
 
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_luasupport_doString")]
@@ -143,6 +146,149 @@ namespace Love
         internal static bool wrap_love_dll_luasupport_doString(byte[] strCode)
         {
             return CheckCAPIException(_wrap_love_dll_luasupport_doString(strCode));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_luasupport_doFile")]
+        internal extern static bool _wrap_love_dll_luasupport_doFile(byte[] strCode);
+        internal static bool wrap_love_dll_luasupport_doFile(byte[] strCode)
+        {
+            return CheckCAPIException(_wrap_love_dll_luasupport_doFile(strCode));
+        }
+
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_luasupport_debugStackDump")]
+        internal extern static void _wrap_love_dll_luasupport_debugStackDump();
+        internal static void wrap_love_dll_luasupport_debugStackDump()
+        {
+            _wrap_love_dll_luasupport_debugStackDump();
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_luasupport_getTop")]
+        internal extern static void _wrap_love_dll_luasupport_getTop(out int result);
+        internal static void wrap_love_dll_luasupport_getTop(out int result)
+        {
+            _wrap_love_dll_luasupport_getTop(out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_luasupport_checkToString")]
+        internal extern static void _wrap_love_dll_luasupport_checkToString(int index, out IntPtr result);
+        internal static void wrap_love_dll_luasupport_checkToString(int index, out IntPtr result)
+        {
+            _wrap_love_dll_luasupport_checkToString(index, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_luasupport_checkToNumber")]
+        internal extern static void _wrap_love_dll_luasupport_checkToNumber(int index, out float result);
+        internal static void wrap_love_dll_luasupport_checkToNumber(int index, out float result)
+        {
+            _wrap_love_dll_luasupport_checkToNumber(index, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_luasupport_checkToInteger")]
+        internal extern static void _wrap_love_dll_luasupport_checkToInteger(int index, out int result);
+        internal static void wrap_love_dll_luasupport_checkToInteger(int index, out int result)
+        {
+            _wrap_love_dll_luasupport_checkToInteger(index, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_luasupport_checkToBoolean")]
+        internal extern static void _wrap_love_dll_luasupport_checkToBoolean(int index, out bool result);
+        internal static void wrap_love_dll_luasupport_checkToBoolean(int index, out bool result)
+        {
+            _wrap_love_dll_luasupport_checkToBoolean(index, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_luasupport_isTable")]
+        internal extern static void _wrap_love_dll_luasupport_isTable(int index, out bool result);
+        internal static void wrap_love_dll_luasupport_isTable(int index, out bool result)
+        {
+            _wrap_love_dll_luasupport_isTable(index, out result);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_luasupport_pushInteger")]
+        internal extern static void _wrap_love_dll_luasupport_pushInteger(int num);
+        internal static void wrap_love_dll_luasupport_pushInteger(int num)
+        {
+            _wrap_love_dll_luasupport_pushInteger(num);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_luasupport_pushNumber")]
+        internal extern static void _wrap_love_dll_luasupport_pushNumber(float num);
+        internal static void wrap_love_dll_luasupport_pushNumber(float num)
+        {
+            _wrap_love_dll_luasupport_pushNumber(num);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_luasupport_pushBoolean")]
+        internal extern static void _wrap_love_dll_luasupport_pushBoolean(bool v);
+        internal static void wrap_love_dll_luasupport_pushBoolean(bool v)
+        {
+            _wrap_love_dll_luasupport_pushBoolean(v);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_luasupport_pushString")]
+        internal extern static void _wrap_love_dll_luasupport_pushString(byte[] str);
+        internal static void wrap_love_dll_luasupport_pushString(byte[] str)
+        {
+            _wrap_love_dll_luasupport_pushString(str);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_luasupport_pushIntegerArray")]
+        internal extern static void _wrap_love_dll_luasupport_pushIntegerArray(int[] num, int num_length);
+        internal static void wrap_love_dll_luasupport_pushIntegerArray(int[] num, int num_length)
+        {
+            _wrap_love_dll_luasupport_pushIntegerArray(num, num_length);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_luasupport_pushNumberArray")]
+        internal extern static void _wrap_love_dll_luasupport_pushNumberArray(float[] num, int num_length);
+        internal static void wrap_love_dll_luasupport_pushNumberArray(float[] num, int num_length)
+        {
+            _wrap_love_dll_luasupport_pushNumberArray(num, num_length);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_luasupport_pushBooleanArray")]
+        internal extern static void _wrap_love_dll_luasupport_pushBooleanArray(bool[] num, int num_length);
+        internal static void wrap_love_dll_luasupport_pushBooleanArray(bool[] num, int num_length)
+        {
+            _wrap_love_dll_luasupport_pushBooleanArray(num, num_length);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_luasupport_pushStringArray")]
+        internal extern static void _wrap_love_dll_luasupport_pushStringArray(BytePtr[] textList, int num_length);
+        internal static void wrap_love_dll_luasupport_pushStringArray(BytePtr[] textList, int num_length)
+        {
+            _wrap_love_dll_luasupport_pushStringArray(textList, num_length);
+        }
+
+       
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_luasupport_checkToArrayBoolean")]
+        internal extern static void _wrap_love_dll_luasupport_checkToArrayBoolean(int index, out IntPtr result, out int length);
+        internal static void wrap_love_dll_luasupport_checkToArrayBoolean(int index, out IntPtr result, out int length)
+        {
+            _wrap_love_dll_luasupport_checkToArrayBoolean(index, out result, out length);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_luasupport_checkToArrayInt")]
+        internal extern static void _wrap_love_dll_luasupport_checkToArrayInt(int index, out IntPtr result, out int length);
+        internal static void wrap_love_dll_luasupport_checkToArrayInt(int index, out IntPtr result, out int length)
+        {
+            _wrap_love_dll_luasupport_checkToArrayInt(index, out result, out length);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_luasupport_checkToArrayNumber")]
+        internal extern static void _wrap_love_dll_luasupport_checkToArrayNumber(int index, out IntPtr result, out int length);
+        internal static void wrap_love_dll_luasupport_checkToArrayNumber(int index, out IntPtr result, out int length)
+        {
+            _wrap_love_dll_luasupport_checkToArrayNumber(index, out result, out length);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_luasupport_checkToArrayString")]
+        internal extern static void _wrap_love_dll_luasupport_checkToArrayString(int index, out IntPtr result);
+        internal static void wrap_love_dll_luasupport_checkToArrayString(int index, out IntPtr result)
+        {
+            _wrap_love_dll_luasupport_checkToArrayString(index, out result);
         }
         #endregion
 
@@ -5595,7 +5741,7 @@ namespace Love
         {
             _wrap_love_dll_type_World_isDestroyed(pWorld, out validate);
         }
-
+        
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_World_update")]
         internal extern static bool _wrap_love_dll_type_World_update(IntPtr pWorld, float dt, int velocityiterations, int positioniterations, WrapWorldContactCallbackDelegate beginContact, WrapWorldContactCallbackDelegate endContact, WrapWorldContactCallbackDelegate preSolve, WrapWorldContactCallbackDelegate postSolve, WrapWorldContactFilterCallbackDelegate filter);
         internal static bool wrap_love_dll_type_World_update(IntPtr pWorld, float dt, int velocityiterations, int positioniterations, WrapWorldContactCallbackDelegate beginContact, WrapWorldContactCallbackDelegate endContact, WrapWorldContactCallbackDelegate preSolve, WrapWorldContactCallbackDelegate postSolve, WrapWorldContactFilterCallbackDelegate filter)
