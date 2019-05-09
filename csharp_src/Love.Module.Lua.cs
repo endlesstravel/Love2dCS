@@ -122,12 +122,19 @@ namespace Love
             public static CallbackCSharpTargetInfo Prase(object target, string funcName)
             {
                 if (target == null)
-                    return null;
+                    throw new ArgumentNullException("target");
+                if (funcName == null)
+                    throw new ArgumentNullException("funcName");
 
                 var type = target.GetType();
-                var info = type.GetMethod(funcName, BindingFlags.Instance | BindingFlags.Static);
+                var info = type.GetMethod(funcName,
+                        BindingFlags.Instance
+                        | BindingFlags.Static
+                        | BindingFlags.Public
+                        | BindingFlags.NonPublic
+                        | BindingFlags.FlattenHierarchy);
                 if (info == null)
-                    return null;
+                    throw new Exception($"register function error: {funcName} is not exists !");
                 if (IsTransAbleType(info.ReturnType, out var returnType) == false)
                     return null;
 
@@ -144,54 +151,58 @@ namespace Love
                 return new CallbackCSharpTargetInfo(target, funcName, info, returnType, argttList);
             }
 
-            public void Call()
+            public int Call()
             {
                 var luaStackTop = RawOperate.GetTop();
                 var parameters = new object[argTypeList.Count];
+                if (argTypeList.Count < luaStackTop - 1)
+                {
+                    throw new ArgumentException($"the require number of argument is{argTypeList.Count}, actual is {luaStackTop - 1}");
+                }
 
                 for (int i = 0; i < argTypeList.Count; i++)
                 {
                     var type = argTypeList[i].type;
                     if (type == typeof(bool))
-                        parameters[i] = (bool)RawOperate.CheckToBoolean(i);
+                        parameters[i] = (bool)RawOperate.CheckToBoolean(i + 2);
                     else if (type == typeof(byte))
-                        parameters[i] = (byte)RawOperate.CheckToInteger(i);
+                        parameters[i] = (byte)RawOperate.CheckToInteger(i + 2);
                     else if (type == (typeof(sbyte)))
-                        parameters[i] = (sbyte)RawOperate.CheckToInteger(i);
+                        parameters[i] = (sbyte)RawOperate.CheckToInteger(i + 2);
                     else if (type == (typeof(Int16)))
-                        parameters[i] = (Int16)RawOperate.CheckToInteger(i);
+                        parameters[i] = (Int16)RawOperate.CheckToInteger(i + 2);
                     else if (type == (typeof(UInt16)))
-                        parameters[i] = (UInt16)RawOperate.CheckToInteger(i);
+                        parameters[i] = (UInt16)RawOperate.CheckToInteger(i + 2);
                     else if (type == (typeof(int)))
-                        parameters[i] = (int)RawOperate.CheckToInteger(i);
+                        parameters[i] = (int)RawOperate.CheckToInteger(i + 2);
                     else if (type == (typeof(uint)))
-                        parameters[i] = (uint)RawOperate.CheckToInteger(i);
+                        parameters[i] = (uint)RawOperate.CheckToInteger(i + 2);
                     else if (type == (typeof(float)))
-                        parameters[i] = (float)RawOperate.CheckToNumber(i);
+                        parameters[i] = (float)RawOperate.CheckToNumber(i + 2);
                     else if (type == (typeof(double)))
-                        parameters[i] = (double)RawOperate.CheckToNumber(i);
+                        parameters[i] = (double)RawOperate.CheckToNumber(i + 2);
                     else if (type == (typeof(string)))
-                        parameters[i] = (string)RawOperate.CheckToString(i);
+                        parameters[i] = (string)RawOperate.CheckToString(i + 2);
                     else if (type == typeof(bool[]))
-                        parameters[i] = (bool)RawOperate.CheckToBoolean(i);
+                        parameters[i] = (bool)RawOperate.CheckToBoolean(i + 2);
                     else if (type == typeof(byte[]))
-                        parameters[i] = (byte[])RawOperate.CheckToArrayInt(i).Select(item => (byte)item).ToArray();
+                        parameters[i] = (byte[])RawOperate.CheckToArrayInt(i + 2).Select(item => (byte)item).ToArray();
                     else if (type == (typeof(sbyte[])))
-                        parameters[i] = (sbyte[])RawOperate.CheckToArrayInt(i).Select(item => (sbyte)item).ToArray();
+                        parameters[i] = (sbyte[])RawOperate.CheckToArrayInt(i + 2).Select(item => (sbyte)item).ToArray();
                     else if (type == (typeof(Int16[])))
-                        parameters[i] = (Int16[])RawOperate.CheckToArrayInt(i).Select(item => (Int16)item).ToArray();
+                        parameters[i] = (Int16[])RawOperate.CheckToArrayInt(i + 2).Select(item => (Int16)item).ToArray();
                     else if (type == (typeof(UInt16[])))
-                        parameters[i] = (UInt16[])RawOperate.CheckToArrayInt(i).Select(item => (UInt16)item).ToArray();
+                        parameters[i] = (UInt16[])RawOperate.CheckToArrayInt(i + 2).Select(item => (UInt16)item).ToArray();
                     else if (type == (typeof(int[])))
-                        parameters[i] = (int[])RawOperate.CheckToArrayInt(i);
+                        parameters[i] = (int[])RawOperate.CheckToArrayInt(i + 2);
                     else if (type == (typeof(uint[])))
-                        parameters[i] = (uint[])RawOperate.CheckToArrayInt(i).Select(item => (uint)item).ToArray();
+                        parameters[i] = (uint[])RawOperate.CheckToArrayInt(i + 2).Select(item => (uint)item).ToArray();
                     else if (type == (typeof(float[])))
-                        parameters[i] = (float[])RawOperate.CheckToArrayNumber(i);
+                        parameters[i] = (float[])RawOperate.CheckToArrayNumber(i + 2);
                     else if (type == (typeof(double[])))
-                        parameters[i] = (double[])RawOperate.CheckToArrayNumber(i).Select(item => (double)item).ToArray();
+                        parameters[i] = (double[])RawOperate.CheckToArrayNumber(i + 2).Select(item => (double)item).ToArray();
                     else if (type == (typeof(string[])))
-                        parameters[i] = (string[])RawOperate.CheckToArrayString(i);
+                        parameters[i] = (string[])RawOperate.CheckToArrayString(i + 2);
                 }
 
                 object returnValue = info.Invoke(target, parameters);
@@ -216,6 +227,7 @@ namespace Love
                 else if (returnValue is double[]) RawOperate.PushNumberArray(((double[])returnValue).Select(item => (float)item).ToArray());
                 else if (returnValue is string[]) RawOperate.PushStringArray(((string[])returnValue));
 
+                return info.ReturnType != typeof(void) ? 1 : 0;
             }
         }
 
@@ -248,14 +260,11 @@ namespace Love
 
             if (funcDict.TryGetValue(name, out var callbackCSharpTargetInfo))
             {
-                callbackCSharpTargetInfo.Call();
-            }
-            else
-            {
-                throw new Exception(" love.sharp." + functionNameStr + "  is not exists !");
+                return callbackCSharpTargetInfo.Call();
             }
 
-            return 0;
+
+            throw new Exception(" love.sharp." + name + "  is not exists !");
         }
 
         static void CheckLuaModleInitStatus()
@@ -399,6 +408,11 @@ namespace Love
                 int out_result;
                 Love2dDll.wrap_love_dll_luasupport_getTop(out out_result);
                 return out_result;
+            }
+
+            public static void SetTop(int idx)
+            {
+                Love2dDll.wrap_love_dll_luasupport_setTop(idx);
             }
 
             public static string CheckToString(int index)

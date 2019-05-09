@@ -528,7 +528,7 @@ namespace wrap
 		if (global_wrap_csharp_communicate_func == nullptr)
 			return luaL_error(global_lua_state, "[error]: lua module not init yet !");
 
-		return global_wrap_csharp_communicate_func(new_WrapString(lua_tostring(global_lua_state, -1)));
+		return global_wrap_csharp_communicate_func(new_WrapString(lua_tostring(global_lua_state, 1)));
 	}
 
 
@@ -585,12 +585,11 @@ namespace wrap
 			wrap_love_dll_luasupport_doString(" require('love.physics'); ");
 			wrap_love_dll_luasupport_doString(" love.sharp={}; ");
 
-
 			// register love.charp._private_csharp_ = [c function] into lua.
 			global_wrap_csharp_communicate_func = wccFunc;
 			set_love_csharp_func(global_lua_state, privateCallTheCSharpCommunicateFunc, "_private_sharp_func_");
 
-			wrap_love_dll_luasupport_doString(" setmetatable(love.sharp,{ __index = function(t, k) return function(...) love.sharp._private_sharp_func_(k, ...) end end})  ");
+			wrap_love_dll_luasupport_doString(" setmetatable(love.sharp,{ __index = function(t, k) return function(...) return love.sharp._private_sharp_func_(k, ...) end end})  ");
 		});
 	}
 
@@ -617,9 +616,8 @@ namespace wrap
 	{
 		// 从栈底到栈顶依次遍历整个堆栈
 		lua_State* L = global_lua_state;
-		int i;
 		int top = lua_gettop(L);
-		for (i = 1; i <= top; ++i)
+		for (int i = 1; i <= top; ++i)
 		{
 			int t = lua_type(L, i);
 			switch (t)
@@ -645,6 +643,11 @@ namespace wrap
 	void wrap_love_dll_luasupport_getTop(int* out_result)
 	{
 		*out_result = lua_gettop(global_lua_state);
+	}
+
+	void wrap_love_dll_luasupport_setTop(int idx)
+	{
+		lua_settop(global_lua_state, idx);
 	}
 
 	void wrap_love_dll_luasupport_checkToString(int index, WrapString** out_result)
@@ -731,7 +734,7 @@ namespace wrap
 		}
 	}
 
-	void wrap_love_dll_luasupport_pushStringArray(pChar coloredStringText[], int num_length)
+	void wrap_love_dll_luasupport_pushStringArray(pChar strList[], int num_length)
 	{
 		// void lua_createtable (lua_State *L, int narr, int nrec);  // 创建一个空的table并压入栈中，并预分配narr个array元素的空间和预分配nrec个非array元素的空间
 		lua_newtable(global_lua_state); // // lua_createtable的特例版，相当于调用 lua_createtable(L, 0, 0)
@@ -739,7 +742,7 @@ namespace wrap
 		for (int i = 0; i < num_length; i++)
 		{
 			lua_pushinteger(global_lua_state, i); // k
-			lua_pushstring(global_lua_state, str[i]); // v
+			lua_pushstring(global_lua_state, strList[i]); // v
 			lua_settable(global_lua_state, tableIndex); // 做一个等价于 t[k] = v 的操作， 这里 t 是给出的索引处的值， v 是栈顶的那个值， k 是栈顶之下的值。
 		}
 	}
@@ -752,7 +755,7 @@ namespace wrap
 		bool4* resArray = new bool4[len];
 		for (int i = 0; i < len; i++)
 		{
-			lua_rawgeti(global_lua_state, index, i);
+			lua_rawgeti(global_lua_state, index, i + 1);
 			resArray[i] = luax_checkboolean(global_lua_state, -1);
 			lua_pop(global_lua_state, 1);
 		}
@@ -767,7 +770,7 @@ namespace wrap
 		int* resArray = new int[len];
 		for (int i = 0; i < len; i++)
 		{
-			lua_rawgeti(global_lua_state, index, i);
+			lua_rawgeti(global_lua_state, index, i + 1);
 			resArray[i] = luaL_checkinteger(global_lua_state, -1);
 			lua_pop(global_lua_state, 1);
 		}
@@ -782,7 +785,7 @@ namespace wrap
 		float* resArray = new float[len];
 		for (int i = 0; i < len; i++)
 		{
-			lua_rawgeti(global_lua_state, index, i);
+			lua_rawgeti(global_lua_state, index, i + 1);
 			resArray[i] = luaL_checknumber(global_lua_state, -1);
 			lua_pop(global_lua_state, 1);
 		}
@@ -796,10 +799,10 @@ namespace wrap
 		std::vector<std::string> items;
 		int len = luax_objlen(global_lua_state, index);
 		items.reserve(len);
-		for (int i = 0; i < len; i++)
+		for (int i = 1; i <= len; i++)
 		{
 			lua_rawgeti(global_lua_state, index, i);
-			items[i] = luax_checkstring(global_lua_state, -1);
+			items.push_back(luax_checkstring(global_lua_state, -1));
 			lua_pop(global_lua_state, 1);
 		}
 

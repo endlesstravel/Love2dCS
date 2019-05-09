@@ -170,6 +170,13 @@ namespace Love
             _wrap_love_dll_luasupport_getTop(out result);
         }
 
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_luasupport_setTop")]
+        internal extern static void _wrap_love_dll_luasupport_setTop(int idx);
+        internal static void wrap_love_dll_luasupport_setTop(int idx)
+        {
+            _wrap_love_dll_luasupport_setTop(idx);
+        }
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_luasupport_checkToString")]
         internal extern static void _wrap_love_dll_luasupport_checkToString(int index, out IntPtr result);
         internal static void wrap_love_dll_luasupport_checkToString(int index, out IntPtr result)

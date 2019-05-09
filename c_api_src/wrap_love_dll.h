@@ -250,6 +250,7 @@ namespace wrap
 
 	extern "C" LOVE_EXPORT void wrap_love_dll_luasupport_debugStackDump();
 	extern "C" LOVE_EXPORT void wrap_love_dll_luasupport_getTop(int* out_result);
+	extern "C" LOVE_EXPORT void wrap_love_dll_luasupport_setTop(int idx);
 	extern "C" LOVE_EXPORT void wrap_love_dll_luasupport_checkToString(int index, WrapString** out_result);
 	extern "C" LOVE_EXPORT void wrap_love_dll_luasupport_checkToNumber(int index, float* out_result);
 	extern "C" LOVE_EXPORT void wrap_love_dll_luasupport_checkToInteger(int index, int* out_result);

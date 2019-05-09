@@ -1142,17 +1142,44 @@ namespace LoveTest
             // res.main
             //Lua.LoadFromString();
             Lua.Load("res/main.lua");
+            Lua.RegisterFunction(this, "Add");
+            Lua.RegisterFunction(this, "PrintLine");
+            Lua.RegisterFunction(this, "PrintArrayLine");
+            Lua.RegisterFunction(this, "PrintArrayLineFloat");
+
+            Lua.DoString(" love.sharp.PrintLine('----------------------------') ");
+            Lua.DoString(" love.sharp.PrintLine(love.sharp.Add(123, 456)) ");
+            Lua.DoString(" love.sharp.PrintArrayLine({ 'aaa', 'bbb' }) ");
+            Lua.DoString(" love.sharp.PrintArrayLineFloat({ 1, 2 }) ");
         }
 
         public override void OnUpdate(float dt)
         {
             Lua.Update(dt);
-
-            Lua.DoString(" love.sharp.boob(1); ");
         }
         public override void OnDraw()
         {
             Lua.Draw();
+        }
+
+        public void PrintArrayLineFloat(float[] info)
+        {
+            Console.WriteLine(string.Join(",  ", info));
+        }
+
+        public void PrintArrayLine(string[] info)
+        {
+            Console.WriteLine(string.Join(",  ", info));
+        }
+
+        public void PrintLine(string info)
+        {
+            Console.WriteLine(info);
+        }
+
+        public int Add(int a, int b)
+        {
+            return a + b;
         }
     }
 
