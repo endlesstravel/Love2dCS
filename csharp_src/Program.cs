@@ -1139,18 +1139,25 @@ namespace LoveTest
     {
         public override void OnLoad()
         {
-            // res.main
-            //Lua.LoadFromString();
             Lua.Load("res/main.lua");
-            Lua.RegisterFunction(this, "Add");
-            Lua.RegisterFunction(this, "PrintLine");
-            Lua.RegisterFunction(this, "PrintArrayLine");
-            Lua.RegisterFunction(this, "PrintArrayLineFloat");
 
-            Lua.DoString(" love.sharp.PrintLine('----------------------------') ");
-            Lua.DoString(" love.sharp.PrintLine(love.sharp.Add(123, 456)) ");
-            Lua.DoString(" love.sharp.PrintArrayLine({ 'aaa', 'bbb' }) ");
-            Lua.DoString(" love.sharp.PrintArrayLineFloat({ 1, 2 }) ");
+            Lua.RegisterFunction(typeof(Math), "Cos", "cos");
+            Lua.RegisterFunction(typeof(TestLua), "StaticWriteLine", "staticWriteLine");
+            Lua.RegisterFunction(this, "Add", "add");
+            Lua.RegisterFunction(this, "PrintLine", "printLine");
+            Lua.RegisterFunction(this, "PrintArrayLine", "printArrayLine");
+            Lua.RegisterFunction(this, "PrintArrayLineFloat", "printArrayLineFloat");
+            Lua.RegisterFunction(this, "ByteToStr");
+
+            Lua.DoString(" love.sharp.staticWriteLine('staticWriteLine') ");
+
+            Console.WriteLine("Math.Cos(3.14f / 2f)  : " +  Math.Cos(3.14f / 2f));
+            Lua.DoString(" love.sharp.staticWriteLine('love.sharp.cos(3.14 / 2) : ' ..  love.sharp.cos(3.14 / 2)) ");
+            Lua.DoString(" love.sharp.printLine('----------------------------') ");
+            Lua.DoString(" love.sharp.printLine('byte to str  : ' ..  love.sharp.ByteToStr(1)) ");
+            Lua.DoString(" love.sharp.printLine(love.sharp.add(123, 456)) ");
+            Lua.DoString(" love.sharp.printArrayLine({ 'aaa', 'bbb' }) ");
+            Lua.DoString(" love.sharp.printArrayLineFloat({ 1, 2 }) ");
         }
 
         public override void OnUpdate(float dt)
@@ -1162,25 +1169,12 @@ namespace LoveTest
             Lua.Draw();
         }
 
-        public void PrintArrayLineFloat(float[] info)
-        {
-            Console.WriteLine(string.Join(",  ", info));
-        }
-
-        public void PrintArrayLine(string[] info)
-        {
-            Console.WriteLine(string.Join(",  ", info));
-        }
-
-        public void PrintLine(string info)
-        {
-            Console.WriteLine(info);
-        }
-
-        public int Add(int a, int b)
-        {
-            return a + b;
-        }
+        public static void StaticWriteLine(string info) => Console.WriteLine(info);
+        public string ByteToStr(byte b) => b.ToString();
+        public void PrintArrayLineFloat(float[] info) => Console.WriteLine(string.Join(",  ", info));
+        public void PrintArrayLine(string[] info) => Console.WriteLine(string.Join(",  ", info));
+        public void PrintLine(string info) => Console.WriteLine(info);
+        public int Add(int a, int b) => a + b;
     }
 
 

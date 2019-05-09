@@ -126,15 +126,17 @@ namespace Love
                 if (funcName == null)
                     throw new ArgumentNullException("funcName");
 
-                var type = target.GetType();
+                var type = target is Type ? target as Type : target.GetType();
                 var info = type.GetMethod(funcName,
                         BindingFlags.Instance
-                        | BindingFlags.Static
                         | BindingFlags.Public
+                        | BindingFlags.Static
                         | BindingFlags.NonPublic
                         | BindingFlags.FlattenHierarchy);
                 if (info == null)
+                {
                     throw new Exception($"register function error: {funcName} is not exists !");
+                }
                 if (IsTransAbleType(info.ReturnType, out var returnType) == false)
                     return null;
 
@@ -147,9 +149,9 @@ namespace Love
                     argttList.Add(new PairCastInfo(param.ParameterType, tt));
                 }
 
-                //
-                return new CallbackCSharpTargetInfo(target, funcName, info, returnType, argttList);
+                return new CallbackCSharpTargetInfo(target is Type ? null : target, funcName, info, returnType, argttList);
             }
+
 
             public int Call()
             {
@@ -160,7 +162,7 @@ namespace Love
                     throw new ArgumentException($"the require number of argument is{argTypeList.Count}, actual is {luaStackTop - 1}");
                 }
 
-                for (int i = 0; i < argTypeList.Count; i++)
+                for (int i = 0; i < argTypeList.Count && (i + 2) <= luaStackTop; i++)
                 {
                     var type = argTypeList[i].type;
                     if (type == typeof(bool))
@@ -235,21 +237,27 @@ namespace Love
 
 
         /// <summary>
-        /// register c# function on object, for example Lua.RegisterFunction(tyeof(System.Math), "Cos")
-        /// the you can do  `love.sharp.Cos(10)` in lua code
+        /// register c# function on object, for example Lua.RegisterFunction(typeof(Math), "Cos", "cos"), 
+        /// the you can do  `print(love.sharp.cos(3.14))` in lua code
         /// </summary>
         /// <param name="target"></param>
         /// <param name="functionName"></param>
+        /// <param name="luaName">luaName to use</param>
         /// <returns></returns>
-        public static bool RegisterFunction(object target, string functionName)
+        public static bool RegisterFunction(object target, string functionName, string luaName)
         {
             var ccti = CallbackCSharpTargetInfo.Prase(target, functionName);
             if (ccti == null)
             {
                 return false;
             }
-            funcDict[functionName] = ccti;
+            funcDict[luaName] = ccti;
             return true;
+        }
+
+        public static bool RegisterFunction(object target, string functionName)
+        {
+            return RegisterFunction(target, functionName, functionName);
         }
 
         static WrapCSharpCommunicationFuncDelegate static_WCSCFD = FunctionBack;
@@ -262,7 +270,6 @@ namespace Love
             {
                 return callbackCSharpTargetInfo.Call();
             }
-
 
             throw new Exception(" love.sharp." + name + "  is not exists !");
         }
