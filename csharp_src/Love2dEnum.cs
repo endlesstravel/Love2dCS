@@ -1,5 +1,26 @@
 ﻿namespace Love
 {
+    public enum VertexDataType: int
+    {
+        UNORM8,
+        UNORM16,
+        FLOAT,
+    }
+    public enum VertexCullMode : int
+    {
+        None,
+        Back,
+        Front,
+        MAX_ENUM
+    };
+
+    public enum VertexWinding : int
+    {
+        CW,
+        CCW,
+        MAX_ENUM
+    }
+
     /// <summary>
     /// The types of a Body.
     /// </summary>

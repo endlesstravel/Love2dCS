@@ -3380,6 +3380,38 @@ namespace wrap
     {
         return wrap_catchexcept([&]() { *out_shader = graphicsInstance->newShader(vertexCodeStr, pixelCodeStr);});
     }
+
+	bool4 wrap_love_dll_graphics_newMesh_custom(pChar vfName[], int* vfType, int* vfComponentCount, int vfLen, bool4 useData, void *data, int dataSizeOrCount, int drawMode_type, int usage_type, Mesh** out_mesh)
+	{
+		return wrap_catchexcept([&]() {
+			auto drawMode = (graphics::PrimitiveType)drawMode_type;
+			auto usage = (vertex::Usage)usage_type;
+			std::vector<Mesh::AttribFormat> vertexformat;
+			for (int i = 0; i < vfLen; i++)
+			{
+				Mesh::AttribFormat af;
+				af.name = vfName[i];
+				af.type = (vertex::DataType)(vfType[i]);
+				af.components = vfComponentCount[i];
+				vertexformat.push_back(af);
+			}
+			if (useData)
+			{
+				//// for debug
+				//auto aff = Mesh::getDefaultVertexFormat();
+				//Vertex* vd= (Vertex*)data;
+				//for (int i = 0; i < 4; i++)
+				//	printf("%d %f %f\n", i, (vd[2].x), (vd[2].y));
+				*out_mesh = graphicsInstance->newMesh(vertexformat, data, dataSizeOrCount, drawMode, usage);
+			}
+			else
+			{
+				int vertexCount = dataSizeOrCount;
+				*out_mesh = graphicsInstance->newMesh(vertexformat, vertexCount, drawMode, usage);
+			}
+		});
+	}
+
     bool4 wrap_love_dll_graphics_newMesh_specifiedVertices(Float2 pos[], Float2 uv[], Float4 color[], int vertexCount, int drawMode_type, int usage_type, Mesh** out_mesh)
     {
         auto drawMode = (graphics::PrimitiveType)drawMode_type;
@@ -3629,6 +3661,7 @@ namespace wrap
     {
         *out_isWireFrame = graphicsInstance->isWireframe();
     }
+
     bool4 wrap_love_dll_graphics_setCanvas(graphics::Canvas** canvaList, int canvaListLength)
     {
         if (canvaListLength == 0)
@@ -3649,53 +3682,168 @@ namespace wrap
                 graphicsInstance->setCanvas(targets);
         });
     }
-    void wrap_love_dll_graphics_getCanvas(graphics::Canvas*** out_canvas, int *out_canvas_length)
-    {
-        Graphics::RenderTargets targets = graphicsInstance->getCanvas();
-        int ntargets = (int)targets.colors.size();
-        if (ntargets == 0)
-        {
-            *out_canvas = new graphics::Canvas*[0];
-            *out_canvas_length = 0;
-            return;
-        }
 
-        bool shouldUseTablesVariant = targets.depthStencil.canvas != nullptr;
+	//bool4 wrap_love_dll_graphics_setCanvas(graphics::Canvas** canvaList, int canvaListLength)
+	//{
+	//	// Disable stencil writes.
+	//	bool4  successFlag = wrap_catchexcept([&]() {
+	//		graphicsInstance->stopDrawToStencilBuffer();
+	//	});
 
-        if (!shouldUseTablesVariant)
-        {
-            for (const auto &rt : targets.colors)
-            {
-                if (rt.mipmap != 0 || rt.canvas->getTextureType() != TEXTURE_2D)
-                {
-                    shouldUseTablesVariant = true;
-                    break;
-                }
-            }
-        }
+	//	if (successFlag == false)
+	//		return false;
 
-        if (shouldUseTablesVariant)
-        {
-            *out_canvas = new graphics::Canvas*[0];
-            *out_canvas_length = 0;
-            return;
-        }
-        else
-        {
-            auto canvaList = new graphics::Canvas*[targets.colors.size()];
+	//	// called with none -> reset to default buffer
+	//	if (canvaListLength == 0)
+	//	{
+	//		return wrap_catchexcept([&]() {
+	//			graphicsInstance->setCanvas();
+	//		});
+	//	}
 
-            int n = 0;
-            for (const auto &rt : targets.colors)
-            {
-                canvaList[n] = rt.canvas;
-                rt.canvas->retain();
-                n++;
-            }
-            *out_canvas = canvaList;
-            *out_canvas_length = targets.colors.size();
-        }
+	//	Graphics::RenderTargets targets;
+	//	targets.colors.reserve(canvaListLength);
+	//	for (int i = 0; i < canvaListLength; i++)
+	//	{
+	//		targets.colors.push_back(canvaList[i]);
+	//	}
 
-    }
+	//	return wrap_catchexcept([&]() {
+	//		graphicsInstance->setCanvas(targets);
+	//	});
+	//}
+
+
+	//void wrap_love_dll_graphics_getCanvas(graphics::Canvas*** out_canvas, int *out_canvas_length)
+	//{
+	//	Graphics::RenderTargets targets = graphicsInstance->getCanvas();
+	//	int ntargets = (int)targets.colors.size();
+	//	if (ntargets == 0)
+	//	{
+	//		*out_canvas = new graphics::Canvas*[0];
+	//		*out_canvas_length = 0;
+	//		return;
+	//	}
+
+	//	bool shouldUseTablesVariant = targets.depthStencil.canvas != nullptr;
+
+	//	if (!shouldUseTablesVariant)
+	//	{
+	//		for (const auto &rt : targets.colors)
+	//		{
+	//			if (rt.mipmap != 0 || rt.canvas->getTextureType() != TEXTURE_2D)
+	//			{
+	//				shouldUseTablesVariant = true;
+	//				break;
+	//			}
+	//		}
+	//	}
+
+	//	if (shouldUseTablesVariant)
+	//	{
+	//		*out_canvas = new graphics::Canvas*[0];
+	//		*out_canvas_length = 0;
+	//		return;
+	//	}
+	//	else
+	//	{
+	//		auto canvaList = new graphics::Canvas*[targets.colors.size()];
+
+	//		int n = 0;
+	//		for (const auto &rt : targets.colors)
+	//		{
+	//			canvaList[n] = rt.canvas;
+	//			rt.canvas->retain();
+	//			n++;
+	//		}
+	//		*out_canvas = canvaList;
+	//		*out_canvas_length = targets.colors.size();
+	//	}
+
+	//}
+	bool4 wrap_love_dll_graphics_setCanvasEmpty()
+	{
+		// Disable stencil writes.
+		graphicsInstance->stopDrawToStencilBuffer();
+
+		// called with none -> reset to default buffer
+		return wrap_catchexcept([&]() {
+			graphicsInstance->setCanvas();
+		});
+	}
+	// [0] = depthStencil, [1] = color1, [2] = color2, ...
+	bool4 wrap_love_dll_graphics_setCanvasRenderTagets(graphics::Canvas** canvaList, int* sliceList, int* mipmapList, int canvaListLength, bool4 depth, bool4 stencil)
+	{
+		return wrap_catchexcept([&]() {
+			// Disable stencil writes.
+			graphicsInstance->stopDrawToStencilBuffer();
+
+
+			Graphics::RenderTargets targets;
+			targets.colors.reserve(canvaListLength);
+
+			// set depthStencil
+			targets.depthStencil.canvas = canvaList[0];
+			targets.depthStencil.slice = sliceList[0];
+			targets.depthStencil.mipmap = mipmapList[0];
+
+			// set colors
+			for (int i = 1; i < canvaListLength; i++)
+			{
+				targets.colors.push_back(Graphics::RenderTarget(canvaList[i], sliceList[i], mipmapList[i]));
+			}
+
+			// set temporaryRTFlags
+			uint32 tempdepthflag = Graphics::TEMPORARY_RT_DEPTH;
+			uint32 tempstencilflag = Graphics::TEMPORARY_RT_STENCIL;
+			if (depth)
+			{
+				targets.temporaryRTFlags |= tempdepthflag;
+			}
+			if (stencil)
+			{
+				targets.temporaryRTFlags |= tempstencilflag;
+			}
+			graphicsInstance->setCanvas(targets);
+		});
+	}
+
+	bool4 wrap_love_dll_graphics_getCanvasTagets(graphics::Canvas*** out_canvas, int** out_sliceList, int** out_mipmapList, int* out_targetCount)
+	{
+		return wrap_catchexcept([&]() {
+			Graphics::RenderTargets targets = graphicsInstance->getCanvas();
+			int tartetCount = 1 + (int)targets.colors.size();
+
+			graphics::Canvas** bufferCanvas = new graphics::Canvas*[tartetCount];
+			int* bufferSliceList = new int[tartetCount];
+			int* bufferMipmapList = new int[tartetCount];
+			
+			if (targets.depthStencil.canvas != nullptr)
+			{
+				bufferCanvas[0] = targets.depthStencil.canvas;
+				bufferSliceList[0] = targets.depthStencil.slice;
+				bufferMipmapList[0] = targets.depthStencil.mipmap;
+				targets.depthStencil.canvas->retain();
+			}
+
+			int n = 1;
+			for (const auto &rt : targets.colors)
+			{
+				bufferCanvas[n] = rt.canvas;
+				bufferSliceList[n] = rt.slice;
+				bufferMipmapList[n] = rt.mipmap;
+				rt.canvas->retain();
+				n++;
+			}
+
+			*out_canvas = bufferCanvas;
+			*out_sliceList = bufferSliceList;
+			*out_mipmapList = bufferMipmapList;
+			*out_targetCount = tartetCount;
+		});
+	}
+
+
     void wrap_love_dll_graphics_setShader(graphics::Shader *shader)
     {
         graphicsInstance->setShader(shader);
@@ -3741,6 +3889,99 @@ namespace wrap
             }
         }
     }
+
+#pragma endregion
+
+#pragma region graphics 11.0 added
+
+	bool4 wrap_love_dll_graphics_drawInstanced(Mesh *tmesh, int instanceCount, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky)
+	{
+		return wrap_catchexcept([&]() { graphicsInstance->drawInstanced(tmesh, Matrix4(x, y, a, sx, sy, ox, oy, kx, ky), instanceCount); });
+	}
+	bool4 wrap_love_dll_graphics_drawLayer(Texture *texture, Quad *quad, int layer, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky)
+	{
+		return wrap_catchexcept([&]() { 
+			auto m = Matrix4(x, y, a, sx, sy, ox, oy, kx, ky);
+			if (quad)
+				graphicsInstance->drawLayer(texture, layer, quad, m);
+			else
+				graphicsInstance->drawLayer(texture, layer, m);
+		});
+	}
+
+	void wrap_love_dll_graphics_flushBatch()
+	{
+		graphicsInstance->flushStreamDraws();
+	}
+
+	void wrap_love_dll_graphics_validateShader(bool4 gles, char* vertexCodeStr, char* pixelCodeStr, bool4 *out_success, WrapString** out_str)
+	{
+		std::string vertexsource(vertexCodeStr), pixelsource(pixelCodeStr);
+		bool success = true;
+		std::string err;
+		try
+		{
+			success = graphicsInstance->validateShader(gles, vertexsource, pixelsource, err);
+		}
+		catch (love::Exception &e)
+		{
+			success = false;
+			err = e.what();
+		}
+
+		*out_success = success;
+		*out_str = new_WrapString(err);
+	}
+
+	void wrap_love_dll_graphics_getDepthMode(int *out_depthMode, bool4 *out_write)
+	{
+		CompareMode compare = COMPARE_ALWAYS;
+		bool write = false;
+		graphicsInstance->getDepthMode(compare, write);
+		*out_depthMode = (int)compare;
+		*out_write = write;
+	}
+
+	void wrap_love_dll_graphics_getFrontFaceWinding(int *out_winding)
+	{
+		*out_winding = graphicsInstance->getFrontFaceWinding();
+	}
+
+	void wrap_love_dll_graphics_getMeshCullMode(int *out_mode)
+	{
+		*out_mode = graphicsInstance->getMeshCullMode();
+	}
+
+	void wrap_love_dll_graphics_getStackDepth(int *out_depth)
+	{
+		*out_depth = graphicsInstance->getStackDepth();
+	}
+
+	bool4 wrap_love_dll_graphics_setDepthMode(int odepthMode, bool4 write)
+	{
+		return wrap_catchexcept([&]() {
+			graphicsInstance->setDepthMode((CompareMode)odepthMode, write);
+		});
+	}
+
+	bool4 wrap_love_dll_graphics_setMeshCullMode(int mode)
+	{
+		return wrap_catchexcept([&]() {
+			graphicsInstance->setMeshCullMode((CullMode)mode);
+		});
+	}
+
+	void wrap_love_dll_graphics_getTextureTypes(bool4** out_capList, int* out_len)
+	{
+		const Graphics::Capabilities &caps = graphicsInstance->getCapabilities();
+		*out_capList = new int[TEXTURE_MAX_ENUM];
+		*out_len = TEXTURE_MAX_ENUM;
+		for (int i = 0; i < (int)TEXTURE_MAX_ENUM; i++)
+		{
+			TextureType textype = (TextureType)i;
+			(*out_capList)[i] = caps.textureTypes[i];
+		}
+	}
 
 #pragma endregion
 
@@ -4814,84 +5055,163 @@ namespace wrap
 		return (c_dataPtr + 1);
 	};
 
-    bool4 wrap_love_dll_type_Mesh_setVertices(Mesh *t, int vertoffset, Float2 pos[], Float2 uv[], Float4 color[], int vertexCount)
+	inline int meshDataTypeToInt(vertex::DataType type)
+	{
+		if (type == vertex::DataType::DATA_UNORM8)
+		{
+			return 1;
+		}
+		else if (type == vertex::DataType::DATA_UNORM16)
+		{
+			return 2;
+		}
+		else if (type == vertex::DataType::DATA_FLOAT)
+		{
+			return 4;
+		}
+		return 0;
+	}
+
+	bool4 wrap_love_dll_type_Mesh_setVertexAttribute(Mesh *mesh, int vertIndex, int attrIndex, void *dataPtr, int dataLen)
+	{
+		return wrap_catchexcept([&]() {
+			int components;
+			vertex::DataType type = mesh->getAttributeInfo(attrIndex, components);
+			// Maximum possible size for a single vertex attribute.
+			char data[sizeof(float) * 4];
+			char* inputedData = (char*)dataPtr;
+			for (int i = 0; (i < sizeof(float) * 4) && i < dataLen; i++)
+			{
+				data[i] = inputedData[i];
+			}
+			mesh->setVertexAttribute(vertIndex, attrIndex, data, sizeof(float) * 4);
+		});
+	}
+
+	bool4 wrap_love_dll_type_Mesh_getVertexAttribute(Mesh *mesh, int vertIndex, int attrIndex, void **out_dataPtr, int *out_dataLen)
+	{
+		return wrap_catchexcept([&]() {
+			int components;
+			vertex::DataType type = mesh->getAttributeInfo(attrIndex, components);
+			// Maximum possible size for a single vertex attribute.
+			char data[sizeof(float) * 4];
+			mesh->getVertexAttribute(vertIndex, attrIndex, data, sizeof(float) * 4);
+
+			int byteUnitCount = 0;
+			if (type == vertex::DataType::DATA_UNORM8)
+			{
+				byteUnitCount = 1;
+			}
+			else if (type == vertex::DataType::DATA_UNORM16)
+			{
+				byteUnitCount = 2;
+			}
+			else if (type == vertex::DataType::DATA_FLOAT)
+			{
+				byteUnitCount = 4;
+			}
+
+			int len = byteUnitCount * components;
+			char* outRes = new char[len];
+			for (int i = 0; i < len; i++)
+			{
+				outRes[i] = data[i];
+			}
+
+			*out_dataPtr = outRes;
+			*out_dataLen = len;
+		});
+	}
+
+    bool4 wrap_love_dll_type_Mesh_setVertices(Mesh *t, int vertOffset, void *inputData, int dataSize)
     {
-        if (vertoffset >= t->getVertexCount())
-        {
-            wrap_ee("Invalid vertex start index (must be between 1 and %d)", (int)t->getVertexCount());
-            return false;
-        }
+		return wrap_catchexcept([&]() {
+			if (vertOffset >= t->getVertexCount())
+			{
+				wrap_ee("Invalid vertex start index (must be between 1 and %d)", (int)t->getVertexCount());
+				return false;
+			}
 
-        size_t stride = t->getVertexStride();
-        size_t byteoffset = vertoffset * stride;
-
-        if (vertoffset + vertexCount > t->getVertexCount())
-        {
-            wrap_ee("Too many vertices (expected at most %d, got %d)", (int)t->getVertexCount() - (int)vertoffset, (int)vertexCount);
-            return false;
-        }
-
-        const std::vector<Mesh::AttribFormat> &vertexformat = t->getVertexFormat();
-        char *data = (char *)t->mapVertexData() + byteoffset;
-
-		int sizeNeedToCopy = 0;
-        for (size_t i = 0; i < vertexCount; i++)
-        {
-			data = floatWrite(data, pos[i].x);
-			data = floatWrite(data, pos[i].y);
-			data = floatWrite(data, uv[i].x);
-			data = floatWrite(data, uv[i].y);
-			data = charWrite(data, color[i].r * 255);
-			data = charWrite(data, color[i].g * 255);
-			data = charWrite(data, color[i].b * 255);
-			data = charWrite(data, color[i].a * 255);
-        }
-
-        t->unmapVertexData(byteoffset, vertexCount * stride);
-        return true;
-    }
-
-    bool4 wrap_love_dll_type_Mesh_setVertex(Mesh *t, int index, Float2 pos, Float2 uv, Float4 color)
-    {
-        return wrap_catchexcept([&]() {
 			size_t stride = t->getVertexStride();
-			int data_length = sizeof(float) * 4 + sizeof(char) * 4;
-			char* const rawData = new char[data_length];
-			char* data = rawData;
-			data = floatWrite(data, pos.x);
-			data = floatWrite(data, pos.y);
-			data = floatWrite(data, uv.x);
-			data = floatWrite(data, uv.y);
-			data = charWrite(data, color.r * 255);
-			data = charWrite(data, color.g * 255);
-			data = charWrite(data, color.b * 255);
-			data = charWrite(data, color.a * 255);
-            t->setVertex(index, data, data_length);
-			delete[] rawData;
-        });
+			size_t byteoffset = vertOffset * stride;
+			char *bytedata = (char *)t->mapVertexData() + byteoffset;
+			t->unmapVertexData(byteoffset, dataSize);
+			return true;
+		});
     }
 
-    bool4 wrap_love_dll_type_Mesh_getVertex(Mesh *t, int index, Float2* out_pos, Float2* out_uv, Float4* out_color)
-    {
-        return wrap_catchexcept([&]() {
+	bool4 wrap_love_dll_type_Mesh_getVertex(Mesh *t, int index, void **out_data, int *out_dataSize)
+	{
+		return wrap_catchexcept([&]() {
+			const std::vector<Mesh::AttribFormat> &vertexformat = t->getVertexFormat();
 			char *data = (char *)t->getVertexScratchBuffer();
 			t->getVertex(index, data, t->getVertexStride());
-			data = floatWrite(data, out_pos->x);
-			data = floatWrite(data, out_pos->y);
-			data = floatWrite(data, out_uv->x);
-			data = floatWrite(data, out_uv->y);
 
-			char r, g, b, a;
-			data = charWrite(data, r);
-			data = charWrite(data, g);
-			data = charWrite(data, b);
-			data = charWrite(data, a);
-			out_color->r = r / 255;
-			out_color->g = g / 255;
-			out_color->b = b / 255;
-			out_color->a = a / 255;
-        });
-    }
+			int byteToCopy = 0;
+			for (const Mesh::AttribFormat &format : vertexformat)
+			{
+				byteToCopy += (meshDataTypeToInt(format.type) * format.components);
+			}
+
+			char* outDataPtr = new char[byteToCopy];
+			memcpy(outDataPtr, data, byteToCopy);
+
+			*out_data = outDataPtr;
+			*out_dataSize = byteToCopy;
+		});
+	}
+
+
+	bool4 wrap_love_dll_type_Mesh_setVertex(Mesh *t, int index, char *data, int dataSize)
+	{
+		return wrap_catchexcept([&]() {
+			memcpy(t->getVertexScratchBuffer(), data, dataSize);
+			t->setVertex(index, data, t->getVertexStride());
+		});
+	}
+
+	bool4 wrap_love_dll_type_Mesh_getVertexFormat(Mesh *t, WrapSequenceString** out_wss, int** out_typeList, int** out_comCountList, int *out_len)
+	{
+		return wrap_catchexcept([&]() {
+			std::vector<std::string> nameList;
+			const std::vector<Mesh::AttribFormat> &vertexformat = t->getVertexFormat();
+
+			int len = vertexformat.size();
+			*out_len = len;
+			*out_typeList = new int[len];
+			*out_comCountList = new int[len];
+			for (int i = 0; i < len; i++)
+			{
+				nameList.push_back(vertexformat[i].name);
+				(*out_typeList)[i] = (int)(vertexformat[i].type);
+				(*out_comCountList)[i] = (int)(vertexformat[i].components);
+			}
+			*out_wss = new_WrapSequenceString(nameList);
+		});
+	}
+
+	bool4 wrap_love_dll_type_Mesh_isAttributeEnabled(Mesh *t, char* name, bool4 *out_res)
+	{
+		return wrap_catchexcept([&]() { 
+			*out_res = t->isAttributeEnabled(name); 
+		});
+	}
+
+	bool4 wrap_love_dll_type_Mesh_setAttributeEnabled(Mesh *t, char* name, bool4 flag)
+	{
+		return wrap_catchexcept([&]() {
+			t->setAttributeEnabled(name, flag);
+		});
+	}
+
+
+
+
+
+
+
+
+
 
     void wrap_love_dll_type_Mesh_getVertexCount(Mesh *t, int *out_result)
     {
@@ -5948,6 +6268,11 @@ namespace wrap
 		const Texture::Filter &f = i->getFilter();
 		*out_mipmap_type = f.mipmap;
 		*out_sharpness = i->getMipmapSharpness();
+	}
+
+	void wrap_love_dll_type_Texture_getMipmapCount(Texture *t, int *out_count)
+	{
+		*out_count = t->getMipmapCount();
 	}
 
     void wrap_love_dll_type_Texture_getWidth(Texture *t, int *out_w)

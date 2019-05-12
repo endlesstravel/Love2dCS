@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Love;
 using int32 = System.Int32;
 using float32 = System.Single;
+using static Love.Misc.MeshUtils;
+using System.Linq;
 
 namespace LovePhysicsTestBed
 {
@@ -67,7 +69,15 @@ namespace LovePhysicsTestBed
             meshToDraw.ForEach(item => {
                 var p = item.Key.GetPosition();
                 Graphics.SetColor(ColorByBody(item.Key));
+                //Console.WriteLine(Love.Misc.MeshUtils.GetVertexFromData(item.Value.GetVertex(0)));
+
+                //var ccc = new byte[4] { 10, 100, 100, 255 };
+                //item.Value.SetVertexAttribute(0, 2, ccc);
+                //item.Value.SetVertexAttribute(1, 2, ccc);
+                //item.Value.SetVertexAttribute(2, 2, ccc);
+                //item.Value.SetVertexAttribute(3, 2, ccc);
                 Graphics.Draw(item.Value, p.x, p.y);
+                //Graphics.DrawInstanced(item.Value, 1, 0, 0);
             });
             
         }
@@ -143,12 +153,21 @@ namespace LovePhysicsTestBed
                 {
                     PolygonShape sp = f.GetShape() as PolygonShape;
                     var pp = sp.GetPoints();
-                    var m = Graphics.NewMesh(new Vertex[]{
-                        new Vertex(pp[0]),
-                        new Vertex(pp[1]),
-                        new Vertex(pp[2]),
-                        new Vertex(pp[3]),
-                    });
+                    var rawData = new Vertex[]{
+                        new Vertex(pp[0].x, pp[0].y),
+                        new Vertex(pp[1].x, pp[1].y),
+                        new Vertex(pp[2].x, pp[2].y),
+                        new Vertex(pp[3].x, pp[3].y),
+                    };
+
+                    var m = Graphics.NewMesh(Love.Misc.MeshUtils.GetVertexFormat(), Love.Misc.MeshUtils.GetVertexData(rawData), MeshDrawMode.Fan, SpriteBatchUsage.Dynamic);
+
+                    //Console.WriteLine("------------------------");
+                    //Console.WriteLine(Love.Misc.MeshUtils.GetVertexFromData(m.GetVertex(0)));
+                    //Console.WriteLine(Love.Misc.MeshUtils.GetVertexFromData(m.GetVertex(1)));
+                    //Console.WriteLine(Love.Misc.MeshUtils.GetVertexFromData(m.GetVertex(2)));
+                    //Console.WriteLine(Love.Misc.MeshUtils.GetVertexFromData(m.GetVertex(3)));
+
                     meshToDraw.Add(new KeyValuePair<Body, Mesh>(body, m));
                 }
             }

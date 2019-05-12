@@ -1483,12 +1483,14 @@ namespace Love
         {
             return CheckCAPIException(_wrap_love_dll_graphics_newShader(vertexCodeStr, pixelCodeStr, out out_shader));
         }
-        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_newMesh_specifiedVertices")]
-        internal extern static bool _wrap_love_dll_graphics_newMesh_specifiedVertices(Vector2[] pos, Vector2[] uv, Vector4[] color, int vertexCount, int drawMode_type, int usage_type, out IntPtr out_mesh);
-        internal static bool wrap_love_dll_graphics_newMesh_specifiedVertices(Vector2[] pos, Vector2[] uv, Vector4[] color, int vertexCount, int drawMode_type, int usage_type, out IntPtr out_mesh)
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_newMesh_custom")]
+        internal extern static bool _wrap_love_dll_graphics_newMesh_custom(IntPtr[] strAry, int[] vfType, int[] vfComponentCount, int vfLen, bool useData, byte[] data, int vertexCountOrSize, int drawMode_type, int usage_type, out IntPtr out_mesh);
+        internal static bool wrap_love_dll_graphics_newMesh_custom(IntPtr[] strAry, int[] vfType, int[] vfComponentCount, int vfLen, bool useData, byte[] data, int vertexCountOrSize, int drawMode_type, int usage_type, out IntPtr out_mesh)
         {
-            return CheckCAPIException(_wrap_love_dll_graphics_newMesh_specifiedVertices(pos, uv, color, vertexCount, drawMode_type, usage_type, out out_mesh));
+            return CheckCAPIException(_wrap_love_dll_graphics_newMesh_custom(strAry,vfType, vfComponentCount, vfLen, useData, data, vertexCountOrSize, drawMode_type, usage_type, out out_mesh));
         }
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_newMesh_count")]
         internal extern static bool _wrap_love_dll_graphics_newMesh_count(int count, int drawMode_type, int usage_type, out IntPtr out_mesh);
         internal static bool wrap_love_dll_graphics_newMesh_count(int count, int drawMode_type, int usage_type, out IntPtr out_mesh)
@@ -1699,18 +1701,42 @@ namespace Love
         {
             _wrap_love_dll_graphics_isWireframe(out out_isWireFrame);
         }
-        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_setCanvas")]
-        internal extern static bool _wrap_love_dll_graphics_setCanvas(IntPtr[] canvaList, int canvaListLength);
-        internal static bool wrap_love_dll_graphics_setCanvas(IntPtr[] canvaList, int canvaListLength)
+        //[DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_setCanvas")]
+        //internal extern static bool _wrap_love_dll_graphics_setCanvas(IntPtr[] canvaList, int canvaListLength);
+        //internal static bool wrap_love_dll_graphics_setCanvas(IntPtr[] canvaList, int canvaListLength)
+        //{
+        //    return CheckCAPIException(_wrap_love_dll_graphics_setCanvas(canvaList, canvaListLength));
+        //}
+
+        //[DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_getCanvas")]
+        //internal extern static void _wrap_love_dll_graphics_getCanvas(out IntPtr out_canvas, out int out_canvas_lenght);
+        //internal static void wrap_love_dll_graphics_getCanvas(out IntPtr out_canvas, out int out_canvas_lenght)
+        //{
+        //    _wrap_love_dll_graphics_getCanvas(out out_canvas, out out_canvas_lenght);
+        //}
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_setCanvasEmpty")]
+        internal extern static bool _wrap_love_dll_graphics_setCanvasEmpty();
+        internal static bool wrap_love_dll_graphics_setCanvasEmpty()
         {
-            return CheckCAPIException(_wrap_love_dll_graphics_setCanvas(canvaList, canvaListLength));
+            return CheckCAPIException(_wrap_love_dll_graphics_setCanvasEmpty());
         }
-        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_getCanvas")]
-        internal extern static void _wrap_love_dll_graphics_getCanvas(out IntPtr out_canvas, out int out_canvas_lenght);
-        internal static void wrap_love_dll_graphics_getCanvas(out IntPtr out_canvas, out int out_canvas_lenght)
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_setCanvasRenderTagets")]
+        internal extern static bool _wrap_love_dll_graphics_setCanvasRenderTagets(IntPtr[] canvaList, int[] sliceList, int[] mipmapList, int canvaListLength, bool depth, bool stencil);
+        internal static bool wrap_love_dll_graphics_setCanvasRenderTagets(IntPtr[] canvaList, int[] sliceList, int[] mipmapList, int canvaListLength, bool depth, bool stencil)
         {
-            _wrap_love_dll_graphics_getCanvas(out out_canvas, out out_canvas_lenght);
+            return CheckCAPIException(_wrap_love_dll_graphics_setCanvasRenderTagets(canvaList, sliceList, mipmapList, canvaListLength, depth, stencil));
         }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_getCanvasTagets")]
+        internal extern static bool _wrap_love_dll_graphics_getCanvasTagets(out IntPtr canvas, out IntPtr sliceList, out IntPtr mipmapList, out int targetCount);
+        internal static bool wrap_love_dll_graphics_getCanvasTagets(out IntPtr canvas, out IntPtr sliceList, out IntPtr mipmapList, out int targetCount)
+        {
+            return CheckCAPIException(_wrap_love_dll_graphics_getCanvasTagets(out canvas, out sliceList, out mipmapList, out targetCount));
+        }
+
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_setShader")]
         internal extern static void _wrap_love_dll_graphics_setShader(IntPtr shader);
         internal static void wrap_love_dll_graphics_setShader(IntPtr shader)
@@ -1732,9 +1758,89 @@ namespace Love
             _wrap_love_dll_graphics_setDefaultShaderCode(strPtr);
         }
 
-
-
         #endregion
+
+
+        #region  graphics 11.0
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_drawInstanced")]
+        internal extern static bool _wrap_love_dll_graphics_drawInstanced(IntPtr tmesh, int instanceCount, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky);
+        internal static bool wrap_love_dll_graphics_drawInstanced(IntPtr tmesh, int instanceCount, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky)
+        {
+            return CheckCAPIException(_wrap_love_dll_graphics_drawInstanced(tmesh, instanceCount, x, y, a, sx, sy, ox, oy, kx, ky));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_drawLayer")]
+        internal extern static bool _wrap_love_dll_graphics_drawLayer(IntPtr texture, IntPtr quad, int layer, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky);
+        internal static bool wrap_love_dll_graphics_drawLayer(IntPtr texture, IntPtr quad, int layer, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky)
+        {
+            return CheckCAPIException(_wrap_love_dll_graphics_drawLayer(texture, quad, layer, x, y, a, sx, sy, ox, oy, kx, ky));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_flushBatch")]
+        internal extern static void _wrap_love_dll_graphics_flushBatch();
+        internal static void wrap_love_dll_graphics_flushBatch()
+        {
+            _wrap_love_dll_graphics_flushBatch();
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_validateShader")]
+        internal extern static void _wrap_love_dll_graphics_validateShader(bool gles, byte[] vertexCodeStr, byte[] pixelCodeStr, out bool success, out IntPtr str);
+        internal static void wrap_love_dll_graphics_validateShader(bool gles, byte[] vertexCodeStr, byte[] pixelCodeStr, out bool success, out IntPtr str)
+        {
+            _wrap_love_dll_graphics_validateShader(gles, vertexCodeStr, pixelCodeStr, out success, out str);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_getDepthMode")]
+        internal extern static void _wrap_love_dll_graphics_getDepthMode(out int depthMode, out bool write);
+        internal static void wrap_love_dll_graphics_getDepthMode(out int depthMode, out bool write)
+        {
+            _wrap_love_dll_graphics_getDepthMode(out depthMode, out write);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_getFrontFaceWinding")]
+        internal extern static void _wrap_love_dll_graphics_getFrontFaceWinding(out int winding);
+        internal static void wrap_love_dll_graphics_getFrontFaceWinding(out int winding)
+        {
+            _wrap_love_dll_graphics_getFrontFaceWinding(out winding);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_getMeshCullMode")]
+        internal extern static void _wrap_love_dll_graphics_getMeshCullMode(out int mode);
+        internal static void wrap_love_dll_graphics_getMeshCullMode(out int mode)
+        {
+            _wrap_love_dll_graphics_getMeshCullMode(out mode);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_getStackDepth")]
+        internal extern static void _wrap_love_dll_graphics_getStackDepth(out int depth);
+        internal static void wrap_love_dll_graphics_getStackDepth(out int depth)
+        {
+            _wrap_love_dll_graphics_getStackDepth(out depth);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_setDepthMode")]
+        internal extern static bool _wrap_love_dll_graphics_setDepthMode(int odepthMode, bool write);
+        internal static bool wrap_love_dll_graphics_setDepthMode(int odepthMode, bool write)
+        {
+            return CheckCAPIException(_wrap_love_dll_graphics_setDepthMode(odepthMode, write));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_setMeshCullMode")]
+        internal extern static bool _wrap_love_dll_graphics_setMeshCullMode(int mode);
+        internal static bool wrap_love_dll_graphics_setMeshCullMode(int mode)
+        {
+            return CheckCAPIException(_wrap_love_dll_graphics_setMeshCullMode(mode));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_getTextureTypes")]
+        internal extern static void _wrap_love_dll_graphics_getTextureTypes(out IntPtr capList, out int len);
+        internal static void wrap_love_dll_graphics_getTextureTypes(out IntPtr capList, out int len)
+        {
+            _wrap_love_dll_graphics_getTextureTypes(out capList, out len);
+        }
+        #endregion
+
+
         #region  graphics Coordinate System
 
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_push")]
@@ -2529,18 +2635,6 @@ namespace Love
         #endregion
         #region  type - Image
 
-        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Texture_setMipmapFilter")]
-        internal extern static bool _wrap_love_dll_type_Texture_setMipmapFilter(IntPtr image, int mipmap_type, float sharpness);
-        internal static bool wrap_love_dll_type_Texture_setMipmapFilter(IntPtr image, int mipmap_type, float sharpness)
-        {
-            return CheckCAPIException(_wrap_love_dll_type_Texture_setMipmapFilter(image, mipmap_type, sharpness));
-        }
-        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Texture_getMipmapFilter")]
-        internal extern static void _wrap_love_dll_type_Texture_getMipmapFilter(IntPtr image, out int out_mipmap_type, out float out_sharpness);
-        internal static void wrap_love_dll_type_Texture_getMipmapFilter(IntPtr image, out int out_mipmap_type, out float out_sharpness)
-        {
-            _wrap_love_dll_type_Texture_getMipmapFilter(image, out out_mipmap_type, out out_sharpness);
-        }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Image_isCompressed")]
         internal extern static void _wrap_love_dll_type_Image_isCompressed(IntPtr image, out bool out_result);
         internal static void wrap_love_dll_type_Image_isCompressed(IntPtr image, out bool out_result)
@@ -2559,24 +2653,65 @@ namespace Love
         #endregion
         #region  type - Mesh
 
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Mesh_setVertexAttribute")]
+        internal extern static bool _wrap_love_dll_type_Mesh_setVertexAttribute(IntPtr mesh, int vertIndex, int attrIndex, byte[] dataPtr, int dataLen);
+        internal static bool wrap_love_dll_type_Mesh_setVertexAttribute(IntPtr mesh, int vertIndex, int attrIndex, byte[] dataPtr, int dataLen)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Mesh_setVertexAttribute(mesh, vertIndex, attrIndex, dataPtr, dataLen));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Mesh_getVertexAttribute")]
+        internal extern static bool _wrap_love_dll_type_Mesh_getVertexAttribute(IntPtr mesh, int vertIndex, int attrIndex, out IntPtr dataPtr, out int dataLen);
+        internal static bool wrap_love_dll_type_Mesh_getVertexAttribute(IntPtr mesh, int vertIndex, int attrIndex, out IntPtr dataPtr, out int dataLen)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Mesh_getVertexAttribute(mesh, vertIndex, attrIndex, out dataPtr, out dataLen));
+        }
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Mesh_setVertices")]
-        internal extern static bool _wrap_love_dll_type_Mesh_setVertices(IntPtr p, int vertoffset, Vector2[] pos, Vector2[] uv, Vector4[] color, int vertexCount);
-        internal static bool wrap_love_dll_type_Mesh_setVertices(IntPtr p, int vertoffset, Vector2[] pos, Vector2[] uv, Vector4[] color, int vertexCount)
+        internal extern static bool _wrap_love_dll_type_Mesh_setVertices(IntPtr t, int vertOffset, byte[] inputData, int dataSize);
+        internal static bool wrap_love_dll_type_Mesh_setVertices(IntPtr t, int vertOffset, byte[] inputData, int dataSize)
         {
-            return CheckCAPIException(_wrap_love_dll_type_Mesh_setVertices(p, vertoffset, pos, uv, color, vertexCount));
+            return CheckCAPIException(_wrap_love_dll_type_Mesh_setVertices(t, vertOffset, inputData, dataSize));
         }
-        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Mesh_setVertex")]
-        internal extern static bool _wrap_love_dll_type_Mesh_setVertex(IntPtr p, int index, Vector2 pos, Vector2 uv, Vector4 color);
-        internal static bool wrap_love_dll_type_Mesh_setVertex(IntPtr p, int index, Vector2 pos, Vector2 uv, Vector4 color)
-        {
-            return CheckCAPIException(_wrap_love_dll_type_Mesh_setVertex(p, index, pos, uv, color));
-        }
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Mesh_getVertex")]
-        internal extern static bool _wrap_love_dll_type_Mesh_getVertex(IntPtr p, int index, out Vector2 pos, out Vector2 uv, out Vector4 color);
-        internal static bool wrap_love_dll_type_Mesh_getVertex(IntPtr p, int index, out Vector2 pos, out Vector2 uv, out Vector4 color)
+        internal extern static bool _wrap_love_dll_type_Mesh_getVertex(IntPtr t, int index, out IntPtr data, out int dataSize);
+        internal static bool wrap_love_dll_type_Mesh_getVertex(IntPtr t, int index, out IntPtr data, out int dataSize)
         {
-            return CheckCAPIException(_wrap_love_dll_type_Mesh_getVertex(p, index, out pos, out uv, out color));
+            return CheckCAPIException(_wrap_love_dll_type_Mesh_getVertex(t, index, out data, out dataSize));
         }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Mesh_setVertex")]
+        internal extern static bool _wrap_love_dll_type_Mesh_setVertex(IntPtr t, int index, byte[] data, int dataSize);
+        internal static bool wrap_love_dll_type_Mesh_setVertex(IntPtr t, int index, byte[] data, int dataSize)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Mesh_setVertex(t, index, data, dataSize));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Mesh_getVertexFormat")]
+        internal extern static bool _wrap_love_dll_type_Mesh_getVertexFormat(IntPtr t, out IntPtr wss, out IntPtr typeList, out IntPtr comCountList, out int len);
+        internal static bool wrap_love_dll_type_Mesh_getVertexFormat(IntPtr t, out IntPtr wss, out IntPtr typeList, out IntPtr comCountList, out int len)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Mesh_getVertexFormat(t, out wss, out typeList, out comCountList, out len));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Mesh_isAttributeEnabled")]
+        internal extern static bool _wrap_love_dll_type_Mesh_isAttributeEnabled(IntPtr t, byte[] name, out bool res);
+        internal static bool wrap_love_dll_type_Mesh_isAttributeEnabled(IntPtr t, byte[] name, out bool res)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Mesh_isAttributeEnabled(t, name, out res));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Mesh_setAttributeEnabled")]
+        internal extern static bool _wrap_love_dll_type_Mesh_setAttributeEnabled(IntPtr t, byte[] name, bool flag);
+        internal static bool wrap_love_dll_type_Mesh_setAttributeEnabled(IntPtr t, byte[] name, bool flag)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Mesh_setAttributeEnabled(t, name, flag));
+        }
+
+
+
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Mesh_getVertexCount")]
         internal extern static void _wrap_love_dll_type_Mesh_getVertexCount(IntPtr p, out int out_result);
         internal static void wrap_love_dll_type_Mesh_getVertexCount(IntPtr p, out int out_result)
@@ -3255,6 +3390,24 @@ namespace Love
         #endregion
         #region  type - Texture
 
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Texture_setMipmapFilter")]
+        internal extern static bool _wrap_love_dll_type_Texture_setMipmapFilter(IntPtr image, int mipmap_type, float sharpness);
+        internal static bool wrap_love_dll_type_Texture_setMipmapFilter(IntPtr image, int mipmap_type, float sharpness)
+        {
+            return CheckCAPIException(_wrap_love_dll_type_Texture_setMipmapFilter(image, mipmap_type, sharpness));
+        }
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Texture_getMipmapFilter")]
+        internal extern static void _wrap_love_dll_type_Texture_getMipmapFilter(IntPtr image, out int out_mipmap_type, out float out_sharpness);
+        internal static void wrap_love_dll_type_Texture_getMipmapFilter(IntPtr image, out int out_mipmap_type, out float out_sharpness)
+        {
+            _wrap_love_dll_type_Texture_getMipmapFilter(image, out out_mipmap_type, out out_sharpness);
+        }
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Texture_getMipmapCount")]
+        internal extern static void _wrap_love_dll_type_Texture_getMipmapCount(IntPtr p, out int out_count);
+        internal static void wrap_love_dll_type_Texture_getMipmapCount(IntPtr p, out int out_count)
+        {
+            _wrap_love_dll_type_Texture_getMipmapCount(p, out out_count);
+        }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Texture_getWidth")]
         internal extern static void _wrap_love_dll_type_Texture_getWidth(IntPtr p, out int out_w);
         internal static void wrap_love_dll_type_Texture_getWidth(IntPtr p, out int out_w)

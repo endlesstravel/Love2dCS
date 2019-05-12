@@ -547,6 +547,7 @@ namespace wrap
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newParticleSystem(Texture *texture, int buffer, ParticleSystem** out_particleSystem);
 	extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newCanvas(int width, int height, int texture_type, int format_type, bool4 readable, int msaa, float dpiscale, int mipmaps, love::graphics::Canvas** out_canvas);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newShader(const char* vertexCodeStr, const char* pixelCodeStr, Shader** out_shader);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newMesh_custom(pChar vfName[], int* vfType, int* vfComponentCount, int vfLen, bool4 useData, void *data, int dataSizeOrCount, int drawMode_type, int usage_type, Mesh** out_mesh);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newMesh_specifiedVertices(Float2 pos[], Float2 uv[], Float4 color[], int vertexCount, int drawMode_type, int usage_type, Mesh** out_mesh);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newMesh_count(int count, int drawMode_type, int usage_type, Mesh** out_mesh);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_newText(love::graphics::Font *font, pChar coloredStringText[], Float4 coloredStringColor[], int coloredStringLength, Text** out_text);
@@ -589,13 +590,32 @@ namespace wrap
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getPointSize(float *out_size);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_setWireframe(bool4 enable);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_isWireframe(bool4 *out_isWireFrame);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_setCanvas(love::graphics::Canvas** canvaList, int canvaListLength);
-    extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getCanvas(love::graphics::Canvas*** out_canvas, int *out_canvas_lenght);
+    //extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_setCanvas(love::graphics::Canvas** canvaList, int canvaListLength);
+    //extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getCanvas(love::graphics::Canvas*** out_canvas, int *out_canvas_lenght);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_setCanvasEmpty();
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_setCanvasRenderTagets(graphics::Canvas** canvaList, int* sliceList, int* mipmapList, int canvaListLength, bool4 depth, bool4 stencil);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_getCanvasTagets(graphics::Canvas*** out_canvas, int** out_sliceList, int** out_mipmapList, int* out_targetCount);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_setShader(Shader *shader);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getShader(Shader** out_shader);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_setDefaultShaderCode(const char **strPtr);
 
 #pragma endregion
+
+
+#pragma region graphics 11.0
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_drawInstanced(Mesh *tmesh, int instanceCount, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_drawLayer(Texture *texture, Quad *quad, int layer, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky);
+	extern "C" LOVE_EXPORT void wrap_love_dll_graphics_flushBatch();
+	extern "C" LOVE_EXPORT void wrap_love_dll_graphics_validateShader(bool4 gles, char* vertexCodeStr, char* pixelCodeStr, bool4 *out_success, WrapString** out_str);
+	extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getDepthMode(int *out_depthMode, bool4 *out_write);
+	extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getFrontFaceWinding(int *out_winding);
+	extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getMeshCullMode(int *out_mode);
+	extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getStackDepth(int *out_depth);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_setDepthMode(int odepthMode, bool4 write);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_setMeshCullMode(int mode);
+	extern "C" LOVE_EXPORT void wrap_love_dll_graphics_getTextureTypes(bool4** out_capList, int* out_len);
+#pragma endregion
+
 
 #pragma region graphics Coordinate System
 
@@ -780,9 +800,15 @@ namespace wrap
 
 #pragma region type - Mesh
     using love::graphics::Mesh;
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Mesh_setVertices(Mesh *t, int vertoffset, Float2 pos[], Float2 uv[], Float4 color[], int vertexCount);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Mesh_setVertex(Mesh *t, int index, Float2 pos, Float2 uv, Float4 color);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Mesh_getVertex(Mesh *t, int index, Float2* out_pos, Float2* out_uv, Float4* out_color);
+
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Mesh_setVertexAttribute(Mesh *mesh, int vertIndex, int attrIndex, void *dataPtr, int dataLen);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Mesh_getVertexAttribute(Mesh *mesh, int vertIndex, int attrIndex, void **out_dataPtr, int *out_dataLen);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Mesh_setVertices(Mesh *t, int vertOffset, void *inputData, int dataSize);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Mesh_getVertex(Mesh *t, int index, void **out_data, int *out_dataSize);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Mesh_setVertex(Mesh *t, int index, char *data, int dataSize);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Mesh_getVertexFormat(Mesh *t, WrapSequenceString** out_wss, int** out_typeList, int** out_comCountList, int *out_len);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Mesh_isAttributeEnabled(Mesh *t, char* name, bool4 *out_res);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Mesh_setAttributeEnabled(Mesh *t, char* name, bool4 flag);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Mesh_getVertexCount(Mesh *t, int *out_result);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Mesh_flush(Mesh *t);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Mesh_setVertexMap_nil(Mesh *t);
@@ -928,7 +954,8 @@ namespace wrap
 #pragma region type - Texture
 	extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Texture_setMipmapFilter(Texture *i, int mipmap_type, float sharpness);
 	extern "C" LOVE_EXPORT void wrap_love_dll_type_Texture_getMipmapFilter(Texture *i, int *out_mipmap_type, float *out_sharpness);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Texture_getWidth(Texture *t, int *out_w);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Texture_getMipmapCount(Texture *t, int *out_count);
+	extern "C" LOVE_EXPORT void wrap_love_dll_type_Texture_getWidth(Texture *t, int *out_w);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Texture_getHeight(Texture *t, int *out_h);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Texture_setFilter(Texture *t, int filtermin_type, int filtermag_type, float anisotropy);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Texture_getFilter(Texture *t, int *out_filtermin_type, int *out_filtermag_type, float *out_anisotropy);

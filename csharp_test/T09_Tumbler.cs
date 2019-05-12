@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Love;
+using static Love.Misc.MeshUtils;
 
 namespace LovePhysicsTestBed
 {
@@ -55,12 +56,16 @@ namespace LovePhysicsTestBed
         {
             var rr=  Physics.NewRectangleShape(x, y, w, h, 0);
             var pp = rr.GetPoints();
-            listToDraw.Add(new KeyValuePair<Body, Mesh>(body, Graphics.NewMesh(new Vertex[]{
-                new Vertex(pp[0]),
-                new Vertex(pp[1]),
-                new Vertex(pp[2]),
-                new Vertex(pp[3]),
-            }, MeshDrawMode.Fan, SpriteBatchUsage.Static)));
+            var rawData = new Vertex[]{
+                new Vertex(pp[0].x, pp[0].y),
+                new Vertex(pp[1].x, pp[1].y),
+                new Vertex(pp[2].x, pp[2].y),
+                new Vertex(pp[3].x, pp[3].y),
+            };
+            listToDraw.Add(new KeyValuePair<Body, Mesh>(body, Graphics.NewMesh(
+                Love.Misc.MeshUtils.GetVertexFormat(),
+                Love.Misc.MeshUtils.GetVertexData(rawData),
+                MeshDrawMode.Fan, SpriteBatchUsage.Static)));
             return rr;
         }
 

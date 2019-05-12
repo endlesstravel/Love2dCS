@@ -3,6 +3,8 @@ using size_t = System.UInt32;
 using int64 = System.Int64;
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Love
 {
@@ -292,62 +294,98 @@ namespace Love
         public double? refreshrate;
     }
 
-    /// <summary>
-    /// for Mesh function
-    /// </summary>
-    public struct Vertex
+    public class MeshAttribFormat
     {
-        /// <summary>
-        /// The position of the vertex .
-        /// </summary>
-        public readonly Vector2 pos;
+        public readonly string name;
+        public readonly VertexDataType type;
+        public readonly int componentCount;
 
-        /// <summary>
-        /// The u and v texture coordinate of the vertex. Texture coordinates are normally in the range of [0, 1], but can be greater or less (see WrapMode.)
-        /// </summary>
-        public readonly Vector2 uv;
-
-        /// <summary>
-        /// The vertex color.
-        /// </summary>
-        public readonly Vector4 color;
-
-
-        /// <summary>
-        /// Mesh vertex.
-        /// </summary>
-        /// <param name="pos">The position of the vertex.</param>
-        public Vertex(Vector2 pos)
+        public MeshAttribFormat(string name, VertexDataType type, int componentCount)
         {
-            this.pos = pos;
-            uv = new Vector2(0, 0);
-            color = new Vector4(1, 1, 1, 1);
-        }
+            if (!(0 <= componentCount && componentCount <= 4))
+            {
+                throw new ArgumentOutOfRangeException("componentCount should <= 4");
+            }
 
-        /// <summary>
-        /// Mesh vertex.
-        /// </summary>
-        /// <param name="pos">The position of the vertex.</param>
-        /// <param name="uv">The u and vtexture coordinate of the vertex. Texture coordinates are normally in the range of [0, 1], but can be greater or less (see <see cref="WrapMode"/>)  <para>https://love2d.org/wiki/WrapMode</para></param>
-        /// <param name="color">The vertex color.</param>
-        public Vertex(Vector2 pos, Vector2 uv, Vector4 color)
-        {
-            this.pos = pos;
-            this.uv = uv;
-            this.color = color;
-        }
-        /// <summary>
-        /// Mesh vertex.
-        /// </summary>
-        public Vertex(float x = 0, float y = 0, float u = 0, float v = 0, float r = 1, float g = 1, float b = 1, float a = 1)
-        {
-            pos = new Vector2(x, y);
-            uv = new Vector2(u, v);
-            color = new Vector4(r, g, b, a);
+            this.name = name;
+            this.type = type;
+            this.componentCount = componentCount;
+
         }
     }
 
+    public class RenderTarget
+    {
+        readonly public Canvas canvas;
 
+        readonly public int slice;
+        readonly public int mipmap;
+
+        public RenderTarget(Canvas canvas, int slice = 0, int mipmap = 0)
+        {
+            this.canvas = canvas;
+            this.slice = slice;
+            this.mipmap = mipmap;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="canvas"></param>
+        /// <param name="slice">For cubemaps this is the cube face index to render to (between 1 and 6). For Array textures this is the array layer. For volume textures this is the depth slice. 2D canvases should use a value of 1.</param>
+        /// <param name="mipmap">The mipmap level to render to, for Canvases with mipmaps.</param>
+        /// <returns></returns>
+        public static RenderTarget FromCanvas(Canvas canvas, int slice = 0, int mipmap = 0)
+        {
+            return new RenderTarget(canvas, slice, mipmap);
+        }
+    }
+
+    public class RenderTargetInfo
+    {
+        public List<Canvas> CanvasList => renderTargetList.Select(item => item.canvas).ToList();
+        public List<RenderTarget> RenderTargetList => renderTargetList;
+        public RenderTarget DepthStencil => depthStencil;
+
+        readonly List<RenderTarget> renderTargetList = new List<RenderTarget>();
+        readonly RenderTarget depthStencil;
+
+        /// <summary>
+        /// for enabling internal depth and stencil buffers if 'depthstencil' isn't used.
+        /// </summary>
+        public bool tempDepthFlag, tempStencilFlag;
+
+        public RenderTargetInfo(List<RenderTarget> list, RenderTarget depthStencil, bool tempDepthFlag = false, bool tempStencilFlag = false)
+        {
+            this.renderTargetList = list;
+            this.depthStencil = depthStencil;
+            this.tempDepthFlag = tempDepthFlag;
+            this.tempStencilFlag = tempStencilFlag;
+        }
+
+        public void SetRenderTagets(IEnumerable<RenderTarget> rts)
+        {
+            renderTargetList.Clear();
+            renderTargetList.AddRange(rts);
+        }
+
+        public static RenderTargetInfo CreateWithDepthStencil(Canvas depthStencil, params Canvas[] renderTagets)
+        {
+            return CreateWithDepthStencil(new RenderTarget(depthStencil), renderTagets.Select(item => new RenderTarget(item)).ToArray());
+        }
+
+        public static RenderTargetInfo CreateWithDepthStencil(RenderTarget depthStencil, params RenderTarget[] renderTagets)
+        {
+            List<RenderTarget> list = new List<RenderTarget>();
+            list.AddRange(renderTagets);
+            return new RenderTargetInfo(list, depthStencil);
+        }
+
+        public static RenderTargetInfo Create(params RenderTarget[] renderTagets)
+        {
+            return CreateWithDepthStencil(null, renderTagets);
+        }
+    }
 
     public struct ColoredPoint
     {

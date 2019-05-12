@@ -980,27 +980,34 @@ namespace Love
             Discard(dc, discardStencil);
         }
 
-        /// <summary>
-        /// Creates a new Mesh.
-        /// <para>Use Mesh.SetTexture if the Mesh should be textured with an Image or Canvas when it's drawn.</para>
-        /// <para>In versions prior to 11.0, color and byte component values were within the range of 0 to 255 instead of 0 to 1.</para>
-        /// </summary>
-        /// <param name="vertices">The array filled with vertex information tables for each vertex as follows:</param>
-        /// <param name="drawMode">How the vertices are used when drawing. The default mode "fan" is sufficient for simple convex polygons.</param>
-        /// <param name="usage">The expected usage of the Mesh. The specified usage mode affects the Mesh's memory usage and performance.</param>
-        /// <returns>The new mesh.</returns>
-        public static Mesh NewMesh(Vertex[] vertices, MeshDrawMode drawMode = MeshDrawMode.Fan, SpriteBatchUsage usage = SpriteBatchUsage.Dynamic)
+        public static Mesh NewMesh(IEnumerable<MeshAttribFormat> formatList, byte[] data, 
+            MeshDrawMode drawMode = MeshDrawMode.Fan, SpriteBatchUsage usage = SpriteBatchUsage.Dynamic)
         {
-            var posArray = new Vector2[vertices.Length];
-            var uvArray = new Vector2[vertices.Length];
-            var colorArray = new Vector4[vertices.Length];
-            for (int i = 0; i < vertices.Length; i++)
+            string[] strList = formatList.Select(item => item.name).ToArray();
+            int[] typeList = formatList.Select(item => (int)item.type).ToArray();
+            int[] comCountList = formatList.Select(item => item.componentCount).ToArray();
+
+            IntPtr meshPtr = IntPtr.Zero;
+            DllTool.ExecuteNullTailStringArray(strList, (strListPtr) =>
             {
-                posArray[i] = vertices[i].pos;
-                uvArray[i] = vertices[i].uv;
-                colorArray[i] = vertices[i].color;
-            }
-            return NewMesh(posArray, uvArray, colorArray, drawMode, usage);
+                Love2dDll.wrap_love_dll_graphics_newMesh_custom(strListPtr, typeList, comCountList, strListPtr.Length, 
+                    true, data, data.Length, (int)drawMode, (int)usage, out meshPtr);
+            });
+            return LoveObject.NewObject<Mesh>(meshPtr);
+        }
+        public static Mesh NewMesh(IEnumerable<MeshAttribFormat> formatList, int count, MeshDrawMode drawMode = MeshDrawMode.Fan, SpriteBatchUsage usage = SpriteBatchUsage.Dynamic)
+        {
+            string[] strList = formatList.Select(item => item.name).ToArray();
+            int[] typeList = formatList.Select(item => (int)item.type).ToArray();
+            int[] comCountList = formatList.Select(item => item.componentCount).ToArray();
+
+            IntPtr meshPtr = IntPtr.Zero;
+            DllTool.ExecuteNullTailStringArray(strList, (strListPtr) =>
+            {
+                Love2dDll.wrap_love_dll_graphics_newMesh_custom(strListPtr, typeList, comCountList, strListPtr.Length,
+                    false, null, 0, (int)drawMode, (int)usage, out meshPtr);
+            });
+            return LoveObject.NewObject<Mesh>(meshPtr);
         }
 
         public static void Points(ColoredPoint[] coloredPoints)
@@ -1107,5 +1114,114 @@ namespace Love
         {
             Scale(scale.x, scale.y);
         }
+
+
+
+
+
+
+
+
+        /// <summary>
+        /// Captures drawing operations to a Canvas
+        /// <para>Sets the render target to a specified Canvas. All drawing operations until the next love.graphics.setCanvas call will be redirected to the Canvas and not shown on the screen.</para>
+        /// <para>if Length of canvas is zero, then resets the render target to the screen, i.e. re-enables drawing to the screen.</para>
+        /// </summary>
+        /// <param name="canvas"></param>
+        public static void SetCanvas(RenderTargetInfo renderTargetInfo)
+        {
+
+            if (renderTargetInfo.RenderTargetList.Count == 0 && renderTargetInfo.DepthStencil == null)
+            {
+                SetCanvas();
+                return;
+            }
+
+            int tcount = renderTargetInfo.RenderTargetList.Count + 1;
+            IntPtr[] canvaList = new IntPtr[tcount];
+            int[] sliceList = new int[tcount];
+            int[] mipmapList = new int[tcount];
+
+            if (renderTargetInfo.DepthStencil != null && renderTargetInfo.DepthStencil.canvas != null)
+            {
+                canvaList[0] = renderTargetInfo.DepthStencil.canvas.p;
+                sliceList[0] = renderTargetInfo.DepthStencil.slice;
+                mipmapList[0] = renderTargetInfo.DepthStencil.mipmap;
+            }
+
+            for (int i = 1; i < tcount; i++)
+            {
+                var rt = renderTargetInfo.RenderTargetList[i - 1];
+                canvaList[i] = rt.canvas.p;
+                sliceList[i] = rt.slice;
+                mipmapList[i] = rt.mipmap;
+            }
+            Love2dDll.wrap_love_dll_graphics_setCanvasRenderTagets(canvaList, sliceList, mipmapList, canvaList.Length, renderTargetInfo.tempDepthFlag, renderTargetInfo.tempStencilFlag);
+        }
+
+
+        /// <summary>
+        /// Returns the current target Canvas. Returns zero length array if drawing to the real screen.
+        /// </summary>
+        public static RenderTargetInfo GetCanvas()
+        {
+            Love2dDll.wrap_love_dll_graphics_getCanvasTagets(out var canvasPtr, out var sliceListPtr, out var mipmapListPtr, out int targetCount);
+            var canvasList = DllTool.ReadIntPtrsWithConvertAndRelease<Canvas>(canvasPtr, targetCount);
+            var sliceList = DllTool.ReadInt32sAndRelease(sliceListPtr, targetCount);
+            var mipmapList = DllTool.ReadInt32sAndRelease(mipmapListPtr, targetCount);
+
+            List<RenderTarget> list = new List<RenderTarget>(targetCount);
+            RenderTarget depthStencil = null;
+            for (int i = 0; i < targetCount; i++)
+            {
+                var rt = RenderTarget.FromCanvas(canvasList[i], sliceList[i], mipmapList[i]);
+                if (i == 0)
+                    depthStencil = rt;
+                else
+                    list.Add(rt);
+            }
+
+            return new RenderTargetInfo(list, depthStencil);
+        }
+
+
+
+        /// <summary>
+        /// Captures drawing operations to a Canvas
+        /// <para>Sets the render target to a specified Canvas. All drawing operations until the next love.graphics.setCanvas call will be redirected to the Canvas and not shown on the screen.</para>
+        /// <para>if Length of canvas is zero, then resets the render target to the screen, i.e. re-enables drawing to the screen.</para>
+        /// </summary>
+        /// <param name="canvas"></param>
+        public static void SetCanvas(params Canvas[] canvas)
+        {
+            if (canvas == null)
+            {
+                canvas = new Canvas[0];
+            }
+
+            if (canvas.Length == 0)
+            {
+                Love2dDll.wrap_love_dll_graphics_setCanvasEmpty();
+                return;
+            }
+
+            SetCanvas(RenderTargetInfo.CreateWithDepthStencil(null, canvas));
+        }
+
+        //public static Canvas[] GetCanvas()
+        //{
+        //    IntPtr out_canvaList = IntPtr.Zero;
+        //    int out_canvaList_length = 0;
+        //    Love2dDll.wrap_love_dll_graphics_getCanvas(out out_canvaList, out out_canvaList_length);
+        //    var buffer = DllTool.ReadIntPtrsAndRelease(out_canvaList, out_canvaList_length);
+
+        //    Canvas[] canvas = new Canvas[buffer.Length];
+        //    for (int i = 0; i < buffer.Length; i++)
+        //    {
+        //        canvas[i] = LoveObject.NewObject<Canvas>(buffer[i]);
+        //    }
+
+        //    return canvas;
+        //}
     }
 }

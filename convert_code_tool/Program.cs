@@ -208,6 +208,15 @@ namespace convert_code_tool
             {"WrapString** out",  new CSParams(true, "IntPtr")},
             {"char*",  new CSParams(false, "byte[]")},
 
+            {"void*",  new CSParams(false, "byte[]")},
+            {"void** out",  new CSParams(true, "IntPtr")},
+
+            {"Mesh*", new CSParams(false, "IntPtr")},
+            {"Texture*", new CSParams(false, "IntPtr")},
+            {"Quad*", new CSParams(false, "IntPtr")},
+            {"Canvas**", new CSParams(false, "IntPtr[]")},
+            {"Canvas*** out", new CSParams(true, "IntPtr")},
+
             {"Body*", new CSParams(false, "IntPtr")},
             {"Body**", new CSParams(true, "IntPtr")},
 

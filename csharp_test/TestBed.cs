@@ -17,6 +17,7 @@ namespace LovePhysicsTestBed
             list = new List<Test>()
             {
                 new T10_RayCast(),
+                new T01_Tiles(),
                 new T23_Pulleys(),
                 new T21_Gears(),
                 new T24_RopeJoint(),
@@ -30,7 +31,6 @@ namespace LovePhysicsTestBed
                 new T02_HeavyOnLight(),
                 new T15_Pinball(),
                 new T05_BasicSliderCrank(),
-                new T01_Tiles(),
                 new T09_Tumbler(),
                 //new T01_Tiles_FV(),
                 //new T02_HeavyOnLight_FV(),

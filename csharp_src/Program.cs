@@ -308,7 +308,7 @@ namespace LoveTest
         }
         public override void OnDraw()
         {
-          
+
         }
     }
 
@@ -460,10 +460,14 @@ namespace LoveTest
 
         public override void OnDraw()
         {
+            if (Mouse.IsPressed(0))
+                Console.WriteLine("Mouse.IsPressed(0)");
+            if (Mouse.IsReleased(0))
+                Console.WriteLine("Mouse.IsReleased(0)");
+
             Graphics.SetColor(0, 0, 0);
-
             bool hasPreviousPos = (Mouse.GetPreviousX() != Mouse.GetX() || Mouse.GetPreviousY() != Mouse.GetY());
-
+            Mouse.GetPreviousX();
             string[] str =
             {
                 "[A-L]: set cursor to different system curosr",
@@ -1041,12 +1045,23 @@ namespace LoveTest
             rectY = 300;// * (float)(1 + Math.Cos(Timer.GetTime() * Math.PI));
 
             Graphics.GetCanvas();
+
+
+            int width = 800, height = 600;
+            var normalCanvas = Graphics.NewCanvas(width, height, new Graphics.Settings()
+            {
+                format = PixelFormat.RGBA8
+            });
+            var depthStencil = Graphics.NewCanvas(width, height, new Graphics.Settings()
+            {
+                format = PixelFormat.DEPTH24
+            });
         }
 
         void DrawStencil()
         {
             // draw a rectangle as a stencil.
-            // Each pixel touched by the rectangle will have its stencil value set to 1. 
+            // Each pixel touched by the rectangle will have its stencil value set to 1.
             // The rest will be 0.
             Graphics.Stencil(() =>
             {
@@ -1075,6 +1090,76 @@ namespace LoveTest
 
             // recovery stencil
             Graphics.SetStencilTest();
+        }
+    }
+
+
+    [StageName("test depth buffer")]
+    class TestDepthBuffer : Stage
+    {
+        const string sharderStr = @"
+    extern float depth;
+    varying vec4 vpos;
+
+    #ifdef VERTEX
+    vec4 position(mat4 transform_projection, vec4 vertex_position)
+    {
+        vpos = transform_projection * vertex_position;
+        vpos.z = depth;
+        return vpos;
+    }
+    #endif
+    #ifdef PIXEL
+
+    void effect()
+    {
+        love_Canvases[0] = VaryingColor;
+    }
+
+    #endif
+";
+        Shader shader;
+        Canvas depthBuffer = null, renderTarget1 = null;
+        public override void OnLoad()
+        {
+            int width = 1000, height = 1000;
+            renderTarget1 = Graphics.NewCanvas(width, height, new Graphics.Settings()
+            {
+                format = PixelFormat.RGBA8
+            });
+            depthBuffer = Graphics.NewCanvas(width, height, new Graphics.Settings()
+            {
+                format = PixelFormat.DEPTH16
+            });
+            shader = Graphics.NewShader(sharderStr);
+        }
+
+        public override void OnUpdate(float dt)
+        {
+
+        }
+        public override void OnDraw()
+        {
+            Graphics.SetCanvas(RenderTargetInfo.CreateWithDepthStencil(depthBuffer, renderTarget1));
+            Graphics.Clear(0.4f, 0.4f, 1.0f, 0f);
+
+            Graphics.SetShader(shader);
+            shader.Send("depth", 1.0f);
+            Graphics.SetDepthMode(CompareMode.Less, true);
+
+            shader.Send("depth", 0.5f);
+            Graphics.SetColor(Color.Red);
+            Graphics.Rectangle(DrawMode.Fill, 200, 200, 100, 100);
+
+            shader.Send("depth", 0.8f);
+            Graphics.SetColor(Color.Green);
+            Graphics.Rectangle(DrawMode.Fill, 250, 250, 100, 100);
+
+            Graphics.Reset();
+
+            Graphics.Draw(renderTarget1);
+            Graphics.Draw(depthBuffer, 0f, 0f, 0f, 0.1f, 0.1f);
+            Graphics.SetCanvas();
         }
     }
 
@@ -1278,6 +1363,7 @@ namespace LoveTest
 
         public override void Load()
         {
+            AddStage(new TestDepthBuffer());
             AddStage(new TestLua());
             AddStage(new TestMouse());
             AddStage(new TestKeyborad());
@@ -1445,308 +1531,6 @@ namespace LoveTest
             {
                 Console.WriteLine(e);
             }
-        }
-    }
-
-
-    class TestQuadTreeQueryAreaSingle : TestQuadTreeScene
-    {
-        const float Width = 600, Height = 600;
-
-        public override void Draw()
-        {
-            var x = Mouse.GetX();
-            var y = Mouse.GetY();
-            Graphics.Clear(0.7f, 0.7f, 0.7f);
-
-            var msRect = new RectangleF(x, y, Width, Height);
-
-            // draw rect selected
-            Graphics.SetColor(1, 0, 0);
-            foreach (var item in rectList)
-            {
-                if (item.IntersectsWith(msRect))
-                {
-                    Graphics.SetColor(Color.Red);
-                }
-                else
-                {
-                    Graphics.SetColor(Color.White);
-                }
-                if (m_drawDebugInfo)
-                    Graphics.Rectangle(DrawMode.Line, item);
-            }
-
-            // draw mouse rect (BLUE)
-            Graphics.SetColor(0, 0, 1);
-            Graphics.Rectangle(DrawMode.Line, x, y, Width, Height);
-            base.Draw();
-        }
-    }
-
-    class TestQuadTreeQueryArea : TestQuadTreeScene
-    {
-        const float Width = 600, Height = 600;
-        public override void Draw()
-        {
-            var x = Mouse.GetX();
-            var y = Mouse.GetY();
-            Graphics.Clear(0.7f, 0.7f, 0.7f);
-
-            // draw tree
-            if (m_drawDebugInfo)
-                tree.DrawDebug();
-
-            // query and draw container item (RED)
-            for (int i = 0; i < 100; i++)
-                tree.QueryArea(new RectangleF(x, y, Width, Height));
-            var queryResult = tree.QueryArea(new RectangleF(x, y, Width, Height));
-
-            // draw rect selected
-            Graphics.SetColor(1, 0, 0);
-            foreach (var item in queryResult)
-            {
-                if (m_drawDebugInfo)
-                    Graphics.Rectangle(DrawMode.Line, item.Zone);
-            }
-
-            // draw mouse rect (BLUE)
-            Graphics.SetColor(0, 0, 1);
-            Graphics.Rectangle(DrawMode.Line, x, y, Width, Height);
-
-            base.Draw();
-        }
-    }
-
-    class TestSingleRectRaycast : TestQuadTreeScene
-    {
-        public override void Draw()
-        {
-            float x = 300, y = 200;
-            x = Mouse.GetX() * 100;
-            y = Mouse.GetY() * 100;
-            Graphics.Clear(0.7f, 0.7f, 0.7f);
-
-            // draw mouse line (RED)
-            Graphics.SetColor(1, 0, 0);
-            Graphics.Line(0, 0, x, y);
-
-            // draw ray cast info (GREED)
-            Graphics.SetPointSize(10);
-            Graphics.SetColor(0, 1, 0);
-            foreach (var item in rectList)
-            {
-                Ray2D ray = new Ray2D(0, 0, x, y);
-                if (ray.Intersects(item, out var result))
-                {
-                    if (m_drawDebugInfo)
-                        Graphics.Points(result.X, result.Y);
-                }
-            }
-
-            base.Draw();
-        }
-    }
-
-    class TestRectRaycastAll : TestQuadTreeScene
-    {
-        public override void Draw()
-        {
-            Graphics.Clear(0.7f, 0.7f, 0.7f);
-            float x = 300, y = 200;
-            x = Mouse.GetX() * 100;
-            y = Mouse.GetY() * 100;
-
-            Ray2D ray = new Ray2D(0, 0, x, y);
-
-            Graphics.SetColor(Color.White);
-            Graphics.Line(0, 0, x, y);
-
-            var result = tree.RayCastAll(ray);
-
-            if (m_drawDebugInfo)
-                tree.DrawDebug();
-
-            Graphics.SetColor(Color.Black);
-            Graphics.SetPointSize(2);
-            foreach (var cr in result)
-            {
-                Graphics.Points(cr.Intersection);
-            }
-
-            base.Draw();
-        }
-    }
-
-    class TestRectRaycast : TestQuadTreeScene
-    {
-        public override void Draw()
-        {
-            Graphics.Clear(0.7f, 0.7f, 0.7f);
-            float x = 300, y = 200;
-            x = Mouse.GetX() * 100;
-            y = Mouse.GetY() * 100;
-
-            Graphics.SetColor(Color.White);
-            Graphics.Line(0, 0, x, y);
-
-
-            Ray2D ray = new Ray2D(0, 0, x, y);
-            if (m_drawDebugInfo)
-                tree.DrawDebug();
-
-            Graphics.SetColor(Color.Black);
-            Graphics.SetPointSize(4);
-            if (tree.RayCast(ray, out var result))
-            {
-                Graphics.Points(result.Intersection);
-                Graphics.Print(result.Intersection.ToString());
-            }
-            else
-            {
-                Graphics.Print("None");
-            }
-
-            base.Draw();
-        }
-    }
-
-
-    class TestQuadTreeMoveSingle : TestQuadTreeScene
-    {
-        public override void Draw()
-        {
-            Graphics.Clear(0.7f, 0.7f, 0.7f);
-            float x = 300, y = 200;
-            x = Mouse.GetX() * 100;
-            y = Mouse.GetY() * 100;
-
-            Graphics.SetColor(Color.White);
-            Graphics.Line(0, 0, x, y);
-
-
-            Ray2D ray = new Ray2D(0, 0, x, y);
-            if (m_drawDebugInfo)
-                tree.DrawDebug();
-
-            Graphics.SetColor(Color.Black);
-            Graphics.SetPointSize(4);
-            if (tree.RayCast(ray, out var result))
-            {
-                Graphics.Points(result.Intersection);
-                Graphics.Print(result.Intersection.ToString());
-            }
-            else
-            {
-                Graphics.Print("None");
-            }
-
-            base.Draw();
-        }
-    }
-
-    class TestQuadTreeScene : Scene
-    {
-        protected bool m_drawDebugInfo = false;
-        const int NUM = 1 * 1000;
-
-        #region Setup
-        protected readonly List<RectangleF> rectList = new List<RectangleF>();
-
-        RectangleF RandomGenItemToTree()
-        {
-            //var w = Mathf.Random(10, 500);
-            //var h = Mathf.Random(10, 400);
-            //var x = Mathf.Random(10, 1000 - w);
-            //var y = Mathf.Random(10, 1000 - h);
-
-            var w = Mathf.Random(10, 30);
-            var h = Mathf.Random(10, 30);
-            var x = Mathf.Random(10, 1000 - w);
-            var y = Mathf.Random(10, 1000 - h);
-            return new RectangleF(x, y, w, h);
-        }
-
-        QuadTree GenerateTree(int num = NUM)
-        {
-            var tree = new QuadTree();
-            for (int i = 0; i < num; i++)
-            {
-                var rect = RandomGenItemToTree();
-                rectList.Add(rect);
-                tree.Add(new Leaf(rect));
-            }
-            this.tree = tree;
-            return tree;
-        }
-
-        protected QuadTree tree;
-        public override void Load()
-        {
-            Window.SetMode(1000, 1000);
-            GenerateTree();
-        }
-
-        int flag = 0;
-        public override void Update(float dt)
-        {
-            FPSGraph.Update(dt);
-            flag += (int)(dt * 1000);
-            if (flag > 1000)
-            {
-                //GenerateTree();
-                flag = 0;
-            }
-        }
-
-        public override void Draw()
-        {
-            FPSGraph.Draw();
-        }
-
-        public override bool ErrorHandler(System.Exception e)
-        {
-            Console.Write(e.StackTrace);
-            return false;
-        }
-        #endregion
-    }
-
-    class TestMoonShine : Scene
-    {
-        Moonshine ms;
-        Image img;
-
-        public override void WheelMoved(int x, int y)
-        {
-            Console.WriteLine($"{x}, {y}");
-        }
-
-        public override void Load()
-        {
-            ms = Moonshine
-                .China(Moonshine.CRT.Default)
-                .Next(Moonshine.DMG.Default)
-                .Next(Moonshine.Scanlines.Default)
-                .Next(Moonshine.Vignette.Default)
-                ;
-            img = Graphics.NewImage("res/img.png");
-        }
-
-        public override void Update(float dt)
-        {
-            FPSGraph.Update(dt);
-        }
-
-        public override void Draw()
-        {
-            ms.Draw(() =>
-            {
-                //Graphics.Rectangle(DrawMode.Fill, 300, 200, 200, 200);
-                Graphics.Draw(img);
-            });
-            //Graphics.Draw(img, 200, 200);
-            FPSGraph.Draw();
         }
     }
 

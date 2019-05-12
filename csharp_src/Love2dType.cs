@@ -1070,37 +1070,68 @@ namespace Love
         /// </summary>
         protected Mesh() {}
 
-        /// <summary>
-        /// Replaces a range of vertices in the Mesh with new ones. 
-        /// </summary>
-        /// <param name="vertices">each vertex</param>
-        /// <param name="startVertex">The index of the first vertex to replace.</param>
-        public void SetVertices(Vertex[] vertices, int startVertex = 0)
+
+        public void SetVertexAttribute(int vertIndex, int attrIndex, byte[] data)
         {
-            var posArray = new Vector2[vertices.Length];
-            var uvArray = new Vector2[vertices.Length];
-            var colorArray = new Vector4[vertices.Length];
-            for (int i = 0; i < vertices.Length; i++)
-            {
-                posArray[i] = vertices[i].pos;
-                uvArray[i] = vertices[i].uv;
-                colorArray[i] = vertices[i].color;
-            }
-            Love2dDll.wrap_love_dll_type_Mesh_setVertices(p, startVertex, posArray, uvArray, colorArray, posArray.Length);
-        }
-        public void SetVertex(int index, Vertex vertex)
-        {
-            Love2dDll.wrap_love_dll_type_Mesh_setVertex(p, index, vertex.pos, vertex.uv, vertex.color);
+            Love2dDll.wrap_love_dll_type_Mesh_setVertexAttribute(p, vertIndex, attrIndex, data, data.Length);
         }
 
-        /// TODO
-        public Vertex GetVertex(int index)
+        public byte[] GetVertexAttribute(int vertIndex, int attrIndex)
         {
-            Vector2 pos, uv;
-            Vector4 color;
-            Love2dDll.wrap_love_dll_type_Mesh_getVertex(p, index, out pos, out uv, out color);
-            return new Vertex(pos, uv, color);
+            Love2dDll.wrap_love_dll_type_Mesh_getVertexAttribute(p, vertIndex, attrIndex, out IntPtr dataPtr, out int dataLen);
+            return DllTool.ReadBytesAndRelease(dataPtr, dataLen);
+
         }
+        public void SetVertices(int vertOffset, byte[] inputData)
+        {
+            Love2dDll.wrap_love_dll_type_Mesh_setVertices(p, vertOffset, inputData, inputData.Length);
+        }
+
+        public byte[] GetVertex(int index)
+        {
+            Love2dDll.wrap_love_dll_type_Mesh_getVertex(p, index, out IntPtr dataPtr, out int dataSize);
+            return DllTool.ReadBytesAndRelease(dataPtr, dataSize);
+        }
+
+        public void SetVertex(int index, byte[] data)
+        {
+            Love2dDll.wrap_love_dll_type_Mesh_setVertex(p, index, data, data.Length);
+        }
+
+        public List<MeshAttribFormat> GetVertexFormat(string name)
+        {
+            Love2dDll.wrap_love_dll_type_Mesh_getVertexFormat(p, out IntPtr wss, out IntPtr typeListPtr, out IntPtr comCountListPtr, out int len);
+            string[] strList = DllTool.WSSToStringListAndRelease(wss);
+            int[] typeList = DllTool.ReadInt32sAndRelease(typeListPtr, len);
+            int[] comCountList = DllTool.ReadInt32sAndRelease(comCountListPtr, len);
+
+
+            List<MeshAttribFormat> list = new List<MeshAttribFormat>();
+            for (int i = 0; i < len; i++)
+            {
+                list.Add(new MeshAttribFormat(strList[i], (VertexDataType)typeList[i], comCountList[i]));
+            }
+            return list;
+        }
+
+        public bool IsAttributeEnabled(string name)
+        {
+            bool out_res;
+            Love2dDll.wrap_love_dll_type_Mesh_isAttributeEnabled(p, DllTool.GetNullTailUTF8Bytes(name), out out_res);
+            return out_res;
+        }
+
+        public void IsAttributeEnabled(string name, bool flag)
+        {
+            Love2dDll.wrap_love_dll_type_Mesh_setAttributeEnabled(p, DllTool.GetNullTailUTF8Bytes(name), flag);
+        }
+
+
+
+
+
+
+
 
         public int GetVertexCount()
         {
@@ -2161,6 +2192,18 @@ namespace Love
             Love2dDll.wrap_love_dll_type_Texture_getMipmapFilter(p, out out_mipmap_type_int, out out_sharpness);
             out_mipmap_type = (FilterMode)out_mipmap_type_int;
         }
+
+        /// <summary>
+        /// Gets the number of mipmaps contained in the Texture. If the texture was not created with mipmaps, it will return 0.
+        /// </summary>
+        /// <returns></returns>
+        public int GetMipmapCount()
+        {
+            int out_w;
+            Love2dDll.wrap_love_dll_type_Texture_getMipmapCount(p, out out_w);
+            return out_w;
+        }
+
 
         /// <summary>
         /// Gets the width of the Texture.

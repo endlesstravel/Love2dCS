@@ -1,4 +1,15 @@
-﻿2019年3月27日
+﻿2019年5月12日
+改变了鼠标按键的默认开始基数为0，并在控制台添加提醒。
+改变了 Graphics.NewMesh 的行为
+完善了 Mesh 模块的支持
+完善了 Lua 模块的支持
+添加了 Vector2 旋转和方向
+添加了 Mouse 的两个函数 Mouse.GetPositionPrevius() / Mouse.IsPressed() / Mouse.IsReleased()
+移除了 Love.Misc.QuadTree 模块
+添加了 Love.Misc.MeshUtis 模块
+添加了 Mouse.SetCursor(SystemCursor) 的一个重载
+
+2019年3月27日
 1.添加了物理模块的支持
 2.修复了很多bug
 

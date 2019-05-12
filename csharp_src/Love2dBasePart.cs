@@ -2282,12 +2282,7 @@ namespace Love
                 out out_canvas);
             return LoveObject.NewObject<Canvas>(out_canvas);
         }
-        public static Mesh NewMesh(Vector2[] pos, Vector2[] uv, Vector4[] color, MeshDrawMode drawMode, SpriteBatchUsage usage)
-        {
-            IntPtr out_mesh = IntPtr.Zero;
-            Love2dDll.wrap_love_dll_graphics_newMesh_specifiedVertices(pos, uv, color, pos.Length, (int)drawMode, (int)usage, out out_mesh);
-            return LoveObject.NewObject<Mesh>(out_mesh);
-        }
+
 
         /// <summary>
         /// Creates a standard Mesh with the specified number of vertices.
@@ -2705,46 +2700,12 @@ namespace Love
             return out_isWireFrame;
         }
 
-        /// <summary>
-        /// Captures drawing operations to a Canvas
-        /// <para>Sets the render target to a specified Canvas. All drawing operations until the next love.graphics.setCanvas call will be redirected to the Canvas and not shown on the screen.</para>
-        /// <para>if Length of canvas is zero, then resets the render target to the screen, i.e. re-enables drawing to the screen.</para>
-        /// </summary>
-        /// <param name="canvas"></param>
-        public static void SetCanvas(params Canvas[] canvas)
-        {
-            if (canvas == null)
-            {
-                canvas = new Canvas[0];
-            }
 
-            IntPtr[] canvaList = new IntPtr[canvas.Length];
-            for (int i = 0; i < canvas.Length; i++)
-            {
-                canvaList[i] = canvas[i].p;
-            }
 
-            Love2dDll.wrap_love_dll_graphics_setCanvas(canvaList, canvaList.Length);
-        }
 
-        /// <summary>
-        /// Returns the current target Canvas. Returns zero length array if drawing to the real screen.
-        /// </summary>
-        public static Canvas[] GetCanvas()
-        {
-            IntPtr out_canvaList = IntPtr.Zero;
-            int out_canvaList_length = 0;
-            Love2dDll.wrap_love_dll_graphics_getCanvas(out out_canvaList, out out_canvaList_length);
-            var buffer = DllTool.ReadIntPtrsAndRelease(out_canvaList, out_canvaList_length);
 
-            Canvas[] canvas = new Canvas[buffer.Length];
-            for (int i = 0; i < buffer.Length; i++)
-            {
-                canvas[i] = LoveObject.NewObject<Canvas>(buffer[i]);
-            }
 
-            return canvas;
-        }
+
 
         /// <summary>
         /// Routes drawing operations through a shader.
@@ -2775,6 +2736,100 @@ namespace Love
             IntPtr out_shader = IntPtr.Zero;
             Love2dDll.wrap_love_dll_graphics_getShader(out out_shader);
             return LoveObject.NewObject<Shader>(out_shader);
+        }
+
+        #endregion
+
+        #region graphics 11.0
+        public static void DrawInstanced(Mesh mesh, int instanceCount, float x = 0, float y = 0, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        {
+            if (mesh == null)
+                throw new System.ArgumentNullException("mesh");
+
+            Love2dDll.wrap_love_dll_graphics_drawInstanced(mesh.p, instanceCount, x, y, angle, sx, sy, ox, oy, kx, ky);
+        }
+
+        public static void DrawLayer(Texture texture, Quad quad, int layer, float x = 0, float y = 0, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        {
+            if (texture == null)
+                throw new System.ArgumentNullException("texture");
+            Love2dDll.wrap_love_dll_graphics_drawLayer(texture.p, quad == null ? IntPtr.Zero : quad.p, layer, x, y, angle, sx, sy, ox, oy, kx, ky);
+        }
+
+        public static void DrawLayer(Texture texture, int layer, float x = 0, float y = 0, float angle = 0, float sx = 1, float sy = 1, float ox = 0, float oy = 0, float kx = 0, float ky = 0)
+        {
+            DrawLayer(texture, null, layer, x, y, angle, sx, sy, ox, oy, kx, ky);
+        }
+
+        public static void FlushBatch()
+        {
+            Love2dDll.wrap_love_dll_graphics_flushBatch();
+        }
+
+        public static bool ValidateShader(bool gles, string vertexCodeStr, string pixelCodeStr, out string errorString)
+        {
+            string vertexCode, pixelCode;
+            Love2dGraphicsShaderBoot.shaderCodeToGLSL(gles, vertexCodeStr, pixelCodeStr, out vertexCode, out pixelCode);
+            Love2dDll.wrap_love_dll_graphics_validateShader(gles, DllTool.GetNullTailUTF8Bytes(pixelCodeStr), DllTool.GetNullTailUTF8Bytes(pixelCode), 
+                out var success, out var errorStrPtr);
+            errorString = DllTool.WSToStringAndRelease(errorStrPtr);
+            return success;
+        }
+
+        public static void GetDepthMode(out CompareMode compare, out bool write)
+        {
+            Love2dDll.wrap_love_dll_graphics_getDepthMode(out int mode, out write);
+            compare = (CompareMode)mode;
+        }
+
+        public static VertexWinding GetFrontFaceWinding()
+        {
+            int out_winding;
+            Love2dDll.wrap_love_dll_graphics_getFrontFaceWinding(out out_winding);
+            return (VertexWinding)out_winding;
+        }
+
+        public static VertexCullMode GetMeshCullMode()
+        {
+            int out_mode;
+            Love2dDll.wrap_love_dll_graphics_getMeshCullMode(out out_mode);
+            return (VertexCullMode)out_mode;
+        }
+
+        public static int GetStackDepth()
+        {
+            int out_depth;
+            Love2dDll.wrap_love_dll_graphics_getStackDepth(out out_depth);
+            return out_depth;
+        }
+
+        public static void SetDepthMode(CompareMode odepthMode, bool write)
+        {
+            Love2dDll.wrap_love_dll_graphics_setDepthMode((int)odepthMode, write);
+        }
+
+        public static void SetMeshCullMode(VertexCullMode mode)
+        {
+            Love2dDll.wrap_love_dll_graphics_setMeshCullMode((int)mode);
+        }
+
+        /// <summary>
+        /// return supported TextureType
+        /// </summary>
+        /// <returns></returns>
+        public static TextureType[] GetTextureTypes()
+        {
+            Love2dDll.wrap_love_dll_graphics_getTextureTypes(out var capListPtr, out int len);
+            var capList = DllTool.ReadBooleansAndRelease(capListPtr, len);
+            List<TextureType> supported = new List<TextureType>();
+            for (int i = 0; i <= (int)TextureType.TEXTURE_CUBE; i++)
+            {
+                if (capList[i])
+                {
+                    supported.Add((TextureType)i);
+                }
+            }
+            return supported.ToArray();
         }
 
         #endregion

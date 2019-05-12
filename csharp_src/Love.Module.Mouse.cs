@@ -277,8 +277,41 @@ namespace Love
 
     public partial class Mouse
     {
-        static readonly Dictionary<SystemCursor, Cursor> systemCursorDict = new Dictionary<SystemCursor, Cursor>();
+        const int RememberButtonCount = 32;
+        static bool[] lastBtnDown = new bool[RememberButtonCount];
+        static bool[] currentBtnDown = new bool[RememberButtonCount];
+        public static void Step()
+        {
+            for (int i = 0; i < RememberButtonCount; i++)
+            {
+                lastBtnDown[i] = currentBtnDown[i];
+                currentBtnDown[i] = Mouse.IsDown(i);
+            }
+        }
 
+
+        public static bool IsPressed(int buttonIndex)
+        {
+            if (0 <= buttonIndex && buttonIndex <= RememberButtonCount)
+            {
+                return lastBtnDown[buttonIndex] == false && Mouse.IsDown(buttonIndex) == true;
+            }
+
+            return false;
+        }
+
+        public static bool IsReleased(int buttonIndex)
+        {
+            if (0 <= buttonIndex && buttonIndex <= RememberButtonCount)
+            {
+                return lastBtnDown[buttonIndex] == true && Mouse.IsDown(buttonIndex) == false;
+            }
+
+            return false;
+        }
+
+
+        static readonly Dictionary<SystemCursor, Cursor> systemCursorDict = new Dictionary<SystemCursor, Cursor>();
 
         /// <summary>
         /// Sets the current mouse cursor to system cursor.
@@ -349,11 +382,19 @@ namespace Love
         {
             return mousePreviousY;
         }
-
-        internal static void RemeberPositionAsPrevious()
+        public static Vector2 GetPreviousPosition()
         {
-            mousePreviousX = GetX();
-            mousePreviousY = GetY();
+            return new Vector2(mousePreviousX, mousePreviousY);
+        }
+        public static void SetPreviousPosition(float x, float y)
+        {
+            mousePreviousX = x;
+            mousePreviousY = y;
+        }
+        public static void SetPreviousPosition(Vector2 pos)
+        {
+            mousePreviousX = pos.x;
+            mousePreviousY = pos.y;
         }
     }
 

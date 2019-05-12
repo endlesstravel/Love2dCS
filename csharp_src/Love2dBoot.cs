@@ -487,7 +487,7 @@ namespace Love
         /// </summary>
         static void SystemStep(Scene scene)
         {
-            Mouse.RemeberPositionAsPrevious();
+            Mouse.SetPreviousPosition(Mouse.GetX(), Mouse.GetY());
             var box = new Event.EventQueueBox();
             while (Event.Poll(box))
             {
@@ -495,6 +495,7 @@ namespace Love
             }
 
             Timer.Step();
+            Mouse.Step();
             Keyboard.Step();
             Joystick.Step();
             FPSCounter.Step();
@@ -517,11 +518,14 @@ namespace Love
 
                 scene.Update(Timer.GetDelta());
 
-                var c = Graphics.GetBackgroundColor();
-                Graphics.Clear(c.r, c.g, c.b, c.a);
-                Graphics.Origin();
-                scene.Draw();
-                Graphics.Present();
+                if (Graphics.IsActive())
+                {
+                    var c = Graphics.GetBackgroundColor();
+                    Graphics.Clear(c.r, c.g, c.b, c.a);
+                    Graphics.Origin();
+                    scene.Draw();
+                    Graphics.Present();
+                }
 
                 if (Timer.IsLimitMaxFPS())
                 {
