@@ -327,7 +327,7 @@ namespace Love
         /// <summary>
         /// Show the Love2dCS warnning info on console.
         /// </summary>
-        public bool WarnningInfo = true;
+        public bool WarningInfo = true;
     }
 
 
@@ -468,12 +468,12 @@ namespace Love
 
                 FileSystem.SetSource(Environment.CurrentDirectory);
 
-                if (bootConfig.WarnningInfo) {
+                if (bootConfig.WarningInfo) {
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.BackgroundColor = ConsoleColor.Red;
                     Console.WriteLine($"");
-                    Console.WriteLine($"[warnning] Mouse.IsDown() MousePressed() MouseReleased() has change the button based index as 0 !");
-                    Console.WriteLine($"(warnning will disapper after two version, or set WarnningInfo as false on bootConfig)");
+                    Console.WriteLine($"[warning] Mouse.IsDown() MousePressed() MouseReleased() has change the button based index as 0 !");
+                    Console.WriteLine($"(warning will disapper after two version, or set WarnningInfo as false on bootConfig)");
                     Console.WriteLine($"");
                     Console.ResetColor();
                     Console.WriteLine($"FileSystem set source with path : {FileSystem.GetSource()}");

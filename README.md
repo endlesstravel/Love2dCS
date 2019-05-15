@@ -14,6 +14,11 @@ Links
 * [Work with ubuntu + mono-develop](develop.md)
 * [Test file example](csharp_src/Program.cs) / [Physics Test example](csharp_test/README.md)
 
+Support Platform
+---
+* .NET Framework 4.0  win-x86 / win-x64
+* .NET Core 2.0 win-x84 / win-x64
+
 Status
 ---
 Love2dCS was designed to be as close as possible to the original LÖVE API, as such the documentation provided from LÖVE largely covers usage of Love2dCS. There is a difference between Love2dCS and LÖVE where is :
@@ -23,7 +28,6 @@ Love2dCS was designed to be as close as possible to the original LÖVE API, as s
 * The `love.thread` module in LÖVE is not supply, you can use [Threading.Thread](https://docs.microsoft.com/en-us/dotnet/api/system.threading.thread) in C# instead.
 * Most index begin from 1 at LÖVE. However, but index will begin from 0 at Love2dCS
 * Love2dCS provide more [build-in module](https://endlesstravel.github.io/#/module/build-in-module-index) to convience use.
-* Love2dCS currently supports Windows x86 / x64. Linux and OSX temporarily was not supported.
 * You can work with lua as well, but only `love.load` `love.update` and `love.draw` are native supported : [Work with lua](https://endlesstravel.github.io/#/tutorial/05.use-lua). The rest of callback function is not supported.
 * Love2dCS currently based on [LÖVE 11.1](https://love2d.org/wiki/11.1)
 
@@ -93,3 +97,7 @@ Distribute
 Development
 ---
 [Develop document](develop.md)
+
+Contributor
+---
+* thanks [matej-zajacik](https://github.com/matej-zajacik) for his contribute on add and improve [document](https://github.com/endlesstravel/endlesstravel.github.io). Without him, the grammatical errors of documents would flourish everywhere.
