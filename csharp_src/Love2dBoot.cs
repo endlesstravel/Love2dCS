@@ -468,16 +468,27 @@ namespace Love
 
                 FileSystem.SetSource(Environment.CurrentDirectory);
 
-                if (bootConfig.WarningInfo) {
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.BackgroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"");
-                    Console.WriteLine($"[warning] Mouse.IsDown() MousePressed() MouseReleased() has change the button based index as 0 !");
-                    Console.WriteLine($"(warning will disapper after two version, or set WarnningInfo as false on bootConfig)");
-                    Console.WriteLine($"");
-                    Console.ResetColor();
-                    Console.WriteLine($"FileSystem set source with path : {FileSystem.GetSource()}");
-                }
+                RecordWarningInfo = bootConfig.WarningInfo;
+
+                LogWarning($"");
+                LogWarning($"[warning] Mouse.IsDown() MousePressed() MouseReleased() has change the button based index as 0 !");
+                LogWarning($"(warning will disapper after two version, or set WarnningInfo as false on bootConfig)");
+                LogWarning($"");
+
+                Console.WriteLine($"FileSystem set source with path : {FileSystem.GetSource()}");
+            }
+        }
+
+        public static bool RecordWarningInfo = true;
+
+        internal static void LogWarning(string info)
+        {
+            if (RecordWarningInfo)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.BackgroundColor = ConsoleColor.Red;
+                Console.WriteLine(info);
+                Console.ResetColor();
             }
         }
 

@@ -589,7 +589,14 @@ namespace wrap
 			global_wrap_csharp_communicate_func = wccFunc;
 			set_love_csharp_func(global_lua_state, privateCallTheCSharpCommunicateFunc, "_private_sharp_func_");
 
-			wrap_love_dll_luasupport_doString(" setmetatable(love.sharp,{ __index = function(t, k) return function(...) return love.sharp._private_sharp_func_(k, ...) end end})  ");
+			const char *to_execute_str = 
+				"(function() "
+				"    local _private_sharp_func_ = love.sharp._private_sharp_func_;"
+				"    local meta_index = function(t, k) return function(...) return _private_sharp_func_(k, ...) end; end;"
+				"    setmetatable(love.sharp,{ __index = meta_index }); "
+				"end)()"
+				;
+			wrap_love_dll_luasupport_doString(to_execute_str);
 		});
 	}
 

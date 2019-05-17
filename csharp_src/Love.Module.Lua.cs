@@ -293,21 +293,33 @@ namespace Love
         /// <summary>
         /// init lua moduel automatically, then do the lua file.
         /// </summary>
-        /// <param name="filepath"></param>
+        /// <param name="filepath">file to execute</param>
         public static void Load(string filepath)
         {
+            if (IsInit)
+            {
+                Boot.LogWarning("[warning] Lua.Load: lua moudle already init. if you want execute file, call `Love.Lua.DoFile` please");
+                return;
+            }
             Init();
             DoFile(filepath);
+            DoString("if love.load then love.load() end");
         }
 
         /// <summary>
         /// init lua moduel automatically, then do the lua code.
         /// </summary>
-        /// <param name="filepath"></param>
+        /// <param name="luaCode">code to execute</param>
         public static void LoadFromString(string luaCode)
         {
+            if (IsInit)
+            {
+                Boot.LogWarning("[warning] Lua.LoadFromString: lua moudle already init. if you want execute file, call `Love.Lua.DoFile` please");
+                return;
+            }
             Init();
             DoString(luaCode);
+            DoString("if love.load then love.load() end");
         }
 
         /// <summary>
@@ -328,30 +340,8 @@ namespace Love
             {
                 return;
             }
-
-            Love2dDll.wrap_love_dll_luasupport_init(luaState, static_WCSCFD); // not Do not pass FunctionBack in directly ! the delegate variable from Automatically generate temporary variables!
-            //var loveModule = new string[]{
-            //    "data",
-            //    "thread",
-            //    "timer",
-            //    "event",
-            //    "keyboard",
-            //    "joystick",
-            //    "mouse",
-            //    "touch",
-            //    "sound",
-            //    "system",
-            //    "audio",
-            //    "image",
-            //    "video",
-            //    "font",
-            //    "window",
-            //    "graphics",
-            //    "math",
-            //    "physics",
-            //};
-            //DoString($"require('love'); ");
-            //DoString(string.Join("\n", loveModule.Select(module => $"require('love.{module}');")));
+            // not Do not pass FunctionBack in directly ! the delegate variable from Automatically generate temporary variables!
+            Love2dDll.wrap_love_dll_luasupport_init(luaState, static_WCSCFD);
             IsInit = true;
         }
 
