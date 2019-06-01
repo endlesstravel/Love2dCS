@@ -359,6 +359,11 @@ namespace Love
             Y *= val;
         }
 
+        public Vector2 Normalized()
+        {
+            return Vector2.Normalize(this);
+        }
+
         public static Vector2 Normalize(Vector2 value)
         {
             float val = 1.0f / (float)Math.Sqrt((value.X * value.X) + (value.Y * value.Y));

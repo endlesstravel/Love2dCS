@@ -283,7 +283,7 @@ namespace Love
 
     #endregion
 
-    
+
     #region Love Type
 
     public partial class Rasterizer
@@ -342,7 +342,7 @@ namespace Love
             var coloredStr = ColoredStringArray.Create(text);
             IntPtr out_pws = IntPtr.Zero;
             int out_maxWidth = 0;
-            
+
             coloredStr.ExecResource( tmp => {
                 Love2dDll.wrap_love_dll_type_Font_getWrap(p, tmp.Item1, tmp.Item2, coloredStr.Length, wrap_limit, out out_maxWidth, out out_pws);
             });
@@ -432,8 +432,13 @@ namespace Love
             int offset = 0;
             foreach (var m in valueArray)
             {
-                Array.Copy(m.data, 0, values, offset, m.data.Length);
-                offset += m.data.Length;
+                values[offset + 00] = m.M11;
+                values[offset + 01] = m.M12;
+
+                values[offset + 02] = m.M21;
+                values[offset + 03] = m.M22;
+
+                offset += (2 * 2);
             }
             SendMatrix(name, values, 2, 2, valueArray.Length);
         }
@@ -449,8 +454,19 @@ namespace Love
             int offset = 0;
             foreach (var m in valueArray)
             {
-                Array.Copy(m.data, 0, values, offset, m.data.Length);
-                offset += m.data.Length;
+                values[offset + 00] = m.M11;
+                values[offset + 01] = m.M12;
+                values[offset + 02] = m.M13;
+
+                values[offset + 03] = m.M21;
+                values[offset + 04] = m.M22;
+                values[offset + 05] = m.M23;
+
+                values[offset + 06] = m.M31;
+                values[offset + 07] = m.M32;
+                values[offset + 08] = m.M33;
+
+                offset += (3 * 3);
             }
             SendMatrix(name, values, 3, 3, valueArray.Length);
         }
@@ -466,8 +482,27 @@ namespace Love
             int offset = 0;
             foreach (var m in valueArray)
             {
-                Array.Copy(m.data, 0, values, offset, m.data.Length);
-                offset += m.data.Length;
+                values[offset + 00] = m.M11;
+                values[offset + 01] = m.M12;
+                values[offset + 02] = m.M13;
+                values[offset + 03] = m.M14;
+
+                values[offset + 04] = m.M21;
+                values[offset + 05] = m.M22;
+                values[offset + 06] = m.M23;
+                values[offset + 07] = m.M24;
+
+                values[offset + 08] = m.M31;
+                values[offset + 09] = m.M32;
+                values[offset + 10] = m.M33;
+                values[offset + 11] = m.M34;
+
+                values[offset + 12] = m.M41;
+                values[offset + 13] = m.M42;
+                values[offset + 14] = m.M43;
+                values[offset + 15] = m.M44;
+
+                offset += (4 * 4);
             }
             SendMatrix(name, values, 4, 4, valueArray.Length);
         }

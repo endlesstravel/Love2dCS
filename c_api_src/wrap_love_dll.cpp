@@ -589,7 +589,7 @@ namespace wrap
 			global_wrap_csharp_communicate_func = wccFunc;
 			set_love_csharp_func(global_lua_state, privateCallTheCSharpCommunicateFunc, "_private_sharp_func_");
 
-			const char *to_execute_str = 
+			const char *to_execute_str =
 				"(function() "
 				"    local _private_sharp_func_ = love.sharp._private_sharp_func_;"
 				"    local meta_index = function(t, k) return function(...) return _private_sharp_func_(k, ...) end; end;"
@@ -620,7 +620,7 @@ namespace wrap
 
 	void wrap_love_dll_luasupport_debugStackDump()
 	{
-		// ´ÓÕ»µ×µ½Õ»¶¥ÒÀ´Î±éÀúÕû¸ö¶ÑÕ»
+		// ï¿½ï¿½Õ»ï¿½×µï¿½Õ»ï¿½ï¿½ï¿½ï¿½ï¿½Î±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ»
 		lua_State* L = global_lua_state;
 		int top = lua_gettop(L);
 		for (int i = 1; i <= top; ++i)
@@ -703,53 +703,53 @@ namespace wrap
 
 	void wrap_love_dll_luasupport_pushIntegerArray(int* num, int num_length)
 	{
-		// void lua_createtable (lua_State *L, int narr, int nrec);  // ´´½¨Ò»¸ö¿ÕµÄtable²¢Ñ¹ÈëÕ»ÖÐ£¬²¢Ô¤·ÖÅänarr¸öarrayÔªËØµÄ¿Õ¼äºÍÔ¤·ÖÅänrec¸ö·ÇarrayÔªËØµÄ¿Õ¼ä
-		lua_newtable(global_lua_state); // // lua_createtableµÄÌØÀý°æ£¬Ïàµ±ÓÚµ÷ÓÃ lua_createtable(L, 0, 0)
+		// void lua_createtable (lua_State *L, int narr, int nrec);  // ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Õµï¿½tableï¿½ï¿½Ñ¹ï¿½ï¿½Õ»ï¿½Ð£ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½ï¿½ï¿½narrï¿½ï¿½arrayÔªï¿½ØµÄ¿Õ¼ï¿½ï¿½Ô¤ï¿½ï¿½ï¿½ï¿½nrecï¿½ï¿½ï¿½ï¿½arrayÔªï¿½ØµÄ¿Õ¼ï¿½
+		lua_newtable(global_lua_state); // // lua_createtableï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ£¬ï¿½àµ±ï¿½Úµï¿½ï¿½ï¿½ lua_createtable(L, 0, 0)
 		int tableIndex = lua_gettop(global_lua_state);
 		for (int i = 0; i < num_length; i++)
 		{
 			lua_pushinteger(global_lua_state, i); // k
 			lua_pushinteger(global_lua_state, num[i]); // v
-			lua_settable(global_lua_state, tableIndex); // ×öÒ»¸öµÈ¼ÛÓÚ t[k] = v µÄ²Ù×÷£¬ ÕâÀï t ÊÇ¸ø³öµÄË÷Òý´¦µÄÖµ£¬ v ÊÇÕ»¶¥µÄÄÇ¸öÖµ£¬ k ÊÇÕ»¶¥Ö®ÏÂµÄÖµ¡£
+			lua_settable(global_lua_state, tableIndex); // ï¿½ï¿½Ò»ï¿½ï¿½ï¿½È¼ï¿½ï¿½ï¿½ t[k] = v ï¿½Ä²ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ t ï¿½Ç¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ v ï¿½ï¿½Õ»ï¿½ï¿½ï¿½ï¿½ï¿½Ç¸ï¿½Öµï¿½ï¿½ k ï¿½ï¿½Õ»ï¿½ï¿½Ö®ï¿½Âµï¿½Öµï¿½ï¿½
 		}
 	}
 
 	void wrap_love_dll_luasupport_pushNumberArray(float* num, int num_length)
 	{
-		// void lua_createtable (lua_State *L, int narr, int nrec);  // ´´½¨Ò»¸ö¿ÕµÄtable²¢Ñ¹ÈëÕ»ÖÐ£¬²¢Ô¤·ÖÅänarr¸öarrayÔªËØµÄ¿Õ¼äºÍÔ¤·ÖÅänrec¸ö·ÇarrayÔªËØµÄ¿Õ¼ä
-		lua_newtable(global_lua_state); // // lua_createtableµÄÌØÀý°æ£¬Ïàµ±ÓÚµ÷ÓÃ lua_createtable(L, 0, 0)
+		// void lua_createtable (lua_State *L, int narr, int nrec);  // ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Õµï¿½tableï¿½ï¿½Ñ¹ï¿½ï¿½Õ»ï¿½Ð£ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½ï¿½ï¿½narrï¿½ï¿½arrayÔªï¿½ØµÄ¿Õ¼ï¿½ï¿½Ô¤ï¿½ï¿½ï¿½ï¿½nrecï¿½ï¿½ï¿½ï¿½arrayÔªï¿½ØµÄ¿Õ¼ï¿½
+		lua_newtable(global_lua_state); // // lua_createtableï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ£¬ï¿½àµ±ï¿½Úµï¿½ï¿½ï¿½ lua_createtable(L, 0, 0)
 		int tableIndex = lua_gettop(global_lua_state);
 		for (int i = 0; i < num_length; i++)
 		{
 			lua_pushinteger(global_lua_state, i); // k
 			lua_pushnumber(global_lua_state, num[i]); // v
-			lua_settable(global_lua_state, tableIndex); // ×öÒ»¸öµÈ¼ÛÓÚ t[k] = v µÄ²Ù×÷£¬ ÕâÀï t ÊÇ¸ø³öµÄË÷Òý´¦µÄÖµ£¬ v ÊÇÕ»¶¥µÄÄÇ¸öÖµ£¬ k ÊÇÕ»¶¥Ö®ÏÂµÄÖµ¡£
+			lua_settable(global_lua_state, tableIndex); // ï¿½ï¿½Ò»ï¿½ï¿½ï¿½È¼ï¿½ï¿½ï¿½ t[k] = v ï¿½Ä²ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ t ï¿½Ç¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ v ï¿½ï¿½Õ»ï¿½ï¿½ï¿½ï¿½ï¿½Ç¸ï¿½Öµï¿½ï¿½ k ï¿½ï¿½Õ»ï¿½ï¿½Ö®ï¿½Âµï¿½Öµï¿½ï¿½
 		}
 	}
 
 	void wrap_love_dll_luasupport_pushBooleanArray(bool4* num, int num_length)
 	{
-		// void lua_createtable (lua_State *L, int narr, int nrec);  // ´´½¨Ò»¸ö¿ÕµÄtable²¢Ñ¹ÈëÕ»ÖÐ£¬²¢Ô¤·ÖÅänarr¸öarrayÔªËØµÄ¿Õ¼äºÍÔ¤·ÖÅänrec¸ö·ÇarrayÔªËØµÄ¿Õ¼ä
-		lua_newtable(global_lua_state); // // lua_createtableµÄÌØÀý°æ£¬Ïàµ±ÓÚµ÷ÓÃ lua_createtable(L, 0, 0)
+		// void lua_createtable (lua_State *L, int narr, int nrec);  // ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Õµï¿½tableï¿½ï¿½Ñ¹ï¿½ï¿½Õ»ï¿½Ð£ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½ï¿½ï¿½narrï¿½ï¿½arrayÔªï¿½ØµÄ¿Õ¼ï¿½ï¿½Ô¤ï¿½ï¿½ï¿½ï¿½nrecï¿½ï¿½ï¿½ï¿½arrayÔªï¿½ØµÄ¿Õ¼ï¿½
+		lua_newtable(global_lua_state); // // lua_createtableï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ£¬ï¿½àµ±ï¿½Úµï¿½ï¿½ï¿½ lua_createtable(L, 0, 0)
 		int tableIndex = lua_gettop(global_lua_state);
 		for (int i = 0; i < num_length; i++)
 		{
 			lua_pushinteger(global_lua_state, i); // k
 			lua_pushboolean(global_lua_state, num[i]); // v
-			lua_settable(global_lua_state, tableIndex); // ×öÒ»¸öµÈ¼ÛÓÚ t[k] = v µÄ²Ù×÷£¬ ÕâÀï t ÊÇ¸ø³öµÄË÷Òý´¦µÄÖµ£¬ v ÊÇÕ»¶¥µÄÄÇ¸öÖµ£¬ k ÊÇÕ»¶¥Ö®ÏÂµÄÖµ¡£
+			lua_settable(global_lua_state, tableIndex); // ï¿½ï¿½Ò»ï¿½ï¿½ï¿½È¼ï¿½ï¿½ï¿½ t[k] = v ï¿½Ä²ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ t ï¿½Ç¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ v ï¿½ï¿½Õ»ï¿½ï¿½ï¿½ï¿½ï¿½Ç¸ï¿½Öµï¿½ï¿½ k ï¿½ï¿½Õ»ï¿½ï¿½Ö®ï¿½Âµï¿½Öµï¿½ï¿½
 		}
 	}
 
 	void wrap_love_dll_luasupport_pushStringArray(pChar strList[], int num_length)
 	{
-		// void lua_createtable (lua_State *L, int narr, int nrec);  // ´´½¨Ò»¸ö¿ÕµÄtable²¢Ñ¹ÈëÕ»ÖÐ£¬²¢Ô¤·ÖÅänarr¸öarrayÔªËØµÄ¿Õ¼äºÍÔ¤·ÖÅänrec¸ö·ÇarrayÔªËØµÄ¿Õ¼ä
-		lua_newtable(global_lua_state); // // lua_createtableµÄÌØÀý°æ£¬Ïàµ±ÓÚµ÷ÓÃ lua_createtable(L, 0, 0)
+		// void lua_createtable (lua_State *L, int narr, int nrec);  // ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Õµï¿½tableï¿½ï¿½Ñ¹ï¿½ï¿½Õ»ï¿½Ð£ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½ï¿½ï¿½narrï¿½ï¿½arrayÔªï¿½ØµÄ¿Õ¼ï¿½ï¿½Ô¤ï¿½ï¿½ï¿½ï¿½nrecï¿½ï¿½ï¿½ï¿½arrayÔªï¿½ØµÄ¿Õ¼ï¿½
+		lua_newtable(global_lua_state); // // lua_createtableï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ£¬ï¿½àµ±ï¿½Úµï¿½ï¿½ï¿½ lua_createtable(L, 0, 0)
 		int tableIndex = lua_gettop(global_lua_state);
 		for (int i = 0; i < num_length; i++)
 		{
 			lua_pushinteger(global_lua_state, i); // k
 			lua_pushstring(global_lua_state, strList[i]); // v
-			lua_settable(global_lua_state, tableIndex); // ×öÒ»¸öµÈ¼ÛÓÚ t[k] = v µÄ²Ù×÷£¬ ÕâÀï t ÊÇ¸ø³öµÄË÷Òý´¦µÄÖµ£¬ v ÊÇÕ»¶¥µÄÄÇ¸öÖµ£¬ k ÊÇÕ»¶¥Ö®ÏÂµÄÖµ¡£
+			lua_settable(global_lua_state, tableIndex); // ï¿½ï¿½Ò»ï¿½ï¿½ï¿½È¼ï¿½ï¿½ï¿½ t[k] = v ï¿½Ä²ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ t ï¿½Ç¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ v ï¿½ï¿½Õ»ï¿½ï¿½ï¿½ï¿½ï¿½Ç¸ï¿½Öµï¿½ï¿½ k ï¿½ï¿½Õ»ï¿½ï¿½Ö®ï¿½Âµï¿½Öµï¿½ï¿½
 		}
 	}
 
@@ -3824,7 +3824,7 @@ namespace wrap
 			graphics::Canvas** bufferCanvas = new graphics::Canvas*[tartetCount];
 			int* bufferSliceList = new int[tartetCount];
 			int* bufferMipmapList = new int[tartetCount];
-			
+
 			if (targets.depthStencil.canvas != nullptr)
 			{
 				bufferCanvas[0] = targets.depthStencil.canvas;
@@ -3907,7 +3907,7 @@ namespace wrap
 	}
 	bool4 wrap_love_dll_graphics_drawLayer(Texture *texture, Quad *quad, int layer, float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky)
 	{
-		return wrap_catchexcept([&]() { 
+		return wrap_catchexcept([&]() {
 			auto m = Matrix4(x, y, a, sx, sy, ox, oy, kx, ky);
 			if (quad)
 				graphicsInstance->drawLayer(texture, layer, quad, m);
@@ -5199,8 +5199,8 @@ namespace wrap
 
 	bool4 wrap_love_dll_type_Mesh_isAttributeEnabled(Mesh *t, char* name, bool4 *out_res)
 	{
-		return wrap_catchexcept([&]() { 
-			*out_res = t->isAttributeEnabled(name); 
+		return wrap_catchexcept([&]() {
+			*out_res = t->isAttributeEnabled(name);
 		});
 	}
 
