@@ -15,13 +15,13 @@ namespace Love
         public Vector2 GetPosition()
         {
             Vector3 t = GetTransform();
-            return new Vector2(t.x, t.y);
+            return new Vector2(t.X, t.Y);
         }
 
         public float GetAngle()
         {
             Vector3 t = GetTransform();
-            return t.z;
+            return t.Z;
         }
 
         public Vector3 GetTransform()
@@ -198,7 +198,7 @@ namespace Love
 
         public Vector2 GetWorldPoint(Vector2 input)
         {
-            return GetWorldPoint(input.x, input.y);
+            return GetWorldPoint(input.X, input.Y);
         }
 
         public Vector2 GetWorldPoint(float x, float y)
@@ -210,7 +210,7 @@ namespace Love
 
         public Vector2 GetWorldVector(Vector2 input)
         {
-            return GetWorldVector(input.x, input.y);
+            return GetWorldVector(input.X, input.Y);
         }
 
         public Vector2 GetWorldVector(float x, float y)
@@ -222,7 +222,7 @@ namespace Love
 
         public Vector2 GetLocalPoint(Vector2 input)
         {
-            return GetLocalPoint(input.x, input.y);
+            return GetLocalPoint(input.X, input.Y);
         }
 
         public Vector2 GetLocalPoint(float x, float y)
@@ -234,7 +234,7 @@ namespace Love
 
         public Vector2 GetLocalVector(Vector2 input)
         {
-            return GetLocalVector(input.x, input.y);
+            return GetLocalVector(input.X, input.Y);
         }
 
         public Vector2 GetLocalVector(float x, float y)
@@ -1031,7 +1031,7 @@ namespace Love
         }
         public static EdgeShape NewEdgeShape(Vector2 p1, Vector2 p2)
         {
-            return NewEdgeShape(p1.x, p1.y, p2.x, p2.y);
+            return NewEdgeShape(p1.X, p1.Y, p2.X, p2.Y);
         }
         public static EdgeShape NewEdgeShape(float x1, float y1, float x2, float y2)
         {
@@ -1052,7 +1052,7 @@ namespace Love
         }
         public static MouseJoint NewMouseJoint(Body body, Vector2 pos)
         {
-            return NewMouseJoint(body, pos.x, pos.y);
+            return NewMouseJoint(body, pos.X, pos.Y);
         }
 
         public static RevoluteJoint NewRevoluteJoint(Body body1, Body body2, Vector2 pos, bool collideConnected = false)
@@ -1508,7 +1508,7 @@ namespace Love
         }
         public void SetTarget(Vector2 pos)
         {
-            Love2dDll.wrap_love_dll_type_MouseJoint_setTarget(p, pos.x, pos.y);
+            Love2dDll.wrap_love_dll_type_MouseJoint_setTarget(p, pos.X, pos.Y);
         }
 
         public void SetMaxForce(float force)

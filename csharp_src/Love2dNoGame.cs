@@ -81,8 +81,8 @@ namespace Love
                 float t = look_t;
                 var src = look_current;
                 var dst = look_target;
-                float look_x = easeOut(t, src.x, dst.x - src.x, LOOK_DURATION);
-                float look_y = easeOut(t, src.y, dst.y - src.y, LOOK_DURATION);
+                float look_x = easeOut(t, src.X, dst.X - src.X, LOOK_DURATION);
+                float look_y = easeOut(t, src.Y, dst.Y - src.Y, LOOK_DURATION);
                 return new Vector2(look_x, look_y);
             }
 
@@ -102,8 +102,8 @@ namespace Love
                 }
 
                 var look = get_look_coordinates();
-                offset_x = look.x * 4;
-		        offset_y = (1 - look.y) * -4;
+                offset_x = look.X * 4;
+		        offset_y = (1 - look.Y) * -4;
             }
 
             public void Draw()
@@ -140,12 +140,12 @@ namespace Love
             public void look_at(float tx, float ty)
             {
 		        var look = get_look_coordinates();
-                look_current.x = look.x;
-                look_current.y = look.y;
+                look_current.X = look.X;
+                look_current.Y = look.Y;
                 look_t = 0;
                 look_point_t = 3 + mathf.Random(0, 1);
-                look_target.x = tx;
-                look_target.y = ty;
+                look_target.X = tx;
+                look_target.Y = ty;
             }
 
             void look_at_next_point()
@@ -156,7 +156,7 @@ namespace Love
                     look_point = 0;
                 }
 		        var point = LOOK_POINTS[look_point];
-                look_at(point.x, point.y);
+                look_at(point.X, point.Y);
             }
 
         }

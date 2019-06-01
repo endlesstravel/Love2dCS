@@ -90,8 +90,8 @@ namespace Love
             var input = new float[valueArray.Length * 2];
             for (int i = 0; i < valueArray.Length; i++)
             {
-                input[i * 2] = valueArray[i].x;
-                input[i * 2 + 1] = valueArray[i].y;
+                input[i * 2] = valueArray[i].X;
+                input[i * 2 + 1] = valueArray[i].Y;
             }
 
             SendFloats(name, input);
@@ -108,9 +108,9 @@ namespace Love
             var input = new float[valueArray.Length * 3];
             for (int i = 0; i < valueArray.Length; i++)
             {
-                input[i * 3] = valueArray[i].x;
-                input[i * 3 + 1] = valueArray[i].y;
-                input[i * 3 + 2] = valueArray[i].z;
+                input[i * 3] = valueArray[i].X;
+                input[i * 3 + 1] = valueArray[i].Y;
+                input[i * 3 + 2] = valueArray[i].Z;
             }
 
             SendFloats(name, input);

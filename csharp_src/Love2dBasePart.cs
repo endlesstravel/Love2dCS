@@ -1665,7 +1665,7 @@ namespace Love
         /// <param name="up">Up vector of the listener orientation.</param>
         public static void SetOrientation(Vector3 forward, Vector3 up)
         {
-            Love2dDll.wrap_love_dll_audio_setOrientation(forward.x, forward.y, forward.z, up.x, up.y, up.z);
+            Love2dDll.wrap_love_dll_audio_setOrientation(forward.X, forward.Y, forward.Z, up.X, up.Y, up.Z);
         }
 
         /// <summary>
@@ -2908,7 +2908,7 @@ namespace Love
         /// <param name="offset"></param>
         public static void Translate(Vector2 offset)
         {
-            Translate(offset.x, offset.y);
+            Translate(offset.X, offset.Y);
         }
 
         /// <summary>

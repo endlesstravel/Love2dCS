@@ -59,8 +59,8 @@ namespace LovePhysicsTestBed
                 var p2 = new Vector2(2.0f, 0.0f);
 
 
-                Body leftFlipper = Physics.NewBody(m_world, p1.x, p1.y, BodyType.Dynamic);
-                Body rightFlipper = Physics.NewBody(m_world, p2.x, p2.y, BodyType.Dynamic);
+                Body leftFlipper = Physics.NewBody(m_world, p1.X, p1.Y, BodyType.Dynamic);
+                Body rightFlipper = Physics.NewBody(m_world, p2.X, p2.Y, BodyType.Dynamic);
 
                 var box = Physics.NewRectangleShape(1.75f * 2, 0.1f * 2);
                 Physics.NewFixture(leftFlipper, box, 1.0f);

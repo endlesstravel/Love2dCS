@@ -18,17 +18,17 @@ namespace Love
         public float X;
         public float Y;
 
-        public float x
-        {
-            get { return X; }
-            set { X = value; }
-        }
+        //public float X
+        //{
+        //    get { return X; }
+        //    set { X = value; }
+        //}
 
-        public float y
-        {
-            get { return Y; }
-            set { Y = value; }
-        }
+        //public float Y
+        //{
+        //    get { return Y; }
+        //    set { Y = value; }
+        //}
 
         #endregion Public Fields
 
@@ -251,10 +251,10 @@ namespace Love
             float radians = degrees * Mathf.Deg2Rad;
             float sin = Mathf.Sin(radians);
             float cos = Mathf.Cos(radians);
-            float tx = v.x;
-            float ty = v.y;
-            v.x = (cos * tx) - (sin * ty);
-            v.y = (sin * tx) + (cos * ty);
+            float tx = v.X;
+            float ty = v.Y;
+            v.X = (cos * tx) - (sin * ty);
+            v.Y = (sin * tx) + (cos * ty);
             return v;
         }
 
@@ -268,10 +268,10 @@ namespace Love
         {
             float sin = Mathf.Sin(radins);
             float cos = Mathf.Cos(radins);
-            float tx = v.x;
-            float ty = v.y;
-            v.x = (cos * tx) - (sin * ty);
-            v.y = (sin * tx) + (cos * ty);
+            float tx = v.X;
+            float ty = v.Y;
+            v.X = (cos * tx) - (sin * ty);
+            v.Y = (sin * tx) + (cos * ty);
             return v;
         }
 
@@ -503,15 +503,15 @@ namespace Love
             var result = new Vector2[length + odd];
             for (int i = 0; i < length; i++)
             {
-                result[i].x = points[2 * i];
-                result[i].y = points[2 * i + 1];
+                result[i].X = points[2 * i];
+                result[i].Y = points[2 * i + 1];
             }
 
             // the last one
             if (odd == 1)
             {
-                result[length].x = points[length * 2];
-                result[length].y = 0;
+                result[length].X = points[length * 2];
+                result[length].Y = 0;
             }
 
             return result;

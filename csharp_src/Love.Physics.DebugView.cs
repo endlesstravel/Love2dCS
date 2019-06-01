@@ -179,7 +179,7 @@ namespace Love
                     var c = carray[cidx];
                     foreach (var p in c.GetPositions())
                     {
-                        if (p.x != 0)
+                        if (p.X != 0)
                         {
                             pointList.Add(p);
                         }

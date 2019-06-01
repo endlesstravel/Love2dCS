@@ -41,14 +41,14 @@ namespace LovePhysicsTestBed
 
         public override void DrawWorld()
         {
-            listToDraw.ForEach(item =>
+            listToDraw.ForEach((Action<KeyValuePair<Body, Mesh>>)((KeyValuePair<Body, Mesh> item) =>
             {
                 var b = item.Key;
                 var m = item.Value;
                 var p = b.GetPosition();
                 Graphics.SetColor(T01_Tiles.ColorByBody(b));
-                Graphics.Draw(m, p.x, p.y, b.GetAngle());
-            });
+                Graphics.Draw(m, (float)p.X, p.Y, b.GetAngle());
+            }));
         }
 
 
@@ -57,10 +57,10 @@ namespace LovePhysicsTestBed
             var rr=  Physics.NewRectangleShape(x, y, w, h, 0);
             var pp = rr.GetPoints();
             var rawData = new Vertex[]{
-                new Vertex(pp[0].x, pp[0].y),
-                new Vertex(pp[1].x, pp[1].y),
-                new Vertex(pp[2].x, pp[2].y),
-                new Vertex(pp[3].x, pp[3].y),
+                new Vertex(pp[0].X, pp[0].Y),
+                new Vertex(pp[1].X, pp[1].Y),
+                new Vertex(pp[2].X, pp[2].Y),
+                new Vertex(pp[3].X, pp[3].Y),
             };
             listToDraw.Add(new KeyValuePair<Body, Mesh>(body, Graphics.NewMesh(
                 Love.Misc.MeshUtils.GetVertexFormat(),

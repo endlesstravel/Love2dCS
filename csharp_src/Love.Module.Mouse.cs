@@ -393,8 +393,8 @@ namespace Love
         }
         public static void SetPreviousPosition(Vector2 pos)
         {
-            mousePreviousX = pos.x;
-            mousePreviousY = pos.y;
+            mousePreviousX = pos.X;
+            mousePreviousY = pos.Y;
         }
     }
 

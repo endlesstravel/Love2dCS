@@ -16,7 +16,7 @@ namespace LovePhysicsTestBed
         {
             var p = circleShape.GetPoint() + body.GetPosition();
             var r = circleShape.GetRadius();
-            Graphics.Circle(DrawMode.Line, p.x, p.y, r, 100);
+            Graphics.Circle(DrawMode.Line, p.X, p.Y, r, 100);
         }
 
         public override void ResetTranslation()

@@ -231,10 +231,10 @@ namespace LovePhysicsTestBed
         Vector2 GetMousePosOnWorld()
         {
             var mp = new Vector2(
-                -(Graphics.GetWidth() / 2 - Mouse.GetPosition().x),
-                Graphics.GetHeight() / 2 - Mouse.GetPosition().y);
-            var offet = new Vector2(-VOffset.x / VScale,  VOffset.y / VScale);
-            return  (new Vector2(mp.x, mp.y)) / VScale + offet;
+                -(Graphics.GetWidth() / 2 - Mouse.GetPosition().X),
+                Graphics.GetHeight() / 2 - Mouse.GetPosition().Y);
+            var offet = new Vector2(-VOffset.X / VScale,  VOffset.Y / VScale);
+            return  (new Vector2(mp.X, mp.Y)) / VScale + offet;
         }
 
         MouseJoint m_mouseJoint;
@@ -249,7 +249,7 @@ namespace LovePhysicsTestBed
                 var lower = p - d;
                 var upper = p + d;
 
-                m_world.QueryBoundingBox(lower.x, lower.y, upper.x, upper.y, (Fixture pfixture) =>
+                m_world.QueryBoundingBox(lower.X, lower.Y, upper.X, upper.Y, (Fixture pfixture) =>
                 {
                     var body = pfixture.GetBody();
                     m_mouseJoint = Physics.NewMouseJoint(body, p);
@@ -296,8 +296,8 @@ namespace LovePhysicsTestBed
             Graphics.Push();
             Graphics.SetBackgroundColor(Color.Gray);
             Graphics.Scale(VScale, -VScale);
-            Graphics.Translate((Graphics.GetWidth() / 2 + VOffset.x) / VScale, 
-                (Graphics.GetHeight() / 2 + VOffset.y) / -VScale);
+            Graphics.Translate((Graphics.GetWidth() / 2 + VOffset.X) / VScale, 
+                (Graphics.GetHeight() / 2 + VOffset.Y) / -VScale);
             Graphics.SetLineWidth(1 / VScale);
             Graphics.SetPointSize(2);
             DrawGrid();

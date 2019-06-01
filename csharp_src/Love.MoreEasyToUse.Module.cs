@@ -919,7 +919,7 @@ namespace Love
         /// <returns></returns>
         public static void Circle(DrawMode mode_type, Vector2 center, float radius)
         {
-            Circle(mode_type, center.x, center.y, radius);
+            Circle(mode_type, center.X, center.Y, radius);
         }
         /// <summary>
         /// Draws a circle.
@@ -931,7 +931,7 @@ namespace Love
         /// <returns></returns>
         public static void Circle(DrawMode mode_type, Vector2 center, float radius, int point)
         {
-            Circle(mode_type, center.x, center.y, radius, point);
+            Circle(mode_type, center.X, center.Y, radius, point);
         }
 
 
@@ -1112,7 +1112,7 @@ namespace Love
         /// <param name="scale">The scaling on each axis.</param>
         public static void Scale(Vector2 scale)
         {
-            Scale(scale.x, scale.y);
+            Scale(scale.X, scale.Y);
         }
 
 

@@ -217,11 +217,11 @@ namespace Love.Misc
             public override void Draw(DoubleBufferCanvas buffer)
             {
                 m_shader.Send("direction", 1f / Graphics.GetWidth(), 0);
-                m_shader.Send("radius", Mathf.Floor(Radius.x + .5f));
+                m_shader.Send("radius", Mathf.Floor(Radius.X + .5f));
                 buffer.Swap(m_shader);
 
                 m_shader.Send("direction", 0, 1f / Graphics.GetHeight());
-                m_shader.Send("radius", Mathf.Floor(Radius.y + .5f));
+                m_shader.Send("radius", Mathf.Floor(Radius.Y + .5f));
                 buffer.Swap(m_shader);
             }
 
@@ -338,7 +338,7 @@ namespace Love.Misc
 
             public override void Draw(DoubleBufferCanvas buffer)
             {
-                m_shader.Send("distortionFactor", DistortionFactor.x, DistortionFactor.y);
+                m_shader.Send("distortionFactor", DistortionFactor.X, DistortionFactor.Y);
                 m_shader.Send("feather", Feather);
                 m_shader.Send("scaleFactor", ScaleFactor);
                 buffer.Swap(m_shader);
@@ -371,7 +371,7 @@ namespace Love.Misc
 
             public override void Draw(DoubleBufferCanvas buffer)
             {
-                m_shader.Send("tint", Tint.x, Tint.y, Tint.z, 1);
+                m_shader.Send("tint", Tint.X, Tint.Y, Tint.Z, 1);
                 m_shader.Send("strength", Strength);
                 buffer.Swap(m_shader);
             }
@@ -1141,7 +1141,7 @@ namespace Love.Misc
                 m_shader.Send("radius", Math.Max(0, Radius));
                 m_shader.Send("softness", Math.Max(0, Softness));
                 m_shader.Send("opacity", Math.Max(0, Opacity));
-                m_shader.Send("color", Color.x, Color.y, Color.z, 1);
+                m_shader.Send("color", Color.X, Color.Y, Color.Z, 1);
                 buffer.Swap(m_shader);
             }
         }

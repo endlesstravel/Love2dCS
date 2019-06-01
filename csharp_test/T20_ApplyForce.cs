@@ -19,7 +19,7 @@ namespace LovePhysicsTestBed
             {
                 var f = m_body.GetWorldVector(0.0f, -200.0f);
                 var p = m_body.GetWorldPoint(0.0f, 2.0f);
-                m_body.ApplyForce(f.x, f.y, p.x, p.y);
+                m_body.ApplyForce(f.X, f.Y, p.X, p.Y);
             }
             if (Keyboard.IsDown(KeyConstant.A))
             {

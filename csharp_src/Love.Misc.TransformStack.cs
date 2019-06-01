@@ -46,14 +46,14 @@ namespace Love.Misc
         public Vector2 TransformPoint(Vector2 p)
         {
             var v3 = TransformVector3(new Vector3(p, 0), list.Last.Value.Value);
-            return new Vector2(v3.x, v3.y);
+            return new Vector2(v3.X, v3.Y);
         }
 
         public Vector2 TransformPointInvert(Vector2 p)
         {
             Matrix44.Invert(list.Last.Value.Value, out var result);
             var v3 = TransformVector3(new Vector3(p, 0), result);
-            return new Vector2(v3.x, v3.y);
+            return new Vector2(v3.X, v3.Y);
         }
 
 

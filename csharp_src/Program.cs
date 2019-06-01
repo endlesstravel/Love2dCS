@@ -871,25 +871,25 @@ namespace LoveTest
             if (key == KeyConstant.Left)
             {
                 var pos = currentControl.GetPosition();
-                currentControl.SetPosition(pos.x - 1, pos.y, pos.z);
+                currentControl.SetPosition(pos.X - 1, pos.Y, pos.Z);
             }
 
             if (key == KeyConstant.Right)
             {
                 var pos = currentControl.GetPosition();
-                currentControl.SetPosition(pos.x + 1, pos.y, pos.z);
+                currentControl.SetPosition(pos.X + 1, pos.Y, pos.Z);
             }
 
             if (key == KeyConstant.Down)
             {
                 var pos = currentControl.GetPosition();
-                currentControl.SetPosition(pos.x, pos.y - 1, pos.z);
+                currentControl.SetPosition(pos.X, pos.Y - 1, pos.Z);
             }
 
             if (key == KeyConstant.Up)
             {
                 var pos = currentControl.GetPosition();
-                currentControl.SetPosition(pos.x, pos.y + 1, pos.z);
+                currentControl.SetPosition(pos.X, pos.Y + 1, pos.Z);
             }
         }
 
@@ -1337,7 +1337,7 @@ namespace LoveTest
             public bool IsHover()
             {
                 var mpos = Mouse.GetPosition();
-                return x <= mpos.x && mpos.x <= x + w && y <= mpos.y && mpos.y <= y + h;
+                return x <= mpos.X && mpos.X <= x + w && y <= mpos.Y && mpos.Y <= y + h;
             }
 
             public bool IsDown()

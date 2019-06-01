@@ -59,23 +59,23 @@ namespace Love
         public float Y;
         public float Z;
 
-        public float x
-        {
-            get { return X; }
-            set { X = value; }
-        }
+        //public float X
+        //{
+        //    get { return X; }
+        //    set { X = value; }
+        //}
 
-        public float y
-        {
-            get { return Y; }
-            set { Y = value; }
-        }
+        //public float Y
+        //{
+        //    get { return Y; }
+        //    set { Y = value; }
+        //}
 
-        public float z
-        {
-            get { return Z; }
-            set { Z = value; }
-        }
+        //public float Z
+        //{
+        //    get { return Z; }
+        //    set { Z = value; }
+        //}
 
         #endregion Public Fields
 

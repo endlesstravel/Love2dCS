@@ -15,10 +15,10 @@ namespace LovePhysicsTestBed
             Vector2 localAnchorA, Vector2 localAnchorB)
         {
             var jd = Physics.NewDistanceJoint(a, b,
-                a.GetPosition().x + localAnchorA.x,
-                a.GetPosition().y + localAnchorA.y,
-                b.GetPosition().x + localAnchorB.x, 
-                b.GetPosition().y + localAnchorB.y);
+                a.GetPosition().X + localAnchorA.X,
+                a.GetPosition().Y + localAnchorA.Y,
+                b.GetPosition().X + localAnchorB.X, 
+                b.GetPosition().Y + localAnchorB.Y);
             jd.SetFrequency(2.0f);
             jd.SetDampingRatio(0);
 

@@ -66,7 +66,7 @@ namespace LovePhysicsTestBed
         public override void DrawWorld()
         {
 
-            meshToDraw.ForEach(item => {
+            meshToDraw.ForEach((Action<KeyValuePair<Body, Mesh>>)((KeyValuePair<Body, Mesh> item) => {
                 var p = item.Key.GetPosition();
                 Graphics.SetColor(ColorByBody(item.Key));
                 //Console.WriteLine(Love.Misc.MeshUtils.GetVertexFromData(item.Value.GetVertex(0)));
@@ -76,9 +76,9 @@ namespace LovePhysicsTestBed
                 //item.Value.SetVertexAttribute(1, 2, ccc);
                 //item.Value.SetVertexAttribute(2, 2, ccc);
                 //item.Value.SetVertexAttribute(3, 2, ccc);
-                Graphics.Draw(item.Value, p.x, p.y);
+                Graphics.Draw(item.Value, (float)p.X, p.Y);
                 //Graphics.DrawInstanced(item.Value, 1, 0, 0);
-            });
+            }));
             
         }
 
@@ -101,17 +101,17 @@ namespace LovePhysicsTestBed
                 var position = new Vector2();
                 for (int32 j = 0; j < M; ++j)
                 {
-                    position.x = -N * a;
+                    position.X = -N * a;
                     for (int32 i = 0; i < N; ++i)
                     {
-                        var shape = Physics.NewRectangleShape(position.x * scale, position.y * scale, a * 2 * scale, a * 2 * scale, 0);
+                        var shape = Physics.NewRectangleShape(position.X * scale, position.Y * scale, a * 2 * scale, a * 2 * scale, 0);
                         Physics.NewFixture(ground, shape, 0);
                         ++m_fixtureCount;
                         groundToDraw.Add(new KeyValuePair<Body, PolygonShape>(ground, shape));
 
-                        position.x += 2.0f * a;
+                        position.X += 2.0f * a;
                     }
-                    position.y -= 2.0f * a;
+                    position.Y -= 2.0f * a;
                 }
             }
 
@@ -131,7 +131,7 @@ namespace LovePhysicsTestBed
 
                     for (int32 j = i; j < e_count; ++j)
                     {
-                        var body = Physics.NewBody(m_world, y.x * scale, y.y * scale, BodyType.Dynamic);
+                        var body = Physics.NewBody(m_world, y.X * scale, y.Y * scale, BodyType.Dynamic);
                         Physics.NewFixture(body, shape, 5.0f * scale);
 
 
@@ -154,10 +154,10 @@ namespace LovePhysicsTestBed
                     PolygonShape sp = f.GetShape() as PolygonShape;
                     var pp = sp.GetPoints();
                     var rawData = new Vertex[]{
-                        new Vertex(pp[0].x, pp[0].y),
-                        new Vertex(pp[1].x, pp[1].y),
-                        new Vertex(pp[2].x, pp[2].y),
-                        new Vertex(pp[3].x, pp[3].y),
+                        new Vertex(pp[0].X, pp[0].Y),
+                        new Vertex(pp[1].X, pp[1].Y),
+                        new Vertex(pp[2].X, pp[2].Y),
+                        new Vertex(pp[3].X, pp[3].Y),
                     };
 
                     var m = Graphics.NewMesh(Love.Misc.MeshUtils.GetVertexFormat(), Love.Misc.MeshUtils.GetVertexData(rawData), MeshDrawMode.Fan, SpriteBatchUsage.Dynamic);
