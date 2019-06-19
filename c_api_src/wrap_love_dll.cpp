@@ -3832,6 +3832,12 @@ namespace wrap
 				bufferMipmapList[0] = targets.depthStencil.mipmap;
 				targets.depthStencil.canvas->retain();
 			}
+			else
+			{
+				bufferCanvas[0] = nullptr;
+				bufferSliceList[0] = 0;
+				bufferMipmapList[0] = 00;
+			}
 
 			int n = 1;
 			for (const auto &rt : targets.colors)

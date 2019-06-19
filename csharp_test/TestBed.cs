@@ -75,7 +75,6 @@ namespace LovePhysicsTestBed
             Graphics.Print(text, x + 5, y + 5);
         }
 
-
         public override void Load()
         {
             list.ForEach(item =>
@@ -92,6 +91,7 @@ namespace LovePhysicsTestBed
                 currentTest.Draw();
             }
             Love.Misc.FPSGraph.Draw();
+
             DrawTextText();
         }
 

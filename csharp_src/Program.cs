@@ -1361,6 +1361,8 @@ namespace LoveTest
             list.Add(new StageContainer(stage, x, y, w, h));
         }
 
+        Love.Misc.Moonshine ms;
+
         public override void Load()
         {
             AddStage(new TestDepthBuffer());
@@ -1378,6 +1380,15 @@ namespace LoveTest
             AddStage(new TestSystemLove());
             AddStage(new TestOther());
             AddStage(new TestJoystick());
+
+
+
+            ms = Love.Misc.Moonshine.China(Love.Misc.Moonshine.CRT.Default)
+                    .Next(Love.Misc.Moonshine.DMG.Default)
+                    .Next(Love.Misc.Moonshine.Scanlines.Default)
+                    .Next(Love.Misc.Moonshine.Vignette.Default)
+                ;
+
         }
 
         public override void Update(float dt)
@@ -1506,6 +1517,8 @@ namespace LoveTest
                 $"[F2]:full screen / window",
             };
             Graphics.Print(string.Join("    ", strs), 0, 0);
+
+            ms.Draw(() => { });
         }
 
         public override bool ErrorHandler(Exception e)

@@ -337,6 +337,8 @@ namespace Love
         /// <returns></returns>
         public static RenderTarget FromCanvas(Canvas canvas, int slice = 0, int mipmap = 0)
         {
+            if (canvas == null)
+                return null;
             return new RenderTarget(canvas, slice, mipmap);
         }
     }
