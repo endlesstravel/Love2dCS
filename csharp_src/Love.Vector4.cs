@@ -483,6 +483,11 @@ namespace Love
             result = new Vector4(-value.X, -value.Y, -value.Z, -value.W);
         }
 
+        public Vector4 Normalized()
+        {
+            return Vector4.Normalize(this);
+        }
+
         public void Normalize()
         {
             Normalize(ref this, out this);

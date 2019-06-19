@@ -445,6 +445,11 @@ namespace Love
             result = new Vector3(-value.X, -value.Y, -value.Z);
         }
 
+        public Vector3 Normalized()
+        {
+            return Vector3.Normalize(this);
+        }
+
         public void Normalize()
         {
             Normalize(ref this, out this);
