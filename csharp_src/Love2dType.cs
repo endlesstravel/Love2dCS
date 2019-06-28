@@ -1194,7 +1194,7 @@ namespace Love
         {
             Love2dDll.wrap_love_dll_type_Mesh_setDrawRange(p);
         }
-        public void SetDrawRange_minmax(int rangemin, int rangemax)
+        public void SetDrawRange(int rangemin, int rangemax)
         {
             Love2dDll.wrap_love_dll_type_Mesh_setDrawRange_minmax(p, rangemin, rangemax);
         }
@@ -3021,6 +3021,17 @@ namespace Love
         public static ColoredString Create(string text, Vector4 color)
         {
             return new ColoredString(text, color);
+        }
+
+        /// <summary>
+        /// Create ColoredString form text and color
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="color"></param>
+        /// <returns></returns>
+        public static ColoredString Create(string text, Color color)
+        {
+            return new ColoredString(text, new Vector4(color.r, color.g, color.b, color.a));
         }
 
         /// <summary>

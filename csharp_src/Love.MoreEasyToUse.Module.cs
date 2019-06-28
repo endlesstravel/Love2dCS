@@ -1005,7 +1005,7 @@ namespace Love
             DllTool.ExecuteNullTailStringArray(strList, (strListPtr) =>
             {
                 Love2dDll.wrap_love_dll_graphics_newMesh_custom(strListPtr, typeList, comCountList, strListPtr.Length,
-                    false, null, 0, (int)drawMode, (int)usage, out meshPtr);
+                    false, null, count, (int)drawMode, (int)usage, out meshPtr);
             });
             return LoveObject.NewObject<Mesh>(meshPtr);
         }

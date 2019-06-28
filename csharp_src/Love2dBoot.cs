@@ -470,11 +470,6 @@ namespace Love
 
                 RecordWarningInfo = bootConfig.WarningInfo;
 
-                LogWarning($"");
-                LogWarning($"[warning] Mouse.IsDown() MousePressed() MouseReleased() has change the button based index as 0 !");
-                LogWarning($"(warning will disapper after two version, or set WarnningInfo as false on bootConfig)");
-                LogWarning($"");
-
                 Console.WriteLine($"FileSystem set source with path : {FileSystem.GetSource()}");
             }
         }
