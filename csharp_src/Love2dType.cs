@@ -2387,7 +2387,7 @@ namespace Love
         protected ImageData() { }
 
         /// <summary>
-        /// Gets the width of the ImageData in pixels.	
+        /// Gets the width of the ImageData in pixels.
         /// </summary>
         /// <returns></returns>
         public int GetWidth()
@@ -2398,7 +2398,7 @@ namespace Love
         }
 
         /// <summary>
-        /// Gets the height of the ImageData in pixels.	
+        /// Gets the height of the ImageData in pixels.
         /// </summary>
         /// <returns></returns>
         public int GetHeight()
@@ -3013,7 +3013,7 @@ namespace Love
         }
 
         /// <summary>
-        /// Create ColoredString form text and color
+        /// Create ColoredString from text and color
         /// </summary>
         /// <param name="text"></param>
         /// <param name="color"></param>
@@ -3024,7 +3024,7 @@ namespace Love
         }
 
         /// <summary>
-        /// Create ColoredString form text and color
+        /// Create ColoredString from text and color
         /// </summary>
         /// <param name="text"></param>
         /// <param name="color"></param>
@@ -3035,7 +3035,7 @@ namespace Love
         }
 
         /// <summary>
-        /// Create ColoredString form text and color
+        /// Create ColoredString from text and color
         /// </summary>
         /// <param name="text"></param>
         /// <param name="r"></param>
