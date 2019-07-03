@@ -553,13 +553,13 @@ namespace Love
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_MOUSE_BUTTON:
                     {
-                        if (out_down_or_up) eHandler.MousePressed(out_float4.x, out_float4.y, out_idx, out_bool);
-                        else eHandler.MouseReleased(out_float4.x, out_float4.y, out_idx, out_bool);
+                        if (out_down_or_up) eHandler.MousePressed(out_float4.X, out_float4.Y, out_idx, out_bool);
+                        else eHandler.MouseReleased(out_float4.X, out_float4.Y, out_idx, out_bool);
                     }
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_MOUSE_MOTION:
                     {
-                        eHandler.MouseMoved(out_float4.x, out_float4.y, out_float4.z, out_float4.w, out_bool);
+                        eHandler.MouseMoved(out_float4.X, out_float4.Y, out_float4.Z, out_float4.W, out_bool);
                     }
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_MOUSE_WHEEL:
@@ -569,17 +569,17 @@ namespace Love
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_TOUCH_MOVED:
                     {
-                        eHandler.TouchMoved(out_idx, out_float4.x, out_float4.y, out_float4.z, out_float4.w, out_float_value);
+                        eHandler.TouchMoved(out_idx, out_float4.X, out_float4.Y, out_float4.Z, out_float4.W, out_float_value);
                     }
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_TOUCH_PRESSED:
                     {
-                        eHandler.TouchPressed(out_idx, out_float4.x, out_float4.y, out_float4.z, out_float4.w, out_float_value);
+                        eHandler.TouchPressed(out_idx, out_float4.X, out_float4.Y, out_float4.Z, out_float4.W, out_float_value);
                     }
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_TOUCH_RELEASED:
                     {
-                        eHandler.TouchReleased(out_idx, out_float4.x, out_float4.y, out_float4.z, out_float4.w, out_float_value);
+                        eHandler.TouchReleased(out_idx, out_float4.X, out_float4.Y, out_float4.Z, out_float4.W, out_float_value);
                     }
                     break;
 

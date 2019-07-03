@@ -906,7 +906,7 @@ namespace Love
         /// </summary>
         public static void SetColor(Vector4 color)
         {
-            SetColor(color.x, color.y, color.z, color.w);
+            SetColor(color.X, color.Y, color.Z, color.W);
         }
 
         /// <summary>

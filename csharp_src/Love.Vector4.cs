@@ -54,30 +54,6 @@ namespace Love
         public float Z;
         public float W;
 
-        public float x
-        {
-            get { return X; }
-            set { X = value; }
-        }
-
-        public float y
-        {
-            get { return Y; }
-            set { Y = value; }
-        }
-
-        public float z
-        {
-            get { return Z; }
-            set { Z = value; }
-        }
-
-        public float w
-        {
-            get { return W; }
-            set { W = value; }
-        }
-
         public float r { set { X = value; } get { return X; } }
         public float g { set { Y = value; } get { return Y; } }
         public float b { set { Z = value; } get { return Z; } }

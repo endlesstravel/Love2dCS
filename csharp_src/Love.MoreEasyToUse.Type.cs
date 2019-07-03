@@ -126,10 +126,10 @@ namespace Love
             var input = new float[valueArray.Length * 4];
             for (int i = 0; i < valueArray.Length; i++)
             {
-                input[i * 4] = valueArray[i].x;
-                input[i * 4 + 1] = valueArray[i].y;
-                input[i * 4 + 2] = valueArray[i].z;
-                input[i * 4 + 3] = valueArray[i].w;
+                input[i * 4] = valueArray[i].X;
+                input[i * 4 + 1] = valueArray[i].Y;
+                input[i * 4 + 2] = valueArray[i].Z;
+                input[i * 4 + 3] = valueArray[i].W;
             }
 
             SendFloats(name, input);
