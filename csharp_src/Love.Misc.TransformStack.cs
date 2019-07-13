@@ -25,22 +25,26 @@ namespace Love.Misc
             list.AddLast(Matrix44.Identity);
         }
 
-        public void Scale(float sx, float sy)
+        public void Effect(Matrix44 effect)
         {
             var m = list.Last.Value.Value;
-            list.AddLast(m * Matrix44.CreateScale(sx, sy, 1));
+            list.RemoveLast();
+            list.AddLast(m * effect);
+        }
+
+        public void Scale(float sx, float sy)
+        {
+            Effect(Matrix44.CreateScale(sx, sy, 1));
         }
 
         public void Translate(float ox, float oy)
         {
-            var m = list.Last.Value.Value;
-            list.AddLast(m * Matrix44.CreateTranslation(ox, oy, 0));
+            Effect(Matrix44.CreateTranslation(ox, oy, 0));
         }
 
         public void Rotate(float r)
         {
-            var m = list.Last.Value;
-            list.AddLast(m * Matrix44.CreateRotationZ(r));
+            Effect(Matrix44.CreateRotationZ(r));
         }
 
         public Vector2 TransformPoint(Vector2 p)
