@@ -487,6 +487,16 @@ namespace Love
             result.Z = vector.Z * factor;
         }
 
+        /// <summary>
+        /// the scalar projection of a vector a on (or onto) a vector b
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        public static float ScalarProjection(Vector4 a, Vector4 b)
+        {
+            return Vector4.Dot(a, b) / b.Length();
+        }
+
         public static Vector4 SmoothStep(Vector4 value1, Vector4 value2, float amount)
         {
 #if(USE_FARSEER)
@@ -551,6 +561,14 @@ namespace Love
             sb.Append(this.W);
             sb.Append("}");
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// the vector projection of a vector a on (or onto) a vector b
+        /// </summary>
+        public static Vector4 VectorProjection(Vector4 a, Vector4 b)
+        {
+            return ScalarProjection(a, b) * b;
         }
 
         #endregion Public Methods

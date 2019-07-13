@@ -894,6 +894,14 @@ namespace Love
         }
 
         /// <summary>
+        /// Clears the screen to transparent black (0, 0, 0, 0).
+        /// </summary>
+        public static void Clear(Color c)
+        {
+            Clear(c.R, c.G, c.B, c.A);
+        }
+
+        /// <summary>
         /// Sets the color used for drawing.
         /// </summary>
         public static void SetColor(Color color)

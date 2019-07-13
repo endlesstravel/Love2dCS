@@ -23,7 +23,7 @@ namespace LovePhysicsTestBed
                     Mathf.Random(0f, 4f)
                     );
 
-                Physics.NewFixture(Physics.NewBody(m_world), shape, 1.0f);
+                Physics.NewFixture(Physics.NewBody(m_world), shape, 1.0f).SetUserData("box:" + i.ToString());
 
 
                 var cshape = Physics.NewCircleShape(
@@ -34,7 +34,7 @@ namespace LovePhysicsTestBed
 
                 var b = Physics.NewBody(m_world);
                 b.SetAngle(Mathf.Random(1f, 3f));
-                Physics.NewFixture(b, cshape, 1.0f);
+                Physics.NewFixture(b, cshape, 1.0f).SetUserData("circle:" + i.ToString());
             }
         }
 
@@ -54,6 +54,7 @@ namespace LovePhysicsTestBed
         public override void DrawWorld()
         {
             base.DrawWorld();
+
             var endPointX = Mathf.Cos(angle) * 100;
             var endPointY = Mathf.Sin(angle) * 100;
             Graphics.SetColor(Color.Wheat);
@@ -68,6 +69,11 @@ namespace LovePhysicsTestBed
                     var n = new Vector2(nx, ny);
                     Graphics.SetColor(Color.Red);
                     Graphics.Line(p, p + n * 2);
+
+                    if (pfixture.GetUserData(out string dataName))
+                    {
+                        Graphics.Print(dataName, x, y, 0, 0.2f, -0.2f);
+                    }
                     return 0;
                 });
 

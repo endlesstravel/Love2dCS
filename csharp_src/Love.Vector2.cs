@@ -379,6 +379,14 @@ namespace Love
             result.Y = value.Y * val;
         }
 
+        /// <summary>
+        /// the scalar projection of a vector a on (or onto) a vector b
+        /// </summary>
+        public static float ScalarProjection(Vector2 a, Vector2 b)
+        {
+            return Vector2.Dot(a, b) / b.Length();
+        }
+
         public static Vector2 SmoothStep(Vector2 value1, Vector2 value2, float amount)
         {
             return new Vector2(
@@ -409,6 +417,14 @@ namespace Love
         public override string ToString()
         {
             return string.Format("{{X:{0} Y:{1}}}", this.X.ToString(), this.Y.ToString());
+        }
+
+        /// <summary>
+        /// the vector projection of a vector a on (or onto) a vector b
+        /// </summary>
+        public static Vector2 VectorProjection(Vector2 a, Vector2 b)
+        {
+            return ScalarProjection(a, b) * b;
         }
 
         #endregion Public Methods

@@ -491,7 +491,7 @@ namespace Love
         /// you should not manual call this function, Unless you know what you're doing
         /// <para>event poll</para>
         /// </summary>
-        static void SystemStep(Scene scene)
+        public static void SystemStep(Scene scene)
         {
             Mouse.SetPreviousPosition(Mouse.GetX(), Mouse.GetY());
             var box = new Event.EventQueueBox();
@@ -511,6 +511,8 @@ namespace Love
             Mouse.SetScrollY(scrollValue.y);
 
             box.SceneHandleEvent(scene);
+
+            Love.Misc.InputBoost.Step();
         }
 
         static void Loop(BootConfig bootConfig, Scene scene)

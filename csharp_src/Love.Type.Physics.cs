@@ -1,11 +1,118 @@
 
 #region Physics
 using System;
+using System.Collections.Generic;
 
 namespace Love
 {
+    class UserData
+    {
+        public void SetData<T>(T data)
+        {
+            _data[typeof(T)] = data;
+        }
+        public bool HasData<T>()
+        {
+            return _data.ContainsKey(typeof(T));
+        }
+        public bool GetData<T>(out T data)
+        {
+            if (_data.TryGetValue(typeof(T), out var objData) == false)
+            {
+                data = default(T);
+                return false;
+            }
 
-    public class Body : LoveObject
+            data = (T)objData;
+            return true;
+        }
+        public bool RemoveData<T>()
+        {
+            return _data.Remove(typeof(T));
+        }
+        public IEnumerator<KeyValuePair<Type, object>> GetAll()
+        {
+            return _data.GetEnumerator();
+        }
+        public void Clear()
+        {
+            _data.Clear();
+        }
+        private Dictionary<Type, object> _data = new Dictionary<Type, object>();
+    }
+
+    class UserDataCenter
+    {
+        public static UserData Get(LoveObject lob)
+        {
+            if (_data.TryGetValue(lob.p, out var ud) == false)
+            {
+                ud = new UserData();
+                _data[lob.p] = ud;
+            }
+
+            return ud;
+        }
+
+        private static readonly Dictionary<IntPtr, UserData> _data = new Dictionary<IntPtr, UserData>();
+    }
+
+    public class UserDataLoveObject : LoveObject
+    {
+        #region UserData
+        /// <summary>
+        /// Get data by type. Each type can has one data.
+        /// </summary>
+        /// <typeparam name="T">the key</typeparam>
+        /// <param name="data">The data to get.</param>
+        /// <returns></returns>
+        public bool GetUserData<T>(out T data) => userData.GetData<T>(out data);
+
+        /// <summary>
+        /// Query exist data by type. Each type can has one data.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public bool HasUserData<T>() => userData.HasData<T>();
+
+        /// <summary>
+        /// Set user data by type, each type can has one data.
+        /// </summary>
+        /// <typeparam name="T">the key</typeparam>
+        /// <param name="data">The data to set.</param>
+        public void SetUserData<T>(T data) => userData.SetData(data);
+
+        /// <summary>
+        /// Remove user data by type, each type can has one data.
+        /// </summary>
+        /// <typeparam name="T">the key</typeparam>
+        public bool RemoveUserData<T>() => userData.RemoveData<T>();
+
+        /// <summary>
+        /// Clear all user data.
+        /// </summary>
+        public void ClearUserData() => userData.Clear();
+
+        /// <summary>
+        /// Get all exists data.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator<KeyValuePair<Type, object>> GetUserDataAll() => userData.GetAll();
+        private UserData userData
+        {
+            get
+            {
+                if (_userDataCache == null)
+                    _userDataCache = UserDataCenter.Get(this);
+
+                return _userDataCache;
+            }
+        }
+        private UserData _userDataCache;
+        #endregion
+    }
+
+    public class Body : UserDataLoveObject
     {
         /// <summary>
         /// disable construct
@@ -458,7 +565,7 @@ namespace Love
             return new Vector2(nx, ny);
         }
     }
-    public class Fixture : LoveObject
+    public class Fixture : UserDataLoveObject
     {
         /// <summary>
         /// disable construct
@@ -686,7 +793,7 @@ namespace Love
         }
 
     }
-    public class Joint : LoveObject
+    public class Joint : UserDataLoveObject
     {
         /// <summary>
         /// disable construct

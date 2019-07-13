@@ -500,6 +500,14 @@ namespace Love
 
         }
 
+        /// <summary>
+        /// the scalar projection of a vector a on (or onto) a vector b
+        /// </summary>
+        public static float ScalarProjection(Vector3 a, Vector3 b)
+        {
+            return Vector3.Dot(a, b) / b.Length();
+        }
+
         public static Vector3 SmoothStep(Vector3 value1, Vector3 value2, float amount)
         {
             return new Vector3(
@@ -542,6 +550,14 @@ namespace Love
             sb.Append(this.Z);
             sb.Append("}");
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// the vector projection of a vector a on (or onto) a vector b
+        /// </summary>
+        public static Vector3 VectorProjection(Vector3 a, Vector3 b)
+        {
+            return ScalarProjection(a, b) * b;
         }
 
         #endregion Public methods
