@@ -619,13 +619,15 @@ namespace wrap
 
 #pragma region graphics Coordinate System
 
-    extern "C" LOVE_EXPORT void wrap_love_dll_graphics_push(int stack_type);
-    extern "C" LOVE_EXPORT void wrap_love_dll_graphics_pop();
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_push(int stack_type);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_pop();
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_rotate(float angle);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_scale(float sx, float sy);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_translate(float x, float y);
     extern "C" LOVE_EXPORT void wrap_love_dll_graphics_shear(float kx, float ky);
-    extern "C" LOVE_EXPORT void wrap_love_dll_graphics_origin();
+	extern "C" LOVE_EXPORT void wrap_love_dll_graphics_origin();
+	extern "C" LOVE_EXPORT void wrap_love_dll_graphics_inverseTransformPoint(float x, float y, float *out_x, float *out_y);
+	extern "C" LOVE_EXPORT void wrap_love_dll_graphics_transformPoint(float x, float y, float *out_x, float *out_y);
 
 #pragma endregion
 
@@ -929,7 +931,7 @@ namespace wrap
     extern "C" LOVE_EXPORT void wrap_love_dll_type_SpriteBatch_getColor(SpriteBatch *t, bool4 *out_exist, float *out_r, float *out_g, float *out_b, float *out_a);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_SpriteBatch_getCount(SpriteBatch *t, int *out_count);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_SpriteBatch_getBufferSize(SpriteBatch *t, int *out_buffersize);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_SpriteBatch_attachAttribute(SpriteBatch *t, const char *name, Mesh *m);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_SpriteBatch_attachAttribute(SpriteBatch *t, const char *name, Mesh *m);
 
 #pragma endregion
 
@@ -942,7 +944,7 @@ namespace wrap
         float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, int *out_index);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Text_addf(Text *t, pChar coloredStringText[], Float4 coloredStringColor[], int coloredStringLength,
         float x, float y, float a, float sx, float sy, float ox, float oy, float kx, float ky, float wraplimit, int align_type, int *out_index);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_Text_clear(Text *t);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Text_clear(Text *t);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_Text_setFont(Text *t, love::graphics::Font *f);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Text_getFont(Text *t, love::graphics::Font **font);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Text_getWidth(Text *t, int index, int *out_w);
@@ -994,7 +996,7 @@ namespace wrap
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_ImageData_getPixel(ImageData *t, int x, int y, Pixel *out_pixel);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_ImageData_setPixel(ImageData *t, int x, int y, Pixel pixel);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_ImageData_paste(ImageData *t, ImageData* src, int dx, int dy, int sx, int sy, int sw, int sh);
-    extern "C" LOVE_EXPORT void wrap_love_dll_type_ImageData_encode(ImageData *t, int format_type, bool4 writeToFile, const char* filename, FileData** out_fileData);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_ImageData_encode(ImageData *t, int format_type, bool4 writeToFile, const char* filename, FileData** out_fileData);
 	extern "C" LOVE_EXPORT void inner_wrap_love_dll_type_ImageData_getPixelSize(ImageData *t, int *out_pixelSize);
 	extern "C" LOVE_EXPORT void inner_wrap_love_dll_type_ImageData_lock(ImageData *t);
 	extern "C" LOVE_EXPORT void inner_wrap_love_dll_type_ImageData_unlock(ImageData *t);

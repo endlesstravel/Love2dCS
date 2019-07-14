@@ -3084,7 +3084,7 @@ namespace wrap
         imageInstance = Module::getInstance<love::image::Image>(Module::M_IMAGE);
         if (imageInstance == nullptr)
         {
-            wrap_catchexcept([&]() {
+            return wrap_catchexcept([&]() {
                 imageInstance = new love::image::Image();
                 Module::registerInstance(imageInstance);
             });
@@ -4000,14 +4000,14 @@ namespace wrap
 
 #pragma region graphics Coordinate System
 
-    void wrap_love_dll_graphics_push(int stack_type)
+    bool4 wrap_love_dll_graphics_push(int stack_type)
     {
         auto stype = (Graphics::StackType)stack_type; // default is Graphics::STACK_TRANSFORM;
-        wrap_catchexcept([&]() { graphicsInstance->push(stype); });
+        return wrap_catchexcept([&]() { graphicsInstance->push(stype); });
     }
-    void wrap_love_dll_graphics_pop()
+	bool4 wrap_love_dll_graphics_pop()
     {
-        wrap_catchexcept([&]() { graphicsInstance->pop(); });
+		return wrap_catchexcept([&]() { graphicsInstance->pop(); });
     }
     void wrap_love_dll_graphics_rotate(float angle)
     {
@@ -4029,6 +4029,21 @@ namespace wrap
     {
         graphicsInstance->origin();
     }
+
+	void wrap_love_dll_graphics_inverseTransformPoint(float x, float y, float *out_x, float *out_y)
+	{
+		Vector2 p(x, y);
+		graphicsInstance->inverseTransformPoint(p);
+		*out_x = x;
+		*out_y = y;
+	}
+	void wrap_love_dll_graphics_transformPoint(float x, float y, float *out_x, float *out_y)
+	{
+		Vector2 p(x, y);
+		graphicsInstance->transformPoint(p);
+		*out_x = x;
+		*out_y = y;
+	}
 
 #pragma endregion
 
@@ -6146,9 +6161,9 @@ namespace wrap
         *out_buffersize = t->getBufferSize();
     }
 
-    void wrap_love_dll_type_SpriteBatch_attachAttribute(SpriteBatch *t, const char *name, Mesh *m)
+    bool4 wrap_love_dll_type_SpriteBatch_attachAttribute(SpriteBatch *t, const char *name, Mesh *m)
     {
-        wrap_catchexcept([&]() { t->attachAttribute(name, m); });
+        return wrap_catchexcept([&]() { t->attachAttribute(name, m); });
     }
 
 #pragma endregion
@@ -6236,9 +6251,9 @@ namespace wrap
         return wrap_catchexcept([&]() { *out_index = t->addf(strings, wraplimit, align, m); });
     }
 
-    void wrap_love_dll_type_Text_clear(Text *t)
+    bool4 wrap_love_dll_type_Text_clear(Text *t)
     {
-        wrap_catchexcept([&]() { t->clear(); });
+        return wrap_catchexcept([&]() { t->clear(); });
     }
 
     bool4 wrap_love_dll_type_Text_setFont(Text *t, love::graphics::Font *f)
@@ -6460,10 +6475,10 @@ namespace wrap
         t->paste((love::image::ImageData *)src, dx, dy, sx, sy, sw, sh);
     }
 
-    void wrap_love_dll_type_ImageData_encode(ImageData *t, int format_type, bool4 writeToFile, const char* filename, FileData** out_fileData)
+    bool4 wrap_love_dll_type_ImageData_encode(ImageData *t, int format_type, bool4 writeToFile, const char* filename, FileData** out_fileData)
     {
         auto format = (FormatHandler::EncodedFormat)format_type;
-        wrap_catchexcept([&]() {
+        return wrap_catchexcept([&]() {
             love::filesystem::FileData *filedata = t->encode(format, filename, false);
 			if (writeToFile) {
 	           wrap_love_dll_filesystem_write(filename, filedata->getData(), filedata->getSize());

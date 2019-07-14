@@ -1844,16 +1844,16 @@ namespace Love
         #region  graphics Coordinate System
 
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_push")]
-        internal extern static void _wrap_love_dll_graphics_push(int stack_type);
-        internal static void wrap_love_dll_graphics_push(int stack_type)
+        internal extern static bool _wrap_love_dll_graphics_push(int stack_type);
+        internal static bool wrap_love_dll_graphics_push(int stack_type)
         {
-            _wrap_love_dll_graphics_push(stack_type);
+            return CheckCAPIException(_wrap_love_dll_graphics_push(stack_type));
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_pop")]
-        internal extern static void _wrap_love_dll_graphics_pop();
-        internal static void wrap_love_dll_graphics_pop()
+        internal extern static bool _wrap_love_dll_graphics_pop();
+        internal static bool wrap_love_dll_graphics_pop()
         {
-            _wrap_love_dll_graphics_pop();
+            return CheckCAPIException(_wrap_love_dll_graphics_pop());
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_rotate")]
         internal extern static void _wrap_love_dll_graphics_rotate(float angle);
@@ -1886,6 +1886,19 @@ namespace Love
             _wrap_love_dll_graphics_origin();
         }
 
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_inverseTransformPoint")]
+        internal extern static void _wrap_love_dll_graphics_inverseTransformPoint(float x, float y, out float out_x, out float out_y);
+        internal static void wrap_love_dll_graphics_inverseTransformPoint(float x, float y, out float out_x, out float out_y)
+        {
+            _wrap_love_dll_graphics_inverseTransformPoint(x, y, out out_x, out out_y);
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_transformPoint")]
+        internal extern static void _wrap_love_dll_graphics_transformPoint(float x, float y, out float out_x, out float out_y);
+        internal static void wrap_love_dll_graphics_transformPoint(float x, float y, out float out_x, out float out_y)
+        {
+            _wrap_love_dll_graphics_transformPoint(x, y, out out_x, out out_y);
+        }
 
 
         #endregion
@@ -3319,10 +3332,10 @@ namespace Love
             _wrap_love_dll_type_SpriteBatch_getBufferSize(p, out out_buffersize);
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_SpriteBatch_attachAttribute")]
-        internal extern static void _wrap_love_dll_type_SpriteBatch_attachAttribute(IntPtr p, byte[] name, IntPtr mesh);
-        internal static void wrap_love_dll_type_SpriteBatch_attachAttribute(IntPtr p, byte[] name, IntPtr mesh)
+        internal extern static bool _wrap_love_dll_type_SpriteBatch_attachAttribute(IntPtr p, byte[] name, IntPtr mesh);
+        internal static bool wrap_love_dll_type_SpriteBatch_attachAttribute(IntPtr p, byte[] name, IntPtr mesh)
         {
-            _wrap_love_dll_type_SpriteBatch_attachAttribute(p, name, mesh);
+            return CheckCAPIException(_wrap_love_dll_type_SpriteBatch_attachAttribute(p, name, mesh));
         }
 
 
@@ -3355,10 +3368,10 @@ namespace Love
             return CheckCAPIException(_wrap_love_dll_type_Text_addf(p, coloredStringText, coloredStringColor, coloredStringLength, x, y, a, sx, sy, ox, oy, kx, ky, wraplimit, align_type, out out_index));
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Text_clear")]
-        internal extern static void _wrap_love_dll_type_Text_clear(IntPtr p);
-        internal static void wrap_love_dll_type_Text_clear(IntPtr p)
+        internal extern static bool _wrap_love_dll_type_Text_clear(IntPtr p);
+        internal static bool wrap_love_dll_type_Text_clear(IntPtr p)
         {
-            _wrap_love_dll_type_Text_clear(p);
+            return CheckCAPIException(_wrap_love_dll_type_Text_clear(p));
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_Text_setFont")]
         internal extern static bool _wrap_love_dll_type_Text_setFont(IntPtr p, IntPtr f);
@@ -3583,10 +3596,10 @@ namespace Love
             _wrap_love_dll_type_ImageData_paste(p, src_imageData, dx, dy, sx, sy, sw, sh);
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_ImageData_encode")]
-        internal extern static void _wrap_love_dll_type_ImageData_encode(IntPtr p, int format_type, bool writeToFile, byte[] filename, out IntPtr out_fileData);
-        internal static void wrap_love_dll_type_ImageData_encode(IntPtr p, int format_type, bool writeToFile, byte[] filename, out IntPtr out_fileData)
+        internal extern static bool _wrap_love_dll_type_ImageData_encode(IntPtr p, int format_type, bool writeToFile, byte[] filename, out IntPtr out_fileData);
+        internal static bool wrap_love_dll_type_ImageData_encode(IntPtr p, int format_type, bool writeToFile, byte[] filename, out IntPtr out_fileData)
         {
-            _wrap_love_dll_type_ImageData_encode(p, format_type, writeToFile, filename, out out_fileData);
+            return CheckCAPIException(_wrap_love_dll_type_ImageData_encode(p, format_type, writeToFile, filename, out out_fileData));
         }
 
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]

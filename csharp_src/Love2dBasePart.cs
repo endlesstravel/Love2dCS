@@ -2389,6 +2389,16 @@ namespace Love
         }
 
         /// <summary>
+        /// Sets scissor.
+        /// <para>The scissor limits the drawing area to a specified rectangle. This affects all graphics calls, including love.graphics.clear.</para>
+        /// <para>The dimensions of the scissor is unaffected by graphical transformations(translate, scale, ...).</para>
+        /// </summary>
+        public static void SetScissor(Rectangle r)
+        {
+            SetScissor(r.x, r.y, r.width, r.height);
+        }
+
+        /// <summary>
         /// 设置 scissor 为所给矩形和现有 scissor 的交集（交集肯定还是个矩形）。如果之前没有设置 scissor，则相当于调用 <see cref="Graphics.SetScissor"/>
         /// <para>Sets the scissor to the rectangle created by the intersection of the specified rectangle with the existing scissor.</para>
         /// <para>The scissor limits the drawing area to a specified rectangle. This affects all graphics calls, including love.graphics.clear.</para>
@@ -2401,6 +2411,18 @@ namespace Love
         public static void IntersectScissor(int x, int y, int w, int h)
         {
             Love2dDll.wrap_love_dll_graphics_intersectScissor(x, y, w, h);
+        }
+
+
+        /// <summary>
+        /// 设置 scissor 为所给矩形和现有 scissor 的交集（交集肯定还是个矩形）。如果之前没有设置 scissor，则相当于调用 <see cref="Graphics.SetScissor"/>
+        /// <para>Sets the scissor to the rectangle created by the intersection of the specified rectangle with the existing scissor.</para>
+        /// <para>The scissor limits the drawing area to a specified rectangle. This affects all graphics calls, including love.graphics.clear.</para>
+        /// <para>The dimensions of the scissor is unaffected by graphical transformations(translate, scale, ...).</para>
+        /// </summary>
+        public static void IntersectScissor(Rectangle r)
+        {
+            IntersectScissor(r.x, r.y, r.width, r.height);
         }
 
         /// <summary>
@@ -2929,6 +2951,45 @@ namespace Love
             Love2dDll.wrap_love_dll_graphics_origin();
         }
 
+
+        /// <summary>
+        /// Converts the given 2D position from global coordinates into screen-space.
+        /// This effectively applies the current graphics transformations to the given position. A similar Transform:transformPoint method exists for Transform objects.
+        /// </summary>
+        public static Vector2 TransformPoint(float x, float y)
+        {
+            Love2dDll.wrap_love_dll_graphics_transformPoint(x, y, out var out_x, out var out_y);
+            return new Vector2(out_x, out_y);
+        }
+
+        /// <summary>
+        /// Converts the given 2D position from global coordinates into screen-space.
+        /// This effectively applies the current graphics transformations to the given position. A similar Transform:transformPoint method exists for Transform objects.
+        /// </summary>
+        public static Vector2 TransformPoint(Vector2 p)
+        {
+            return TransformPoint(p.X, p.Y);
+        }
+
+        /// <summary>
+        /// Converts the given 2D position from screen-space into global coordinates.
+        /// This effectively applies the reverse of the current graphics transformations to the given position. A similar Transform:inverseTransformPoint method exists for Transform objects.
+        /// </summary>
+        public static Vector2 InverseTransformPoint(float x, float y)
+        {
+            Love2dDll.wrap_love_dll_graphics_inverseTransformPoint(x, y, out var out_x, out var out_y);
+            return new Vector2(out_x, out_y);
+        }
+
+
+        /// <summary>
+        /// Converts the given 2D position from screen-space into global coordinates.
+        /// This effectively applies the reverse of the current graphics transformations to the given position. A similar Transform:inverseTransformPoint method exists for Transform objects.
+        /// </summary>
+        public static Vector2 InverseTransformPoint(Vector2 p)
+        {
+            return InverseTransformPoint(p.X, p.Y);
+        }
         #endregion
 
         #region graphics Drwing

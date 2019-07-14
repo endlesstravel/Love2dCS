@@ -9,6 +9,15 @@ namespace Love.Misc
 
         public TransformStack()
         {
+            Clear();
+        }
+
+        /// <summary>
+        /// remove all transform
+        /// </summary>
+        public void Clear()
+        {
+            list.Clear();
             Push();
         }
 
