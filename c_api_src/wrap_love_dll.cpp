@@ -4032,17 +4032,15 @@ namespace wrap
 
 	void wrap_love_dll_graphics_inverseTransformPoint(float x, float y, float *out_x, float *out_y)
 	{
-		Vector2 p(x, y);
-		graphicsInstance->inverseTransformPoint(p);
-		*out_x = x;
-		*out_y = y;
+		auto tp = graphicsInstance->inverseTransformPoint(Vector2(x, y));
+		*out_x = tp.x;
+		*out_y = tp.y;
 	}
 	void wrap_love_dll_graphics_transformPoint(float x, float y, float *out_x, float *out_y)
 	{
-		Vector2 p(x, y);
-		graphicsInstance->transformPoint(p);
-		*out_x = x;
-		*out_y = y;
+		auto tp = graphicsInstance->transformPoint(Vector2(x, y));
+		*out_x = tp.x;
+		*out_y = tp.y;
 	}
 
 #pragma endregion
