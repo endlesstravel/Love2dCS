@@ -2775,6 +2775,34 @@ namespace Love
         {
             Love2dDll.wrap_love_dll_type_RandomGenerator_setSeed(p, low, high);
         }
+        public void SetSeed(long seed)
+        {
+            var bits = BitConverter.GetBytes(seed);
+            var high = BitConverter.ToUInt32(bits, 0);
+            var low = BitConverter.ToUInt32(bits, 4);
+            if (BitConverter.IsLittleEndian)
+            {
+                // 1 + 2 * 255 + 7 * 255^4 + 8 * 255^5
+                //   -> high                low
+                //   -> 00 00 08 07 00 00 02 01
+                // BitConverter.GetBytes -> [01, 02, 00, 00, 07, 08, 00, 00]
+                SetSeed(high, low);
+            }
+            else
+            {
+                // 1 + 2 * 255 + 7 * 255^4 + 8 * 255^5
+                //   -> high                low
+                //   -> 01 02 00 00 07 08 00 00
+                // BitConverter.GetBytes -> [00, 00, 08, 07, 00, 00, 02, 01]
+                SetSeed(low, high);
+            }
+        }
+        public long GetSeed()
+        {
+            GetSeed(out var low, out var high);
+            return (long)high + (long)low;
+        }
+
         public void GetSeed(out uint out_low, out uint out_high)
         {
             Love2dDll.wrap_love_dll_type_RandomGenerator_getSeed(p, out out_low, out out_high);

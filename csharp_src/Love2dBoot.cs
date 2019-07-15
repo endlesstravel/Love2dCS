@@ -328,6 +328,15 @@ namespace Love
         /// Show the Love2dCS warnning info on console.
         /// </summary>
         public bool WarningInfo = true;
+
+
+
+
+
+        /// <summary>
+        /// Default random seed on Mathf.Random
+        /// </summary>
+        public long? DefaultRandomSeed;
     }
 
 
@@ -426,7 +435,11 @@ namespace Love
                 // init to load native library
                 InitNativeLibrary();
 
-                Mathf.Init();
+                if (bootConfig.DefaultRandomSeed.HasValue)
+                    Mathf.Init(bootConfig.DefaultRandomSeed.Value);
+                else
+                    Mathf.Init();
+
                 FileSystem.Init("");
 
                 Timer.Init();

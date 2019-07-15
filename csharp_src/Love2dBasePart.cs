@@ -1962,6 +1962,16 @@ namespace Love
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="seed">Default random seed on Mathf.Random</param>
+        public static void Init(long seed)
+        {
+            Init();
+            rg.SetSeed(seed);
+        }
+
+        /// <summary>
         /// Get uniformly distributed pseudo-random integer within [min, max].
         /// </summary>
         /// <param name="min">The minimum possible value it should return.</param>
