@@ -380,8 +380,18 @@ namespace Love
     /// </summary>
     public partial class Timer
     {
+        /// <summary>
+        /// Time when launch the Timer.Init FirstTime
+        /// </summary>
+        public static double StartTime => startTimer.HasValue ? startTimer.Value : 0;
+        public static double? startTimer;
+
         public static bool Init()
         {
+            if (startTimer.HasValue == false)
+            {
+                startTimer = GetTimeRaw();
+            }
             return Love2dDll.wrap_love_dll_timer_open_timer();
         }
 
@@ -436,13 +446,30 @@ namespace Love
         }
 
         /// <summary>
-        /// Returns the amount of time since some time in the past.
+        /// Returns time in seconds since the start of the game.
         /// </summary>
         /// <returns></returns>
         public static float GetTime()
         {
-            float out_time = 0;
-            Love2dDll.wrap_love_dll_timer_getTime(out out_time);
+            GetTime(out var out_time);
+            return (float)out_time;
+        }
+        /// <summary>
+        /// Returns time in seconds since the start of the game.
+        /// </summary>
+        /// <returns></returns>
+        public static void GetTime(out double out_time)
+        {
+            out_time = GetTimeRaw() - StartTime;
+        }
+
+        /// <summary>
+        /// Returns the amount of time since some time in the past.
+        /// </summary>
+        /// <returns></returns>
+        public static double GetTimeRaw()
+        {
+            Love2dDll.wrap_love_dll_timer_getTime(out var out_time);
             return out_time;
         }
 
@@ -2026,7 +2053,7 @@ namespace Love
         /// </summary>
         /// <param name="points"></param>
         /// <returns></returns>
-        public static BezierCurve NewBezierCurve(Vector2[] points)
+        public static BezierCurve NewBezierCurve(params Vector2[] points)
         {
             IntPtr out_BezierCurve = IntPtr.Zero;
             Love2dDll.wrap_love_dll_math_newBezierCurve(points, points.Length, out out_BezierCurve);
@@ -2409,6 +2436,16 @@ namespace Love
         }
 
         /// <summary>
+        /// Sets scissor.
+        /// <para>The scissor limits the drawing area to a specified rectangle. This affects all graphics calls, including love.graphics.clear.</para>
+        /// <para>The dimensions of the scissor is unaffected by graphical transformations(translate, scale, ...).</para>
+        /// </summary>
+        public static void SetScissor(RectangleF r)
+        {
+            SetScissor((int)r.x, (int)r.y, (int)r.width, (int)r.height);
+        }
+
+        /// <summary>
         /// 设置 scissor 为所给矩形和现有 scissor 的交集（交集肯定还是个矩形）。如果之前没有设置 scissor，则相当于调用 <see cref="Graphics.SetScissor"/>
         /// <para>Sets the scissor to the rectangle created by the intersection of the specified rectangle with the existing scissor.</para>
         /// <para>The scissor limits the drawing area to a specified rectangle. This affects all graphics calls, including love.graphics.clear.</para>
@@ -2423,7 +2460,6 @@ namespace Love
             Love2dDll.wrap_love_dll_graphics_intersectScissor(x, y, w, h);
         }
 
-
         /// <summary>
         /// 设置 scissor 为所给矩形和现有 scissor 的交集（交集肯定还是个矩形）。如果之前没有设置 scissor，则相当于调用 <see cref="Graphics.SetScissor"/>
         /// <para>Sets the scissor to the rectangle created by the intersection of the specified rectangle with the existing scissor.</para>
@@ -2433,6 +2469,17 @@ namespace Love
         public static void IntersectScissor(Rectangle r)
         {
             IntersectScissor(r.x, r.y, r.width, r.height);
+        }
+
+        /// <summary>
+        /// 设置 scissor 为所给矩形和现有 scissor 的交集（交集肯定还是个矩形）。如果之前没有设置 scissor，则相当于调用 <see cref="Graphics.SetScissor"/>
+        /// <para>Sets the scissor to the rectangle created by the intersection of the specified rectangle with the existing scissor.</para>
+        /// <para>The scissor limits the drawing area to a specified rectangle. This affects all graphics calls, including love.graphics.clear.</para>
+        /// <para>The dimensions of the scissor is unaffected by graphical transformations(translate, scale, ...).</para>
+        /// </summary>
+        public static void IntersectScissor(RectangleF r)
+        {
+            IntersectScissor((int)r.x, (int)r.y, (int)r.width, (int)r.height);
         }
 
         /// <summary>

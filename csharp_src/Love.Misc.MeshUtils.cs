@@ -33,7 +33,7 @@ namespace Love.Misc
 
             /// Mesh vertex.
             /// </summary>
-            public Vertex(float x = 0, float y = 0, float z = 0, float u = 0, float v = 0, byte r = 255, byte g = 255, byte b = 255, byte a = 255)
+            public Vertex(float x = 0, float y = 0, float u = 0, float v = 0, byte r = 255, byte g = 255, byte b = 255, byte a = 255)
             {
                 this.x = x;
                 this.y = y;

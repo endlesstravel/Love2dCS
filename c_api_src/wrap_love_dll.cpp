@@ -1010,7 +1010,7 @@ namespace wrap
     {
         std::vector<Vector2> points;
         points.reserve(pointsList_lenght);
-        for (int i = 0; i < pointsList_lenght; i += 2)
+        for (int i = 0; i < pointsList_lenght; i++)
         {
             points.push_back(Vector2(pointsList[i].x, pointsList[i].y));
         }
@@ -1067,7 +1067,7 @@ namespace wrap
         timerInstance->sleep(t);
     }
 
-    void wrap_love_dll_timer_getTime(float *out_time)
+    void wrap_love_dll_timer_getTime(double *out_time)
     {
         *out_time = timerInstance->getTime();
     }

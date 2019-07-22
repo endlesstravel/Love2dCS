@@ -315,7 +315,7 @@ namespace wrap
     extern "C" LOVE_EXPORT void wrap_love_dll_timer_getFPS(float *out_fps);
     extern "C" LOVE_EXPORT void wrap_love_dll_timer_getAverageDelta(float *out_averageDelta);
     extern "C" LOVE_EXPORT void wrap_love_dll_timer_sleep(float t);
-    extern "C" LOVE_EXPORT void wrap_love_dll_timer_getTime(float *out_time);
+    extern "C" LOVE_EXPORT void wrap_love_dll_timer_getTime(double *out_time);
 
 #pragma endregion
 

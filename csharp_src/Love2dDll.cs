@@ -485,8 +485,8 @@ namespace Love
             _wrap_love_dll_timer_sleep(t);
         }
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_timer_getTime")]
-        internal extern static void _wrap_love_dll_timer_getTime(out float out_time);
-        internal static void wrap_love_dll_timer_getTime(out float out_time)
+        internal extern static void _wrap_love_dll_timer_getTime(out double out_time);
+        internal static void wrap_love_dll_timer_getTime(out double out_time)
         {
             _wrap_love_dll_timer_getTime(out out_time);
         }
