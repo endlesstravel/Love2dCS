@@ -25,8 +25,8 @@ namespace Love.Misc
             for (int i = 0; i < wi; i++)
                 fpsGraph.m_vals.Enqueue(0);
 
-            fpsGraph.m_rect.x = x;
-            fpsGraph.m_rect.y = y;
+            fpsGraph.m_rect.X = x;
+            fpsGraph.m_rect.Y = y;
             fpsGraph.m_rect.Width = width;
             fpsGraph.m_rect.Height = height;
             fpsGraph.m_inverval = Mathf.Max(interval, 0.05f);
@@ -113,14 +113,14 @@ namespace Love.Misc
             var maxVal = m_vals.Max();
             var minVal = 0;
             var lastValue = m_vals.Peek();
-            float stepX = m_rect.width / m_vals.Count;
+            float stepX = m_rect.Width / m_vals.Count;
             int index = 0;
 
-            Vector2 lastPoint = new Vector2(m_rect.Left, m_rect.Bottom - m_rect.height * (lastValue / (maxVal - minVal)));
+            Vector2 lastPoint = new Vector2(m_rect.Left, m_rect.Bottom - m_rect.Height * (lastValue / (maxVal - minVal)));
 
             foreach (var v in m_vals)
             {
-                Vector2 currentPoint = new Vector2(index * stepX + m_rect.x, m_rect.Bottom - m_rect.height * (v / (maxVal - minVal)));
+                Vector2 currentPoint = new Vector2(index * stepX + m_rect.X, m_rect.Bottom - m_rect.Height * (v / (maxVal - minVal)));
                 Graphics.Line(lastPoint, currentPoint);
 
                 lastValue = v;
@@ -129,7 +129,7 @@ namespace Love.Misc
             }
 
             Graphics.SetFont(FPSGraph_FONT);
-            Graphics.Print("MAX:" + maxVal.ToString("00.0") + "\nFPS:" + FPSCounter.GetFPS(), m_rect.x, m_rect.Top);
+            Graphics.Print("MAX:" + maxVal.ToString("00.0") + "\nFPS:" + FPSCounter.GetFPS(), m_rect.X, m_rect.Top);
         }
 
 
@@ -138,8 +138,8 @@ namespace Love.Misc
 
         public static void Config(float x, float y, float width = 200, float height = 90, float interval = 0.5f, bool draggable = true)
         {
-            m_Defalt.m_rect.x = x;
-            m_Defalt.m_rect.y = y;
+            m_Defalt.m_rect.X = x;
+            m_Defalt.m_rect.Y = y;
             m_Defalt.m_rect.Width = width;
             m_Defalt.m_rect.Height = height;
             m_Defalt.m_inverval = Mathf.Max(interval, 0.05f);

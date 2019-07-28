@@ -23,10 +23,10 @@ namespace Love
         /// </summary>
         public static readonly RectangleF Empty = new RectangleF();
 
-        public float x; // Do not rename (binary serialization) 
-        public float y; // Do not rename (binary serialization) 
-        public float width; // Do not rename (binary serialization) 
-        public float height; // Do not rename (binary serialization) 
+        public float X; // Do not rename (binary serialization) 
+        public float Y; // Do not rename (binary serialization) 
+        public float Width; // Do not rename (binary serialization) 
+        public float Height; // Do not rename (binary serialization) 
 
         /// <summary>
         ///    <para>
@@ -36,10 +36,10 @@ namespace Love
         /// </summary>
         public RectangleF(float x, float y, float width, float height)
         {
-            this.x = x;
-            this.y = y;
-            this.width = width;
-            this.height = height;
+            this.X = x;
+            this.Y = y;
+            this.Width = width;
+            this.Height = height;
         }
 
         /// <summary>
@@ -51,10 +51,10 @@ namespace Love
         /// </summary>
         public RectangleF(Vector2 location, SizeF size)
         {
-            x = location.X;
-            y = location.Y;
-            width = size.Width;
-            height = size.Height;
+            X = location.X;
+            Y = location.Y;
+            Width = size.Width;
+            Height = size.Height;
         }
 
         /// <summary>
@@ -97,54 +97,6 @@ namespace Love
                 Width = value.Width;
                 Height = value.Height;
             }
-        }
-
-        /// <summary>
-        ///    <para>
-        ///       Gets or sets the x-coordinate of the
-        ///       upper-left corner of the rectangular region defined by this <see cref='Love.RectangleF'/>.
-        ///    </para>
-        /// </summary>
-        public float X
-        {
-            get { return x; }
-            set { x = value; }
-        }
-
-        /// <summary>
-        ///    <para>
-        ///       Gets or sets the y-coordinate of the
-        ///       upper-left corner of the rectangular region defined by this <see cref='Love.RectangleF'/>.
-        ///    </para>
-        /// </summary>
-        public float Y
-        {
-            get { return y; }
-            set { y = value; }
-        }
-
-        /// <summary>
-        ///    <para>
-        ///       Gets or sets the width of the rectangular
-        ///       region defined by this <see cref='Love.RectangleF'/>.
-        ///    </para>
-        /// </summary>
-        public float Width
-        {
-            get { return width; }
-            set { width = value; }
-        }
-
-        /// <summary>
-        ///    <para>
-        ///       Gets or sets the height of the
-        ///       rectangular region defined by this <see cref='Love.RectangleF'/>.
-        ///    </para>
-        /// </summary>
-        public float Height
-        {
-            get { return height; }
-            set { height = value; }
         }
 
         /// <summary>

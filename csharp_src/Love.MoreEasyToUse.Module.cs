@@ -950,7 +950,7 @@ namespace Love
         /// <param name="rect">the rectangle to draw.</param>
         public static void Rectangle(DrawMode mode, RectangleF rect)
         {
-            Rectangle(mode, rect.x, rect.y, rect.width, rect.height);
+            Rectangle(mode, rect.X, rect.Y, rect.Width, rect.Height);
         }
 
         /// <summary>
