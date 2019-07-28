@@ -2432,7 +2432,7 @@ namespace Love
         /// </summary>
         public static void SetScissor(Rectangle r)
         {
-            SetScissor(r.x, r.y, r.width, r.height);
+            SetScissor(r.X, r.Y, r.Width, r.Height);
         }
 
         /// <summary>
@@ -2468,7 +2468,7 @@ namespace Love
         /// </summary>
         public static void IntersectScissor(Rectangle r)
         {
-            IntersectScissor(r.x, r.y, r.width, r.height);
+            IntersectScissor(r.X, r.Y, r.Width, r.Height);
         }
 
         /// <summary>

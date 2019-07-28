@@ -19,10 +19,10 @@ namespace Love
     {
         public static readonly Rectangle Empty = new Rectangle();
 
-        public int x; // Do not rename (binary serialization) 
-        public int y; // Do not rename (binary serialization) 
-        public int width; // Do not rename (binary serialization) 
-        public int height; // Do not rename (binary serialization) 
+        public int X; // Do not rename (binary serialization) 
+        public int Y; // Do not rename (binary serialization) 
+        public int Width; // Do not rename (binary serialization) 
+        public int Height; // Do not rename (binary serialization) 
 
         /// <summary>
         ///    <para>
@@ -32,10 +32,10 @@ namespace Love
         /// </summary>
         public Rectangle(int x, int y, int width, int height)
         {
-            this.x = x;
-            this.y = y;
-            this.width = width;
-            this.height = height;
+            this.X = x;
+            this.Y = y;
+            this.Width = width;
+            this.Height = height;
         }
 
         /// <summary>
@@ -46,10 +46,10 @@ namespace Love
         /// </summary>
         public Rectangle(Point location, Size size)
         {
-            x = location.X;
-            y = location.Y;
-            width = size.Width;
-            height = size.Height;
+            X = location.X;
+            Y = location.Y;
+            Width = size.Width;
+            Height = size.Height;
         }
 
         /// <summary>
@@ -88,46 +88,6 @@ namespace Love
                 Width = value.Width;
                 Height = value.Height;
             }
-        }
-
-        /// <summary>
-        ///    Gets or sets the x-coordinate of the
-        ///    upper-left corner of the rectangular region defined by this <see cref='Love.Rectangle'/>.
-        /// </summary>
-        public int X
-        {
-            get { return x; }
-            set { x = value; }
-        }
-
-        /// <summary>
-        ///    Gets or sets the y-coordinate of the
-        ///    upper-left corner of the rectangular region defined by this <see cref='Love.Rectangle'/>.
-        /// </summary>
-        public int Y
-        {
-            get { return y; }
-            set { y = value; }
-        }
-
-        /// <summary>
-        ///    Gets or sets the width of the rectangular
-        ///    region defined by this <see cref='Love.Rectangle'/>.
-        /// </summary>
-        public int Width
-        {
-            get { return width; }
-            set { width = value; }
-        }
-
-        /// <summary>
-        ///    Gets or sets the width of the rectangular
-        ///    region defined by this <see cref='Love.Rectangle'/>.
-        /// </summary>
-        public int Height
-        {
-            get { return height; }
-            set { height = value; }
         }
 
         /// <summary>
@@ -173,7 +133,7 @@ namespace Love
         ///    </para>
         /// </summary>
         [Browsable(false)]
-        public bool IsEmpty => height == 0 && width == 0 && x == 0 && y == 0;
+        public bool IsEmpty => Height == 0 && Width == 0 && X == 0 && Y == 0;
 
         /// <summary>
         ///    <para>
