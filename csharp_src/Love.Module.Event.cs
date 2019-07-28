@@ -221,8 +221,8 @@ namespace Love
                 {
                     if (ed.type == EventType.WheelMoved)
                     {
-                        svalue.x += ed.idx;
-                        svalue.y += ed.idy;
+                        svalue.X += ed.idx;
+                        svalue.Y += ed.idy;
                     }
                 }
 

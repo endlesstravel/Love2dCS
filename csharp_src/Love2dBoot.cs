@@ -520,8 +520,8 @@ namespace Love
             FPSCounter.Step();
 
             var scrollValue = box.GetScrollValue();
-            Mouse.SetScrollX(scrollValue.x);
-            Mouse.SetScrollY(scrollValue.y);
+            Mouse.SetScrollX(scrollValue.X);
+            Mouse.SetScrollY(scrollValue.Y);
 
             box.SceneHandleEvent(scene);
 

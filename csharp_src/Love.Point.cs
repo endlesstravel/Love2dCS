@@ -22,8 +22,8 @@ namespace Love
         /// </summary>
         public static readonly Point Empty = new Point();
 
-        public int x; // Do not rename (binary serialization)
-        public int y; // Do not rename (binary serialization)
+        public int X; // Do not rename (binary serialization)
+        public int Y; // Do not rename (binary serialization)
 
         /// <summary>
         ///    Initializes a new instance of the <see cref='Love.Point'/> class
@@ -31,8 +31,8 @@ namespace Love
         /// </summary>
         public Point(int x, int y)
         {
-            this.x = x;
-            this.y = y;
+            this.X = x;
+            this.Y = y;
         }
 
         /// <summary>
@@ -43,8 +43,8 @@ namespace Love
         /// </summary>
         public Point(Size sz)
         {
-            x = sz.Width;
-            y = sz.Height;
+            X = sz.Width;
+            Y = sz.Height;
         }
 
         /// <summary>
@@ -53,8 +53,8 @@ namespace Love
         /// </summary>
         public Point(int dw)
         {
-            x = LowInt16(dw);
-            y = HighInt16(dw);
+            X = LowInt16(dw);
+            Y = HighInt16(dw);
         }
 
         /// <summary>
@@ -63,27 +63,7 @@ namespace Love
         ///    </para>
         /// </summary>
         [Browsable(false)]
-        public bool IsEmpty => x == 0 && y == 0;
-
-        /// <summary>
-        ///    Gets the x-coordinate of this <see cref='Love.Point'/>.
-        /// </summary>
-        public int X
-        {
-            get { return x; }
-            set { x = value; }
-        }
-
-        /// <summary>
-        ///    <para>
-        ///       Gets the y-coordinate of this <see cref='Love.Point'/>.
-        ///    </para>
-        /// </summary>
-        public int Y
-        {
-            get { return y; }
-            set { y = value; }
-        }
+        public bool IsEmpty => X == 0 && Y == 0;
 
         /// <summary>
         ///    <para>
