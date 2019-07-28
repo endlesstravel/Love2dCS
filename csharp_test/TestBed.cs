@@ -182,7 +182,7 @@ namespace LovePhysicsTestBed
             }
             Love.Misc.FPSGraph.Update(dt);
             Love.Misc.FPSGraph.Position = new Vector2(
-                0, Graphics.GetHeight() - Love.Misc.FPSGraph.Size.height);
+                0, Graphics.GetHeight() - Love.Misc.FPSGraph.Size.Height);
 
             foreach (var joy in Joystick.GetJoysticks())
             {

@@ -25,8 +25,8 @@ namespace Love
         ///    Initializes a new instance of the <see cref='SizeF'/> class.
         /// </summary>
         public static readonly SizeF Empty = new SizeF();
-        public float width; // Do not rename (binary serialization) 
-        public float height; // Do not rename (binary serialization) 
+        public float Width; // Do not rename (binary serialization) 
+        public float Height; // Do not rename (binary serialization) 
 
         /**
          * Create a new SizeF object from another size object
@@ -37,8 +37,8 @@ namespace Love
         /// </summary>
         public SizeF(SizeF size)
         {
-            width = size.width;
-            height = size.height;
+            Width = size.Width;
+            Height = size.Height;
         }
 
         /**
@@ -52,8 +52,8 @@ namespace Love
         /// </summary>
         public SizeF(Vector2 pt)
         {
-            width = pt.X;
-            height = pt.Y;
+            Width = pt.X;
+            Height = pt.Y;
         }
 
         /**
@@ -67,8 +67,8 @@ namespace Love
         /// </summary>
         public SizeF(float width, float height)
         {
-            this.width = width;
-            this.height = height;
+            this.Width = width;
+            this.Height = height;
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace Love
         /// <param name="right">Divisor of type <see cref="int"/>.</param>
         /// <returns>Result of type <see cref="SizeF"/>.</returns>
         public static SizeF operator /(SizeF left, float right)
-            => new SizeF(left.width / right, left.height / right);
+            => new SizeF(left.Width / right, left.Height / right);
 
         /// <summary>
         ///    Tests whether two <see cref='SizeF'/> objects
@@ -138,39 +138,11 @@ namespace Love
         ///    </para>
         /// </summary>
         [Browsable(false)]
-        public bool IsEmpty => width == 0 && height == 0;
+        public bool IsEmpty => Width == 0 && Height == 0;
 
         /**
          * Horizontal dimension
          */
-
-        /// <summary>
-        ///    <para>
-        ///       Represents the horizontal component of this
-        ///    <see cref='SizeF'/>.
-        ///    </para>
-        /// </summary>
-        public float Width
-        {
-            get { return width; }
-            set { width = value; }
-        }
-
-        /**
-         * Vertical dimension
-         */
-
-        /// <summary>
-        ///    <para>
-        ///       Represents the vertical component of this
-        ///    <see cref='SizeF'/>.
-        ///    </para>
-        /// </summary>
-        public float Height
-        {
-            get { return height; }
-            set { height = value; }
-        }
 
         /// <summary>
         ///    <para>
@@ -210,7 +182,7 @@ namespace Love
         ///    <see cref='SizeF'/>.
         ///    </para>
         /// </summary>
-        public override string ToString() => "{Width=" + width.ToString() + ", Height=" + height.ToString() + "}";
+        public override string ToString() => "{Width=" + Width.ToString() + ", Height=" + Height.ToString() + "}";
 
         /// <summary>
         /// Multiplies <see cref="SizeF"/> by a <see cref="float"/> producing <see cref="SizeF"/>.
@@ -219,6 +191,6 @@ namespace Love
         /// <param name="multiplier">Multiplier of type <see cref="float"/>.</param>
         /// <returns>Product of type SizeF.</returns>
         private static SizeF Multiply(SizeF size, float multiplier) =>
-            new SizeF(size.width * multiplier, size.height * multiplier);
+            new SizeF(size.Width * multiplier, size.Height * multiplier);
     }
 }

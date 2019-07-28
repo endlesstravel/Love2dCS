@@ -1434,7 +1434,7 @@ namespace LoveTest
             FPSGraph.Update(dt);
             var gw = Graphics.GetWidth();
             var gh = Graphics.GetHeight();
-            FPSGraph.Position = new Vector2(gw - FPSGraph.Size.width, gh - FPSGraph.Size.height);
+            FPSGraph.Position = new Vector2(gw - FPSGraph.Size.Width, gh - FPSGraph.Size.Height);
         }
 
         public override void KeyPressed(KeyConstant key, Scancode scancode, bool isRepeat)
