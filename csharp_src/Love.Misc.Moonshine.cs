@@ -110,8 +110,23 @@ namespace Love.Misc
 
         public Moonshine Resize(int w, int h)
         {
-            buffer.Front = Graphics.NewCanvas(w, h);
-            buffer.Back = Graphics.NewCanvas(w, h);
+            if (buffer.Front == null || buffer.Back == null)
+            {
+                buffer.Front = Graphics.NewCanvas(w, h);
+                buffer.Back = Graphics.NewCanvas(w, h);
+            }
+            else
+            {
+                int fw = buffer.Front.GetWidth();
+                int fh = buffer.Front.GetHeight();
+                int bw = buffer.Back.GetWidth();
+                int bh = buffer.Back.GetHeight();
+                if (fw != w || fh != h || bw != w || bh != h)
+                {
+                    buffer.Front = Graphics.NewCanvas(w, h);
+                    buffer.Back = Graphics.NewCanvas(w, h);
+                }
+            }
             return this;
         }
 
@@ -836,8 +851,21 @@ namespace Love.Misc
                 m_shaderBlur = Graphics.NewShader(code.ToString());
             }
 
+            public void UpdateSceneCanvas()
+            {
+                if (m_scene != null)
+                {
+                    if (m_scene.GetWidth() != Graphics.GetWidth() || m_scene.GetHeight() != Graphics.GetHeight())
+                    {
+                        m_scene = Graphics.NewCanvas();
+                    }
+                }
+            }
+
             public override void Draw(DoubleBufferCanvas buffer)
             {
+                UpdateSceneCanvas();
+
                 buffer.Swap();
                 var front = buffer.Front;
                 var scene = buffer.Back;
