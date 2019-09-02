@@ -61,6 +61,21 @@ namespace Love
 
         /// <summary>
         ///    <para>
+        ///       Gets or sets the center of the rectangle
+        ///    </para>
+        /// </summary>
+        public Point Center
+        {
+            get { return new Point(X + Width / 2, Y + Height / 2); }
+            set
+            {
+                X = value.X - Width / 2;
+                Y = value.Y - Height / 2;
+            }
+        }
+
+        /// <summary>
+        ///    <para>
         ///       Gets or sets the coordinates of the
         ///       upper-left corner of the rectangular region represented by this <see cref='Love.Rectangle'/>.
         ///    </para>

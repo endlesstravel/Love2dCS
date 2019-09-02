@@ -219,7 +219,7 @@ namespace LovePhysicsTestBed
                 WindowResizable = true,
                 //WindowVsync = false,
             });
-
+            //Log.Target = Log.TargetType.DiagnosticsDubug;
             Boot.Run(new TestBed());
         }
     }

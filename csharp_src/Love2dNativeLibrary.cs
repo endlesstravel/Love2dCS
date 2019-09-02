@@ -26,7 +26,7 @@ namespace Love
             {
                 if (dlopen($"{Environment.CurrentDirectory}/{name}", RTLD_NOW) == IntPtr.Zero)
                 {
-                    Console.WriteLine($"load library '{name}' error: {dlerror()}");
+                    Log.Error($"load library '{name}' error: {dlerror()}");
                 }
             }
         }

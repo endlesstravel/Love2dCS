@@ -59,7 +59,7 @@ namespace Love
         // part of C# response for release
         public void Dispose()
         {
-            Console.WriteLine("release : " + GetType());
+            // Log.Info("release : " + GetType());
             Love2dDll.wrap_love_dll_release_obj(p);
             p = IntPtr.Zero;
         }

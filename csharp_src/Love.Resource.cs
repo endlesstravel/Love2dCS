@@ -10,7 +10,7 @@ using SIO = System.IO;
 namespace Love
 {
     /// <summary>
-    /// This module will create resource through starndard C# IO, 
+    /// This module will create resource through starndard C# IO,
     /// this means you can read a png file from path like C:/love-logo.png
     /// </summary>
     public class Resource
@@ -46,7 +46,7 @@ namespace Love
 
         #region Audio
         /// <summary>
-        /// Creates a new Source from file name. 
+        /// Creates a new Source from file name.
         /// </summary>
         /// <param name="filename">The filepath to the audio file.</param>
         /// <param name="type">Streaming or static source.</param>
@@ -70,7 +70,7 @@ namespace Love
         }
 
         /// <summary>
-        /// Append data to an existing file. 
+        /// Append data to an existing file.
         /// </summary>
         /// <param name="path">The name (and path) of the file.</param>
         /// <param name="byteArray">The data to append to the file.</param>
@@ -83,7 +83,7 @@ namespace Love
         }
 
         /// <summary>
-        /// Append data to an existing file. 
+        /// Append data to an existing file.
         /// </summary>
         /// <param name="path">The name (and path) of the file.</param>
         /// <param name="content">The string to append to the file.</param>
@@ -93,7 +93,7 @@ namespace Love
         }
 
         /// <summary>
-        /// Append data to an existing file. 
+        /// Append data to an existing file.
         /// </summary>
         /// <param name="path">The name (and path) of the file.</param>
         /// <param name="content">The string to append to the file.</param>
@@ -118,7 +118,7 @@ namespace Love
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Create Directory failed {pathString} : {e.Message}");
+                Log.Error($"Create Directory failed {pathString} : {e.Message}");
             }
             return false;
         }
@@ -209,7 +209,7 @@ namespace Love
             }
             catch(Exception e)
             {
-                Console.WriteLine($"Remove path failed {path} : {e.Message}");
+                Log.Error($"Remove path failed {path} : {e.Message}");
             }
             return false;
         }

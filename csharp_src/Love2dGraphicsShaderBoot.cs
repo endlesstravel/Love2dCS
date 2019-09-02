@@ -314,7 +314,7 @@ void effect() {
         ";
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="stage">"VERTEX" or "PIXEL"</param>
         /// <param name="code">input string</param>
@@ -393,7 +393,7 @@ void effect() {
             {
                 Love2dDll.wrap_love_dll_graphics_setDefaultShaderCode(tmp);
             });
-            
+
         }
 
         static bool isVertexCode(string code)
@@ -515,9 +515,9 @@ void effect() {
 
         public static void Init()
         {
-            Console.WriteLine("init shader code boot ...");
+            Log.Info("init shader code boot ...");
             InitGraphicsShader();
-            Console.WriteLine("init shader code success");
+            Log.Info("init shader code success");
         }
     }
 }

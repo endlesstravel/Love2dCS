@@ -287,7 +287,7 @@ namespace Love
         public int WindowMinHeight = 1;
 
         /// <summary>
-        /// Choose between "DeskTop" fullscreen or "Exclusive" fullscreen mode 
+        /// Choose between "DeskTop" fullscreen or "Exclusive" fullscreen mode
         /// </summary>
         public FullscreenType WindowFullscreenType = FullscreenType.DeskTop;
 
@@ -323,15 +323,6 @@ namespace Love
         /// The x-coordinate(y-coordinate) of the window's position in the specified display
         /// </summary>
         public int? WindowX, WindowY;
-
-        /// <summary>
-        /// Show the Love2dCS warnning info on console.
-        /// </summary>
-        public bool WarningInfo = true;
-
-
-
-
 
         /// <summary>
         /// Default random seed on Mathf.Random
@@ -414,7 +405,7 @@ namespace Love
 
     /// <summary>
     /// LÖVE engine entrance class
-    /// <para>LÖVE 引擎入口类</para> 
+    /// <para>LÖVE 引擎入口类</para>
     /// </summary>
     static public partial class Boot
     {
@@ -481,22 +472,7 @@ namespace Love
 
                 FileSystem.SetSource(Environment.CurrentDirectory);
 
-                RecordWarningInfo = bootConfig.WarningInfo;
-
-                Console.WriteLine($"FileSystem set source with path : {FileSystem.GetSource()}");
-            }
-        }
-
-        public static bool RecordWarningInfo = true;
-
-        internal static void LogWarning(string info)
-        {
-            if (RecordWarningInfo)
-            {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.BackgroundColor = ConsoleColor.Red;
-                Console.WriteLine(info);
-                Console.ResetColor();
+                Log.Info($"FileSystem set source with path : {FileSystem.GetSource()}");
             }
         }
 
@@ -613,17 +589,17 @@ namespace Love
             }
             catch (Exception e)
             {
-                Console.WriteLine("----------------------------------------------------");
-                Console.WriteLine("[Error]:");
+                Log.Error("----------------------------------------------------");
+                Log.Error("[Error]:");
                 Exception itException = e;
                 while (itException != null)
                 {
-                    Console.WriteLine(itException.Message);
+                    Log.Error(itException.Message);
                     itException = itException.InnerException;
                 }
-                Console.WriteLine("[Stack trace]:");
-                Console.WriteLine(e.StackTrace);
-                Console.WriteLine("----------------------------------------------------");
+                Log.Error("[Stack trace]:");
+                Log.Error(e.StackTrace);
+                Log.Error("----------------------------------------------------");
                 LoopErrorScene(scene, e);
             }
         }
