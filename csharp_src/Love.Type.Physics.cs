@@ -1084,6 +1084,11 @@ namespace Love
 
         public delegate float RayCastCallback(Fixture pfixture, float x, float y, float nx, float ny, float fraction);
 
+        public void RayCast(Vector2 a, Vector2 b, RayCastCallback callback)
+        {
+            RayCast(a.X, a.Y, b.X, b.Y, callback);
+        }
+
         public void RayCast(float x1, float y1, float x2, float y2, RayCastCallback callback)
         {
             Love2dDll.wrap_love_dll_type_World_rayCast(p, x1, y1, x2, y2, (pf, x, y, nx, ny, fraction) => callback(NewObject<Fixture>(pf), x, y, nx, ny, fraction));

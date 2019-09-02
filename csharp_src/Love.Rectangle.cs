@@ -65,7 +65,6 @@ namespace Love
         ///       upper-left corner of the rectangular region represented by this <see cref='Love.Rectangle'/>.
         ///    </para>
         /// </summary>
-        [Browsable(false)]
         public Point Location
         {
             get { return new Point(X, Y); }
@@ -79,7 +78,6 @@ namespace Love
         /// <summary>
         ///    Gets or sets the size of this <see cref='Love.Rectangle'/>.
         /// </summary>
-        [Browsable(false)]
         public Size Size
         {
             get { return new Size(Width, Height); }
@@ -96,8 +94,7 @@ namespace Love
         ///       rectangular region defined by this <see cref='Love.Rectangle'/> .
         ///    </para>
         /// </summary>
-        [Browsable(false)]
-        public int Left => X;
+        public int Left { get => X; set => X = value; }
 
         /// <summary>
         ///    <para>
@@ -105,8 +102,7 @@ namespace Love
         ///       rectangular region defined by this <see cref='Love.Rectangle'/>.
         ///    </para>
         /// </summary>
-        [Browsable(false)]
-        public int Top => Y;
+        public int Top { get => Y; set => Y = value; }
 
         /// <summary>
         ///    <para>
@@ -114,8 +110,7 @@ namespace Love
         ///       rectangular region defined by this <see cref='Love.Rectangle'/>.
         ///    </para>
         /// </summary>
-        [Browsable(false)]
-        public int Right => unchecked(X + Width);
+        public int Right { get => X + Width; set => X = value - Width; }
 
         /// <summary>
         ///    <para>
@@ -123,8 +118,7 @@ namespace Love
         ///       rectangular region defined by this <see cref='Love.Rectangle'/>.
         ///    </para>
         /// </summary>
-        [Browsable(false)]
-        public int Bottom => unchecked(Y + Height);
+        public int Bottom { get => Y + Height; set => Y = value - Height; }
 
         /// <summary>
         ///    <para>
@@ -132,7 +126,6 @@ namespace Love
         ///       or a <see cref='Love.Rectangle.Height'/> of 0.
         ///    </para>
         /// </summary>
-        [Browsable(false)]
         public bool IsEmpty => Height == 0 && Width == 0 && X == 0 && Y == 0;
 
         /// <summary>
@@ -276,7 +269,8 @@ namespace Love
             return r;
         }
 
-        /// <summary> Creates a Rectangle that represents the intersection between this Rectangle and rect.
+        /// <summary>
+        /// Lead this rectangle intersection with other rectangle.
         /// </summary>
         public void Intersect(Rectangle rect)
         {

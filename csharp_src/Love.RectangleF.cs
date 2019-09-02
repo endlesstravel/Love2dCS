@@ -72,7 +72,6 @@ namespace Love
         ///       the rectangular region represented by this <see cref='Love.RectangleF'/>.
         ///    </para>
         /// </summary>
-        [Browsable(false)]
         public Vector2 Location
         {
             get { return new Vector2(X, Y); }
@@ -88,7 +87,6 @@ namespace Love
         ///       Gets or sets the size of this <see cref='Love.RectangleF'/>.
         ///    </para>
         /// </summary>
-        [Browsable(false)]
         public SizeF Size
         {
             get { return new SizeF(Width, Height); }
@@ -105,8 +103,7 @@ namespace Love
         ///       rectangular region defined by this <see cref='Love.RectangleF'/> .
         ///    </para>
         /// </summary>
-        [Browsable(false)]
-        public float Left => X;
+        public float Left { get => X; set => X = value; }
 
         /// <summary>
         ///    <para>
@@ -114,8 +111,7 @@ namespace Love
         ///       rectangular region defined by this <see cref='Love.RectangleF'/>.
         ///    </para>
         /// </summary>
-        [Browsable(false)]
-        public float Top => Y;
+        public float Top { get => Y; set => Y = value; }
 
         /// <summary>
         ///    <para>
@@ -123,8 +119,7 @@ namespace Love
         ///       rectangular region defined by this <see cref='Love.RectangleF'/>.
         ///    </para>
         /// </summary>
-        [Browsable(false)]
-        public float Right => X + Width;
+        public float Right { get => X + Width; set => X = value - Width; }
 
         /// <summary>
         ///    <para>
@@ -132,15 +127,13 @@ namespace Love
         ///       rectangular region defined by this <see cref='Love.RectangleF'/>.
         ///    </para>
         /// </summary>
-        [Browsable(false)]
-        public float Bottom => Y + Height;
+        public float Bottom { get => Y + Height; set => Y = value - Height; } 
 
         /// <summary>
         ///    <para>
         ///       Tests whether this <see cref='Love.RectangleF'/> has a <see cref='Love.RectangleF.Width'/> or a <see cref='Love.RectangleF.Height'/> of 0.
         ///    </para>
         /// </summary>
-        [Browsable(false)]
         public bool IsEmpty => (Width <= 0) || (Height <= 0);
 
         /// <summary>
@@ -236,7 +229,8 @@ namespace Love
             return r;
         }
 
-        /// <summary> Creates a Rectangle that represents the intersection between this Rectangle and rect.
+        /// <summary>
+        /// Lead this rectangle intersection with other rectangle.
         /// </summary>
         public void Intersect(RectangleF rect)
         {

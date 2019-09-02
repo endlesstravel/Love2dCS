@@ -16,7 +16,7 @@ namespace Love
         public void DrawFixture(Fixture fixture, Color color)
         {
             var rawShape = fixture.GetShape();
-            var fillColor = Color.FromRGBA(color.R * .5f, color.G * .5f, color.B * .5f, 0.5f);
+            var fillColor = Color.FromRGBA(color.Rf * .5f, color.Gf * .5f, color.Bf * .5f, 0.5f);
             Graphics.SetColor(color);
             if (rawShape is CircleShape)
             {

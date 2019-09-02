@@ -2567,7 +2567,7 @@ namespace Love
         /// <param name="a">The alpha component (0-1).</param>
         public static void SetBackgroundColor(Color color)
         {
-            Love2dDll.wrap_love_dll_graphics_setBackgroundColor(color.R, color.G, color.B, color.A);
+            Love2dDll.wrap_love_dll_graphics_setBackgroundColor(color.Rf, color.Gf, color.Bf, color.Af);
         }
 
 

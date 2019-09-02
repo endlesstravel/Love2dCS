@@ -21,7 +21,7 @@ namespace Love
         /// <summary>
         /// get/set red component [0-1]
         /// </summary>
-        public float R
+        public float Rf
         {
             get { return r / 255f; }
             set { r = unchecked((byte)(255 * value)); }
@@ -30,7 +30,7 @@ namespace Love
         /// <summary>
         /// get/set green component [0-1]
         /// </summary>
-        public float G
+        public float Gf
         {
             get { return g / 255f; }
             set { g = unchecked((byte)(255 * value)); }
@@ -39,7 +39,7 @@ namespace Love
         /// <summary>
         /// get/set blue component [0-1]
         /// </summary>
-        public float B
+        public float Bf
         {
             get { return b / 255f; }
             set { b = unchecked((byte)(255 * value)); }
@@ -48,7 +48,7 @@ namespace Love
         /// <summary>
         /// get/set alpha component [0-1]
         /// </summary>
-        public float A
+        public float Af
         {
             get { return a / 255f; }
             set { a = unchecked((byte)(255 * value)); }
@@ -155,7 +155,7 @@ namespace Love
 
         public override string ToString()
         {
-            return "[R:" + R + ", R=" + G + ", G=" + B + ", B=" + A + "]";
+            return "[R:" + Rf + ", R=" + Gf + ", G=" + Bf + ", B=" + Af + "]";
         }
 
         public static bool operator ==(Color left, Color right) =>

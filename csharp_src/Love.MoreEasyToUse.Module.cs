@@ -898,7 +898,7 @@ namespace Love
         /// </summary>
         public static void Clear(Color c)
         {
-            Clear(c.R, c.G, c.B, c.A);
+            Clear(c.Rf, c.Gf, c.Bf, c.Af);
         }
 
         /// <summary>
@@ -906,7 +906,7 @@ namespace Love
         /// </summary>
         public static void SetColor(Color color)
         {
-            SetColor(color.R, color.G, color.B, color.A);
+            SetColor(color.Rf, color.Gf, color.Bf, color.Af);
         }
 
         /// <summary>
