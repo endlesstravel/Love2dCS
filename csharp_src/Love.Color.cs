@@ -155,7 +155,7 @@ namespace Love
 
         public override string ToString()
         {
-            return "[R:" + Rf + ", R=" + Gf + ", G=" + Bf + ", B=" + Af + "]";
+            return "[Rf:" + Rf + ", Gf=" + Gf + ", Bf=" + Bf + ", Af=" + Af + "]";
         }
 
         public static bool operator ==(Color left, Color right) =>
