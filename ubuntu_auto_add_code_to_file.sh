@@ -34,20 +34,23 @@ add_code_to_file() {
 
 # download files
 echo "[1/2]download files ...."
-wget -o src/modules/wrap_love_dll.cpp https://github.com/endlesstravel/Love2dCS/raw/master/c_api_src/wrap_love_dll.cpp
-wget -o src/modules/wrap_love_dll.h https://github.com/endlesstravel/Love2dCS/raw/master/c_api_src/wrap_love_dll.h
+cd ./src/modules/love/
+echo $(pwd)
+rm wrap_love_dll.*
+wget https://github.com/endlesstravel/Love2dCS/raw/master/c_api_src/wrap_love_dll.cpp
+wget https://github.com/endlesstravel/Love2dCS/raw/master/c_api_src/wrap_love_dll.h
 
 
 echo "[2/2]add code to file ..."
 
 # rm '#include "wrap_love_dll.h"' instructions
-sed -e '/#include "wrap_love_dll.h"/d'  "src/modules/wrap_love_dll.cpp"  > "src/modules/wrap_love_dll.cpp.tmp"
-cat "src/modules/wrap_love_dll.cpp.tmp"  > "src/modules/wrap_love_dll.cpp"
-rm "src/modules/wrap_love_dll.cpp.tmp"
+sed -e '/#include "wrap_love_dll.h"/d'  "wrap_love_dll.cpp"  > "wrap_love_dll.cpp.tmp"
+cat "wrap_love_dll.cpp.tmp"  > "wrap_love_dll.cpp"
+rm "wrap_love_dll.cpp.tmp"
 
 # output to target file
-add_code_to_file "./src/modules/love.h" "./src/modules/wrap_love_dll.h"
-add_code_to_file "./src/modules/love.cpp" "./src/modules/wrap_love_dll.cpp"
+add_code_to_file "./love.h" "./wrap_love_dll.h"
+add_code_to_file "./love.cpp" "./wrap_love_dll.cpp"
 
 
 echo "--- Finished ---"
