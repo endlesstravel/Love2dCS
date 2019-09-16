@@ -14,6 +14,10 @@
 #ifndef LOVE_LOVE_WRAP_LOVE_DLL_H
 #define LOVE_LOVE_WRAP_LOVE_DLL_H
 
+#ifndef WIN32 // for the ubuntu build
+#define __stdcall
+#endif
+
 #include "modules/mouse/sdl/Mouse.h"
 #include "modules/video/theora/Video.h"
 #include "modules/graphics/opengl/Graphics.h"
