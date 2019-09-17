@@ -1,7 +1,7 @@
 Work in process [WIP]
 *in development ...*
 
-## The way of Love2DCS work 
+## The way of Love2DCS work
 
 Love2DCS will binding C function and export to dynamic library to provide function to C# code. C# will use `System.Runtime.InteropServices` to interop with native libraries. : https://www.mono-project.com/docs/advanced/pinvoke/
 
@@ -24,7 +24,7 @@ b. build C Part :
 
 ![liblove-src](https://github.com/endlesstravel/Love2dCS/raw/master/img/006-liblove-src.png "liblove-src")
 * follow example in `wrap_love_dll.cpp` and `wrap_love_dll.h` to modify / add more function
-* this step will generate  `love.dll` / `lua51.dll` / `mpg123` / `OpenAL32.dll` / `SDL2.dll` , this is what we need. 
+* this step will generate  `love.dll` / `lua51.dll` / `mpg123` / `OpenAL32.dll` / `SDL2.dll` , this is what we need.
 
 c. build C# part :
 
@@ -40,15 +40,33 @@ a. tool
 
 b.  build C Part :
 
-* Follow the instructions at the [Building LÖVE](https://love2d.org/wiki/Building_L%C3%96VE) to build `LÖVE`
-* clone repository `git clone https://github.com/endlesstravel/Love2dCS`
-* add content `c_api_src/wrap_love_dll.cpp` to the end of `src\modules\love\love.cpp` and delete code : 
-```C++
-#include "wrap_love_dll.h"
+* clone repository: `git clone https://github.com/love2d/love`
+* to the root of the love srource: `cd love`
+* then change CMake file
+from
+```CMake
+set(LOVE_SRC_MODULE_LOVE
+	src/modules/love/love.cpp
+	src/modules/love/love.h
+)
 ```
-* add content `c_api_src/wrap_love_dll.h` to the end of `src\modules\love\love.h`.
-* rebuild `LÖVE`
-* library will finded at `src\.libs\love-11.1.so`, this is what we need. 
+to
+```CMake
+set(LOVE_SRC_MODULE_LOVE
+	src/modules/love/love.cpp
+	src/modules/love/love.h
+	src/modules/love/wrap_love_dll.cpp
+	src/modules/love/wrap_love_dll.h
+)
+```
+* download `wrap_love_dll.cpp` and `wrap_love_dll.h` to `/src/modules/love`
+```shell
+cd ./src/modules/love
+wget -o src/modules/love/wrap_love_dll.cpp https://github.com/endlesstravel/Love2dCS/raw/master/c_api_src/wrap_love_dll.cpp
+wget -o src/modules/love/wrap_love_dll.h https://github.com/endlesstravel/Love2dCS/raw/master/c_api_src/wrap_love_dll.h
+```
+* Follow the instructions at the [Building LÖVE](https://love2d.org/wiki/Building_L%C3%96VE) to build `LÖVE`
+* library will finded at `src\.libs\love-11.1.so`, this is what we need.
 * [Question about Linux binaries size](https://love2d.org/forums/viewtopic.php?f=4&t=85332&p=221386&hilit=build+LÖVE+liblove) :  call 'strip -s' on them, to remove (mostly) debug information.
 ``` bash
 strip -s love-11.1.so
@@ -59,6 +77,16 @@ c. build C# Part :
 * open monodevelop, create C# Console Application, add all `*.cs` code under `csharp_src` folder to your C# project.
 * copy `love-11.1.so` to your build path and rename to `liblove.so`
 * build & run
+
+### docker build
+```bash
+sed  '/set\s*(\s*LOVE_SRC_MODULE_LOVE/a\src/modules/love/wrap_love_dll.cpp\nsrc/modules/love/wrap_love_dll.h' love/CMakeLists.txt > love/CMakeLists.txt.tmp
+mv   love/CMakeLists.txt              love/CMakeLists.txt.old
+mv   love/CMakeLists.txt.tmp       love/CMakeLists.txt
+wget -o  love/src/modules/love/wrap_love_dll.cpp  https://github.com/endlesstravel/Love2dCS/raw/master/c_api_src/wrap_love_dll.cpp
+wget -o  love/src/modules/love/wrap_love_dll.h      https://github.com/endlesstravel/Love2dCS/raw/master/c_api_src/wrap_love_dll.h
+ls   love/src/modules/love
+```
 
 ## Code Convention
 ### UTF8

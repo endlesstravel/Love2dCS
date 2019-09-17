@@ -3038,6 +3038,67 @@ namespace Love
             return new Vector2(out_x, out_y);
         }
 
+        /// <summary>
+        /// Applies the given Transform object to the current coordinate transformation.
+        /// This effectively multiplies the existing coordinate transformation's matrix with the Transform object's internal matrix to produce the new coordinate transformation.
+        /// </summary>
+        public static void ApplyTransform(Matrix44 m)
+        {
+            var marray = new float[16]
+            {
+                m.M11,
+                m.M12,
+                m.M13,
+                m.M14,
+
+                m.M21,
+                m.M22,
+                m.M23,
+                m.M24,
+
+                m.M31,
+                m.M32,
+                m.M33,
+                m.M34,
+
+                m.M41,
+                m.M42,
+                m.M43,
+                m.M44,
+            };
+            Love2dDll.wrap_love_dll_graphics_applyTransform(marray);
+        }
+
+        /// <summary>
+        /// Replaces the current coordinate transformation with the given Transform object.
+        /// </summary>
+        public static void ReplaceTransform(Matrix44 m)
+        {
+            var marray = new float[16]
+            {
+                m.M11,
+                m.M12,
+                m.M13,
+                m.M14,
+
+                m.M21,
+                m.M22,
+                m.M23,
+                m.M24,
+
+                m.M31,
+                m.M32,
+                m.M33,
+                m.M34,
+
+                m.M41,
+                m.M42,
+                m.M43,
+                m.M44,
+            };
+            Love2dDll.wrap_love_dll_graphics_replaceTransform(marray);
+        }
+
 
         /// <summary>
         /// Converts the given 2D position from screen-space into global coordinates.

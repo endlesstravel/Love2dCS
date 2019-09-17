@@ -4043,6 +4043,23 @@ namespace wrap
 		*out_y = tp.y;
 	}
 
+	bool4 wrap_love_dll_graphics_replaceTransform(float *marray)
+	{
+		return wrap_catchexcept([&]() { 
+			Matrix4 m4(marray);
+			Transform trans(m4);
+			graphicsInstance->replaceTransform(&trans);
+		});
+	}
+	bool4 wrap_love_dll_graphics_applyTransform(float *marray)
+	{
+		return wrap_catchexcept([&]() {
+			Matrix4 m4(marray);
+			Transform trans(m4);
+			graphicsInstance->applyTransform(&trans);
+		});
+	}
+
 #pragma endregion
 
 #pragma region graphics Drwing

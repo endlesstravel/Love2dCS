@@ -10,10 +10,11 @@ using size_t = System.UInt32;
 using Int64 = System.Int64;
 using UInt8 = System.Byte;
 using BytePtr = System.IntPtr;
+using System.Runtime.CompilerServices;
 
 namespace Love
 {
-    
+
 	[UnmanagedFunctionPointer(CallingConvention.StdCall)]
 	internal delegate float WrapShapeComputeMassCallbackDelegate(float x, float y, float mass, float inertia);
 
@@ -41,7 +42,7 @@ namespace Love
 
     class Love2dDll
     {
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)] // .NET 4.5
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] // .NET 4.5
         static bool CheckCAPIException(bool hasNoException)
         {
             if (hasNoException == false)
@@ -53,7 +54,7 @@ namespace Love
             return hasNoException;
         }
 
-        const string DllPath = @"love";
+        public const string DllPath = @"liblove-11.2";
 
 
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl)]
@@ -268,7 +269,7 @@ namespace Love
             _wrap_love_dll_luasupport_pushStringArray(textList, num_length);
         }
 
-       
+
 
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_luasupport_checkToArrayBoolean")]
         internal extern static void _wrap_love_dll_luasupport_checkToArrayBoolean(int index, out IntPtr result, out int length);
@@ -1900,6 +1901,19 @@ namespace Love
             _wrap_love_dll_graphics_transformPoint(x, y, out out_x, out out_y);
         }
 
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_replaceTransform")]
+        internal extern static bool _wrap_love_dll_graphics_replaceTransform(float[] marray);
+        internal static bool wrap_love_dll_graphics_replaceTransform(float[] marray)
+        {
+            return CheckCAPIException(_wrap_love_dll_graphics_replaceTransform(marray));
+        }
+
+        [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_graphics_applyTransform")]
+        internal extern static bool _wrap_love_dll_graphics_applyTransform(float[] marray);
+        internal static bool wrap_love_dll_graphics_applyTransform(float[] marray)
+        {
+            return CheckCAPIException(_wrap_love_dll_graphics_applyTransform(marray));
+        }
 
         #endregion
         #region  graphics drawing
@@ -5914,7 +5928,7 @@ namespace Love
         {
             _wrap_love_dll_type_World_isDestroyed(pWorld, out validate);
         }
-        
+
         [DllImport(DllPath, CallingConvention = CallingConvention.Cdecl, EntryPoint = "wrap_love_dll_type_World_update")]
         internal extern static bool _wrap_love_dll_type_World_update(IntPtr pWorld, float dt, int velocityiterations, int positioniterations, WrapWorldContactCallbackDelegate beginContact, WrapWorldContactCallbackDelegate endContact, WrapWorldContactCallbackDelegate preSolve, WrapWorldContactCallbackDelegate postSolve, WrapWorldContactFilterCallbackDelegate filter);
         internal static bool wrap_love_dll_type_World_update(IntPtr pWorld, float dt, int velocityiterations, int positioniterations, WrapWorldContactCallbackDelegate beginContact, WrapWorldContactCallbackDelegate endContact, WrapWorldContactCallbackDelegate preSolve, WrapWorldContactCallbackDelegate postSolve, WrapWorldContactFilterCallbackDelegate filter)

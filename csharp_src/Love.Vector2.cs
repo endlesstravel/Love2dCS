@@ -419,6 +419,53 @@ namespace Love
             return string.Format("{{X:{0} Y:{1}}}", this.X.ToString(), this.Y.ToString());
         }
 
+
+        public static Vector2 Transform(Vector2 position, Matrix44 matrix)
+        {
+            Transform(ref position, ref matrix, out position);
+            return position;
+        }
+
+        public static void Transform(ref Vector2 position, ref Matrix44 matrix, out Vector2 result)
+        {
+            result = new Vector2((position.X * matrix.M11) + (position.Y * matrix.M21) + matrix.M41,
+                                 (position.X * matrix.M12) + (position.Y * matrix.M22) + matrix.M42);
+        }
+
+        public static void Transform(Vector2[] sourceArray, ref Matrix44 matrix, Vector2[] destinationArray)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void Transform(Vector2[] sourceArray, int sourceIndex, ref Matrix44 matrix,
+                                     Vector2[] destinationArray, int destinationIndex, int length)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static Vector2 TransformNormal(Vector2 normal, Matrix44 matrix)
+        {
+            TransformNormal(ref normal, ref matrix, out normal);
+            return normal;
+        }
+
+        public static void TransformNormal(ref Vector2 normal, ref Matrix44 matrix, out Vector2 result)
+        {
+            result = new Vector2((normal.X * matrix.M11) + (normal.Y * matrix.M21),
+                                 (normal.X * matrix.M12) + (normal.Y * matrix.M22));
+        }
+
+        public static void TransformNormal(Vector2[] sourceArray, ref Matrix44 matrix, Vector2[] destinationArray)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void TransformNormal(Vector2[] sourceArray, int sourceIndex, ref Matrix44 matrix,
+                                           Vector2[] destinationArray, int destinationIndex, int length)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// the vector projection of a vector a on (or onto) a vector b
         /// </summary>

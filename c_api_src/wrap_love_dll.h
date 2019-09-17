@@ -632,6 +632,8 @@ namespace wrap
 	extern "C" LOVE_EXPORT void wrap_love_dll_graphics_origin();
 	extern "C" LOVE_EXPORT void wrap_love_dll_graphics_inverseTransformPoint(float x, float y, float *out_x, float *out_y);
 	extern "C" LOVE_EXPORT void wrap_love_dll_graphics_transformPoint(float x, float y, float *out_x, float *out_y);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_replaceTransform(float *marray);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_graphics_applyTransform(float *marray);
 
 #pragma endregion
 

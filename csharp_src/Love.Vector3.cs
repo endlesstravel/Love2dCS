@@ -552,6 +552,57 @@ namespace Love
             return sb.ToString();
         }
 
+
+        public static Vector3 Transform(Vector3 position, Matrix44 matrix)
+        {
+            Transform(ref position, ref matrix, out position);
+            return position;
+        }
+
+        public static void Transform(ref Vector3 position, ref Matrix44 matrix, out Vector3 result)
+        {
+            result =
+                new Vector3((position.X * matrix.M11) + (position.Y * matrix.M21) + (position.Z * matrix.M31) + matrix.M41,
+                            (position.X * matrix.M12) + (position.Y * matrix.M22) + (position.Z * matrix.M32) + matrix.M42,
+                            (position.X * matrix.M13) + (position.Y * matrix.M23) + (position.Z * matrix.M33) + matrix.M43);
+        }
+
+        public static void Transform(Vector3[] sourceArray, ref Matrix44 matrix, Vector3[] destinationArray)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void Transform(Vector3[] sourceArray, int sourceIndex, ref Matrix44 matrix,
+                                     Vector3[] destinationArray, int destinationIndex, int length)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void TransformNormal(Vector3[] sourceArray, ref Matrix44 matrix, Vector3[] destinationArray)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void TransformNormal(Vector3[] sourceArray, int sourceIndex, ref Matrix44 matrix,
+                                           Vector3[] destinationArray, int destinationIndex, int length)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static Vector3 TransformNormal(Vector3 normal, Matrix44 matrix)
+        {
+            TransformNormal(ref normal, ref matrix, out normal);
+            return normal;
+        }
+
+        public static void TransformNormal(ref Vector3 normal, ref Matrix44 matrix, out Vector3 result)
+        {
+            result = new Vector3((normal.X * matrix.M11) + (normal.Y * matrix.M21) + (normal.Z * matrix.M31),
+                                 (normal.X * matrix.M12) + (normal.Y * matrix.M22) + (normal.Z * matrix.M32),
+                                 (normal.X * matrix.M13) + (normal.Y * matrix.M23) + (normal.Z * matrix.M33));
+        }
+
+
         /// <summary>
         /// the vector projection of a vector a on (or onto) a vector b
         /// </summary>

@@ -1452,5 +1452,64 @@ namespace Love
         //{
         //    return *(Quaternion*)&value;
         //}
+
+
+        public Matrix44 ToMatrix() => ToMatrix(ref this);
+        public void ToMatrix(out Matrix44 m) => ToMatrix(ref this, out m);
+
+        public static Matrix44 ToMatrix(Quaternion q)
+        {
+            var m = Matrix44.Identity;
+            ToMatrix(ref q, out m);
+            return m;
+        }
+
+        public static Matrix44 ToMatrix(ref Quaternion q)
+        {
+            var m = Matrix44.Identity;
+            ToMatrix(ref q, out m);
+            return m;
+        }
+
+        public  static void ToMatrix(ref Quaternion q, out Matrix44 m)
+        {
+            //float norm = GetNorm (q);
+            //float s = (norm > 0.0) ? 2.0/norm : 0;
+
+            // Precalculate coordinate products
+            float x = q.X * 2.0F;
+            float y = q.Y * 2.0F;
+            float z = q.Z * 2.0F;
+            float xx = q.X * x;
+            float yy = q.Y * y;
+            float zz = q.Z * z;
+            float xy = q.X * y;
+            float xz = q.X * z;
+            float yz = q.Y * z;
+            float wx = q.W * x;
+            float wy = q.W * y;
+            float wz = q.W * z;
+
+            // Calculate 4x4 matrix from orthonormal basis 
+            m.M11 = 1.0f - (yy + zz);
+            m.M12 = xy + wz;
+            m.M13 = xz - wy;
+            m.M14 = 0.0F;
+
+            m.M21 = xy - wz;
+            m.M22 = 1.0f - (xx + zz);
+            m.M23 = yz + wx;
+            m.M24 = 0.0F;
+
+            m.M31 = xz + wy;
+            m.M32 = yz - wx;
+            m.M33 = 1.0f - (xx + yy);
+            m.M34 = 0.0F;
+
+            m.M41 = 0.0F;
+            m.M42 = 0.0F;
+            m.M43 = 0.0F;
+            m.M44 = 1.0F;
+        }
     }
 }

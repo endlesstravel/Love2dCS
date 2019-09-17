@@ -1093,6 +1093,27 @@ namespace LoveTest
         }
     }
 
+    [StageName("TestMatrix")]
+    class TestMatrix : Stage
+    {
+        public override void OnLoad()
+        {
+        }
+
+        public override void OnUpdate(float dt)
+        {
+
+        }
+        public override void OnDraw()
+        {
+
+            var mt = Matrix44.CreateTranslation(Vector3.Zero);
+            var mr = Quaternion.ToMatrix(Quaternion.Identity);
+            Graphics.Push();
+            Graphics.ReplaceTransform(mt * mr);
+            Graphics.Pop();
+        }
+    }
 
     [StageName("test depth buffer")]
     class TestDepthBuffer : Stage
@@ -1365,6 +1386,7 @@ namespace LoveTest
 
         public override void Load()
         {
+            AddStage(new TestMatrix());
             AddStage(new TestDepthBuffer());
             AddStage(new TestLua());
             AddStage(new TestMouse());
