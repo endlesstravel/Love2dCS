@@ -151,11 +151,7 @@ namespace Love
             {
                 if (!dirName.Exists)
                 {
-                    //dirName.Create();
-                }
-                else
-                {
-                    NativlibTool.DeleteFolder(dirName.FullName);
+                    dirName.Create();
                 }
 
                 var path = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process) ?? String.Empty;
@@ -265,7 +261,6 @@ namespace Love
                 }
 
                 // extract unzip file to temp
-                NativlibTool.DeleteFolder(dirName.FullName);
                 NativlibTool.UnzipEmbeddedResourceToDir(assem, name, dirName.FullName);
             }
 
@@ -353,7 +348,7 @@ namespace Love
 
     static class NativlibTool
     {
-        public static void UnzipEmbeddedResourceToDir(Assembly assem, string name, string tergetPath)
+        public static void UnzipEmbeddedResourceToDir_Old(Assembly assem, string name, string tergetPath)
         {
             using (var stream = assem.GetManifestResourceStream(name))
             {
@@ -363,6 +358,89 @@ namespace Love
                 }
             }
         }
+
+        public static void UnzipEmbeddedResourceToDir(Assembly assem, string name, string extractPath) // CheckRewrite
+        {
+            if (!extractPath.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal))
+                extractPath += Path.DirectorySeparatorChar;
+
+            using (var zipStream = assem.GetManifestResourceStream(name))
+            {
+                using (ZipArchive archive = new ZipArchive(zipStream, ZipArchiveMode.Read))
+                {
+                    foreach (var entry in archive.Entries)
+                    {
+                        if (entry.Name != "") // skip dictionary
+                        {
+                            CreateFolderCheck(extractPath, entry.FullName);
+                            ExtractStreamResourceToDir(entry.Open(), Path.Combine(extractPath, entry.FullName));
+                        }
+                    }
+                }
+            }
+        }
+
+        public static byte[] ReadFully(System.IO.Stream input)
+        {
+            byte[] buffer = new byte[16 * 1024];
+            using (input)
+            {
+                if (input == null)
+                {
+                    throw new ArgumentNullException(nameof(input));
+                }
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    int read;
+                    while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+                    {
+                        ms.Write(buffer, 0, read);
+                    }
+                    return ms.ToArray();
+                }
+            }
+        }
+
+        public static void CreateFolderCheck(string targetFolder, string zipEntryName)
+        {
+            var path = zipEntryName.Split('/');
+            if (path.Length > 1)
+            {
+                var releativeFolder = string.Join(Path.DirectorySeparatorChar.ToString(), path.Take(path.Length - 1).ToArray());
+                var dirName = new System.IO.DirectoryInfo(Path.Combine(targetFolder, releativeFolder));
+                if (!dirName.Exists)
+                {
+                    dirName.Create();
+                }
+            }
+        }
+
+        public static void ExtractStreamResourceToDir(System.IO.Stream stream, string targetFilePath)
+        {
+            try // no catch
+            {
+                byte[] bytes = ReadFully(stream);
+                var dllPath = new System.IO.FileInfo(targetFilePath);
+                var rewrite = true;
+                if (dllPath.Exists)
+                {
+                    var existing = System.IO.File.ReadAllBytes(dllPath.FullName);
+                    if (bytes.SequenceEqual(existing))
+                    {
+                        rewrite = false;
+                    }
+                }
+                if (rewrite)
+                {
+                    System.IO.File.WriteAllBytes(dllPath.FullName, bytes);
+                }
+            }
+             catch (Exception ex)
+             {
+                Log.Error(ex.Message);
+            }
+        }
+
 
         public static void ExtractEmbeddedResourceToDir(Assembly assem, string name, string tergetPath)
         {
