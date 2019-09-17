@@ -17,8 +17,8 @@ Links
 
 Support Platform
 ---
-* .NET Framework 4.0  win-x86 / win-x64
-* .NET Core 2.0 win-x84 / win-x64
+* .NET Framework 4.5  win-x86 / win-x64
+* .NET Core 2.0 win-x84 / win-x64 / ubuntu-16-x64 / ubuntu-18-x64
 
 Status
 ---
