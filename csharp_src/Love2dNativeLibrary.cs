@@ -302,7 +302,9 @@ namespace Love
                     "libstdc++/libstdc++.so.6",
                     "lib/x86_64-linux-gnu/libgcc_s.so.1",
                     "lib/x86_64-linux-gnu/libz.so.1",
+                    "lib/x86_64-linux-gnu/libpng12.so.0",
 
+                    "usr/lib/x86_64-linux-gnu/libatomic.so.1",
                     "usr/lib/x86_64-linux-gnu/libtheoradec.so.1",
                     "usr/lib/x86_64-linux-gnu/libvorbis.so.0",
                     "usr/lib/x86_64-linux-gnu/libvorbisfile.so.3",
@@ -327,7 +329,8 @@ namespace Love
                     // }
                     if (LoadLibrary(dirName.FullName + "/" + libname, out var errorInfo) == false)
                     {
-                        throw new Exception(errorInfo);
+                        //throw new Exception(errorInfo);
+                        Log.Error(errorInfo);
                     }
                 }
             }
@@ -338,6 +341,7 @@ namespace Love
             var path = Environment.GetEnvironmentVariable(LD_LIBRARY_PATH, EnvironmentVariableTarget.Process) ?? String.Empty;
             Environment.SetEnvironmentVariable(LD_LIBRARY_PATH,
                 string.Join(ENV_PATH_SPITER.ToString(),
+                $"{folderPath}/usr/lib/libstdc++",
                 $"{folderPath}/lib/x86_64-linux-gnu",
                 $"{folderPath}/usr/bin",
                 $"{folderPath}/usr/lib",
