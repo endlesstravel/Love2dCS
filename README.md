@@ -56,10 +56,9 @@ class Program : Scene
 Next to development
 ---
  - Improve the document : in development
- - Support Ubuntu : in development
- - Fully support Love 11.0 : in development
- - Add support for .net core
- - Add support for GUI
+ - Support Ubuntu : √ , now support ubuntu 16/18
+ - Fully support Love 11.2 : in development
+ - Add support for .net core : √
 
  Finished:
  - [√] Support call lua function : Love.Lua.Call(name, ...arg) / Love.Lua.LoadString / Love.Lua.LoadFile ([here](https://endlesstravel.github.io/#/tutorial/05.use-lua))
