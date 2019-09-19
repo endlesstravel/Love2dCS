@@ -9,10 +9,9 @@ Links
 ---
 * [Document at https://endlesstravel.github.io](https://endlesstravel.github.io)
 * [love wiki](https://love2d.org/wiki/love)
-* [Easy to install with Visual Studio (install introduce)](https://endlesstravel.github.io/#/tutorial/01.install)
+* [Easy to install with Visual Studio/MonoDevelop (install introduce)](https://endlesstravel.github.io/#/tutorial/01.install)
 * [Spine Runtime Support](https://gitee.com/endlesstravel/spine-lovecs)
 * [Work with lua](https://endlesstravel.github.io/#/tutorial/05.use-lua)
-* [Work with ubuntu + mono-develop](develop.md)
 * [Test file example](csharp_src/Program.cs) / [Physics Test example](csharp_test/README.md)
 
 Support Platform
@@ -56,11 +55,11 @@ class Program : Scene
 Next to development
 ---
  - Improve the document : in development
- - Support Ubuntu : √ , now support ubuntu 16/18
  - Fully support Love 11.2 : in development
- - Add support for .net core : √
 
  Finished:
+ - [√] Support Ubuntu : now support ubuntu 16/18
+ - [√] Add support for .net core
  - [√] Support call lua function : Love.Lua.Call(name, ...arg) / Love.Lua.LoadString / Love.Lua.LoadFile ([here](https://endlesstravel.github.io/#/tutorial/05.use-lua))
  - [√] Support helpper function : `Keyboard.IsPressed` / `Keyboard.IsReleased` / `Joystick.IsPressed` / `Joystick.IsReleased` / `Joystick.IsGamepadPressed`  /`Joystick.IsGamepadReleased`
  - [√] Add support for Physics
