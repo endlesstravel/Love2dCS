@@ -132,6 +132,21 @@ namespace LoveTest
             return p;
         }
 
+
+        public T[] GenData<T>(Func<int, int, T, T> func, T rawT)
+        {
+            T[] data = new T[W * H];
+            for (int y = 0; y < H; y++)
+            {
+                for (int x = 0; x < W; x++)
+                {
+                    data[x + y * W] = func(x, y, rawT);
+                }
+            }
+
+            return data;
+        }
+
         public override void OnLoad()
         {
             var imgd01 = Image.NewImageData(W, H, imageDataPixelFormat);
@@ -143,11 +158,32 @@ namespace LoveTest
             var imgd03 = Image.NewImageData(W, H, imageDataPixelFormat);
             imgd03.MapPixel(MapPixel_03);
 
+            //var imgd04 = Image.NewImageData(W, H, imageDataPixelFormat);
+            //imgd04.SetPixel(GenData(MapPixel_01, Color.White));
+
+
+            var imgd04 = Image.NewImageData(W, H, imageDataPixelFormat);
+            {
+                for (int  y = 0; y < H / 2; y++)
+                    for (int x = 0; x < W / 2; x++)
+                        imgd04.SetPixel(x, y, MapPixel_01(x, y, Color.White));
+
+                // get & set
+                var buffer = new Color[W, H];
+                for (int y = 0; y < H / 2; y++)
+                    for (int x = 0; x < W / 2; x++)
+                    {
+                        buffer[x, y] = imgd04.GetPixel(x, y);
+                        imgd04.SetPixel(W/2 + x, H/2 + y, buffer[x, y]);
+                    }
+            }
+
             image = new Image[]
             {
                 Graphics.NewImage(imgd01),
                 Graphics.NewImage(imgd02),
                 Graphics.NewImage(imgd03),
+                Graphics.NewImage(imgd04),
             };
         }
         public override void OnUpdate(float dt)
@@ -156,15 +192,17 @@ namespace LoveTest
         public override void OnDraw()
         {
             Graphics.SetColor(1, 1, 1);
-            Graphics.Draw(image[0], W * 0 , H * 0);
-            Graphics.Draw(image[1], W * 0 , H * 1);
-            Graphics.Draw(image[2], W * 0 , H * 2);
+            for (int i = 0; i < image.Length; i++)
+            {
+                Graphics.Draw(image[i], W * 0, H * i);
+            }
 
             Graphics.SetColor(Color.Red);
             Graphics.SetLineWidth(5);
-            Graphics.Rectangle(DrawMode.Line, W * 0, H * 0, W, H);
-            Graphics.Rectangle(DrawMode.Line, W * 0, H * 1, W, H);
-            Graphics.Rectangle(DrawMode.Line, W * 0, H * 2, W, H);
+            for (int i = 0; i < image.Length; i++)
+            {
+                Graphics.Rectangle(DrawMode.Line, W * 0, H * i, W, H);
+            }
             Graphics.SetLineWidth(1);
         }
     }
@@ -326,7 +364,7 @@ namespace LoveTest
 
             PrintExecTime("Pixel[] imageData.GetPixels() =>  ", () =>
             {
-                var p = imageData.GetPixels();
+                var p = imageData.GetPixelsRaw();
             });
 
             PrintExecTime("imageData.SetPixels( Pixel[] p) =>  ", () =>
@@ -369,7 +407,7 @@ namespace LoveTest
                         pixelBuffer[y * w + x] = p;
                     }
                 }
-                imageData.SetPixels(pixelBuffer);
+                imageData.SetPixelsRaw(pixelBuffer);
             });
 
             image = Graphics.NewImage(imageData);

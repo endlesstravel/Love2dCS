@@ -6136,11 +6136,14 @@ namespace Love
             return $"({p.rgba32f.r},{p.rgba32f.g},{p.rgba32f.b},{p.rgba32f.a})";
         }
 
+        public static Pixel FromColor(Color color, PixelFormat format)
+        {
+            return FromFloat4(new Vector4(color.Rf, color.Gf, color.Bf, color.Af), format) ;
+        }
+
         /// <summary>
         /// Create pixel with given Float4 value and format
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="format"></param>
         /// <returns></returns>
         public static Pixel FromFloat4(Vector4 value, PixelFormat format)
         {
@@ -6181,10 +6184,66 @@ namespace Love
             }
             else
             {
-                throw new Exception($"Unsupported format {format}");
+                throw new Exception($"Unsupported format {format} convert from (Rf, Gf, Bf, Af) to {nameof(Pixel)} object");
             }
 
             return pixel;
+        }
+
+
+        public static Vector4 FromFloat4(Pixel pixel, PixelFormat format)
+        {
+            var color = ToColor(pixel, format);
+            return new Vector4(color.Rf, color.Gf, color.Bf, color.Af);
+        }
+
+        /// <summary>
+        /// Create pixel with given Float4 value and format
+        /// </summary>
+        /// <returns></returns>
+        public static Color ToColor(Pixel pixel, PixelFormat format)
+        {
+            Color color = new Color();
+            if (format == PixelFormat.RGBA8)
+            {
+                unchecked
+                {
+                    color.r = pixel.rgba8.r;
+                    color.g = pixel.rgba8.g;
+                    color.b = pixel.rgba8.b;
+                    color.a = pixel.rgba8.a;
+                }
+            }
+            else if (format == PixelFormat.RGBA16)
+            {
+                unchecked
+                {
+                    color.Rf = pixel.rgba16.r / (float)ushort.MaxValue;
+                    color.Gf = pixel.rgba16.g / (float)ushort.MaxValue;
+                    color.Bf = pixel.rgba16.b / (float)ushort.MaxValue;
+                    color.Af = pixel.rgba16.a / (float)ushort.MaxValue;
+                }
+            }
+            else if (format == PixelFormat.RGBA16F)
+            {
+                color.Rf = pixel.rgba16f.r.ToFloat();
+                color.Gf = pixel.rgba16f.g.ToFloat();
+                color.Bf = pixel.rgba16f.b.ToFloat();
+                color.Af = pixel.rgba16f.a.ToFloat();
+            }
+            else if (format == PixelFormat.RGBA32F)
+            {
+                color.Rf = pixel.rgba32f.r;
+                color.Gf = pixel.rgba32f.g;
+                color.Bf = pixel.rgba32f.b;
+                color.Af = pixel.rgba32f.a;
+            }
+            else
+            {
+                throw new Exception($"Unsupported format {format} convert from (Rf, Gf, Bf, Af) to {nameof(Pixel)} object");
+            }
+
+            return color;
         }
     }
 

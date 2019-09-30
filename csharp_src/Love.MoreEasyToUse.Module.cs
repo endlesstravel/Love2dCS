@@ -254,6 +254,7 @@ namespace Love
         public delegate Vector4 MapPixelColorDelegate(int x, int y, Vector4 p);
         public delegate Color MapColorDelegate(int x, int y, Color color);
 
+        #region MapPixel
         static void WriteVector4(IntPtr dest, int offset, Vector4 input, PixelFormat format)
         {
             Pixel pixel = new Pixel();
@@ -463,7 +464,7 @@ namespace Love
         /// <summary>
         /// <para> Advance version of <see cref="MapPixel(MapPixelColorDelegate, int, int, int, int)"/>,</para>
         /// <para>if you don't know how to handle pixel format, please use <see cref="MapPixel(MapPixelColorDelegate, int, int, int, int)"/> </para>
-        /// <para>if you need speed, consider use <see cref="SetPixels(Pixel[])"/></para>
+        /// <para>if you need speed, consider use <see cref="SetPixelsRaw(Pixel[])"/></para>
         /// </summary>
         /// <param name="func">Function to apply to every pixel.</param>
         /// <param name="sx">The x-axis of the top-left corner of the area within the ImageData to apply the function to.</param>
@@ -505,12 +506,12 @@ namespace Love
         /// <summary>
         /// <para> Advance version of <see cref="MapPixel(MapPixelColorDelegate, int, int, int, int)"/>,</para>
         /// <para>if you don't know how to handle pixel format, please use <see cref="MapPixel(MapPixelColorDelegate, int, int, int, int)"/> </para>
-        /// <para>if you need speed, consider use <see cref="SetPixels(Pixel[])"/></para>
+        /// <para>if you need speed, consider use <see cref="SetPixelsRaw(Pixel[])"/></para>
         /// </summary>
         /// <param name="func">Function to apply to every pixel.</param>
         public void MapPixel(MapPixelDelegate func)
         {
-            var buffer = GetPixels();
+            var buffer = GetPixelsRaw();
             int w = GetWidth();
             int h = GetHeight();
             for (int y = 0; y < h; y++)
@@ -521,14 +522,52 @@ namespace Love
                     buffer[offset] = func(x, y, buffer[offset]);
                 }
             }
-            SetPixels(buffer);
+            SetPixelsRaw(buffer);
         }
 
+        #endregion
+
+        public void SetPixel(int x, int y, Color color)
+        {
+            var pixel = Pixel.FromColor(color, GetFormat());
+            SetPixelRaw(x, y, pixel);
+        }
+
+        public Color GetPixel(int x, int y)
+        {
+            var pixel = GetPixelRaw(x, y);
+            return Pixel.ToColor(pixel, GetFormat());
+        }
+
+        public Color[] GetPixels()
+        {
+            var fmt = GetFormat();
+            var pixelData = GetPixelsRaw();
+            var len = pixelData.Length;
+            var colorData = new Color[len];
+            for (int i = 0; i < len; i++)
+            {
+                colorData[i] = Pixel.ToColor(pixelData[i], fmt);
+            }
+            return colorData;
+        }
+
+        public void SetPixel(Color[] colorData)
+        {
+            var fmt = GetFormat();
+            var len = colorData.Length;
+            var pixelData = new Pixel[len];
+            for (int i = 0; i < pixelData.Length; i++)
+            {
+                pixelData[i] = Pixel.FromColor(colorData[i], fmt);
+            }
+            SetPixelsRaw(pixelData);
+        }
 
         /// <summary>
         /// get every pixel
         /// </summary>
-        public Pixel[] GetPixels()
+        public Pixel[] GetPixelsRaw()
         {
             int w = GetWidth();
             int h = GetHeight();
@@ -597,7 +636,7 @@ namespace Love
         /// set every pixel with given data
         /// </summary>
         /// <param name="data"></param>
-        public void SetPixels(Pixel[] data)
+        public void SetPixelsRaw(Pixel[] data)
         {
             Check.ArgumentNull(data, "data");
             int w = GetWidth();

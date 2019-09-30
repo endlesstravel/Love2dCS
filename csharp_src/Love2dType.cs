@@ -2414,7 +2414,7 @@ namespace Love
         /// <param name="x">The position of the pixel on the x-axis.</param>
         /// <param name="y">The position of the pixel on the y-axis.</param>
         /// <returns></returns>
-        public Pixel GetPixel(int x, int y)
+        public Pixel GetPixelRaw(int x, int y)
         {
             Pixel out_pixel;
             Love2dDll.wrap_love_dll_type_ImageData_getPixel(p, x, y, out out_pixel);
@@ -2427,7 +2427,7 @@ namespace Love
         /// <param name="x">The position of the pixel on the x-axis.</param>
         /// <param name="y">The position of the pixel on the y-axis.</param>
         /// <param name="pixel"></param>
-        public void SetPixel(int x, int y, Pixel pixel)
+        public void SetPixelRaw(int x, int y, Pixel pixel)
         {
             Love2dDll.wrap_love_dll_type_ImageData_setPixel(p, x, y, pixel);
         }
