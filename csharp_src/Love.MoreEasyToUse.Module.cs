@@ -342,7 +342,7 @@ namespace Love
             {
                 for (int x = 0; x < w; x++)
                 {
-                    int offset = x + y * h;
+                    int offset = x + y * w;
                     buffer[offset] = func(x, y, buffer[offset]);
                 }
             }
@@ -365,10 +365,10 @@ namespace Love
             {
                 for (int x = 0; x < w; x++)
                 {
-                    int offset = x + y * h;
+                    int offset = x + y * w;
                     var vc = buffer[offset];
                     var c = func(x, y, new Color(vc.r, vc.g, vc.b, vc.a));
-                    buffer[offset] = new Vector4(c.r, c.g, c.b, c.a);
+                    buffer[offset] = new Vector4(c.Rf, c.Gf, c.Bf, c.Af);
                 }
             }
             SetPixelsFloat(buffer);
@@ -517,7 +517,7 @@ namespace Love
             {
                 for (int x = 0; x < w; x++)
                 {
-                    int offset = x + y * h;
+                    int offset = x + y * w;
                     buffer[offset] = func(x, y, buffer[offset]);
                 }
             }

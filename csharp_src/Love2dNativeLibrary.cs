@@ -482,25 +482,25 @@ namespace Love
             // }
         }
 
-        public static void DeleteFolder(string path)
-        {
-            foreach (string d in Directory.GetFileSystemEntries(path))
-            {
-                if (System.IO.File.Exists(d)) // it's a file
-                {
-                    var fi = new System.IO.FileInfo(d);
-                    if (fi.Attributes.ToString().IndexOf("ReadOnly") != -1)
-                        fi.Attributes = FileAttributes.Normal;
-                    System.IO.File.Delete(d);//直接删除其中的文件  
-                }
-                else // it's a directory
-                {
-                    var d1 = new System.IO.DirectoryInfo(d);
-                    DeleteFolder(d1.FullName);////递归删除子文件夹
-                    Directory.Delete(d); // delete it self
-                }
-            }
-        }
+        //public static void DeleteFolder(string path)
+        //{
+        //    foreach (string d in Directory.GetFileSystemEntries(path))
+        //    {
+        //        if (System.IO.File.Exists(d)) // it's a file
+        //        {
+        //            var fi = new System.IO.FileInfo(d);
+        //            if (fi.Attributes.ToString().IndexOf("ReadOnly") != -1)
+        //                fi.Attributes = FileAttributes.Normal;
+        //            System.IO.File.Delete(d);//直接删除其中的文件  
+        //        }
+        //        else // it's a directory
+        //        {
+        //            var d1 = new System.IO.DirectoryInfo(d);
+        //            DeleteFolder(d1.FullName);////递归删除子文件夹
+        //            Directory.Delete(d); // delete it self
+        //        }
+        //    }
+        //}
 
         public static string GetHashAssembly()
         {

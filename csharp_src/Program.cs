@@ -75,6 +75,100 @@ namespace LoveTest
         }
     }
 
+
+    [StageName("test image data map")]
+    class TestImageDataMap : Stage
+    {
+        static int W = 202, H = 200;
+        PixelFormat pixelFormat = PixelFormat.RGBA8;
+        ImageDataPixelFormat imageDataPixelFormat = ImageDataPixelFormat.RGBA8;
+        Image[] image;
+
+
+        private Color MapPixel_01(int x, int y, Color p)
+        {
+            var col = new Color(x / (float)W, y / (float)H, 1f, 1f);
+            return new Color(col.Rf, col.Gf, col.Bf, col.Af);
+        }
+        private Vector4 MapPixel_02(int x, int y, Vector4 p)
+        {
+            var col = new Color(x / (float)W, y / (float)H, 1f, 1f);
+            return new Vector4(col.Rf, col.Gf, col.Bf, col.Af);
+        }
+        private Pixel MapPixel_03(int x, int y, Pixel p)
+        {
+            var col = new Color(x / (float)W, y / (float)H, 1f, 1f);
+
+
+            if (pixelFormat == PixelFormat.RGBA8)
+            {
+                p.rgba8.r = (byte)(col.Rf * byte.MaxValue);
+                p.rgba8.g = (byte)(col.Gf * byte.MaxValue);
+                p.rgba8.b = (byte)(col.Bf * byte.MaxValue);
+                p.rgba8.a = (byte)(col.Af * byte.MaxValue);
+            }
+            else if (pixelFormat == PixelFormat.RGBA16)
+            {
+                p.rgba16.r = (ushort)(col.Rf * ushort.MaxValue);
+                p.rgba16.g = (ushort)(col.Gf * ushort.MaxValue);
+                p.rgba16.b = (ushort)(col.Bf * ushort.MaxValue);
+                p.rgba16.a = (ushort)(col.Af * ushort.MaxValue);
+            }
+            else if (pixelFormat == PixelFormat.RGBA16F)
+            {
+                p.rgba16f.r = Half.FromFloat(col.Rf);
+                p.rgba16f.g = Half.FromFloat(col.Gf);
+                p.rgba16f.b = Half.FromFloat(col.Bf);
+                p.rgba16f.a = Half.FromFloat(col.Af);
+            }
+            else if (pixelFormat == PixelFormat.RGBA32F)
+            {
+                p.rgba32f.r = col.Rf;
+                p.rgba32f.g = col.Gf;
+                p.rgba32f.b = col.Bf;
+                p.rgba32f.a = col.Af;
+            }
+
+            return p;
+        }
+
+        public override void OnLoad()
+        {
+            var imgd01 = Image.NewImageData(W, H, imageDataPixelFormat);
+            imgd01.MapPixel(MapPixel_01);
+
+            var imgd02 = Image.NewImageData(W, H, imageDataPixelFormat);
+            imgd02.MapPixel(MapPixel_02);
+
+            var imgd03 = Image.NewImageData(W, H, imageDataPixelFormat);
+            imgd03.MapPixel(MapPixel_03);
+
+            image = new Image[]
+            {
+                Graphics.NewImage(imgd01),
+                Graphics.NewImage(imgd02),
+                Graphics.NewImage(imgd03),
+            };
+        }
+        public override void OnUpdate(float dt)
+        {
+        }
+        public override void OnDraw()
+        {
+            Graphics.SetColor(1, 1, 1);
+            Graphics.Draw(image[0], W * 0 , H * 0);
+            Graphics.Draw(image[1], W * 0 , H * 1);
+            Graphics.Draw(image[2], W * 0 , H * 2);
+
+            Graphics.SetColor(Color.Red);
+            Graphics.SetLineWidth(5);
+            Graphics.Rectangle(DrawMode.Line, W * 0, H * 0, W, H);
+            Graphics.Rectangle(DrawMode.Line, W * 0, H * 1, W, H);
+            Graphics.Rectangle(DrawMode.Line, W * 0, H * 2, W, H);
+            Graphics.SetLineWidth(1);
+        }
+    }
+
     [StageName("test image data")]
     class TestImageData : Stage
     {
@@ -1386,6 +1480,7 @@ namespace LoveTest
 
         public override void Load()
         {
+            AddStage(new TestImageDataMap());
             AddStage(new TestMatrix());
             AddStage(new TestDepthBuffer());
             AddStage(new TestLua());
@@ -1540,7 +1635,7 @@ namespace LoveTest
             };
             Graphics.Print(string.Join("    ", strs), 0, 0);
 
-            ms.Draw(() => { });
+            //ms.Draw(() => { });
         }
 
         public override bool ErrorHandler(Exception e)

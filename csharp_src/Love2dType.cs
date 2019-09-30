@@ -3059,7 +3059,7 @@ namespace Love
         /// <returns></returns>
         public static ColoredString Create(string text, Color color)
         {
-            return new ColoredString(text, new Vector4(color.r, color.g, color.b, color.a));
+            return new ColoredString(text, new Vector4(color.Rf, color.Gf, color.Bf, color.Af));
         }
 
         /// <summary>
