@@ -18,10 +18,7 @@ Links
 
 Support Platform
 ---
-* .NET Framework 4.5.1  win-x86 / win-x64
-* .NET Core 1.0 ubuntu-16 x64 / ubuntu-18 x64
-* .NET Core 2.1 MacOS 10.12+ 
-* mono may be work either??
+* `windows-x86` / `windows-x64` / `ubuntu-16 x64` / `ubuntu-18 x64` / `MacOS 10.12+ x64` with `.net startard 1.2` (`.NET Core` | `.NET Framework 4.5.1`  | `Mono 4.6`)
 
 Status
 ---
