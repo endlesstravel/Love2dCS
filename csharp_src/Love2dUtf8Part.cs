@@ -193,10 +193,10 @@ namespace Love
         }
 
 
-        public static long _GetLastModified(string filename)
-        {
-            return _GetLastModified(DllTool.GetNullTailUTF8Bytes(filename));
-        }
+        //public static long _GetLastModified(string filename)
+        //{
+        //    return _GetLastModified(DllTool.GetNullTailUTF8Bytes(filename));
+        //}
 
         public static void _SetRequirePath(string paths)
         {

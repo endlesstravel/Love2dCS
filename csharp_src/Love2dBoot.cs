@@ -429,6 +429,7 @@ namespace Love
 
                 // init to load native library
                 InitNativeLibrary();
+                Love2dDll.LoadInit();
 
                 if (bootConfig.DefaultRandomSeed.HasValue)
                     Mathf.Init(bootConfig.DefaultRandomSeed.Value);

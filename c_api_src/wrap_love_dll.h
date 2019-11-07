@@ -903,7 +903,7 @@ namespace wrap
 
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Quad_setViewport(Quad *quad, float x, float y, float w, float h);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_Quad_getViewport(Quad *quad, float *out_x, float *out_y, float *out_w, float *out_h);
-    //extern "C" LOVE_EXPORT void wrap_love_dll_type_Quad_getTextureDimensions(Quad *quad, double *out_sw, double *out_sh);
+    extern "C" LOVE_EXPORT void wrap_love_dll_type_Quad_getTextureDimensions(Quad *quad, float *out_sw, float *out_sh);
 
 #pragma endregion
 

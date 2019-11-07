@@ -21,20 +21,48 @@ namespace Love
         {
             UnixNativeLibraryLoader.Load();
         }
+        static void LoadMacLibrary()
+        {
+            MacNativeLibraryLoader.Load();
+        }
         static void LoadWinLibrary()
         {
             WindowsNativeLibraryLoader.Load();
-            // System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture // from 4.7.1
-            //Log.Warnning(ProcessorArchitecture);
-
-            //var assem = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
-            //assem.ManifestModule.GetPEKind(out var peKind, out var imageFileMachine);
-            //Console.WriteLine(assem.ToString() + "  " + peKind + " " + imageFileMachine);
-
-
-            //ExtractWinLibrary();
+        }
+        static IntPtr GetUnixLibraryFunc(string name)
+        {
+            return IntPtr.Zero;
+            //return UnixNativeLibraryLoader.DynamciLoadFunction(name);
+        }
+        static IntPtr GetMacLibraryFunc(string name)
+        {
+            return IntPtr.Zero;
+            //return MacNativeLibraryLoader.DynamciLoadFunction(name);
+        }
+        static IntPtr GetWinLibraryFunc(string name)
+        {
+            return WindowsNativeLibraryLoader.DynamciLoadFunction(name);
         }
 
+        public static IntPtr GetLibraryFunc(string name)
+        {
+            OperatingSystem os = Environment.OSVersion;
+            PlatformID pid = os.Platform;
+            switch (pid)
+            {
+                case PlatformID.Win32NT:
+                case PlatformID.Win32S:
+                case PlatformID.Win32Windows:
+                case PlatformID.WinCE:
+                    return GetWinLibraryFunc(name);
+                case PlatformID.Unix:
+                    return GetUnixLibraryFunc(name);
+                case PlatformID.MacOSX:
+                    return GetMacLibraryFunc(name);
+                default:
+                    throw new Exception("unsupport platform : " + pid);
+            }
+        }
 
         public static void InitNativeLibrary()
         {
@@ -51,8 +79,11 @@ namespace Love
                 case PlatformID.Unix:
                     LoadUnixLibrary();
                     break;
-                default:
+                case PlatformID.MacOSX:
+                    LoadMacLibrary();
                     break;
+                default:
+                    throw new Exception("unsupport platform : " + pid);
             }
         }
     }
@@ -140,7 +171,7 @@ namespace Love
             {
                 throw new Exception("Love2DCS unsupport Processor Architecture " + parcitecture);
             }
-            Console.WriteLine(dllStringTip);
+            Log.Info(dllStringTip);
 
 
             var assem = Assembly.GetExecutingAssembly();
@@ -154,11 +185,12 @@ namespace Love
                     dirName.Create();
                 }
 
-                var path = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process) ?? String.Empty;
-                if (path.Split(';').All(pathPiece => pathPiece != dirName.FullName))
-                {
-                    Environment.SetEnvironmentVariable("PATH", String.Join(";", dirName, path), EnvironmentVariableTarget.Process);
-                }
+                // no need to set env now...
+                //var path = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process) ?? String.Empty;
+                //if (path.Split(';').All(pathPiece => pathPiece != dirName.FullName))
+                //{
+                //    Environment.SetEnvironmentVariable("PATH", String.Join(";", dirName, path), EnvironmentVariableTarget.Process);
+                //}
             }
 
             // 2. uzip
@@ -181,30 +213,63 @@ namespace Love
                 NativlibTool.UnzipEmbeddedResourceToDir(assem, name, dirName.FullName);
             }
 
-            // 3. load library // not need now
+            // 3. load library
             {
-                //var fileToLoad = dirName.FullName + "\\" + Love2dDll.DllPath;
-                //if (LoadLibrary(fileToLoad) == IntPtr.Zero)
-                //{
-                //    throw new Exception($"load {fileToLoad}");
-                //}
+                var LOVE_LIB_NAME = "love.dll";
+                var winLibTable = new string[]
+                {
+                    "SDL2.dll",
+                    "OpenAL32.dll",
+                    "mpg123.dll",
+                    "lua51.dll",
+                    LOVE_LIB_NAME,
+                };
+                foreach (var libname in winLibTable)
+                {
+                    var fileToLoadPath = dirName.FullName + "/" + libname;
+                    var libPtr = LoadLibrary(fileToLoadPath);
+                    if (libPtr == IntPtr.Zero)
+                    {
+                        var errorInfo = $"load lib error: {fileToLoadPath} {Marshal.GetLastWin32Error()}";
+                        Log.Error(errorInfo);
+                        throw new Exception(errorInfo);
+                    }
+
+                    if (libname == LOVE_LIB_NAME)
+                    {
+                        LoveLibraryPtr = libPtr;
+                    }
+                }
             }
 
+
+        }
+
+        static IntPtr LoveLibraryPtr = IntPtr.Zero;
+        public static IntPtr DynamciLoadFunction(string functionName)
+        {
+            return GetProcAddress(LoveLibraryPtr, functionName);
         }
 
         //[DllImport("kernel32.dll", CallingConvention = CallingConvention.StdCall, EntryPoint = "LoadLibraryW", ExactSpelling = true, SetLastError = true, CharSet = CharSet.Unicode)]
         //private static extern IntPtr LoadLibrary(string lpFileName);
+
+
+        [DllImport("kernel32")]
+        public static extern IntPtr LoadLibrary(string fileName);
+        [DllImport("kernel32")]
+        public static extern IntPtr GetProcAddress(IntPtr module, string procName);
+        [DllImport("kernel32")]
+        public static extern int FreeLibrary(IntPtr module);
     }
 
     static class UnixNativeLibraryLoader
     {
-
         // public const int RTLD_LAZY = 0x001;
         public const int RTLD_NOW = 0x002;
-        [System.Runtime.InteropServices.DllImport("libdl")]
+        [DllImport("libdl")]
         public static extern IntPtr dlopen(string fileName, int flags);
-
-        [System.Runtime.InteropServices.DllImport("libdl")]
+        [DllImport("libdl")]
         public static extern string dlerror();
 
         const string LD_LIBRARY_PATH = "LD_LIBRARY_PATH";
@@ -268,35 +333,7 @@ namespace Love
             // (it will automatically load others; lua51/mpg123/OpenAL32/SDL2, dependency DLLs):
             {
                 Set_LD_LIBRARY_PATH_Env(dirName.FullName);
-                // if (LoadLibrary(dirName.FullName + "/usr/lib/liblove-11.2.so", out var errorInfo) == false)
-                // {
-                //     throw new Exception(errorInfo);
-                // }
-                // if (LoadLibrary("liblove-11.2.so", out var errorInfo) == false)
-                // {
-                //     throw new Exception(errorInfo);
-                // }
-                // var linuxLibHashSet = new HashSet<string>()
-                // {
-                //     "lib/x86_64-linux-gnu/libgcc_s.so.1",
-                //     "lib/x86_64-linux-gnu/libz.so.1",
-                //     "lib/x86_64-linux-gnu/libm.so.6",
-                //     "libstdc++/libstdc++.so.6",
-                //     "usr/lib/liblove-11.2.so",
-                //     "usr/lib/libmodplug.so.1",
-                //     "usr/lib/libluajit-5.1.so.2",
-                //     "usr/lib/x86_64-linux-gnu/libtheoradec.so.1",
-                //     "usr/lib/x86_64-linux-gnu/libmpg123.so.0",
-                //     "usr/lib/x86_64-linux-gnu/libopenal.so.1",
-                //     "usr/lib/x86_64-linux-gnu/libvorbis.so.0",
-                //     "usr/lib/x86_64-linux-gnu/libvorbisfile.so.3",
-                //     "usr/lib/x86_64-linux-gnu/libogg.so.0",
-                //     "usr/lib/x86_64-linux-gnu/libfreetype.so.6",
-                //     "usr/lib/libSDL2-2.0.so.0",
-                // };
-
-
-
+                var Love2dDll_DllPath = "liblove-11.2.so";
                 var linuxLibHashSet = new string[]
                 {
                     "libstdc++/libstdc++.so.6",
@@ -317,7 +354,7 @@ namespace Love
                     "usr/lib/x86_64-linux-gnu/libopenal.so.1",
                     "usr/lib/x86_64-linux-gnu/libmpg123.so.0",
 
-                    $"usr/lib/{Love2dDll.DllPath}.so",
+                    $"usr/lib/{Love2dDll_DllPath}.so",
 
                 };
                 foreach (var libname in linuxLibHashSet)
@@ -334,6 +371,55 @@ namespace Love
                     }
                 }
             }
+        }
+
+        static void Set_LD_LIBRARY_PATH_Env(string folderPath)
+        {
+            var path = Environment.GetEnvironmentVariable(LD_LIBRARY_PATH, EnvironmentVariableTarget.Process) ?? String.Empty;
+            Environment.SetEnvironmentVariable(LD_LIBRARY_PATH,
+                string.Join(ENV_PATH_SPITER.ToString(),
+                $"{folderPath}/usr/lib/libstdc++",
+                $"{folderPath}/lib/x86_64-linux-gnu",
+                $"{folderPath}/usr/bin",
+                $"{folderPath}/usr/lib",
+                $"{folderPath}/usr/lib/x86_64-linux-gnu",
+                path), EnvironmentVariableTarget.Process);
+        }
+    }
+
+    static class MacNativeLibraryLoader
+    {
+
+        // public const int RTLD_LAZY = 0x001;
+        public const int RTLD_NOW = 0x002;
+        [System.Runtime.InteropServices.DllImport("libdl")]
+        public static extern IntPtr dlopen(string fileName, int flags);
+
+        [System.Runtime.InteropServices.DllImport("libdl")]
+        public static extern string dlerror();
+
+        const string LD_LIBRARY_PATH = "LD_LIBRARY_PATH";
+        const string ZIP_FILE_NAME = "native_lib_linux_x64.zip";
+        const char ENV_PATH_SPITER = ':';
+
+        public static bool LoadLibrary(string path, out string errorInfo)
+        {
+            // Console.WriteLine($"{Environment.CurrentDirectory}/{name}");
+            if (dlopen(path, RTLD_NOW) == IntPtr.Zero)
+            {
+                errorInfo = dlerror();
+                Log.Error($"load library '{path}' error: [{errorInfo}]");
+                return false;
+            }
+
+            errorInfo = "";
+            return true;
+        }
+
+        /// linux下递归列出目录下的所有文件名（不包括目录），并且去掉空行
+        /// ls -lR |grep -v ^d|awk '{print $9}' |tr -s '\n'
+        public static void Load()
+        {
         }
 
         static void Set_LD_LIBRARY_PATH_Env(string folderPath)

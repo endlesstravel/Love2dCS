@@ -229,7 +229,7 @@ namespace Love
                 else if (returnValue is uint[]) RawOperate.PushIntegerArray(((uint[])returnValue).Select(item => (int)item).ToArray());
                 else if (returnValue is float[]) RawOperate.PushNumberArray(((float[])returnValue));
                 else if (returnValue is double[]) RawOperate.PushNumberArray(((double[])returnValue).Select(item => (float)item).ToArray());
-                else if (returnValue is string[]) RawOperate.PushStringArray(((string[])returnValue));
+                //else if (returnValue is string[]) RawOperate.PushStringArray(((string[])returnValue));
 
                 return info.ReturnType != typeof(void) ? 1 : 0;
             }
@@ -488,13 +488,13 @@ namespace Love
                 Love2dDll.wrap_love_dll_luasupport_pushBooleanArray(num, num.Length);
             }
 
-            public static void PushStringArray(string[] texts)
-            {
-                DllTool.ExecuteNullTailStringArray(texts, (pointers) =>
-                {
-                    Love2dDll.wrap_love_dll_luasupport_pushStringArray(pointers, pointers.Length);
-                });
-            }
+            //public static void PushStringArray(string[] texts)
+            //{
+            //    DllTool.ExecuteNullTailStringArray(texts, (pointers) =>
+            //    {
+            //        Love2dDll.wrap_love_dll_luasupport_pushStringArray(pointers, pointers.Length);
+            //    });
+            //}
 
 
             // TODO: finishe function wrap_love_dll_luasupport_checkToArray

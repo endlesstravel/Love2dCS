@@ -1417,18 +1417,18 @@ namespace Love
             return DllTool.WSSToStringListAndRelease(out_wss);
         }
 
-        /// <summary>
-        /// <para>Deprecated in LÖVE 11.0</para>
-        /// <para>Gets the last modification time of a file.</para>
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <returns></returns>
-        public static long _GetLastModified(byte[] filename)
-        {
-            long out_time;
-            Love2dDll.wrap_love_dll_filesystem_getLastModified(filename, out out_time);
-            return out_time;
-        }
+        ///// <summary>
+        ///// <para>Deprecated in LÖVE 11.0</para>
+        ///// <para>Gets the last modification time of a file.</para>
+        ///// </summary>
+        ///// <param name="filename"></param>
+        ///// <returns></returns>
+        //public static long _GetLastModified(byte[] filename)
+        //{
+        //    long out_time;
+        //    Love2dDll.wrap_love_dll_filesystem_getLastModified(filename, out out_time);
+        //    return out_time;
+        //}
 
         /// <summary>
         /// Gets whether love.filesystem follows symbolic links.
