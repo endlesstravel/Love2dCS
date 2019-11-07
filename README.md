@@ -5,6 +5,8 @@ Love2dCS - C# Wrapper for LÖVE
 ---
 Love2dCS is a C# Wrapper for [LÖVE game engine](https://love2d.org/), it can be used your C# based Application.
 
+Nuget : https://www.nuget.org/packages/Love2dCS
+
 Links
 ---
 * [Document at https://endlesstravel.github.io](https://endlesstravel.github.io)
@@ -16,8 +18,10 @@ Links
 
 Support Platform
 ---
-* .NET Framework 4.5  win-x86 / win-x64
-* .NET Core 2.0 win-x84 / win-x64 / ubuntu-16 x64 / ubuntu-18 x64
+* .NET Framework 4.5.1  win-x86 / win-x64
+* .NET Core 1.0 ubuntu-16 x64 / ubuntu-18 x64
+* .NET Core 2.1 MacOS 10.12+ 
+* mono may be work either??
 
 Status
 ---
