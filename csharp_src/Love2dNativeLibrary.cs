@@ -8,7 +8,6 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.IO.Compression;
 using File = System.IO.File;
 using FileInfo = System.IO.FileInfo;
 using System.Text;
@@ -317,25 +316,11 @@ namespace Love
         public static extern IntPtr dlopen(string fileName, int flags);
         [DllImport("libdl")]
         public static extern string dlerror();
+        [DllImport("libdl")]
+        public static extern IntPtr dlsym(IntPtr handle, string name);
 
-        const string LD_LIBRARY_PATH = "LD_LIBRARY_PATH";
         const string ZIP_FILE_NAME = "native_lib_linux_x64.zip";
-        const char ENV_PATH_SPITER = ':';
-
-        public static bool LoadLibrary(string path, out string errorInfo)
-        {
-            // Console.WriteLine($"{Environment.CurrentDirectory}/{name}");
-            if (dlopen(path, RTLD_NOW) == IntPtr.Zero)
-            {
-                errorInfo = dlerror();
-                Log.Error($"load library '{path}' error: [{errorInfo}]");
-                return false;
-            }
-
-            errorInfo = "";
-            return true;
-        }
-
+        
         /// linux下递归列出目录下的所有文件名（不包括目录），并且去掉空行
         /// ls -lR |grep -v ^d|awk '{print $9}' |tr -s '\n'
         public static void Load()
@@ -375,12 +360,10 @@ namespace Love
                 NativlibTool.UnzipEmbeddedResourceToDir(assem, name, dirName.FullName);
             }
 
-            // 2. Only load the native "usr/lib/liblove-11.2.so"
-            // (it will automatically load others; lua51/mpg123/OpenAL32/SDL2, dependency DLLs):
+            // 2. load the native library
             {
-                Set_LD_LIBRARY_PATH_Env(dirName.FullName);
-                var Love2dDll_DllPath = "liblove-11.2.so";
-                var linuxLibHashSet = new string[]
+                var libLove2d_so_filename = $"usr/lib/liblove-11.2.so";
+                var linuxLibTableArray = new string[]
                 {
                     "libstdc++/libstdc++.so.6",
                     "lib/x86_64-linux-gnu/libgcc_s.so.1",
@@ -400,36 +383,33 @@ namespace Love
                     "usr/lib/x86_64-linux-gnu/libopenal.so.1",
                     "usr/lib/x86_64-linux-gnu/libmpg123.so.0",
 
-                    $"usr/lib/{Love2dDll_DllPath}.so",
+                    libLove2d_so_filename,
 
                 };
-                foreach (var libname in linuxLibHashSet)
+                foreach (var libname in linuxLibTableArray)
                 {
-                    // var nn = libname.Split("/").Last();
-                    // if (LoadLibrary(nn, out var errorInfo) == false)
-                    // {
-                    //     throw new Exception(errorInfo);
-                    // }
-                    if (LoadLibrary(dirName.FullName + "/" + libname, out var errorInfo) == false)
+                    var path = dirName.FullName + "/" + libname;
+                    var dlPtr = dlopen(path, RTLD_NOW);
+                    if (dlPtr == IntPtr.Zero)
                     {
-                        //throw new Exception(errorInfo);
+                        var errorInfo = $"load library '{path}' error: [{dlerror()}]";
                         Log.Error(errorInfo);
+                        throw new Exception(errorInfo);
+                    }
+
+                    if (libname == libLove2d_so_filename)
+                    {
+                        LOVE_LIB_PTR = dlPtr;
                     }
                 }
             }
         }
 
-        static void Set_LD_LIBRARY_PATH_Env(string folderPath)
+        static IntPtr LOVE_LIB_PTR = IntPtr.Zero;
+
+        public static IntPtr DynamciLoadFunction(string name)
         {
-            var path = Environment.GetEnvironmentVariable(LD_LIBRARY_PATH, EnvironmentVariableTarget.Process) ?? String.Empty;
-            Environment.SetEnvironmentVariable(LD_LIBRARY_PATH,
-                string.Join(ENV_PATH_SPITER.ToString(),
-                $"{folderPath}/usr/lib/libstdc++",
-                $"{folderPath}/lib/x86_64-linux-gnu",
-                $"{folderPath}/usr/bin",
-                $"{folderPath}/usr/lib",
-                $"{folderPath}/usr/lib/x86_64-linux-gnu",
-                path), EnvironmentVariableTarget.Process);
+            return dlsym(LOVE_LIB_PTR, name);
         }
     }
 
