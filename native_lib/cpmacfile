@@ -1,0 +1,23 @@
+
+######## runtimes-mac-x64-native
+rm native_lib_mac_x64.zip
+mkdir workspace-mac-x64
+cd workspace-mac-x64
+
+
+cp /d/OtherDev/test/love.app/Contents/Frameworks/freetype.framework/Versions/A/FreeType             ./
+cp /d/OtherDev/test/love.app/Contents/Frameworks/libmodplug.framework/Versions/A/libmodplug         ./
+cp /d/OtherDev/test/love.app/Contents/Frameworks/love.framework/Versions/A/love                     ./
+cp /d/OtherDev/test/love.app/Contents/Frameworks/Lua.framework/Versions/A/Lua                       ./
+cp /d/OtherDev/test/love.app/Contents/Frameworks/mpg123.framework/Versions/A/mpg123                 ./
+cp /d/OtherDev/test/love.app/Contents/Frameworks/ogg.framework/Versions/A/Ogg                       ./
+cp /d/OtherDev/test/love.app/Contents/Frameworks/OpenAL-Soft.framework/Versions/A/OpenAL-Soft       ./
+cp /d/OtherDev/test/love.app/Contents/Frameworks/SDL2.framework/Versions/A/SDL2                     ./
+cp /d/OtherDev/test/love.app/Contents/Frameworks/theora.framework/Versions/A/Theora                 ./
+cp /d/OtherDev/test/love.app/Contents/Frameworks/vorbis.framework/Versions/A/Vorbis                 ./
+
+
+zip -r native_lib_mac_x64.zip ./*
+mv native_lib_mac_x64.zip ../
+cd ..
+rm -rf workspace-mac-x64
