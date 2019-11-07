@@ -12,6 +12,7 @@ using System.IO.Compression;
 using File = System.IO.File;
 using FileInfo = System.IO.FileInfo;
 using System.Text;
+using System.Diagnostics;
 
 namespace Love
 {
@@ -31,17 +32,52 @@ namespace Love
         }
         static IntPtr GetUnixLibraryFunc(string name)
         {
-            return IntPtr.Zero;
-            //return UnixNativeLibraryLoader.DynamciLoadFunction(name);
+            return UnixNativeLibraryLoader.DynamciLoadFunction(name);
         }
         static IntPtr GetMacLibraryFunc(string name)
         {
-            return IntPtr.Zero;
-            //return MacNativeLibraryLoader.DynamciLoadFunction(name);
+            return MacNativeLibraryLoader.DynamciLoadFunction(name);
         }
         static IntPtr GetWinLibraryFunc(string name)
         {
             return WindowsNativeLibraryLoader.DynamciLoadFunction(name);
+        }
+
+
+        static bool IsMacOSFlag = false;
+        public static bool TestIsMacOS()
+        {
+            bool isMacFlag = false;
+            var thg = new Thread(() =>
+            {
+                var proc = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "uname",
+                        Arguments = "-a",
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        CreateNoWindow = true
+                    }
+                };
+                proc.Start();
+                List<char> list = new List<char>();
+                while (!proc.StandardOutput.EndOfStream && (list.Count < 20))
+                {
+                    unchecked
+                    {
+                        list.Add((char)proc.StandardOutput.Read());
+                    }
+                }
+
+                var info = new string(list.ToArray());
+                isMacFlag = info.ToLower().Contains("darwin");
+            });
+
+            thg.Start();
+            thg.Join(10 * 1000); // time out failed !
+            return isMacFlag;
         }
 
         public static IntPtr GetLibraryFunc(string name)
@@ -56,9 +92,14 @@ namespace Love
                 case PlatformID.WinCE:
                     return GetWinLibraryFunc(name);
                 case PlatformID.Unix:
-                    return GetUnixLibraryFunc(name);
-                case PlatformID.MacOSX:
-                    return GetMacLibraryFunc(name);
+                    if (IsMacOSFlag)
+                    {
+                        return GetMacLibraryFunc(name);
+                    }
+                    else
+                    {
+                        return GetUnixLibraryFunc(name);
+                    }
                 default:
                     throw new Exception("unsupport platform : " + pid);
             }
@@ -77,10 +118,15 @@ namespace Love
                     LoadWinLibrary();
                     break;
                 case PlatformID.Unix:
-                    LoadUnixLibrary();
-                    break;
-                case PlatformID.MacOSX:
-                    LoadMacLibrary();
+                    IsMacOSFlag = TestIsMacOS();
+                    if (IsMacOSFlag)
+                    {
+                        LoadMacLibrary();
+                    }
+                    else
+                    {
+                        LoadUnixLibrary();
+                    }
                     break;
                 default:
                     throw new Exception("unsupport platform : " + pid);
@@ -392,47 +438,95 @@ namespace Love
 
         // public const int RTLD_LAZY = 0x001;
         public const int RTLD_NOW = 0x002;
-        [System.Runtime.InteropServices.DllImport("libdl")]
+        [DllImport("libdl")]
         public static extern IntPtr dlopen(string fileName, int flags);
-
-        [System.Runtime.InteropServices.DllImport("libdl")]
+        [DllImport("libdl")]
         public static extern string dlerror();
+        [DllImport("libdl")]
+        public static extern IntPtr dlsym(IntPtr handle, string name);
 
-        const string LD_LIBRARY_PATH = "LD_LIBRARY_PATH";
-        const string ZIP_FILE_NAME = "native_lib_linux_x64.zip";
-        const char ENV_PATH_SPITER = ':';
-
-        public static bool LoadLibrary(string path, out string errorInfo)
-        {
-            // Console.WriteLine($"{Environment.CurrentDirectory}/{name}");
-            if (dlopen(path, RTLD_NOW) == IntPtr.Zero)
-            {
-                errorInfo = dlerror();
-                Log.Error($"load library '{path}' error: [{errorInfo}]");
-                return false;
-            }
-
-            errorInfo = "";
-            return true;
-        }
+        const string ZIP_FILE_NAME = "native_lib_mac_x64.zip";
 
         /// linux下递归列出目录下的所有文件名（不包括目录），并且去掉空行
         /// ls -lR |grep -v ^d|awk '{print $9}' |tr -s '\n'
         public static void Load()
         {
+
+            // 1. Extract all DLL (embedded resources) into the a temporary directory:
+            var assem = Assembly.GetExecutingAssembly();
+            var an = assem.GetName();
+            var asseName = an.Name + ".";
+            var dirName = new DirectoryInfo(Path.Combine(Path.GetTempPath(), $"{NativlibTool.GetHashAssembly()}{an.ProcessorArchitecture}.{an.Version}"));
+            {
+                if (!dirName.Exists)
+                {
+                    dirName.Create();
+                }
+
+                // Log To Delete:
+                Log.Info(dirName);
+
+                var names = assem.GetManifestResourceNames();
+                var name = names.FirstOrDefault(item => item.EndsWith(ZIP_FILE_NAME));
+                if (name != null)
+                {
+                    //Log.Info("lib --------------------------------------- begin ");
+                    //Log.Info("lib " + names.Length);
+                    //Log.Info(string.Join("\n", names));
+                    //Log.Info("lib --------------------------------------- end ");
+                }
+                else
+                {
+                    var errorInfo = ZIP_FILE_NAME + " ont founded in Embedded Resource !";
+                    Log.Error(errorInfo);
+                    throw new Exception(errorInfo);
+                }
+
+                // extract unzip file to temp
+                NativlibTool.UnzipEmbeddedResourceToDir(assem, name, dirName.FullName);
+            }
+
+            // 2. load the native library
+            {
+                var Love2dDll_DllPath_NAME = "love";
+                var linuxLibTable = new string[]
+                {
+                    "Theora",
+                    "Vorbis",
+                    "Ogg",
+                    "FreeType",
+                    "SDL2",
+                    "libmodplug",
+                    "Lua",
+                    "OpenAL-Soft",
+                    "mpg123",
+                    Love2dDll_DllPath_NAME,
+
+                };
+                foreach (var libname in linuxLibTable)
+                {
+                    var dllFilePath = dirName.FullName + "/" + libname;
+                    var dlPtr = dlopen(dllFilePath, RTLD_NOW);
+                    if (dlPtr == IntPtr.Zero)
+                    {
+                        var errorInfo = $"load library '{dllFilePath}' error: [{dlerror()}]";
+                        Log.Error(errorInfo);
+                        throw new Exception(errorInfo);
+                    }
+
+                    if (libname == Love2dDll_DllPath_NAME)
+                    {
+                        LOVE_LIB_PTR = dlPtr;
+                    }
+                }
+            }
         }
 
-        static void Set_LD_LIBRARY_PATH_Env(string folderPath)
+        static IntPtr LOVE_LIB_PTR = IntPtr.Zero;
+
+        public static IntPtr DynamciLoadFunction(string name)
         {
-            var path = Environment.GetEnvironmentVariable(LD_LIBRARY_PATH, EnvironmentVariableTarget.Process) ?? String.Empty;
-            Environment.SetEnvironmentVariable(LD_LIBRARY_PATH,
-                string.Join(ENV_PATH_SPITER.ToString(),
-                $"{folderPath}/usr/lib/libstdc++",
-                $"{folderPath}/lib/x86_64-linux-gnu",
-                $"{folderPath}/usr/bin",
-                $"{folderPath}/usr/lib",
-                $"{folderPath}/usr/lib/x86_64-linux-gnu",
-                path), EnvironmentVariableTarget.Process);
+            return dlsym(LOVE_LIB_PTR, name);
         }
     }
 

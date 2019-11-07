@@ -42,6 +42,7 @@ namespace Love
 
     class Love2dDll
     {
+        // LoadFunction Marshal.GetDelegateForFunctionPointer<T> // .NET 4.5.1
         [MethodImpl(MethodImplOptions.AggressiveInlining)] // .NET 4.5
         static bool CheckCAPIException(bool hasNoException)
         {
@@ -61,7 +62,6 @@ namespace Love
         }
         public static void LoadInit()
         {
-            Love2dDll.inner_wrap_love_dll_type_c_size_info_value();
         }
 
 
@@ -4429,7 +4429,7 @@ namespace Love
         public static T LoadFunction<T>(string name)
         {
             //IntPtr functionPtr = _loader.LoadFunctionPointer(Handle, name);
-            var functionPtr = WindowsNativeLibraryLoader.DynamciLoadFunction(name);
+            var functionPtr = Boot.GetLibraryFunc(name);
             if (functionPtr == IntPtr.Zero)
             {
                 throw new InvalidOperationException($"No function was found with the name {name}.");
