@@ -417,6 +417,10 @@ namespace Love
             {
                 InitFlag = true;
 
+                // output the version
+                var versionInfo = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                Log.Info($"[Version: {versionInfo}]");
+
                 // config
                 if (bootConfig == null)
                 {

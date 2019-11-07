@@ -515,7 +515,7 @@ void effect() {
 
         public static void Init()
         {
-            Log.Info("init shader code boot ...");
+            Log.Info("init shader code ...");
             InitGraphicsShader();
             Log.Info("init shader code success");
         }

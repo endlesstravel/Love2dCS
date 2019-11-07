@@ -552,7 +552,7 @@ namespace Love
             return colorData;
         }
 
-        public void SetPixel(Color[] colorData)
+        public void SetPixels(Color[] colorData)
         {
             var fmt = GetFormat();
             var len = colorData.Length;
@@ -1163,6 +1163,24 @@ namespace Love
         }
 
 
+        /// <summary>
+        /// <para>以二维方式缩放坐标系。</para>
+        /// <para>默认情况下，LÖVE中的坐标系在水平和垂直方向上一对一显示像素，x轴向右增加，y轴向下增加。 缩放坐标系会改变这种关系。</para>
+        /// <para>在通过sx和sy进行缩放之后，所有坐标都被视为与sx和sy相乘。 绘图操作的每个结果也相应地缩放，例如按（2,2）缩放将意味着在x和y方向上使所有内容都变为两倍。 按负值缩放会使坐标系在相应的方向上翻转，所有内容都会被翻转或颠倒（或两者兼而有之）。 按零缩放没有意义。</para>
+        /// <para>缩放(Scale)操作和平移(Translate)操作不是可交换操作，以不同的顺序调用它们会产生不同的结果。</para>
+        /// <para>效果持续到 Scene.Draw 调用结束（每一帧画面绘制结束都会自动重置为1倍。）</para>
+        /// 
+        /// <para>Scales the coordinate system in two dimensions.</para> 
+        /// <para>By default the coordinate system in LÖVE corresponds to the display pixels in horizontal and vertical directions one-to-one, and the x-axis increases towards the right while the y-axis increases downwards. Scaling the coordinate system changes this relation.</para>
+        /// <para>After scaling by sx and sy, all coordinates are treated as if they were multiplied by sx and sy. Every result of a drawing operation is also correspondingly scaled, so scaling by (2, 2) for example would mean making everything twice as large in both x- and y-directions. Scaling by a negative value flips the coordinate system in the corresponding direction, which also means everything will be drawn flipped or upside down, or both. Scaling by zero is not a useful operation.</para>
+        /// <para>Scale and translate are not commutative operations, therefore, calling them in different orders will change the outcome.</para>
+        /// <para>Scaling lasts until Scene.Draw exits.</para>
+        /// </summary>
+        /// <param name="scale">The scaling on each axis.</param>
+        public static void Scale(float scale)
+        {
+            Scale(scale, scale);
+        }
 
 
 

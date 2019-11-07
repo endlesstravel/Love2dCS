@@ -78,6 +78,21 @@ namespace Love
         }
     }
 
+
+    //public partial class Canvas
+    //{
+    //    public void RenderTo(Action func)
+    //    {
+    //        if (func == null)
+    //            throw new ArgumentNullException(nameof(func));
+
+    //        var oldTargets = Graphics.GetCanvas();
+    //        Graphics.SetCanvas(this);
+    //        func();
+    //        Graphics.SetCanvas(oldTargets);
+    //    }
+    //}
+
     public partial class Shader
     {
         /// <summary>
