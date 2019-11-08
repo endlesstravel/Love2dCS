@@ -210,7 +210,7 @@ namespace Love
         /// Callback function triggered when a file is dragged and dropped onto the window.
         /// </summary>
         /// <param name="file">The unopened File object representing the file that was dropped.</param>
-        public virtual void FileDropped(File file) { }
+        public virtual void FileDropped(string fileFilePath) { }
 
         /// <summary>
         /// Callback function triggered when the game is closed.

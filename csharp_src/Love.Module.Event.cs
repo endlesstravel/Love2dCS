@@ -124,7 +124,7 @@ namespace Love
             internal JoystickHat direction;
             internal GamepadButton gamepadButton;
             internal GamepadAxis gamepadAxis;
-            internal File file;
+            //internal File file;
             internal string text;
             internal bool flag;
             internal float fx, fy, fz, fw, fp;
@@ -140,7 +140,6 @@ namespace Love
                 direction = JoystickHat.Invalid;
                 gamepadButton = GamepadButton.Invalid;
                 gamepadAxis = GamepadAxis.Invalid;
-                file = null;
                 text = null;
                 flag = false;
                 fx = 0;
@@ -364,10 +363,10 @@ namespace Love
                 ed.text = path;
                 list.AddLast(ed);
             }
-            public void FileDropped(File file)
+            public void FileDropped(string filePath)
             {
                 EventData ed = new EventData(EventType.FileDropped);
-                ed.file = file;
+                ed.text = filePath;
                 list.AddLast(ed);
             }
             public void Quit()
@@ -518,7 +517,7 @@ namespace Love
                             break;
                         case EventType.FileDropped:
                             {
-                                scene.FileDropped(ed.file);
+                                scene.FileDropped(ed.text);
                             }
                             break;
                         case EventType.Quit:
@@ -648,7 +647,7 @@ namespace Love
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_FILE_DROPPED:
                     {
-                        eHandler.FileDropped(FileSystem.NewFile(out_string));
+                        eHandler.FileDropped(out_string);
                     }
                     break;
                 case WrapEventType.WRAP_EVENT_TYPE_DIRECTORY_DROPPED:

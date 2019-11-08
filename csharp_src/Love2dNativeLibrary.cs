@@ -250,7 +250,7 @@ namespace Love
                 }
                 else
                 {
-                    var errorInfo = dllStringTip + " ont founded in Embedded Resource !";
+                    var errorInfo = dllStringTip + " not founded in Embedded Resource ! May be incorrect platform package Love2dCS-win|ubuntu|mac";
                     Log.Error(errorInfo);
                     throw new Exception(errorInfo);
                 }
@@ -351,7 +351,7 @@ namespace Love
                 }
                 else
                 {
-                    var errorInfo = ZIP_FILE_NAME + " ont founded in Embedded Resource !";
+                    var errorInfo = ZIP_FILE_NAME + " not founded in Embedded Resource ! May be incorrect platform package, Try Love2dCS-win";
                     Log.Error(errorInfo);
                     throw new Exception(errorInfo);
                 }
@@ -457,7 +457,7 @@ namespace Love
                 }
                 else
                 {
-                    var errorInfo = ZIP_FILE_NAME + " ont founded in Embedded Resource !";
+                    var errorInfo = ZIP_FILE_NAME + " not founded in Embedded Resource ! May be incorrect platform package Love2dCS-win|ubuntu|mac";
                     Log.Error(errorInfo);
                     throw new Exception(errorInfo);
                 }
