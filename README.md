@@ -5,7 +5,10 @@ Love2dCS - C# Wrapper for LÖVE
 ---
 Love2dCS is a C# Wrapper for [LÖVE game engine](https://love2d.org/), it can be used your C# based Application.
 
-Nuget : https://www.nuget.org/packages/Love2dCS
+* Nuget Package: https://www.nuget.org/packages/Love2dCS
+* Windows(x64/x86) Only Nuget Package : https://www.nuget.org/packages/Love2dCS-win
+* Ubuntu(x64) Only Nuget Package : https://www.nuget.org/packages/Love2dCS-ubuntu
+* MacOS(x64) Only Nuget Package : https://www.nuget.org/packages/Love2dCS-mac
 
 Links
 ---
@@ -65,6 +68,8 @@ Next to development
  - [√] Support helpper function : `Keyboard.IsPressed` / `Keyboard.IsReleased` / `Joystick.IsPressed` / `Joystick.IsReleased` / `Joystick.IsGamepadPressed`  /`Joystick.IsGamepadReleased`
  - [√] Add support for Physics
 
+Test
+---
 | Module                | Process | code comment   |     Test      |   ubuntu Test    | Remark         |
 | ----------------------|--------:|---------------:|--------------:|----------------:| --------------:|
 | Audio                 | 80%     |      80%       |  50% test     |                 |                |
