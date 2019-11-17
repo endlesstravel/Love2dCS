@@ -35,7 +35,7 @@ Love2dCS API尽可能与原来的 `LÖVE 引擎`保持一致，但任然有一�
 * LÖVE 中的 `love.math` 在 Love2dCS 被改名为 `Love.Mathf`
 * LÖVE 中的  `love.system` 在 Love2dCS 被改名为 `Love.Special`
 * Love2dCS 不打算提供线程模块，请使用 C# 中的线程。
-* 在 LÖVE 中，为了遵循 lua 语言的习惯，索引是从 0 开始计算的。而 Love2dCS 中的索引遵循 C# 语言的使用习惯，从 0 开始记起。
+* 在 LÖVE 中，为了遵循 lua 语言的习惯，索引是从 1 开始的。而 Love2dCS 中的索引遵循 C# 语言的使用习惯，从 0 开始记起。
 * Love2dCS 提供了更多的[内置模块](https://endlesstravel.github.io/#/module/build-in-module-index)，以供使用.
 * Love2dCS 可以同时和lua进行工作，详情请参考 ： https://endlesstravel.github.io/#/tutorial/05.use-lua
 * Love2dCS 当前基于 [LÖVE 11.1](https://love2d.org/wiki/11.1)
