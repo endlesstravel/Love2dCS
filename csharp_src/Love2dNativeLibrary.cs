@@ -468,18 +468,35 @@ namespace Love
 
             // 2. load the native library
             {
+                //var Love2dDll_DllPath_NAME = "love.framework/Versions/A/love";
                 var Love2dDll_DllPath_NAME = "love";
                 var linuxLibTable = new string[]
                 {
+                    "Ogg",
                     "Theora",
                     "Vorbis",
-                    "Ogg",
                     "FreeType",
                     "SDL2",
                     "libmodplug",
                     "Lua",
                     "OpenAL-Soft",
                     "mpg123",
+
+                    //"ogg.framework/Versions/A/Ogg", // dep [/usr/lib/libSystem.B.dylib]
+                    //"theora.framework/Versions/A/Theora", // dep [ogg] [/usr/lib/libSystem.B.dylib]
+                    //"vorbis.framework/Versions/A/Vorbis", // dep [ogg]
+                    //"freetype.framework/Versions/A/FreeType", // dep [/usr/lib/libz.1.dylib ]
+                    //"libmodplug.framework/Versions/A/libmodplug", // [/usr/lib/libstdc++.6.dylib] [/usr/lib/libSystem.B.dylib] [/usr/lib/libgcc_s.1.dylib]
+                    //"Lua.framework/Versions/A/Lua", // dep [/usr/lib/libSystem.B.dylib]
+                    //"mpg123.framework/Versions/A/mpg123", // dep [/usr/lib/libSystem.B.dylib]
+                    //"OpenAL-Soft.framework/Versions/A/OpenAL-Soft", 
+                    //        // dep [/System/Library/Frameworks/AudioToolbox.framework/Versions/A/AudioToolbox]
+                    //        // [/System/Library/Frameworks/ApplicationServices.framework/Versions/A/ApplicationServices]
+                    //        // [/System/Library/Frameworks/AudioUnit.framework/Versions/A/AudioUnit]
+                    //        // [/System/Library/Frameworks/CoreAudio.framework/Versions/A/CoreAudio]
+                    //        // [/usr/lib/libSystem.B.dylib]
+                    //"SDL2.framework/Versions/A/SDL2", // dep [/usr/lib/libiconv.2.dylib] ........
+
                     Love2dDll_DllPath_NAME,
 
                 };
@@ -490,6 +507,7 @@ namespace Love
                     if (dlPtr == IntPtr.Zero)
                     {
                         var errorInfo = $"load library '{dllFilePath}' error: [{dlerror()}]";
+                        errorInfo += $" ... file exists ? : {new System.IO.FileInfo(dllFilePath).Exists}";
                         Log.Error(errorInfo);
                         throw new Exception(errorInfo);
                     }

@@ -3,6 +3,8 @@
 
 Love2dCS - C# Wrapper for LÖVE
 ---
+[中文版](README-zh.md) |
+
 Love2dCS is a C# Wrapper for [LÖVE game engine](https://love2d.org/), it can be used your C# based Application.
 
 * Nuget Package: https://www.nuget.org/packages/Love2dCS
@@ -27,7 +29,8 @@ Status
 ---
 Love2dCS was designed to be as close as possible to the original LÖVE API, as such the documentation provided from LÖVE largely covers usage of Love2dCS. There is a difference between Love2dCS and LÖVE where is :
 
-* The `love.timer.getTimer` in C# as `The time in seconds since the start of the game` beacuse of `C# double to float precision`
+* The `Love.Resource.New*` `Love.Resource.*` in C# can access to files anywhere. In the original functin like `Love.Graphics.NewImage` can only access the contents of the current folder.
+* The `love.timer.getTime` in C# as `The time in seconds since the start of the game` beacuse of `C# double to float precision`
 * The `love.math` module in LÖVE is named `Love.Mathf` in Love2dCS
 * The `love.system` module in LÖVE is named `Love.Special` in Love2dCS
 * The `love.thread` module in LÖVE is not supply, you can use [Threading.Thread](https://docs.microsoft.com/en-us/dotnet/api/system.threading.thread) in C# instead.

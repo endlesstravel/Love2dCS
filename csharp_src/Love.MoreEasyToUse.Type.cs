@@ -79,19 +79,23 @@ namespace Love
     }
 
 
-    //public partial class Canvas
-    //{
-    //    public void RenderTo(Action func)
-    //    {
-    //        if (func == null)
-    //            throw new ArgumentNullException(nameof(func));
+    public partial class Canvas
+    {
+        /// <summary>
+        /// Render to the Canvas using a function. This is a shortcut to love.graphics.setCanvas.
+        /// </summary>
+        /// <param name="func"></param>
+        public void RenderTo(Action func)
+        {
+            if (func == null)
+                throw new ArgumentNullException(nameof(func));
 
-    //        var oldTargets = Graphics.GetCanvas();
-    //        Graphics.SetCanvas(this);
-    //        func();
-    //        Graphics.SetCanvas(oldTargets);
-    //    }
-    //}
+            var oldTargets = Graphics.GetCanvas();
+            Graphics.SetCanvas(this);
+            func();
+            Graphics.SetCanvas(oldTargets);
+        }
+    }
 
     public partial class Shader
     {
