@@ -27,6 +27,11 @@ namespace Love
         }
         static void LoadWinLibrary()
         {
+//#if DEBUG
+//            WindowsNativeLibraryLoader.DebugLoad();
+//            return;
+//#endif
+
             WindowsNativeLibraryLoader.Load();
         }
         static IntPtr GetUnixLibraryFunc(string name)
@@ -199,6 +204,19 @@ namespace Love
 
         const string native_lib_win_x64 = "native_lib_win_x64";
         const string native_lib_win_x86 = "native_lib_win_x86";
+
+        public static void DebugLoad()
+        {
+            var libPtr = LoadLibrary("love.dll");
+            if (libPtr == IntPtr.Zero)
+            {
+                var errorInfo = $"load love.dll";
+                Log.Error(errorInfo);
+                throw new Exception(errorInfo);
+            }
+
+            LoveLibraryPtr = libPtr;
+        }
 
         public static void Load()
         {

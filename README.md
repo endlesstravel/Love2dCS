@@ -7,10 +7,10 @@ Love2dCS - C# Wrapper for LÖVE
 
 Love2dCS is a C# Wrapper for [LÖVE game engine](https://love2d.org/), it can be used your C# based Application.
 
-* Nuget Package: https://www.nuget.org/packages/Love2dCS
-* Windows(x64/x86) Only Nuget Package : https://www.nuget.org/packages/Love2dCS-win
-* Ubuntu(x64) Only Nuget Package : https://www.nuget.org/packages/Love2dCS-ubuntu
-* MacOS(x64) Only Nuget Package : https://www.nuget.org/packages/Love2dCS-mac
+* Nuget Package - ~17MB: https://www.nuget.org/packages/Love2dCS
+* Windows(x64/x86) Only Nuget Package - ~6MB: https://www.nuget.org/packages/Love2dCS-win
+* Ubuntu(x64) Only Nuget Package - ~6MB: https://www.nuget.org/packages/Love2dCS-ubuntu
+* MacOS(x64) Only Nuget Package - ~6MB: https://www.nuget.org/packages/Love2dCS-mac
 
 Links
 ---

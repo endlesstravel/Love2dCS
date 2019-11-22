@@ -1685,7 +1685,7 @@ namespace LoveTest
         {
             try
             {
-                Boot.Run(new Program(), new BootConfig
+                Boot.Init(new BootConfig
                 {
                     WindowX = 100,
                     WindowY = 100,
@@ -1694,6 +1694,7 @@ namespace LoveTest
                     WindowResizable = true,
                     WindowTitle = "test",
                 });
+                Boot.Run(new Program());
             }
             catch (Exception e)
             {

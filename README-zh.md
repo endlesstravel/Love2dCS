@@ -1,5 +1,5 @@
 
-![logo](https://github.com/endlesstravel/Love2dCS/raw/master/img/logo.png "logo") 
+![logo](https://gitee.com/endlesstravel/love2dCS/raw/master/img/logo.png "logo") 
 
 Love2dCS - C# Wrapper for LÖVE
 ---
