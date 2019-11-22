@@ -2065,8 +2065,11 @@ namespace Love
         /// </summary>
         /// <param name="points">Polygon to triangulate. Must not intersect itself.</param>
         /// <returns></returns>
-        public static Triangle[] Triangulate(Vector2[] points)
+        public static Triangle[] Triangulate(params Vector2[] points)
         {
+            if (points == null)
+                throw new ArgumentNullException(nameof(points));
+
             IntPtr out_triArray;
             int out_triCount;
             Love2dDll.wrap_love_dll_math_triangulate(points, points.Length, out out_triArray, out out_triCount);
@@ -2090,8 +2093,11 @@ namespace Love
         /// </summary>
         /// <param name="points">The vertices of the polygon as a table in the form of {(x1, y1), (x2, y2), (x3, y3), ...}.</param>
         /// <returns>Whether the given polygon is convex.</returns>
-        public static bool IsConvex(Vector2[] points)
+        public static bool IsConvex(params Vector2[] points)
         {
+            if (points == null)
+                throw new ArgumentNullException(nameof(points));
+
             bool out_result = false;
             Love2dDll.wrap_love_dll_math_isConvex(points, points.Length, out out_result);
             return out_result;

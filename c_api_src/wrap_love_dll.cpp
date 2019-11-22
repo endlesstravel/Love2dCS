@@ -3148,7 +3148,7 @@ namespace wrap
         return wrap_catchexcept([&]() {
             std::vector<Vector2> points;
             points.reserve(pointsList_lenght);
-            for (int i = 0; i < pointsList_lenght; i += 2)
+            for (int i = 0; i < pointsList_lenght; i++)
             {
                 points.push_back(Vector2(pointsList[i].x, pointsList[i].y));
             }

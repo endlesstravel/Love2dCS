@@ -27,10 +27,11 @@ namespace Love
         }
         static void LoadWinLibrary()
         {
-//#if DEBUG
-//            WindowsNativeLibraryLoader.DebugLoad();
-//            return;
-//#endif
+#if DEBUG
+            WindowsNativeLibraryLoader.DebugLoad();
+            Log.Error("Debug Load Mode Error !");
+            return;
+#endif
 
             WindowsNativeLibraryLoader.Load();
         }
@@ -210,7 +211,7 @@ namespace Love
             var libPtr = LoadLibrary("love.dll");
             if (libPtr == IntPtr.Zero)
             {
-                var errorInfo = $"load love.dll";
+                var errorInfo = $"error when load love.dll  " + Environment.CurrentDirectory;
                 Log.Error(errorInfo);
                 throw new Exception(errorInfo);
             }

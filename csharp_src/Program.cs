@@ -1674,6 +1674,21 @@ namespace LoveTest
             Graphics.Print(string.Join("    ", strs), 0, 0);
 
             //ms.Draw(() => { });
+
+
+            var ttr = Mathf.Triangulate(
+                new Vector2(-100, -100), new Vector2(-100, 100), new Vector2(100, 100), new Vector2(200, 0), new Vector2(100, -100)
+            ); 
+            foreach (var item in ttr)
+            {
+                var ary = new float[] {
+                    item.a.X, item.a.Y,
+                    item.b.X, item.b.Y,
+                    item.c.X, item.c.Y,
+                }.Select(trx => trx + 200).ToArray();
+                //Graphics.Line(ary);
+                Graphics.Polygon(DrawMode.Line, ary);
+            }
         }
 
         public override bool ErrorHandler(Exception e)
@@ -1683,8 +1698,6 @@ namespace LoveTest
 
         static void Main(string[] args)
         {
-            try
-            {
                 Boot.Init(new BootConfig
                 {
                     WindowX = 100,
@@ -1695,11 +1708,6 @@ namespace LoveTest
                     WindowTitle = "test",
                 });
                 Boot.Run(new Program());
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
         }
     }
 
