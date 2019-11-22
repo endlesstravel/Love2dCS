@@ -3164,19 +3164,22 @@ namespace wrap
             else
                 triangles = math::triangulate(vertices);
 
-            *out_triCount = triangles.size();
-            *out_triArray = new float[(*out_triCount) * 6];
+			int result_count = (int)triangles.size();
+            float* result = new float[result_count * 6];
 
-            for (int i = 0; i < (int)triangles.size(); ++i)
+            for (int i = 0; i < result_count; ++i)
             {
                 const Triangle &tri = triangles[i];
-                *out_triArray[0] = tri.a.x;
-                *out_triArray[1] = tri.a.y;
-                *out_triArray[2] = tri.b.x;
-                *out_triArray[3] = tri.b.y;
-                *out_triArray[4] = tri.c.x;
-                *out_triArray[5] = tri.c.y;
+                result[i * 6 + 0] = tri.a.x;
+                result[i * 6 + 1] = tri.a.y;
+                result[i * 6 + 2] = tri.b.x;
+                result[i * 6 + 3] = tri.b.y;
+                result[i * 6 + 4] = tri.c.x;
+                result[i * 6 + 5] = tri.c.y;
             }
+
+			*out_triCount = result_count;
+			*out_triArray = result;
         });
     }
 
