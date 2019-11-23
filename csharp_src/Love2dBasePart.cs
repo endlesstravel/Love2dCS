@@ -2299,8 +2299,6 @@ namespace Love
         /// </summary>
         /// <param name="width">The desired width of the Canvas.</param>
         /// <param name="height">The desired height of the Canvas.</param>
-        /// <param name="format_type"></param>
-        /// <param name="msaa"></param>
         /// <returns>A new Canvas with specified width and height.</returns>
         public static Canvas NewCanvas(int width, int height, Settings settings = null)
         {

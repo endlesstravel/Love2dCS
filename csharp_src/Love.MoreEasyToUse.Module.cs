@@ -839,6 +839,8 @@ namespace Love
         /// <summary>
         /// Create a new instance of the default font (Vera Sans) with a custom size.
         /// </summary>
+        /// <param name="size">The size of the font in pixels.</param>
+        /// <param name="hinting">True Type hinting mode.</param>
         /// <returns></returns>
         public static Font NewFont(int size, HintingMode hinting = HintingMode.Normal)
         {
