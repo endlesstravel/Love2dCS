@@ -1,0 +1,19 @@
+
+######## runtimes-mac-x64-native
+rm native_lib_linux_x64.zip
+mkdir workspace-linux-x64
+cd workspace-linux-x64
+
+
+cp -r /d/Love2DCS_Dev/ubuntu_build/2019.11.22/mounted/lib/               ./lib
+cp -r /d/Love2DCS_Dev/ubuntu_build/2019.11.22/mounted/libstdc++/         ./libstdc++
+cp -r /d/Love2DCS_Dev/ubuntu_build/2019.11.22/mounted/usr/               ./usr
+rm -r ./usr/bin/
+
+zip -r native_lib_linux_x64.zip ./*
+
+find . -type f | wc -l
+
+mv native_lib_linux_x64.zip ../
+cd ..
+rm -rf workspace-linux-x64
