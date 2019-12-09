@@ -821,6 +821,23 @@ namespace wrap
 
 #pragma region *new* region
 
+	bool4 wrap_love_dll_filesystem_newDroppedFile(const char *filename, int fmode, DroppedFile** out_file)
+	{
+		return wrap_catchexcept([&]() {
+
+			auto *t = new love::filesystem::DroppedFile(filename);
+			File::Mode mode = (File::Mode)fmode;
+
+			if (mode != File::MODE_CLOSED)
+			{
+				if (!t->open(mode))
+					throw love::Exception("Could not open file.");
+			}
+
+			*out_file = t;
+		});
+	}
+
     bool4 wrap_love_dll_filesystem_newFile(const char *filename, int fmode, File** out_file)
     {
         return wrap_catchexcept([&]() {

@@ -903,9 +903,9 @@ namespace Love
         }
 
         /// <summary>
-        /// Determines the width of the given text. (UTF-8 byte array version)
+        /// Determines the width of the given text.
         /// </summary>
-        /// <param name="str">A string. (UTF-8 byte array needed)</param>
+        /// <param name="str">A string. </param>
         /// <returns>The width of the text.</returns>
         public int GetWidth(byte[] str)
         {
@@ -1000,9 +1000,9 @@ namespace Love
         }
 
         /// <summary>
-        /// Gets whether the Font can render a character or string. (UTF-8 byte array version)
+        /// Gets whether the Font can render a character or string.
         /// </summary>
-        /// <param name="str">A string. (UTF-8 byte array needed)</param>
+        /// <param name="str">A string. </param>
         /// <returns>Whether the font can render all characters in the string.</returns>
         public bool HasGlyphs(byte[] str)
         {
@@ -1920,52 +1920,52 @@ namespace Love
         /// <summary>
         /// Sends one or more colors to a special (extern / uniform) vec3 or vec4 variable inside the shader. The color components must be in the range of [0, 1]. The colors are gamma-corrected if global gamma-correction is enabled.
         /// </summary>
-        /// <param name="name">The name of the color extern variable to send to in the shader. (UTF8 byte array)</param>
+        /// <param name="name">The name of the color extern variable to send to in the shader. </param>
         /// <param name="valueArray">A array with red, green, blue, and alpha color components in the range of [0, 1] to send to the extern as a vector.</param>
-        public void SendColors(byte[] name, params Vector4[] valueArray)
+        public void SendColors(string name, params Vector4[] valueArray)
         {
-            Love2dDll.wrap_love_dll_type_Shader_sendColors(p, name, valueArray, valueArray.Length);
+            Love2dDll.wrap_love_dll_type_Shader_sendColors(p, DllTool.GetNullTailUTF8Bytes(name), valueArray, valueArray.Length);
         }
 
         /// <summary>
         /// Sends one or more float values to a special (uniform) variable inside the shader.
         /// </summary>
-        /// <param name="name">Name of the float to send to the shader. (UTF8 byte array)</param>
+        /// <param name="name">Name of the float to send to the shader. </param>
         /// <param name="valueArray">Float to send to store in the uniform variable.</param>
-        public void SendFloats(byte[] name, params float[] valueArray)
+        public void SendFloats(string name, params float[] valueArray)
         {
-            Love2dDll.wrap_love_dll_type_Shader_sendFloats(p, name, valueArray, valueArray.Length);
+            Love2dDll.wrap_love_dll_type_Shader_sendFloats(p, DllTool.GetNullTailUTF8Bytes(name), valueArray, valueArray.Length);
         }
 
         /// <summary>
         /// Sends one or more uint values to a special (uniform) variable inside the shader.
         /// </summary>
-        /// <param name="name">Name of the uint to send to the shader. (UTF8 byte array)</param>
+        /// <param name="name">Name of the uint to send to the shader. </param>
         /// <param name="valueArray">Uint to send to store in the uniform variable.</param>
-        public void SendUints(byte[] name, params uint[] valueArray)
+        public void SendUints(string name, params uint[] valueArray)
         {
-            Love2dDll.wrap_love_dll_type_Shader_sendUints(p, name, valueArray, valueArray.Length);
+            Love2dDll.wrap_love_dll_type_Shader_sendUints(p, DllTool.GetNullTailUTF8Bytes(name), valueArray, valueArray.Length);
         }
 
         /// <summary>
         /// Sends one or more int values to a special (uniform) variable inside the shader.
         /// </summary>
-        /// <param name="name">Name of the int to send to the shader. (UTF8 byte array)</param>
+        /// <param name="name">Name of the int to send to the shader. </param>
         /// <param name="valueArray">Int to send to store in the uniform variable.</param>
-        public void SendInts(byte[] name, params int[] valueArray)
+        public void SendInts(string name, params int[] valueArray)
         {
-            Love2dDll.wrap_love_dll_type_Shader_sendInts(p, name, valueArray, valueArray.Length);
+            Love2dDll.wrap_love_dll_type_Shader_sendInts(p, DllTool.GetNullTailUTF8Bytes(name), valueArray, valueArray.Length);
         }
 
 
         /// <summary>
         /// Sends one or more boolean values to a special (uniform) variable inside the shader.
         /// </summary>
-        /// <param name="name">Name of the boolean to send to the shader. (UTF8 byte array)</param>
+        /// <param name="name">Name of the boolean to send to the shader. </param>
         /// <param name="valueArray">Boolean to send to store in the uniform variable.</param>
-        public void SendBooleans(byte[] name, params bool[] valueArray)
+        public void SendBooleans(string name, params bool[] valueArray)
         {
-            Love2dDll.wrap_love_dll_type_Shader_sendBooleans(p, name, valueArray, valueArray.Length);
+            Love2dDll.wrap_love_dll_type_Shader_sendBooleans(p, DllTool.GetNullTailUTF8Bytes(name), valueArray, valueArray.Length);
         }
 
         /// <summary>
@@ -1977,25 +1977,25 @@ namespace Love
         /// <param name="columns">matrix columns</param>
         /// <param name="rows">matrix rows</param>
         /// <param name="count">matrix count</param>
-        public void SendMatrix(byte[] name, float[] valueArray, int columns, int rows, int count)
+        public void SendMatrix(string name, float[] valueArray, int columns, int rows, int count)
         {
             if (valueArray.Length != columns * rows * count)
             {
                 throw new Exception("passed params error, columns * rows not equal valueArray.Length");
             }
 
-            Love2dDll.wrap_love_dll_type_Shader_sendMatrices(p, name, valueArray, columns, rows, count);
+            Love2dDll.wrap_love_dll_type_Shader_sendMatrices(p, DllTool.GetNullTailUTF8Bytes(name), valueArray, columns, rows, count);
         }
 
         /// <summary>
         /// Sends one or more texture to a special (uniform) variable inside the shader.
         /// </summary>
-        /// <param name="name">Name of the Texture to send to the shader.(UTF8 byte array)</param>
+        /// <param name="name">Name of the Texture to send to the shader.</param>
         /// <param name="texture">Texture (Image or Canvas) to send to the uniform variable.</param>
-        public void SendTexture(byte[] name, params Texture[] texture)
+        public void SendTexture(string name, params Texture[] texture)
         {
             IntPtr[] txts = DllTool.GenIntPtrArray(texture);
-            Love2dDll.wrap_love_dll_type_Shader_sendTexture(p, name, txts, txts.Length);
+            Love2dDll.wrap_love_dll_type_Shader_sendTexture(p, DllTool.GetNullTailUTF8Bytes(name), txts, txts.Length);
         }
     }
 
@@ -2077,9 +2077,9 @@ namespace Love
             Love2dDll.wrap_love_dll_type_SpriteBatch_getBufferSize(p, out out_buffersize);
             return out_buffersize;
         }
-        public void AttachAttribute(byte[] name, Mesh mesh)
+        public void AttachAttribute(string name, Mesh mesh)
         {
-            Love2dDll.wrap_love_dll_type_SpriteBatch_attachAttribute(p, name, mesh.p);
+            Love2dDll.wrap_love_dll_type_SpriteBatch_attachAttribute(p, DllTool.GetNullTailUTF8Bytes(name), mesh.p);
         }
     }
 
@@ -2465,10 +2465,10 @@ namespace Love
         /// <param name="writeToFile">Whether to write to the specified file</param>
         /// <param name="filename">The filename to write the file to. If null, no file will be written but the FileData will still be returned.</param>
         /// <returns></returns>
-        public FileData Encode(ImageFormat format_type, bool writeToFile, byte[] filename)
+        public FileData Encode(ImageFormat format_type, bool writeToFile, string filename)
         {
             IntPtr out_fileData = IntPtr.Zero;
-            Love2dDll.wrap_love_dll_type_ImageData_encode(p, (int)format_type, writeToFile, filename, out out_fileData);
+            Love2dDll.wrap_love_dll_type_ImageData_encode(p, (int)format_type, writeToFile, DllTool.GetNullTailUTF8Bytes(filename), out out_fileData);
             return NewObject<FileData>(out_fileData);
         }
     }
@@ -2807,9 +2807,9 @@ namespace Love
         {
             Love2dDll.wrap_love_dll_type_RandomGenerator_getSeed(p, out out_low, out out_high);
         }
-        public void SetState(byte[] state)
+        public void SetState(string state)
         {
-            Love2dDll.wrap_love_dll_type_RandomGenerator_setState(p, state);
+            Love2dDll.wrap_love_dll_type_RandomGenerator_setState(p, DllTool.GetNullTailUTF8Bytes(state));
         }
         public string GetState()
         {
@@ -3038,6 +3038,12 @@ namespace Love
         {
             this.text = text;
             this.color = color;
+        }
+
+        public ColoredString(string text, Color color)
+        {
+            this.text = text;
+            this.color = new Vector4(color.Rf, color.Gf, color.Bf, color.Af);
         }
 
         /// <summary>

@@ -231,6 +231,11 @@ namespace Love
         internal static delegateFunc_wrap_love_dll_luasupport_checkToArrayString wrap_love_dll_luasupport_checkToArrayString = wrap_love_dll_luasupport_checkToArrayString_value;
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        internal delegate bool delegateFunc_wrap_love_dll_filesystem_newDroppedFile(byte[] filename, int fmode, out IntPtr out_file);
+        internal static delegateFunc_wrap_love_dll_filesystem_newDroppedFile wrap_love_dll_filesystem_newDroppedFile_value = LoadFunction<delegateFunc_wrap_love_dll_filesystem_newDroppedFile>("wrap_love_dll_filesystem_newDroppedFile");
+        internal static delegateFunc_wrap_love_dll_filesystem_newDroppedFile wrap_love_dll_filesystem_newDroppedFile = (byte[] filename, int fmode, out IntPtr out_file) => CheckCAPIException(wrap_love_dll_filesystem_newDroppedFile_value(filename, fmode, out out_file));
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate bool delegateFunc_wrap_love_dll_filesystem_newFile(byte[] filename, int fmode, out IntPtr out_file);
         internal static delegateFunc_wrap_love_dll_filesystem_newFile wrap_love_dll_filesystem_newFile_value = LoadFunction<delegateFunc_wrap_love_dll_filesystem_newFile>("wrap_love_dll_filesystem_newFile");
         internal static delegateFunc_wrap_love_dll_filesystem_newFile wrap_love_dll_filesystem_newFile = (byte[] filename, int fmode, out IntPtr out_file) => CheckCAPIException(wrap_love_dll_filesystem_newFile_value(filename, fmode, out out_file));

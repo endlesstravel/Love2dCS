@@ -10,6 +10,89 @@ using System.Collections.Generic;
 
 namespace Love
 {
+    public partial class FileSystem
+    {
+        /// <summary>
+        ///  File which is created when a user drags and drops an actual file onto the
+        ///  LOVE game. Uses C's stdio. Filenames are system-dependent full paths.
+        /// </summary>
+        /// <param name="filename">The filename of the file.</param>
+        /// <param name="fmode_type">The mode to open the file in.</param>
+        public static File NewFile(string filename, FileMode fmode_type = FileMode.Read)
+            => NewDroppedFile(filename, fmode_type);
+
+        /// <summary>
+        ///  File which is created when a user drags and drops an actual file onto the
+        ///  LOVE game. Uses C's stdio. Filenames are system-dependent full paths.
+        /// </summary>
+        /// <param name="filename">The filename of the file.</param>
+        /// <param name="fmode_type">The mode to open the file in.</param>
+        public static File NewDroppedFile(string filename, FileMode fmode_type = FileMode.Read)
+        {
+            Love2dDll.wrap_love_dll_filesystem_newDroppedFile(DllTool.GetNullTailUTF8Bytes(filename), (int)fmode_type, out IntPtr out_file);
+            return LoveObject.NewObject<File>(out_file);
+        }
+
+        /// <summary>
+        /// Creates a new File object. It needs to be opened before it can be accessed.
+        /// </summary>
+        /// <param name="filename">The filename of the file.</param>
+        /// <param name="fmode_type">The mode to open the file in.</param>
+        /// <returns></returns>
+        public static File NewPhysicsFS_File(string filename, FileMode fmode_type = FileMode.Read)
+        {
+            IntPtr out_file;
+            Love2dDll.wrap_love_dll_filesystem_newFile(DllTool.GetNullTailUTF8Bytes(filename), (int)fmode_type, out out_file);
+            return LoveObject.NewObject<File>(out_file);
+        }
+
+        /// <summary>
+        /// Creates a new FileData object.
+        /// </summary>
+        /// <param name="contents">The contents of the file.</param>
+        /// <param name="filename">The name of the file.</param>
+        /// <returns></returns>
+        public static FileData NewFileData(byte[] contents, string filename)
+        {
+            IntPtr out_file;
+            Love2dDll.wrap_love_dll_filesystem_newFileData_content(contents, contents.Length, DllTool.GetNullTailUTF8Bytes(filename), out out_file);
+            return LoveObject.NewObject<FileData>(out_file);
+        }
+
+        /// <summary>
+        /// Creates a new UTF8 text FileData object. 
+        /// </summary>
+        /// <param name="contents">The contents of the file.</param>
+        /// <param name="filename">The name of the file.</param>
+        /// <returns></returns>
+        public static FileData NewFileData(string contents, string filename)
+        {
+            return NewFileData(DllTool.GetUTF8Bytes(contents), filename);
+        }
+
+        /// <summary>
+        /// Creates a new FileData object.
+        /// </summary>
+        /// <param name="filename">The name of the file.</param>
+        /// <returns></returns>
+        public static FileData NewFileData(string filename)
+        {
+            return NewFileData(NewFile(filename));
+        }
+
+        /// <summary>
+        /// Creates a new FileData object.
+        /// </summary>
+        /// <param name="file">The file.</param>
+        /// <returns></returns>
+        public static FileData NewFileData(File file)
+        {
+            IntPtr out_file;
+            Love2dDll.wrap_love_dll_filesystem_newFileData_file(file.p, out out_file);
+            return LoveObject.NewObject<FileData>(out_file);
+        }
+    }
+
     /// <summary>
     /// This module will create resource through starndard C# IO,
     /// this means you can read a png file from path like C:/love-logo.png

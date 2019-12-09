@@ -277,7 +277,8 @@ namespace wrap
 
 #pragma region *new* region
 
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_filesystem_newFile(const char *filename, int fmode, File** out_file);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_filesystem_newDroppedFile(const char *filename, int fmode, DroppedFile** out_file);
+	extern "C" LOVE_EXPORT bool4 wrap_love_dll_filesystem_newFile(const char *filename, int fmode, File** out_file);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_filesystem_newFileData_content(const void *contents, int contents_length, const char *filename, FileData** out_filedata);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_filesystem_newFileData_file(File* file, FileData** out_filedata);
 

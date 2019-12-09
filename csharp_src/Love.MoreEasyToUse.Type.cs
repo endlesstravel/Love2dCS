@@ -257,7 +257,7 @@ namespace Love
         /// <summary>
         /// Sends one or more texture to a special (uniform) variable inside the shader.
         /// </summary>
-        /// <param name="name">Name of the Texture to send to the shader.(UTF8 byte array)</param>
+        /// <param name="name">Name of the Texture to send to the shader.</param>
         /// <param name="texture">Texture (Image or Canvas) to send to the uniform variable.</param>
         public void Send(string name, Texture texture)
         {

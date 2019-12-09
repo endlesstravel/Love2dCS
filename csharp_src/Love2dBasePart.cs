@@ -832,13 +832,13 @@ namespace Love
         }
 
         /// <summary>
-        /// Sets the window title. (UTF-8 byte array version)
+        /// Sets the window title.
         /// <para>Constantly updating the window title can lead to issues on some systems and therefore is discouraged.</para>
         /// </summary>
-        /// <param name="titleStr">The new window title.(UTF-8 byte array)</param>
-        public static void SetTitle(byte[] titleStr)
+        /// <param name="titleStr">The new window title.</param>
+        public static void SetTitle(string titleStr)
         {
-            Love2dDll.wrap_love_dll_windows_setTitle(titleStr);
+            Love2dDll.wrap_love_dll_windows_setTitle(DllTool.GetNullTailUTF8Bytes(titleStr));
         }
 
         /// <summary>
@@ -962,18 +962,19 @@ namespace Love
         }
 
         /// <summary>
-        /// Displays a simple message box with a single 'OK' button. (UTF-8 byte array version)
+        /// Displays a simple message box with a single 'OK' button.
         /// <para>	This function will pause all execution of the main thread until the user has clicked a button to exit the message box. Calling the function from a different thread may cause love to crash.</para>
         /// </summary>
-        /// <param name="title">The title of the message box. (UTF-8 byte array)</param>
-        /// <param name="message">The text inside the message box. (UTF-8 byte array)</param>
+        /// <param name="title">The title of the message box. </param>
+        /// <param name="message">The text inside the message box. </param>
         /// <param name="msgbox_type">The type of the message box.</param>
         /// <param name="attachToWindow">Whether the message box should be attached to the love window or free-floating.</param>
         /// <returns>Whether the message box was successfully displayed.</returns>
-        public static bool ShowMessageBox(byte[] title, byte[] message, MessageBoxType msgbox_type, bool attachToWindow = true)
+        public static bool ShowMessageBox(string title, string message, MessageBoxType msgbox_type, bool attachToWindow = true)
         {
             bool out_result = false;
-            Love2dDll.wrap_love_dll_windows_showMessageBox(title, message, (int)msgbox_type, attachToWindow, out out_result);
+            Love2dDll.wrap_love_dll_windows_showMessageBox(DllTool.GetNullTailUTF8Bytes(title), DllTool.GetNullTailUTF8Bytes(message)
+                , (int)msgbox_type, attachToWindow, out out_result);
             return out_result;
         }
 
@@ -1123,52 +1124,14 @@ namespace Love
     {
 
         /// <summary>
-        /// Creates a new File object. It needs to be opened before it can be accessed. (UTF-8 byte array version)
-        /// </summary>
-        /// <param name="filename">The filename of the file.(UTF-8 byte array needed)</param>
-        /// <param name="fmode_type">The mode to open the file in.</param>
-        /// <returns></returns>
-        public static File NewFile(byte[] filename, FileMode fmode_type = FileMode.Read)
-        {
-            IntPtr out_file;
-            Love2dDll.wrap_love_dll_filesystem_newFile(filename, (int)fmode_type, out out_file);
-            return LoveObject.NewObject<File>(out_file);
-        }
-
-        /// <summary>
-        /// Creates a new FileData object.
-        /// </summary>
-        /// <param name="contents">The contents of the file.</param>
-        /// <param name="filename">The name of the file.</param>
-        /// <returns></returns>
-        public static FileData NewFileData(byte[] contents, byte[] filename)
-        {
-            IntPtr out_file;
-            Love2dDll.wrap_love_dll_filesystem_newFileData_content(contents, contents.Length, filename, out out_file);
-            return LoveObject.NewObject<FileData>(out_file);
-        }
-
-        /// <summary>
-        /// Creates a new FileData object.
-        /// </summary>
-        /// <param name="file">The file.</param>
-        /// <returns></returns>
-        public static FileData NewFileData(File file)
-        {
-            IntPtr out_file;
-            Love2dDll.wrap_love_dll_filesystem_newFileData_file(file.p, out out_file);
-            return LoveObject.NewObject<FileData>(out_file);
-        }
-
-        /// <summary>
         /// Initializes FileSystem, will be called internally, so should not be used explictly.
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
-        public static bool Init(byte[] args)
+        public static bool Init(string args)
         {
             Love2dDll.wrap_love_dll_filesystem_open_love_filesystem();
-            return Love2dDll.wrap_love_dll_filesystem_init(args);
+            return Love2dDll.wrap_love_dll_filesystem_init(DllTool.GetNullTailUTF8Bytes(args));
         }
 
         public static void _SetFused(bool flag)
@@ -1199,12 +1162,12 @@ namespace Love
         /// <summary>
         /// Sets the write directory for your game. Note that you can only set the name of the folder to store your files in, not the location.
         /// </summary>
-        /// <param name="path">The new identity that will be used as write directory.(UTF-8 byte array needed)</param>
+        /// <param name="path">The new identity that will be used as write directory.</param>
         /// <param name="append">Whether the identity directory will be searched when reading a filepath before or after the game's source directory and any currently.
         /// TRUE: results in searching source before searching save directory; FALSE: results in searching game save directory before searching source directorymounted archives.</param>
-        public static void SetIdentity(byte[] path, bool append = false)
+        public static void SetIdentity(string path, bool append = false)
         {
-            Love2dDll.wrap_love_dll_filesystem_setIdentity(path, append);
+            Love2dDll.wrap_love_dll_filesystem_setIdentity(DllTool.GetNullTailUTF8Bytes(path), append);
         }
 
         /// <summary>
@@ -1221,10 +1184,10 @@ namespace Love
         /// <summary>
         /// Sets the source of the game, where the code is present. This function can only be called once, and is normally automatically done by LÖVE.
         /// </summary>
-        /// <param name="path">Absolute path to the game's source folder.(UTF-8 byte array needed)</param>
-        public static void SetSource(byte[] path)
+        /// <param name="path">Absolute path to the game's source folder.</param>
+        public static void SetSource(string path)
         {
-            Love2dDll.wrap_love_dll_filesystem_setSource(path);
+            Love2dDll.wrap_love_dll_filesystem_setSource(DllTool.GetNullTailUTF8Bytes(path));
         }
 
         /// <summary>
@@ -1242,14 +1205,15 @@ namespace Love
         /// <summary>
         /// Mounts a zip file or folder in the game's save directory for reading. It is also possible to mount love.filesystem.getSourceBaseDirectory if the game is in fused mode.
         /// </summary>
-        /// <param name="archive">The folder or zip file in the game's save directory to mount.(UTF-8 byte array needed)</param>
-        /// <param name="mountpoint">The new path the archive will be mounted to.(UTF-8 byte array needed)</param>
+        /// <param name="archive">The folder or zip file in the game's save directory to mount.</param>
+        /// <param name="mountpoint">The new path the archive will be mounted to.</param>
         /// <param name="appendToPath">Whether the archive will be searched when reading a filepath before or after already-mounted archives. This includes the game's source and save directories.</param>
         /// <returns></returns>
-        public static bool Mount(byte[] archive, byte[] mountpoint, bool appendToPath = false)
+        public static bool Mount(string archive, string mountpoint, bool appendToPath = false)
         {
             bool out_result = false;
-            Love2dDll.wrap_love_dll_filesystem_mount(archive, mountpoint, appendToPath, out out_result);
+            Love2dDll.wrap_love_dll_filesystem_mount(DllTool.GetNullTailUTF8Bytes(archive),
+                DllTool.GetNullTailUTF8Bytes(mountpoint), appendToPath, out out_result);
             return out_result;
         }
 
@@ -1258,10 +1222,10 @@ namespace Love
         /// </summary>
         /// <param name="archive">The folder or zip file in the game's save directory which is currently mounted.</param>
         /// <returns>True if the archive was successfully unmounted, false otherwise.</returns>
-        public static bool Unmount(byte[] archive)
+        public static bool Unmount(string archive)
         {
             bool out_result = false;
-            Love2dDll.wrap_love_dll_filesystem_unmount(archive, out out_result);
+            Love2dDll.wrap_love_dll_filesystem_unmount(DllTool.GetNullTailUTF8Bytes(archive), out out_result);
             return out_result;
         }
 
@@ -1312,12 +1276,12 @@ namespace Love
         /// <summary>
         /// <para>Gets the platform-specific absolute path of the directory containing a filepath.</para>
         /// </summary>
-        /// <param name="filename">The filepath to get the directory of.(UTF-8 byte array needed)</param>
+        /// <param name="filename">The filepath to get the directory of.</param>
         /// <returns>The platform-specific full path of the directory containing the filepath.</returns>
-        public static string GetRealDirectory(byte[] filename)
+        public static string GetRealDirectory(string filename)
         {
             IntPtr out_str = IntPtr.Zero;
-            Love2dDll.wrap_love_dll_filesystem_getRealDirectory(filename, out out_str);
+            Love2dDll.wrap_love_dll_filesystem_getRealDirectory(DllTool.GetNullTailUTF8Bytes(filename), out out_str);
             return DllTool.WSToStringAndRelease(out_str);
         }
 
@@ -1337,12 +1301,12 @@ namespace Love
         /// </summary>
         /// <param name="path">The file or directory path to check.</param>
         /// <returns></returns>
-        public static FileInfo GetInfo(byte[] path)
+        public static FileInfo GetInfo(string path)
         {
             int fileType_int = 0;
             int64 size, modifyTime;
             bool success;
-            Love2dDll.wrap_love_dll_filesystem_getInfo(path, out fileType_int, out size, out modifyTime, out success);
+            Love2dDll.wrap_love_dll_filesystem_getInfo(DllTool.GetNullTailUTF8Bytes(path), out fileType_int, out size, out modifyTime, out success);
             return success ? new FileInfo(size, modifyTime, (FileType)fileType_int) : null;
         }
 
@@ -1350,12 +1314,12 @@ namespace Love
         /// <para>Recursively creates a directory.</para>
         /// <para>When called with "a/b" it creates both "a" and "a/b", if they don't exist already.</para>
         /// </summary>
-        /// <param name="name">The directory to create. (UTF-8 byte array needed)</param>
+        /// <param name="name">The directory to create. </param>
         /// <returns>True if the directory was created, false if not.</returns>
-        public static bool CreateDirectory(byte[] name)
+        public static bool CreateDirectory(string name)
         {
             bool out_result;
-            Love2dDll.wrap_love_dll_filesystem_createDirectory(name, out out_result);
+            Love2dDll.wrap_love_dll_filesystem_createDirectory(DllTool.GetNullTailUTF8Bytes(name), out out_result);
             return out_result;
         }
 
@@ -1363,24 +1327,24 @@ namespace Love
         /// Removes a file or empty directory.
         /// </summary>
         /// <param name="path">The file or directory to remove.</param>
-        public static bool Remove(byte[] path)
+        public static bool Remove(string path)
         {
             bool out_result;
-            Love2dDll.wrap_love_dll_filesystem_remove(path, out out_result);
+            Love2dDll.wrap_love_dll_filesystem_remove(DllTool.GetNullTailUTF8Bytes(path), out out_result);
             return out_result;
         }
 
         /// <summary>
         /// Read the contents of a file.
         /// </summary>
-        /// <param name="filename">The name (and path) of the file. (UTF-8 byte array needed)</param>
+        /// <param name="filename">The name (and path) of the file. </param>
         /// <param name="len">How many bytes to read. (-1 means all)</param>
         /// <returns></returns>
-        public static byte[] Read(byte[] filename, long len = -1)
+        public static byte[] Read(string filename, long len = -1)
         {
             IntPtr out_data;
             uint out_data_length;
-            Love2dDll.wrap_love_dll_filesystem_read(filename, len, out out_data, out out_data_length);
+            Love2dDll.wrap_love_dll_filesystem_read(DllTool.GetNullTailUTF8Bytes(filename), len, out out_data, out out_data_length);
             return DllTool.ReadBytesAndRelease(out_data, out_data_length);
         }
 
@@ -1389,19 +1353,19 @@ namespace Love
         /// </summary>
         /// <param name="filename">The name (and path) of the file.(UTF-8 byte need)</param>
         /// <param name="input">The data to write to the file.</param>
-        public static void Write(byte[] filename, byte[] input)
+        public static void Write(string filename, byte[] input)
         {
-            Love2dDll.wrap_love_dll_filesystem_write(filename, input, (uint)input.Length);
+            Love2dDll.wrap_love_dll_filesystem_write(DllTool.GetNullTailUTF8Bytes(filename), input, (uint)input.Length);
         }
 
         /// <summary>
-        /// Append data to an existing file. (UTF-8 byte array version)
+        /// Append data to an existing file.
         /// </summary>
         /// <param name="filename">The name (and path) of the file.</param>
         /// <param name="input">The data to append to the file.</param>
-        public static void Append(byte[] filename, byte[] input)
+        public static void Append(string filename, byte[] input)
         {
-            Love2dDll.wrap_love_dll_filesystem_append(filename, input, (uint)input.Length);
+            Love2dDll.wrap_love_dll_filesystem_append(DllTool.GetNullTailUTF8Bytes(filename), input, (uint)input.Length);
         }
 
         /// <summary>
@@ -1410,10 +1374,10 @@ namespace Love
         /// </summary>
         /// <param name="dir">The directory.</param>
         /// <returns></returns>
-        public static string[] GetDirectoryItems(byte[] dir)
+        public static string[] GetDirectoryItems(string dir)
         {
             IntPtr out_wss = IntPtr.Zero;
-            Love2dDll.wrap_love_dll_filesystem_getDirectoryItems(dir, out out_wss);
+            Love2dDll.wrap_love_dll_filesystem_getDirectoryItems(DllTool.GetNullTailUTF8Bytes(dir), out out_wss);
             return DllTool.WSSToStringListAndRelease(out_wss);
         }
 
@@ -1472,9 +1436,9 @@ namespace Love
         /// <para>The paths are relative to the game's source and save directories, as well as any paths mounted with love.filesystem.mount.</para>
         /// </summary>
         /// <param name="paths"></param>
-        public static void _SetRequirePath(byte[] paths)
+        public static void _SetRequirePath(string paths)
         {
-            Love2dDll.wrap_love_dll_filesystem_setRequirePath(paths);
+            Love2dDll.wrap_love_dll_filesystem_setRequirePath(DllTool.GetNullTailUTF8Bytes(paths));
         }
 
     }

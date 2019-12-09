@@ -36,19 +36,6 @@ namespace Love
         }
     }
 
-    public partial class FileSystem
-    {
-        /// <summary>
-        /// Creates a new FileData from a file on the storage device.
-        /// </summary>
-        /// <param name="filename">Path to the file.</param>
-        /// <returns></returns>
-        public static FileData NewFileData(string filename)
-        {
-            return NewFileData(NewFile(filename));
-        }
-    }
-
     public partial class Sound
     {
         /// <summary>
