@@ -5,9 +5,9 @@ mkdir workspace-linux-x64
 cd workspace-linux-x64
 
 
-cp -r /d/Love2DCS_Dev/ubuntu_build/2019.11.22/mounted/lib/               ./lib
-cp -r /d/Love2DCS_Dev/ubuntu_build/2019.11.22/mounted/libstdc++/         ./libstdc++
-cp -r /d/Love2DCS_Dev/ubuntu_build/2019.11.22/mounted/usr/               ./usr
+cp -r /d/Love2DCS_Dev/docker_linux_build/app_content/lib/               ./lib
+cp -r /d/Love2DCS_Dev/docker_linux_build/app_content/libstdc++/         ./libstdc++
+cp -r /d/Love2DCS_Dev/docker_linux_build/app_content/usr/               ./usr
 rm -r ./usr/bin/
 
 zip -r native_lib_linux_x64.zip ./*

@@ -30,7 +30,7 @@ Love2dCS - C# Wrapper for LÖVE
 Love2dCS API尽可能与原来的 `LÖVE 引擎`保持一致，但任然有一些和原始 `LÖVE` 不一致的地方：
 
 
-* 可以使用 `Love.Resource.New*` `Love.Resource.*` 访问任意文件夹里的资源内容. 原始 `LÖVE` 仅可以访问当前文件夹的内容。
+* 可以使用 `Love.XXXX.New*` 访问任意文件夹里的资源内容. 原始 `LÖVE` 仅可以访问当前文件夹的内容。
 * 因为 float 的精度问题， `Timer.GetTime` 在本库中表示的是游戏开始到现在的时间。
 * LÖVE 中的 `love.math` 在 Love2dCS 被改名为 `Love.Mathf`
 * LÖVE 中的  `love.system` 在 Love2dCS 被改名为 `Love.Special`

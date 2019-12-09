@@ -29,7 +29,7 @@ Status
 ---
 Love2dCS was designed to be as close as possible to the original LÖVE API, as such the documentation provided from LÖVE largely covers usage of Love2dCS. There is a difference between Love2dCS and LÖVE where is :
 
-* The `Love.Resource.New*` `Love.Resource.*` in C# can access to files anywhere. In the original functin like `Love.Graphics.NewImage` can only access the contents of the current folder.
+* The `Love.XXX.New*` in C# can access to files anywhere. In the original functin can only access the contents of the current folder.
 * The `love.timer.getTime` in C# as `The time in seconds since the start of the game` beacuse of `C# double to float precision`
 * The `love.math` module in LÖVE is named `Love.Mathf` in Love2dCS
 * The `love.system` module in LÖVE is named `Love.Special` in Love2dCS

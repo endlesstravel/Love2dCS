@@ -759,21 +759,21 @@ namespace Love
 
         static void Loop(BootConfig bootConfig, Scene scene)
         {
-            scene.Load();
+            scene.InvokeLoad();
             Timer.Step(); // fix large delta on first frame
 
             while (true)
             {
                 SystemStep(scene);
 
-                scene.Update(Timer.GetDelta());
+                scene.InvokeUpdate(Timer.GetDelta());
 
                 if (Graphics.IsActive())
                 {
                     var c = Graphics.GetBackgroundColor();
                     Graphics.Clear(c.r, c.g, c.b, c.a);
                     Graphics.Origin();
-                    scene.Draw();
+                    scene.InvokeDraw();
                     Graphics.Present();
                 }
 
