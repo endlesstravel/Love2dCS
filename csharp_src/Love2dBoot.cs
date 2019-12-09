@@ -249,6 +249,254 @@ namespace Love
         {
             return Keyboard.IsDown(KeyConstant.Escape);
         }
+
+        public delegate void KeyPressedDelegate(KeyConstant key, Scancode scancode, bool isRepeat);
+        public event KeyPressedDelegate OnKeyPressed;
+        internal void InvokeKeyPressed(KeyConstant key, Scancode scancode, bool isRepeat)
+        {
+            OnKeyPressed?.Invoke(key, scancode, isRepeat);
+            KeyPressed(key, scancode, isRepeat);
+        }
+
+        public delegate void KeyReleasedDelegate(KeyConstant key, Scancode scancode);
+        public event KeyReleasedDelegate OnKeyReleased;
+        internal void InvokeKeyReleased(KeyConstant key, Scancode scancode)
+        {
+            OnKeyReleased?.Invoke(key, scancode);
+            KeyReleased(key, scancode);
+        }
+
+        public delegate void MouseMovedDelegate(float x, float y, float dx, float dy, bool isTouch);
+        public event MouseMovedDelegate OnMouseMoved;
+        internal void InvokeMouseMoved(float x, float y, float dx, float dy, bool isTouch)
+        {
+            OnMouseMoved?.Invoke(x, y, dx, dy, isTouch);
+            MouseMoved(x, y, dx, dy, isTouch);
+        }
+
+        public delegate void MousePressedDelegate(float x, float y, int button, bool isTouch);
+        public event MousePressedDelegate OnMousePressed;
+        internal void InvokeMousePressed(float x, float y, int button, bool isTouch)
+        {
+            OnMousePressed?.Invoke(x, y, button, isTouch);
+            MousePressed(x, y, button, isTouch);
+        }
+
+        public delegate void MouseReleasedDelegate(float x, float y, int button, bool isTouch);
+        public event MouseReleasedDelegate OnMouseReleased;
+        internal void InvokeMouseReleased(float x, float y, int button, bool isTouch)
+        {
+            OnMouseReleased?.Invoke(x, y, button, isTouch);
+            MouseReleased(x, y, button, isTouch);
+        }
+
+        public delegate void MouseFocusDelegate(bool focus);
+        public event MouseFocusDelegate OnMouseFocus;
+        internal void InvokeMouseFocus(bool focus)
+        {
+            OnMouseFocus?.Invoke(focus);
+            MouseFocus(focus);
+        }
+
+        public delegate void WheelMovedDelegate(int x, int y);
+        public event WheelMovedDelegate OnWheelMoved;
+        internal void InvokeWheelMoved(int x, int y)
+        {
+            OnWheelMoved?.Invoke(x, y);
+            WheelMoved(x, y);
+        }
+
+        public delegate void JoystickPressedDelegate(Joystick joystick, int button);
+        public event JoystickPressedDelegate OnJoystickPressed;
+        internal void InvokeJoystickPressed(Joystick joystick, int button)
+        {
+            OnJoystickPressed?.Invoke(joystick, button);
+            JoystickPressed(joystick, button);
+        }
+
+        public delegate void JoystickReleasedDelegate(Joystick joystick, int button);
+        public event JoystickReleasedDelegate OnJoystickReleased;
+        internal void InvokeJoystickReleased(Joystick joystick, int button)
+        {
+            OnJoystickReleased?.Invoke(joystick, button);
+            JoystickReleased(joystick, button);
+        }
+
+        public delegate void JoystickAxisDelegate(Joystick joystick, float axis, float value);
+        public event JoystickAxisDelegate OnJoystickAxis;
+        internal void InvokeJoystickAxis(Joystick joystick, float axis, float value)
+        {
+            OnJoystickAxis?.Invoke(joystick, axis, value);
+            JoystickAxis(joystick, axis, value);
+        }
+
+        public delegate void JoystickHatDelegate(Joystick joystick, int hat, JoystickHat direction);
+        public event JoystickHatDelegate OnJoystickHat;
+        internal void InvokeJoystickHat(Joystick joystick, int hat, JoystickHat direction)
+        {
+            OnJoystickHat?.Invoke(joystick, hat, direction);
+            JoystickHat(joystick, hat, direction);
+        }
+
+        public delegate void JoystickGamepadPressedDelegate(Joystick joystick, GamepadButton button);
+        public event JoystickGamepadPressedDelegate OnJoystickGamepadPressed;
+        internal void InvokeJoystickGamepadPressed(Joystick joystick, GamepadButton button)
+        {
+            OnJoystickGamepadPressed?.Invoke(joystick, button);
+            JoystickGamepadPressed(joystick, button);
+        }
+
+        public delegate void JoystickGamepadReleasedDelegate(Joystick joystick, GamepadButton button);
+        public event JoystickGamepadReleasedDelegate OnJoystickGamepadReleased;
+        internal void InvokeJoystickGamepadReleased(Joystick joystick, GamepadButton button)
+        {
+            OnJoystickGamepadReleased?.Invoke(joystick, button);
+            JoystickGamepadReleased(joystick, button);
+        }
+
+        public delegate void JoystickGamepadAxisDelegate(Joystick joystick, GamepadAxis axis, float value);
+        public event JoystickGamepadAxisDelegate OnJoystickGamepadAxis;
+        internal void InvokeJoystickGamepadAxis(Joystick joystick, GamepadAxis axis, float value)
+        {
+            OnJoystickGamepadAxis?.Invoke(joystick, axis, value);
+            JoystickGamepadAxis(joystick, axis, value);
+        }
+
+        public delegate void JoystickAddedDelegate(Joystick joystick);
+        public event JoystickAddedDelegate OnJoystickAdded;
+        internal void InvokeJoystickAdded(Joystick joystick)
+        {
+            OnJoystickAdded?.Invoke(joystick);
+            JoystickAdded(joystick);
+        }
+
+        public delegate void JoystickRemovedDelegate(Joystick joystick);
+        public event JoystickRemovedDelegate OnJoystickRemoved;
+        internal void InvokeJoystickRemoved(Joystick joystick)
+        {
+            OnJoystickRemoved?.Invoke(joystick);
+            JoystickRemoved(joystick);
+        }
+
+        public delegate void TouchMovedDelegate(long id, float x, float y, float dx, float dy, float pressure);
+        public event TouchMovedDelegate OnTouchMoved;
+        internal void InvokeTouchMoved(long id, float x, float y, float dx, float dy, float pressure)
+        {
+            OnTouchMoved?.Invoke(id, x, y, dx, dy, pressure);
+            TouchMoved(id, x, y, dx, dy, pressure);
+        }
+
+        public delegate void TouchPressedDelegate(long id, float x, float y, float dx, float dy, float pressure);
+        public event TouchPressedDelegate OnTouchPressed;
+        internal void InvokeTouchPressed(long id, float x, float y, float dx, float dy, float pressure)
+        {
+            OnTouchPressed?.Invoke(id, x, y, dx, dy, pressure);
+            TouchPressed(id, x, y, dx, dy, pressure);
+        }
+
+        public delegate void TouchReleasedDelegate(long id, float x, float y, float dx, float dy, float pressure);
+        public event TouchReleasedDelegate OnTouchReleased;
+        internal void InvokeTouchReleased(long id, float x, float y, float dx, float dy, float pressure)
+        {
+            OnTouchReleased?.Invoke(id, x, y, dx, dy, pressure);
+            TouchReleased(id, x, y, dx, dy, pressure);
+        }
+
+        public delegate void TextEditingDelegate(string text, int start, int end);
+        public event TextEditingDelegate OnTextEditing;
+        internal void InvokeTextEditing(string text, int start, int end)
+        {
+            OnTextEditing?.Invoke(text, start, end);
+            TextEditing(text, start, end);
+        }
+
+        public delegate void TextInputDelegate(string text);
+        public event TextInputDelegate OnTextInput;
+        internal void InvokeTextInput(string text)
+        {
+            OnTextInput?.Invoke(text);
+            TextInput(text);
+        }
+
+        public delegate void WindowFocusDelegate(bool focus);
+        public event WindowFocusDelegate OnWindowFocus;
+        internal void InvokeWindowFocus(bool focus)
+        {
+            OnWindowFocus?.Invoke(focus);
+            WindowFocus(focus);
+        }
+
+        public delegate void WindowVisibleDelegate(bool visible);
+        public event WindowVisibleDelegate OnWindowVisible;
+        internal void InvokeWindowVisible(bool visible)
+        {
+            OnWindowVisible?.Invoke(visible);
+            WindowVisible(visible);
+        }
+
+        public delegate void WindowResizeDelegate(int w, int h);
+        public event WindowResizeDelegate OnWindowResize;
+        internal void InvokeWindowResize(int w, int h)
+        {
+            OnWindowResize?.Invoke(w, h);
+            WindowResize(w, h);
+        }
+
+        public delegate void DirectoryDroppedDelegate(string path);
+        public event DirectoryDroppedDelegate OnDirectoryDropped;
+        internal void InvokeDirectoryDropped(string path)
+        {
+            OnDirectoryDropped?.Invoke(path);
+            DirectoryDropped(path);
+        }
+
+        public delegate void FileDroppedDelegate(string fileFilePath);
+        public event FileDroppedDelegate OnFileDropped;
+        internal void InvokeFileDropped(string fileFilePath)
+        {
+            OnFileDropped?.Invoke(fileFilePath);
+            FileDropped(fileFilePath);
+        }
+
+        public delegate bool QuitDelegate();
+        public event QuitDelegate OnQuit;
+        internal bool InvokeQuit()
+        {
+            var quit = OnQuit?.Invoke() ?? false;
+            return quit || Quit();
+        }
+
+        public delegate void LowMemoryDelegate();
+        public event LowMemoryDelegate OnLowMemory;
+        internal void InvokeLowMemory()
+        {
+            OnLowMemory?.Invoke();
+            LowMemory();
+        }
+
+        public delegate void LoadDelegate();
+        public event LoadDelegate OnLoad;
+        internal void InvokeLoad()
+        {
+            OnLoad?.Invoke();
+            Load();
+        }
+
+        public delegate void UpdateDelegate(float dt);
+        public event UpdateDelegate OnUpdate;
+        internal void InvokeUpdate(float dt)
+        {
+            OnUpdate?.Invoke(dt);
+            Update(dt);
+        }
+
+        public delegate void DrawDelegate();
+        public event DrawDelegate OnDraw;
+        internal void InvokeDraw()
+        {
+            OnDraw?.Invoke();
+            Draw();
+        }
     }
 
     /// <summary>

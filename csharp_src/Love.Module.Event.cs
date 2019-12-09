@@ -392,143 +392,143 @@ namespace Love
                     {
                         case EventType.KeyPressed:
                             {
-                                scene.KeyPressed(ed.key, ed.scancode, ed.flag);
+                                scene.InvokeKeyPressed(ed.key, ed.scancode, ed.flag);
                             }
                             break;
                         case EventType.KeyReleased:
                             {
-                                scene.KeyReleased(ed.key, ed.scancode);
+                                scene.InvokeKeyReleased(ed.key, ed.scancode);
                             }
                             break;
                         case EventType.MouseMoved:
                             {
-                                scene.MouseMoved(ed.fx, ed.fy, ed.fz, ed.fw, ed.flag);
+                                scene.InvokeMouseMoved(ed.fx, ed.fy, ed.fz, ed.fw, ed.flag);
                             }
                             break;
                         case EventType.MousePressed:
                             {
-                                scene.MousePressed(ed.fx, ed.fy, ed.idx, ed.flag);
+                                scene.InvokeMousePressed(ed.fx, ed.fy, ed.idx, ed.flag);
                             }
                             break;
                         case EventType.MouseReleased:
                             {
-                                scene.MouseReleased(ed.fx, ed.fy, ed.idx, ed.flag);
+                                scene.InvokeMouseReleased(ed.fx, ed.fy, ed.idx, ed.flag);
                             }
                             break;
                         case EventType.MouseFocus:
                             {
-                                scene.MouseFocus(ed.flag);
+                                scene.InvokeMouseFocus(ed.flag);
                             }
                             break;
                         case EventType.WheelMoved:
                             {
-                                scene.WheelMoved(ed.idx, ed.idy);
+                                scene.InvokeWheelMoved(ed.idx, ed.idy);
                             }
                             break;
                         case EventType.JoystickPressed:
                             {
-                                scene.JoystickPressed(ed.joystick, ed.idx);
+                                scene.InvokeJoystickPressed(ed.joystick, ed.idx);
                             }
                             break;
                         case EventType.JoystickReleased:
                             {
-                                scene.JoystickReleased(ed.joystick, ed.idx);
+                                scene.InvokeJoystickReleased(ed.joystick, ed.idx);
                             }
                             break;
                         case EventType.JoystickAxis:
                             {
-                                scene.JoystickAxis(ed.joystick, ed.fx, ed.fy);
+                                scene.InvokeJoystickAxis(ed.joystick, ed.fx, ed.fy);
                             }
                             break;
                         case EventType.JoystickHat:
                             {
-                                scene.JoystickHat(ed.joystick, ed.idx, ed.direction);
+                                scene.InvokeJoystickHat(ed.joystick, ed.idx, ed.direction);
                             }
                             break;
                         case EventType.JoystickGamepadPressed:
                             {
-                                scene.JoystickGamepadPressed(ed.joystick, ed.gamepadButton);
+                                scene.InvokeJoystickGamepadPressed(ed.joystick, ed.gamepadButton);
                             }
                             break;
                         case EventType.JoystickGamepadReleased:
                             {
-                                scene.JoystickGamepadReleased(ed.joystick, ed.gamepadButton);
+                                scene.InvokeJoystickGamepadReleased(ed.joystick, ed.gamepadButton);
                             }
                             break;
                         case EventType.JoystickGamepadAxis:
                             {
-                                scene.JoystickGamepadAxis(ed.joystick, ed.gamepadAxis, ed.fx);
+                                scene.InvokeJoystickGamepadAxis(ed.joystick, ed.gamepadAxis, ed.fx);
                             }
                             break;
                         case EventType.JoystickAdded:
                             {
-                                scene.JoystickAdded(ed.joystick);
+                                scene.InvokeJoystickAdded(ed.joystick);
                             }
                             break;
                         case EventType.JoystickRemoved:
                             {
-                                scene.JoystickRemoved(ed.joystick);
+                                scene.InvokeJoystickRemoved(ed.joystick);
                             }
                             break;
                         case EventType.TouchMoved:
                             {
-                                scene.TouchMoved(ed.lid, ed.fx, ed.fy, ed.fz, ed.fw, ed.fp);
+                                scene.InvokeTouchMoved(ed.lid, ed.fx, ed.fy, ed.fz, ed.fw, ed.fp);
                             }
                             break;
                         case EventType.TouchPressed:
                             {
-                                scene.TouchPressed(ed.lid, ed.fx, ed.fy, ed.fz, ed.fw, ed.fp);
+                                scene.InvokeTouchPressed(ed.lid, ed.fx, ed.fy, ed.fz, ed.fw, ed.fp);
                             }
                             break;
                         case EventType.TouchReleased:
                             {
-                                scene.TouchReleased(ed.lid, ed.fx, ed.fy, ed.fz, ed.fw, ed.fp);
+                                scene.InvokeTouchReleased(ed.lid, ed.fx, ed.fy, ed.fz, ed.fw, ed.fp);
                             }
                             break;
                         case EventType.TextEditing:
                             {
-                                scene.TextEditing(ed.text, ed.idx, ed.idy);
+                                scene.InvokeTextEditing(ed.text, ed.idx, ed.idy);
                             }
                             break;
                         case EventType.TextInput:
                             {
-                                scene.TextInput(ed.text);
+                                scene.InvokeTextInput(ed.text);
                             }
                             break;
                         case EventType.WindowFocus:
                             {
-                                scene.WindowFocus(ed.flag);
+                                scene.InvokeWindowFocus(ed.flag);
                             }
                             break;
                         case EventType.WindowVisible:
                             {
-                                scene.WindowVisible(ed.flag);
+                                scene.InvokeWindowVisible(ed.flag);
                             }
                             break;
                         case EventType.WindowResize:
                             {
-                                scene.WindowResize(ed.idx, ed.idy);
+                                scene.InvokeWindowResize(ed.idx, ed.idy);
                             }
                             break;
                         case EventType.DirectoryDropped:
                             {
-                                scene.DirectoryDropped(ed.text);
+                                scene.InvokeDirectoryDropped(ed.text);
                             }
                             break;
                         case EventType.FileDropped:
                             {
-                                scene.FileDropped(ed.text);
+                                scene.InvokeFileDropped(ed.text);
                             }
                             break;
                         case EventType.Quit:
                             {
-                                if (scene.Quit())
+                                if (scene.InvokeQuit())
                                     Event.Quit();
                             }
                             break;
                         case EventType.LowMemory:
                             {
-                                scene.LowMemory();
+                                scene.InvokeLowMemory();
                             }
                             break;
                         default: break;
