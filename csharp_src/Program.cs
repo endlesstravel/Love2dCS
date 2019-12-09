@@ -673,12 +673,13 @@ namespace LoveTest
 
             if (key == KeyConstant.M)
             {
-                var success = FileSystem.Mount(MOUNT_PATH, "win_boot_ressources");
+                var success = FileSystem.PhysicsFS.Mount(MOUNT_PATH, "win_boot_ressources");
                 Console.WriteLine("mount success : {0}", success);
             }
 
             if (key == KeyConstant.R)
             {
+                Console.WriteLine(recursiveEnumerateBuffer);
                 recursiveEnumerateBuffer = recursiveEnumerate("", "", "");
             }
 
@@ -690,6 +691,7 @@ namespace LoveTest
         public override void OnLoad()
         {
             recursiveEnumerateBuffer = recursiveEnumerate("", "", "");
+            Console.WriteLine(recursiveEnumerateBuffer);
         }
         public override void OnUpdate(float dt)
         {
@@ -697,11 +699,11 @@ namespace LoveTest
 
         public string recursiveEnumerate(string folder, string fileTree, string tab)
         {
-            var list = FileSystem.GetDirectoryItems(folder);
+            var list = FileSystem.PhysicsFS.GetDirectoryItems(folder);
             foreach (var item in list)
             {
                 var file = folder + "/" + item;
-                var info = FileSystem.GetInfo(file);
+                var info = FileSystem.PhysicsFS.GetInfo(file);
                 if (info != null)
                 {
                     if (info.Type == FileType.File)
@@ -734,10 +736,10 @@ namespace LoveTest
                     .Replace(Convert.ToChar(0x0).ToString(), " ");
 
                 sb.Add($"info : {info}");
-                sb.Add($"realpath : {FileSystem.GetRealDirectory(TEST_FILE_PATH)}");
+                sb.Add($"realpath : {FileSystem.PhysicsFS.GetRealDirectory(TEST_FILE_PATH)}");
                 sb.Add($"text content : {content}");
-
             }
+
             sb.Add($"-------------------- Operate --------------------");
             sb.Add($"[A]: Append to file  '{TEST_FILE_PATH}'  'You have to be happiness.(LR)' ");
             sb.Add($"[C]: (Re)create new file  '{TEST_FILE_PATH}' with content 'new file ....(LR)' ");
@@ -745,14 +747,14 @@ namespace LoveTest
             sb.Add($"[I]: Set identify path to  '{IDENTIFY_PATH}' ");
             sb.Add($"[S]: toogle symbolic link switch ");
             sb.Add($"-------------------- Status --------------------");
-            sb.Add($"whether the game is in fused mode or not: {FileSystem.IsFused()}");
-            sb.Add($"current working directory: {FileSystem.GetWorkingDirectory()}");
-            sb.Add($"whether love.filesystem follows symbolic links: {FileSystem.AreSymlinksEnabled()}");
+            sb.Add($"whether the game is in fused mode or not: {FileSystem.PhysicsFS.IsFused()}");
+            sb.Add($"current working directory: {FileSystem.PhysicsFS.GetWorkingDirectory()}");
+            sb.Add($"whether love.filesystem follows symbolic links: {FileSystem.PhysicsFS.AreSymlinksEnabled()}");
             sb.Add($"application data directory: {FileSystem.GetAppdataDirectory()}");
             sb.Add($"the full path to the designated save directory: {FileSystem.GetSaveDirectory()}");
             sb.Add($"the full path to the source or directory.: {FileSystem.GetSource()}");
-            sb.Add($"Require Path: {FileSystem._GetRequirePath()}");
-            sb.Add($"the full path to the directory containing the .love file.: {FileSystem._GetSourceBaseDirectory()}");
+            sb.Add($"Require Path: {FileSystem.PhysicsFS._GetRequirePath()}");
+            sb.Add($"the full path to the directory containing the .love file.: {FileSystem.PhysicsFS._GetSourceBaseDirectory()}");
             sb.Add($"the path of the user's directory: {FileSystem.GetUserDirectory()}");
             sb.Add($"the write directory name for your game: {FileSystem.GetIdentity()}");
             sb.Add($"-------------------- recursive enumerate files --------------------");
@@ -777,35 +779,36 @@ namespace LoveTest
         {
             if (key == KeyConstant.A)
             {
-                Resource.Append(TEST_FILE_PATH, "You have to be happiness.\n");
+                FileSystem.Append(TEST_FILE_PATH, "You have to be happiness.\n");
             }
 
             if (key == KeyConstant.C)
             {
-                Resource.Write(TEST_FILE_PATH, "new file .... \n");
+                FileSystem.Write(TEST_FILE_PATH, "new file .... \n");
             }
 
             if (key == KeyConstant.D)
             {
-                var success = Resource.CreateDirectory(TEST_DIR_PATH);
+                var success = FileSystem.CreateDirectory(TEST_DIR_PATH);
                 Console.WriteLine("CreateDirectory success : {0}", success);
             }
 
             if (key == KeyConstant.X)
             {
-                Console.WriteLine("remove dir success : {0}", Resource.Remove(TEST_DIR_PATH));
+                Console.WriteLine("remove dir success : {0}", FileSystem.Remove(TEST_DIR_PATH));
             }
 
 
             if (key == KeyConstant.E)
             {
-                var success = Resource.Remove(TEST_FILE_PATH);
+                var success = FileSystem.Remove(TEST_FILE_PATH);
                 Console.WriteLine("remove success : {0}", success);
             }
 
             if (key == KeyConstant.R)
             {
-                recursiveEnumerateBuffer = recursiveEnumerate("/", "", "");
+                recursiveEnumerateBuffer = recursiveEnumerate(".", "", "");
+                Console.WriteLine(recursiveEnumerateBuffer);
             }
 
             if (key == KeyConstant.S)
@@ -816,23 +819,24 @@ namespace LoveTest
         public override void OnLoad()
         {
             recursiveEnumerateBuffer = recursiveEnumerate(".", "", "");
+            Console.WriteLine(recursiveEnumerateBuffer);
         }
         public override void OnUpdate(float dt)
         {
 
             if (Keyboard.IsPressed(KeyConstant.T) || Keyboard.IsReleased(KeyConstant.T))
             {
-                Resource.Append(TEST_FILE_PATH, "You have to be happiness.\n");
+                FileSystem.Append(TEST_FILE_PATH, "You have to be happiness.\n");
             }
         }
 
         public string recursiveEnumerate(string folder, string fileTree, string tab)
         {
-            var list = Resource.GetDirectoryItems(folder);
+            var list = FileSystem.GetDirectoryItems(folder);
             foreach (var item in list)
             {
-                var file = folder + "/" + item;
-                var info = Resource.GetInfo(file);
+                var file = item;
+                var info = FileSystem.GetInfo(file);
                 if (info != null)
                 {
                     if (info.Type == FileType.File)
@@ -853,7 +857,7 @@ namespace LoveTest
 
         public override void OnDraw()
         {
-            var info = Resource.GetInfo(TEST_FILE_PATH);
+            var info = FileSystem.GetInfo(TEST_FILE_PATH);
 
             var sb = new List<string>();
             sb.Add($"-------------------- {TEST_FILE_PATH} --------------------");
@@ -861,7 +865,7 @@ namespace LoveTest
             if (info != null)
             {
                 string content = System.Text.Encoding.UTF8
-                    .GetString(Resource.Read(TEST_FILE_PATH))
+                    .GetString(FileSystem.Read(TEST_FILE_PATH))
                     .Replace(Convert.ToChar(0x0).ToString(), " ");
 
                 sb.Add($"info : {(info == null ? "" : info.ToString())}");

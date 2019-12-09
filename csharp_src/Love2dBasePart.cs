@@ -1134,31 +1134,6 @@ namespace Love
             return Love2dDll.wrap_love_dll_filesystem_init(DllTool.GetNullTailUTF8Bytes(args));
         }
 
-        public static void _SetFused(bool flag)
-        {
-            Love2dDll.wrap_love_dll_filesystem_setFused(flag);
-        }
-
-        /// <summary>
-        /// <para>Gets whether the game is in fused mode or not.</para>
-        /// <para>If a game is in fused mode, its save directory will be directly in the Appdata directory instead of Appdata/LOVE/. The game will also be able to load C Lua dynamic libraries which are located in the save directory.</para>
-        /// <para>A game is in fused mode if the source .love has been fused to the executable (see Game Distribution), or if "--fused" has been given as a command-line argument when starting the game.</para>
-        /// </summary>
-        /// <returns></returns>
-        public static bool IsFused()
-        {
-            bool out_result = false;
-            Love2dDll.wrap_love_dll_filesystem_isFused(out out_result);
-            return out_result;
-        }
-
-
-        public static void SetAndroidSaveExternal(bool useExternal)
-        {
-            Love2dDll.wrap_love_dll_filesystem_setAndroidSaveExternal(useExternal);
-        }
-
-
         /// <summary>
         /// Sets the write directory for your game. Note that you can only set the name of the folder to store your files in, not the location.
         /// </summary>
@@ -1201,43 +1176,230 @@ namespace Love
             Love2dDll.wrap_love_dll_filesystem_getSource(out out_str);
             return DllTool.WSToStringAndRelease(out_str);
         }
-
-        /// <summary>
-        /// Mounts a zip file or folder in the game's save directory for reading. It is also possible to mount love.filesystem.getSourceBaseDirectory if the game is in fused mode.
-        /// </summary>
-        /// <param name="archive">The folder or zip file in the game's save directory to mount.</param>
-        /// <param name="mountpoint">The new path the archive will be mounted to.</param>
-        /// <param name="appendToPath">Whether the archive will be searched when reading a filepath before or after already-mounted archives. This includes the game's source and save directories.</param>
-        /// <returns></returns>
-        public static bool Mount(string archive, string mountpoint, bool appendToPath = false)
+        
+        public static class PhysicsFS
         {
-            bool out_result = false;
-            Love2dDll.wrap_love_dll_filesystem_mount(DllTool.GetNullTailUTF8Bytes(archive),
-                DllTool.GetNullTailUTF8Bytes(mountpoint), appendToPath, out out_result);
-            return out_result;
-        }
 
-        /// <summary>
-        /// Unmounts a zip file or folder previously mounted for reading with <see cref="Mount"/>.
-        /// </summary>
-        /// <param name="archive">The folder or zip file in the game's save directory which is currently mounted.</param>
-        /// <returns>True if the archive was successfully unmounted, false otherwise.</returns>
-        public static bool Unmount(string archive)
-        {
-            bool out_result = false;
-            Love2dDll.wrap_love_dll_filesystem_unmount(DllTool.GetNullTailUTF8Bytes(archive), out out_result);
-            return out_result;
-        }
+            /// <summary>
+            /// Creates a new File object. It needs to be opened before it can be accessed.
+            /// </summary>
+            /// <param name="filename">The filename of the file.</param>
+            /// <param name="fmode_type">The mode to open the file in.</param>
+            /// <returns></returns>
+            public static File NewFile(string filename, FileMode fmode_type = FileMode.Read)
+            {
+                IntPtr out_file;
+                Love2dDll.wrap_love_dll_filesystem_newFile(DllTool.GetNullTailUTF8Bytes(filename), (int)fmode_type, out out_file);
+                return LoveObject.NewObject<File>(out_file);
+            }
 
-        /// <summary>
-        /// Gets the current working directory.
-        /// </summary>
-        /// <returns></returns>
-        public static string GetWorkingDirectory()
-        {
-            IntPtr out_str = IntPtr.Zero;
-            Love2dDll.wrap_love_dll_filesystem_getWorkingDirectory(out out_str);
-            return DllTool.WSToStringAndRelease(out_str);
+            public static void _SetFused(bool flag)
+            {
+                Love2dDll.wrap_love_dll_filesystem_setFused(flag);
+            }
+
+            /// <summary>
+            /// <para>Gets whether the game is in fused mode or not.</para>
+            /// <para>If a game is in fused mode, its save directory will be directly in the Appdata directory instead of Appdata/LOVE/. The game will also be able to load C Lua dynamic libraries which are located in the save directory.</para>
+            /// <para>A game is in fused mode if the source .love has been fused to the executable (see Game Distribution), or if "--fused" has been given as a command-line argument when starting the game.</para>
+            /// </summary>
+            /// <returns></returns>
+            public static bool IsFused()
+            {
+                bool out_result = false;
+                Love2dDll.wrap_love_dll_filesystem_isFused(out out_result);
+                return out_result;
+            }
+
+
+            public static void _SetAndroidSaveExternal(bool useExternal)
+            {
+                Love2dDll.wrap_love_dll_filesystem_setAndroidSaveExternal(useExternal);
+            }
+
+
+            /// <summary>
+            /// Mounts a zip file or folder in the game's save directory for reading. It is also possible to mount love.filesystem.getSourceBaseDirectory if the game is in fused mode.
+            /// </summary>
+            /// <param name="archive">The folder or zip file in the game's save directory to mount.</param>
+            /// <param name="mountpoint">The new path the archive will be mounted to.</param>
+            /// <param name="appendToPath">Whether the archive will be searched when reading a filepath before or after already-mounted archives. This includes the game's source and save directories.</param>
+            /// <returns></returns>
+            public static bool Mount(string archive, string mountpoint, bool appendToPath = false)
+            {
+                bool out_result = false;
+                Love2dDll.wrap_love_dll_filesystem_mount(DllTool.GetNullTailUTF8Bytes(archive),
+                    DllTool.GetNullTailUTF8Bytes(mountpoint), appendToPath, out out_result);
+                return out_result;
+            }
+
+            /// <summary>
+            /// Unmounts a zip file or folder previously mounted for reading with <see cref="Mount"/>.
+            /// </summary>
+            /// <param name="archive">The folder or zip file in the game's save directory which is currently mounted.</param>
+            /// <returns>True if the archive was successfully unmounted, false otherwise.</returns>
+            public static bool Unmount(string archive)
+            {
+                bool out_result = false;
+                Love2dDll.wrap_love_dll_filesystem_unmount(DllTool.GetNullTailUTF8Bytes(archive), out out_result);
+                return out_result;
+            }
+
+            /// <summary>
+            /// Gets the current working directory.
+            /// </summary>
+            /// <returns></returns>
+            public static string GetWorkingDirectory()
+            {
+                IntPtr out_str = IntPtr.Zero;
+                Love2dDll.wrap_love_dll_filesystem_getWorkingDirectory(out out_str);
+                return DllTool.WSToStringAndRelease(out_str);
+            }
+
+            /// <summary>
+            /// <para>Gets the platform-specific absolute path of the directory containing a filepath.</para>
+            /// </summary>
+            /// <param name="filename">The filepath to get the directory of.</param>
+            /// <returns>The platform-specific full path of the directory containing the filepath.</returns>
+            public static string GetRealDirectory(string filename)
+            {
+                IntPtr out_str = IntPtr.Zero;
+                Love2dDll.wrap_love_dll_filesystem_getRealDirectory(DllTool.GetNullTailUTF8Bytes(filename), out out_str);
+                return DllTool.WSToStringAndRelease(out_str);
+            }
+
+
+            /// <summary>
+            /// Gets information about the specified file or directory.
+            /// </summary>
+            /// <param name="path">The file or directory path to check.</param>
+            /// <returns></returns>
+            public static FileInfo GetInfo(string path)
+            {
+                int fileType_int = 0;
+                int64 size, modifyTime;
+                bool success;
+                Love2dDll.wrap_love_dll_filesystem_getInfo(DllTool.GetNullTailUTF8Bytes(path), out fileType_int, out size, out modifyTime, out success);
+                return success ? new FileInfo(size, modifyTime, (FileType)fileType_int) : null;
+            }
+
+            /// <summary>
+            /// <para>Recursively creates a directory.</para>
+            /// <para>When called with "a/b" it creates both "a" and "a/b", if they don't exist already.</para>
+            /// </summary>
+            /// <param name="name">The directory to create. </param>
+            /// <returns>True if the directory was created, false if not.</returns>
+            public static bool CreateDirectory(string name)
+            {
+                bool out_result;
+                Love2dDll.wrap_love_dll_filesystem_createDirectory(DllTool.GetNullTailUTF8Bytes(name), out out_result);
+                return out_result;
+            }
+
+            /// <summary>
+            /// Removes a file or empty directory.
+            /// </summary>
+            /// <param name="path">The file or directory to remove.</param>
+            public static bool Remove(string path)
+            {
+                bool out_result;
+                Love2dDll.wrap_love_dll_filesystem_remove(DllTool.GetNullTailUTF8Bytes(path), out out_result);
+                return out_result;
+            }
+
+            /// <summary>
+            /// Read the contents of a file.
+            /// </summary>
+            /// <param name="filename">The name (and path) of the file. </param>
+            /// <param name="len">How many bytes to read. (-1 means all)</param>
+            /// <returns></returns>
+            public static byte[] Read(string filename, long len = -1)
+            {
+                IntPtr out_data;
+                uint out_data_length;
+                Love2dDll.wrap_love_dll_filesystem_read(DllTool.GetNullTailUTF8Bytes(filename), len, out out_data, out out_data_length);
+                return DllTool.ReadBytesAndRelease(out_data, out_data_length);
+            }
+
+            /// <summary>
+            /// Write data to a file in the save directory. If the file existed already, it will be completely replaced by the new contents.
+            /// </summary>
+            /// <param name="filename">The name (and path) of the file.(UTF-8 byte need)</param>
+            /// <param name="input">The data to write to the file.</param>
+            public static void Write(string filename, byte[] input)
+            {
+                Love2dDll.wrap_love_dll_filesystem_write(DllTool.GetNullTailUTF8Bytes(filename), input, (uint)input.Length);
+            }
+
+            /// <summary>
+            /// Append data to an existing file.
+            /// </summary>
+            /// <param name="filename">The name (and path) of the file.</param>
+            /// <param name="input">The data to append to the file.</param>
+            public static void Append(string filename, byte[] input)
+            {
+                Love2dDll.wrap_love_dll_filesystem_append(DllTool.GetNullTailUTF8Bytes(filename), input, (uint)input.Length);
+            }
+
+            /// <summary>
+            /// <para>Returns a table with the names of files and subdirectories in the specified path. The table is not sorted in any way; the order is undefined.</para>
+            /// <para>If the path passed to the function exists in the game and the save directory, it will list the files and directories from both places.</para>
+            /// </summary>
+            /// <param name="dir">The directory.</param>
+            /// <returns></returns>
+            public static string[] GetDirectoryItems(string dir)
+            {
+                IntPtr out_wss = IntPtr.Zero;
+                Love2dDll.wrap_love_dll_filesystem_getDirectoryItems(DllTool.GetNullTailUTF8Bytes(dir), out out_wss);
+                return DllTool.WSSToStringListAndRelease(out_wss);
+            }
+
+            /// <summary>
+            /// Gets whether love.filesystem follows symbolic links.
+            /// </summary>
+            /// <returns></returns>
+            public static bool AreSymlinksEnabled()
+            {
+                bool out_result = false;
+                Love2dDll.wrap_love_dll_filesystem_areSymlinksEnabled(out out_result);
+                return out_result;
+            }
+
+            /// <summary>
+            /// <para>no need for C# version</para>
+            /// Returns the full path to the directory containing the .love file.
+            /// </summary>
+            /// <returns></returns>
+            public static string _GetSourceBaseDirectory()
+            {
+                IntPtr out_str = IntPtr.Zero;
+                Love2dDll.wrap_love_dll_filesystem_getSourceBaseDirectory(out out_str);
+                return DllTool.WSToStringAndRelease(out_str);
+            }
+
+            /// <summary>
+            /// <para>no need for C# version</para>
+            /// Gets the filesystem paths that will be searched when require is called.
+            /// </summary>
+            /// <returns></returns>
+            public static string _GetRequirePath()
+            {
+                IntPtr out_str = IntPtr.Zero;
+                Love2dDll.wrap_love_dll_filesystem_getRequirePath(out out_str);
+                return DllTool.WSToStringAndRelease(out_str);
+            }
+
+            /// <summary>
+            /// <para>no need for C# version</para>
+            /// <para>Sets the filesystem paths that will be searched when require is called.</para>
+            /// <para>The paths string given to this function is a sequence of path templates separated by semicolons. The argument passed to require will be inserted in place of any question mark ("?") character in each template (after the dot characters in the argument passed to require are replaced by directory separators.)</para>
+            /// <para>The paths are relative to the game's source and save directories, as well as any paths mounted with love.filesystem.mount.</para>
+            /// </summary>
+            /// <param name="paths"></param>
+            public static void _SetRequirePath(string paths)
+            {
+                Love2dDll.wrap_love_dll_filesystem_setRequirePath(DllTool.GetNullTailUTF8Bytes(paths));
+            }
         }
 
         /// <summary>
@@ -1252,7 +1414,7 @@ namespace Love
         }
 
         /// <summary>
-        /// Returns the application data directory (could be the same as getUserDirectory
+        /// Returns the application data directory (could be the same as getUserDirectory)
         /// </summary>
         /// <returns></returns>
         public static string GetAppdataDirectory()
@@ -1274,18 +1436,6 @@ namespace Love
         }
 
         /// <summary>
-        /// <para>Gets the platform-specific absolute path of the directory containing a filepath.</para>
-        /// </summary>
-        /// <param name="filename">The filepath to get the directory of.</param>
-        /// <returns>The platform-specific full path of the directory containing the filepath.</returns>
-        public static string GetRealDirectory(string filename)
-        {
-            IntPtr out_str = IntPtr.Zero;
-            Love2dDll.wrap_love_dll_filesystem_getRealDirectory(DllTool.GetNullTailUTF8Bytes(filename), out out_str);
-            return DllTool.WSToStringAndRelease(out_str);
-        }
-
-        /// <summary>
         /// will be called internally, so should not be used explictly.
         /// </summary>
         /// <returns></returns>
@@ -1295,152 +1445,6 @@ namespace Love
             Love2dDll.wrap_love_dll_filesystem_getExecutablePath(out out_str);
             return DllTool.WSToStringAndRelease(out_str);
         }
-
-        /// <summary>
-        /// Gets information about the specified file or directory.
-        /// </summary>
-        /// <param name="path">The file or directory path to check.</param>
-        /// <returns></returns>
-        public static FileInfo GetInfo(string path)
-        {
-            int fileType_int = 0;
-            int64 size, modifyTime;
-            bool success;
-            Love2dDll.wrap_love_dll_filesystem_getInfo(DllTool.GetNullTailUTF8Bytes(path), out fileType_int, out size, out modifyTime, out success);
-            return success ? new FileInfo(size, modifyTime, (FileType)fileType_int) : null;
-        }
-
-        /// <summary>
-        /// <para>Recursively creates a directory.</para>
-        /// <para>When called with "a/b" it creates both "a" and "a/b", if they don't exist already.</para>
-        /// </summary>
-        /// <param name="name">The directory to create. </param>
-        /// <returns>True if the directory was created, false if not.</returns>
-        public static bool CreateDirectory(string name)
-        {
-            bool out_result;
-            Love2dDll.wrap_love_dll_filesystem_createDirectory(DllTool.GetNullTailUTF8Bytes(name), out out_result);
-            return out_result;
-        }
-
-        /// <summary>
-        /// Removes a file or empty directory.
-        /// </summary>
-        /// <param name="path">The file or directory to remove.</param>
-        public static bool Remove(string path)
-        {
-            bool out_result;
-            Love2dDll.wrap_love_dll_filesystem_remove(DllTool.GetNullTailUTF8Bytes(path), out out_result);
-            return out_result;
-        }
-
-        /// <summary>
-        /// Read the contents of a file.
-        /// </summary>
-        /// <param name="filename">The name (and path) of the file. </param>
-        /// <param name="len">How many bytes to read. (-1 means all)</param>
-        /// <returns></returns>
-        public static byte[] Read(string filename, long len = -1)
-        {
-            IntPtr out_data;
-            uint out_data_length;
-            Love2dDll.wrap_love_dll_filesystem_read(DllTool.GetNullTailUTF8Bytes(filename), len, out out_data, out out_data_length);
-            return DllTool.ReadBytesAndRelease(out_data, out_data_length);
-        }
-
-        /// <summary>
-        /// Write data to a file in the save directory. If the file existed already, it will be completely replaced by the new contents.
-        /// </summary>
-        /// <param name="filename">The name (and path) of the file.(UTF-8 byte need)</param>
-        /// <param name="input">The data to write to the file.</param>
-        public static void Write(string filename, byte[] input)
-        {
-            Love2dDll.wrap_love_dll_filesystem_write(DllTool.GetNullTailUTF8Bytes(filename), input, (uint)input.Length);
-        }
-
-        /// <summary>
-        /// Append data to an existing file.
-        /// </summary>
-        /// <param name="filename">The name (and path) of the file.</param>
-        /// <param name="input">The data to append to the file.</param>
-        public static void Append(string filename, byte[] input)
-        {
-            Love2dDll.wrap_love_dll_filesystem_append(DllTool.GetNullTailUTF8Bytes(filename), input, (uint)input.Length);
-        }
-
-        /// <summary>
-        /// <para>Returns a table with the names of files and subdirectories in the specified path. The table is not sorted in any way; the order is undefined.</para>
-        /// <para>If the path passed to the function exists in the game and the save directory, it will list the files and directories from both places.</para>
-        /// </summary>
-        /// <param name="dir">The directory.</param>
-        /// <returns></returns>
-        public static string[] GetDirectoryItems(string dir)
-        {
-            IntPtr out_wss = IntPtr.Zero;
-            Love2dDll.wrap_love_dll_filesystem_getDirectoryItems(DllTool.GetNullTailUTF8Bytes(dir), out out_wss);
-            return DllTool.WSSToStringListAndRelease(out_wss);
-        }
-
-        ///// <summary>
-        ///// <para>Deprecated in LÖVE 11.0</para>
-        ///// <para>Gets the last modification time of a file.</para>
-        ///// </summary>
-        ///// <param name="filename"></param>
-        ///// <returns></returns>
-        //public static long _GetLastModified(byte[] filename)
-        //{
-        //    long out_time;
-        //    Love2dDll.wrap_love_dll_filesystem_getLastModified(filename, out out_time);
-        //    return out_time;
-        //}
-
-        /// <summary>
-        /// Gets whether love.filesystem follows symbolic links.
-        /// </summary>
-        /// <returns></returns>
-        public static bool AreSymlinksEnabled()
-        {
-            bool out_result = false;
-            Love2dDll.wrap_love_dll_filesystem_areSymlinksEnabled(out out_result);
-            return out_result;
-        }
-
-        /// <summary>
-        /// <para>no need for C# version</para>
-        /// Returns the full path to the directory containing the .love file.
-        /// </summary>
-        /// <returns></returns>
-        public static string _GetSourceBaseDirectory()
-        {
-            IntPtr out_str = IntPtr.Zero;
-            Love2dDll.wrap_love_dll_filesystem_getSourceBaseDirectory(out out_str);
-            return DllTool.WSToStringAndRelease(out_str);
-        }
-
-        /// <summary>
-        /// <para>no need for C# version</para>
-        /// Gets the filesystem paths that will be searched when require is called.
-        /// </summary>
-        /// <returns></returns>
-        public static string _GetRequirePath()
-        {
-            IntPtr out_str = IntPtr.Zero;
-            Love2dDll.wrap_love_dll_filesystem_getRequirePath(out out_str);
-            return DllTool.WSToStringAndRelease(out_str);
-        }
-
-        /// <summary>
-        /// <para>no need for C# version</para>
-        /// <para>Sets the filesystem paths that will be searched when require is called.</para>
-        /// <para>The paths string given to this function is a sequence of path templates separated by semicolons. The argument passed to require will be inserted in place of any question mark ("?") character in each template (after the dot characters in the argument passed to require are replaced by directory separators.)</para>
-        /// <para>The paths are relative to the game's source and save directories, as well as any paths mounted with love.filesystem.mount.</para>
-        /// </summary>
-        /// <param name="paths"></param>
-        public static void _SetRequirePath(string paths)
-        {
-            Love2dDll.wrap_love_dll_filesystem_setRequirePath(DllTool.GetNullTailUTF8Bytes(paths));
-        }
-
     }
 
     public partial class Sound

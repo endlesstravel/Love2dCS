@@ -8,35 +8,6 @@ namespace Love
 {
     #region Love Module
 
-    public partial class FileSystem
-    {
-        /// <summary>
-        /// Write data to a file in the save directory. If the file existed already, it will be completely replaced by the new contents.
-        /// <para>encode with UTF-8</para>
-        /// </summary>
-        /// <param name="filename">The name (and path) of the file.</param>
-        /// <param name="input">The string data to write to the file.</param>
-        public static void Write(string filename, string input)
-        {
-            Write(filename, DllTool.GetUTF8Bytes(input));
-        }
-
-        /// <summary>
-        /// Append text to an existing file (encode with UTF-8).
-        /// </summary>
-        /// <param name="filename">The name (and path) of the file.</param>
-        /// <param name="txt">string to append</param>
-        public static void Append(string filename, string txt)
-        {
-            Append(filename, DllTool.GetUTF8Bytes(txt));
-        }
-
-        //public static long _GetLastModified(string filename)
-        //{
-        //    return _GetLastModified(DllTool.GetNullTailUTF8Bytes(filename));
-        //}
-    }
-
 
     public partial class Joystick
     {
