@@ -324,5 +324,35 @@ namespace Love
         }
         #endregion
 
+
+        /// <summary>
+        /// Encodes the ImageData and writes it to the path.
+        /// </summary>
+        /// <param name="path">The filename to write the file to.</param>
+        /// <param name="imageData">The imageData to write the file to. </param>
+        /// <param name="format">The format to encode the image as.</param>
+        /// <returns></returns>
+        public static void EncodeToFile(string path, ImageData imageData, ImageFormat format)
+        {
+            Check.ArgumentNull(path, "path");
+            Check.ArgumentNull(imageData, "imageData");
+
+            var fileData = imageData.Encode(format);
+            SFile.WriteAllBytes(path, fileData.GetBytes());
+        }
+
+        /// <summary>
+        /// Encodes the ImageData and writes it to the path.
+        /// </summary>
+        /// <param name="path">The filename to write the file to.</param>
+        /// <param name="canvas">The canvas to write the file to. </param>
+        /// <param name="format">The format to encode the image as.</param>
+        /// <returns></returns>
+        public static void EncodeToFile(string path, Canvas canvas, ImageFormat format)
+        {
+            Check.ArgumentNull(path, "path");
+            Check.ArgumentNull(canvas, "canvas");
+            EncodeToFile(path, canvas.NewImageData(), format);
+        }
     }
 }
