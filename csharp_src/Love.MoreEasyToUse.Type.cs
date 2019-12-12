@@ -25,10 +25,18 @@ namespace Love
         /// Gets the texture coordinates according to a viewport.
         /// </summary>
         /// <returns>The size of the viewport</returns>
-        public Viewport GetViewport()
+        public RectangleF GetViewport()
         {
             GetViewport(out float out_x, out float out_y, out float out_w, out float out_h);
-            return new Viewport(out_x, out_y, out_w, out_h);
+            return new RectangleF(out_x, out_y, out_w, out_h);
+        }
+        /// <summary>
+        /// Gets the texture coordinates according to a viewport.
+        /// </summary>
+        /// <returns>The size of the viewport</returns>
+        public void SetViewport(RectangleF r)
+        {
+            SetViewport(r.X, r.Y, r.Width, r.Height);
         }
 
         /// <summary>
