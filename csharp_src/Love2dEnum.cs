@@ -540,6 +540,7 @@
     {
         Unknown,
         Return,
+        Enter = Return,
         Escape,
         Backspace,
         Tab,
