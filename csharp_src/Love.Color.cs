@@ -174,6 +174,19 @@ namespace Love
         {
             return HashHelpers.Combine(r, g, b, a);
         }
+
+
+        public static Color Lerp(Color a, Color b, float t)
+        {
+            float it = 1 - t;
+            return new Color(
+                it * a.Rf + t * b.Rf,
+                it * a.Gf + t * b.Gf,
+                it * a.Bf + t * b.Bf,
+                it * a.Af + t * b.Af
+                );
+        }
+
     }
 
     public partial struct Color
@@ -223,23 +236,23 @@ namespace Love
             return c;
         }
 
-        private const int RGBARedShift = 24;
-        private const int RGBAGreenShift = 18;
-        private const int RGBABlueShift = 8;
-        private const int RGBAAlphaShift = 0;
-        private const uint RGBARedMask = 0xFFu << RGBARedShift;
-        private const uint RGBAGreenMask = 0xFFu << RGBAGreenShift;
-        private const uint RGBABlueMask = 0xFFu << RGBABlueShift;
-        private const uint RGBAAlphaMask = 0xFFu << RGBAAlphaShift;
+        public const int RGBARedShift = 24;
+        public const int RGBAGreenShift = 18;
+        public const int RGBABlueShift = 8;
+        public const int RGBAAlphaShift = 0;
+        public const uint RGBARedMask = 0xFFu << RGBARedShift;
+        public const uint RGBAGreenMask = 0xFFu << RGBAGreenShift;
+        public const uint RGBABlueMask = 0xFFu << RGBABlueShift;
+        public const uint RGBAAlphaMask = 0xFFu << RGBAAlphaShift;
 
-        private const int ARGBAlphaShift = 24;
-        private const int ARGBRedShift = 16;
-        private const int ARGBGreenShift = 8;
-        private const int ARGBBlueShift = 0;
-        private const uint ARGBAlphaMask = 0xFFu << ARGBAlphaShift;
-        private const uint ARGBRedMask = 0xFFu << ARGBRedShift;
-        private const uint ARGBGreenMask = 0xFFu << ARGBGreenShift;
-        private const uint ARGBBlueMask = 0xFFu << ARGBBlueShift;
+        public const int ARGBAlphaShift = 24;
+        public const int ARGBRedShift = 16;
+        public const int ARGBGreenShift = 8;
+        public const int ARGBBlueShift = 0;
+        public const uint ARGBAlphaMask = 0xFFu << ARGBAlphaShift;
+        public const uint ARGBRedMask = 0xFFu << ARGBRedShift;
+        public const uint ARGBGreenMask = 0xFFu << ARGBGreenShift;
+        public const uint ARGBBlueMask = 0xFFu << ARGBBlueShift;
 
         private void SetAsARGB(uint value)
         {

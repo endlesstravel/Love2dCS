@@ -16,6 +16,7 @@ Love2dCS - C# Wrapper for LÖVE
 * [文档 https://endlesstravel.github.io](https://endlesstravel.github.io)
 * [love wiki](https://love2d.org/wiki/love)
 * [安装介绍](https://endlesstravel.github.io/#/tutorial/01.install)
+* [Aseprite 支持库](https://gitee.com/endlesstravel/LoveMetaSprite)
 * [Spine 支持库](https://gitee.com/endlesstravel/spine-lovecs)
 * [与Lua同时工作](https://endlesstravel.github.io/#/tutorial/05.use-lua)
 * [测试文件示例](csharp_src/Program.cs) / [物理模块测试文件示例](csharp_test/README.md)
