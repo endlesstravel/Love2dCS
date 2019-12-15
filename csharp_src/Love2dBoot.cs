@@ -676,8 +676,16 @@ namespace Love
                 }
 
                 // init to load native library
-                InitNativeLibrary();
-                Love2dDll.LoadInit();
+                try
+                {
+                    InitNativeLibrary();
+                    Love2dDll.LoadInit();
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e);
+                    throw e;
+                }
 
                 if (bootConfig.DefaultRandomSeed.HasValue)
                     Mathf.Init(bootConfig.DefaultRandomSeed.Value);
@@ -725,7 +733,7 @@ namespace Love
 
                 FileSystem.SetSource(Environment.CurrentDirectory);
 
-                Log.Info($"FileSystem set source with path : {FileSystem.GetSource()}");
+                Log.Info($"FileSystem current work directory : {FileSystem.GetSource()}");
             }
         }
 

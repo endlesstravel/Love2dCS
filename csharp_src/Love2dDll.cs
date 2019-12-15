@@ -58,10 +58,11 @@ namespace Love
 
         static Love2dDll()
         {
-            Console.WriteLine("ready to ...");
+            Log.Info("loading navtive library ...");
         }
         public static void LoadInit()
         {
+            Log.Info("loading navtive library success");
         }
 
 
