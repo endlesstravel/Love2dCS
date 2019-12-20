@@ -16,11 +16,11 @@ Links
 ---
 * [Document at https://endlesstravel.github.io](https://endlesstravel.github.io)
 * [love wiki](https://love2d.org/wiki/love)
-* [Easy to install with Visual Studio/MonoDevelop (install introduce)](https://endlesstravel.github.io/#/tutorial/01.install)
-* [Aseprite Runtime Support](https://gitee.com/endlesstravel/LoveMetaSprite)
-* [Spine Runtime Support](https://gitee.com/endlesstravel/spine-lovecs)
-* [Work with lua](https://endlesstravel.github.io/#/tutorial/05.use-lua)
+* [Aseprite](https://www.aseprite.org/) Runtime Support : [here](https://gitee.com/endlesstravel/LoveMetaSprite)
+* [Spine](http://esotericsoftware.com/) Runtime Support : [here](https://gitee.com/endlesstravel/spine-lovecs)
 * [Test file example](csharp_src/Program.cs) / [Physics Test example](csharp_test/README.md)
+* [Easy to install with Visual Studio/MonoDevelop (install introduce)](https://endlesstravel.github.io/#/tutorial/01.install)
+
 
 Support Platform
 ---
