@@ -141,7 +141,7 @@ namespace Love
         }
 
         /// <summary>
-        /// Creates a new ImageData object.
+        /// Creates a new ImageData object. -----  Vector4[x, y]
         /// <para> Vector4[x, y] - new Vector4(0.1f, 0.2f, 0.3f, 0.4f) </para>
         /// </summary>
         /// <param name="rawData">color data to set</param>
@@ -168,16 +168,37 @@ namespace Love
 
 
         /// <summary>
-        /// Creates a new ImageData object.
+        /// Creates a new ImageData object. -----  Vector4[x][y]
         /// </summary>
         /// <param name="rawData">Optional raw byte data to load into the ImageData, in the format specified by format.</param>
         /// <param name="format">The pixel format of the ImageData.</param>
         /// <returns></returns>
         public static ImageData NewImageData(Vector4[][] rawData, ImageDataPixelFormat format)
         {
-            Check.ArgumentNull(rawData, "data");
-            int w = 0;
-            int h = rawData.Length;
+            CheckTDA(rawData, out int W, out int H);
+
+            // copy data
+            Vector4[] data = new Vector4[W * H];
+            for (int y = 0; y < H; y++)
+            {
+                for (int x = 0; x < W; x++)
+                {
+                    data[x + y * W] = rawData[x][y];
+                }
+            }
+
+            var imageData = NewImageData(W, H, format);
+            imageData.SetPixelsFloat(data);
+            return imageData;
+        }
+
+        static void CheckTDA<T>(T[][] rawData, out int w, out int h)
+        {
+            if (rawData == null)
+                throw new ArgumentNullException(nameof(rawData));
+
+            w = 0;
+            h = rawData.Length;
             if (h > 0)
             {
                 if (rawData[0] == null)
@@ -200,22 +221,63 @@ namespace Love
                     }
                 }
             }
+            else
+                throw new Exception("size of data is [0][?] !");
+        }
 
-            // copy data
-            Vector4[] data = new Vector4[w * h];
-            for (int y = 0; y < h; y++)
+        /// <summary>
+        /// Creates a new ImageData object. -----  Color[x][y]
+        /// </summary>
+        /// <param name="rawData">Optional raw byte data to load into the ImageData, in the format specified by format.</param>
+        /// <param name="format">The pixel format of the ImageData.</param>
+        /// <returns></returns>
+        public static ImageData NewImageData(Color[][] rawData, ImageDataPixelFormat format)
+        {
+            CheckTDA(rawData, out int W, out int H);
+
+            var imageData = NewImageData(W, H, format);
+            var fmt = imageData.GetFormat();
+            var pixelData = new Pixel[W * H];
+            for (int y = 0; y < H; y++)
             {
-                for (int x = 0; x < w; x++)
+                for (int x = 0; x < W; x++)
                 {
-                    data[x + y * w] = rawData[x][y];
+                    int i = x + y * W;
+                    pixelData[i] = Pixel.FromColor(rawData[x][y], fmt);
                 }
             }
-
-            var imageData = NewImageData(w, h, format);
-            imageData.SetPixelsFloat(data);
+            imageData.SetPixelsRaw(pixelData);
             return imageData;
         }
 
+        /// <summary>
+        /// Creates a new ImageData object. -----  Color[x, y]
+        /// </summary>
+        /// <param name="rawData">Optional raw byte data to load into the ImageData, in the format specified by format.</param>
+        /// <param name="format">The pixel format of the ImageData.</param>
+        /// <returns></returns>
+        public static ImageData NewImageData(Color[, ] rawData, ImageDataPixelFormat format)
+        {
+            if (rawData == null)
+                throw new ArgumentNullException(nameof(rawData));
+
+            int W = rawData.GetLength(0);
+            int H = rawData.GetLength(1);
+
+            var imageData = NewImageData(W, H, format);
+            var fmt = imageData.GetFormat();
+            var pixelData = new Pixel[W * H];
+            for (int y = 0; y < H; y++)
+            {
+                for (int x = 0; x < W; x++)
+                {
+                    int i = x + y * W;
+                    pixelData[i] = Pixel.FromColor(rawData[x, y], fmt);
+                }
+            }
+            imageData.SetPixelsRaw(pixelData);
+            return imageData;
+        }
 
         /// <summary>
         /// Determines whether a file can be loaded as <see cref="CompressedImageData"/>.
