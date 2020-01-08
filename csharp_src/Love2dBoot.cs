@@ -499,6 +499,8 @@ namespace Love
         }
     }
 
+
+
     /// <summary>
     /// Boot class start params
     /// </summary>
@@ -659,6 +661,11 @@ namespace Love
     {
         static bool InitFlag = false;
 
+        /// <summary>
+        /// <para>Event.Quit() will lead QuitFlag = true, with will lead Boot.Run()  quit </para>
+        /// </summary>
+        public static bool QuitFlag = false;
+
         static public void Init(BootConfig bootConfig = null)
         {
             if (InitFlag == false)
@@ -737,6 +744,149 @@ namespace Love
             }
         }
 
+        public class SystemStepConfig
+        {
+            public delegate void KeyPressedDelegate(KeyConstant key, Scancode scancode, bool isRepeat);
+            public KeyPressedDelegate OnKeyPressed;
+
+            public delegate void KeyReleasedDelegate(KeyConstant key, Scancode scancode);
+            public KeyReleasedDelegate OnKeyReleased;
+
+            public delegate void MouseMovedDelegate(float x, float y, float dx, float dy, bool isTouch);
+            public MouseMovedDelegate OnMouseMoved;
+
+            public delegate void MousePressedDelegate(float x, float y, int button, bool isTouch);
+            public MousePressedDelegate OnMousePressed;
+
+            public delegate void MouseReleasedDelegate(float x, float y, int button, bool isTouch);
+            public MouseReleasedDelegate OnMouseReleased;
+
+            public delegate void MouseFocusDelegate(bool focus);
+            public MouseFocusDelegate OnMouseFocus;
+
+            public delegate void WheelMovedDelegate(int x, int y);
+            public WheelMovedDelegate OnWheelMoved;
+
+            public delegate void JoystickPressedDelegate(Joystick joystick, int button);
+            public JoystickPressedDelegate OnJoystickPressed;
+
+            public delegate void JoystickReleasedDelegate(Joystick joystick, int button);
+            public JoystickReleasedDelegate OnJoystickReleased;
+
+            public delegate void JoystickAxisDelegate(Joystick joystick, float axis, float value);
+            public JoystickAxisDelegate OnJoystickAxis;
+
+            public delegate void JoystickHatDelegate(Joystick joystick, int hat, JoystickHat direction);
+            public JoystickHatDelegate OnJoystickHat;
+
+            public delegate void JoystickGamepadPressedDelegate(Joystick joystick, GamepadButton button);
+            public JoystickGamepadPressedDelegate OnJoystickGamepadPressed;
+
+            public delegate void JoystickGamepadReleasedDelegate(Joystick joystick, GamepadButton button);
+            public JoystickGamepadReleasedDelegate OnJoystickGamepadReleased;
+
+            public delegate void JoystickGamepadAxisDelegate(Joystick joystick, GamepadAxis axis, float value);
+            public JoystickGamepadAxisDelegate OnJoystickGamepadAxis;
+
+            public delegate void JoystickAddedDelegate(Joystick joystick);
+            public JoystickAddedDelegate OnJoystickAdded;
+
+            public delegate void JoystickRemovedDelegate(Joystick joystick);
+            public JoystickRemovedDelegate OnJoystickRemoved;
+
+            public delegate void TouchMovedDelegate(long id, float x, float y, float dx, float dy, float pressure);
+            public TouchMovedDelegate OnTouchMoved;
+
+            public delegate void TouchPressedDelegate(long id, float x, float y, float dx, float dy, float pressure);
+            public TouchPressedDelegate OnTouchPressed;
+
+            public delegate void TouchReleasedDelegate(long id, float x, float y, float dx, float dy, float pressure);
+            public TouchReleasedDelegate OnTouchReleased;
+
+            public delegate void TextEditingDelegate(string text, int start, int end);
+            public TextEditingDelegate OnTextEditing;
+
+            public delegate void TextInputDelegate(string text);
+            public TextInputDelegate OnTextInput;
+
+            public delegate void WindowFocusDelegate(bool focus);
+            public WindowFocusDelegate OnWindowFocus;
+
+            public delegate void WindowVisibleDelegate(bool visible);
+            public WindowVisibleDelegate OnWindowVisible;
+
+            public delegate void WindowResizeDelegate(int w, int h);
+            public WindowResizeDelegate OnWindowResize;
+
+            public delegate void DirectoryDroppedDelegate(string path);
+            public DirectoryDroppedDelegate OnDirectoryDropped;
+
+            public delegate void FileDroppedDelegate(string fileFilePath);
+            public FileDroppedDelegate OnFileDropped;
+
+            public delegate bool QuitDelegate();
+            public QuitDelegate OnQuit;
+
+            public delegate void LowMemoryDelegate();
+            public LowMemoryDelegate OnLowMemory;
+
+            public delegate void LoadDelegate();
+            public LoadDelegate OnLoad;
+
+            public delegate void UpdateDelegate(float dt);
+            public UpdateDelegate OnUpdate;
+
+            public delegate void DrawDelegate();
+            public DrawDelegate OnDraw;
+            public Func<Exception, bool> OnErrorHandler;
+
+            public Scene GenScen() => new InternalEventFuncScene(this);
+
+            internal class InternalEventFuncScene : Scene
+            {
+                readonly SystemStepConfig behc;
+                public InternalEventFuncScene(SystemStepConfig behc)
+                {
+                    this.behc = behc ?? throw new ArgumentNullException(nameof(behc));
+                }
+
+                public override void KeyPressed(KeyConstant key, Scancode scancode, bool isRepeat) => behc.OnKeyPressed?.Invoke(key, scancode, isRepeat);
+                public override void KeyReleased(KeyConstant key, Scancode scancode) => behc.OnKeyReleased?.Invoke(key, scancode);
+                public override void MouseMoved(float x, float y, float dx, float dy, bool isTouch) => behc.OnMouseMoved?.Invoke(x, y, dx, dy, isTouch);
+                public override void MousePressed(float x, float y, int button, bool isTouch) => behc.OnMousePressed?.Invoke(x, y, button, isTouch);
+                public override void MouseReleased(float x, float y, int button, bool isTouch) => behc.OnMouseReleased?.Invoke(x, y, button, isTouch);
+                public override void MouseFocus(bool focus) => behc.OnMouseFocus?.Invoke(focus);
+                public override void WheelMoved(int x, int y) => behc.OnWheelMoved?.Invoke(x, y);
+                public override void JoystickPressed(Joystick joystick, int button) => behc.OnJoystickPressed?.Invoke(joystick, button);
+                public override void JoystickReleased(Joystick joystick, int button) => behc.OnJoystickReleased?.Invoke(joystick, button);
+                public override void JoystickAxis(Joystick joystick, float axis, float value) => behc.OnJoystickAxis?.Invoke(joystick, axis, value);
+                public override void JoystickHat(Joystick joystick, int hat, JoystickHat direction) => behc.OnJoystickHat?.Invoke(joystick, hat, direction);
+                public override void JoystickGamepadPressed(Joystick joystick, GamepadButton button) => behc.OnJoystickGamepadPressed?.Invoke(joystick, button);
+                public override void JoystickGamepadReleased(Joystick joystick, GamepadButton button) => behc.OnJoystickGamepadReleased?.Invoke(joystick, button);
+                public override void JoystickGamepadAxis(Joystick joystick, GamepadAxis axis, float value) => behc.OnJoystickGamepadAxis?.Invoke(joystick, axis, value);
+                public override void JoystickAdded(Joystick joystick) => behc.OnJoystickAdded?.Invoke(joystick);
+                public override void JoystickRemoved(Joystick joystick) => behc.OnJoystickRemoved?.Invoke(joystick);
+                public override void TouchMoved(long id, float x, float y, float dx, float dy, float pressure) => behc.OnTouchMoved?.Invoke(id, x, y, dx, dy, pressure);
+                public override void TouchPressed(long id, float x, float y, float dx, float dy, float pressure) => behc.OnTouchPressed?.Invoke(id, x, y, dx, dy, pressure);
+                public override void TouchReleased(long id, float x, float y, float dx, float dy, float pressure) => behc.OnTouchReleased?.Invoke(id, x, y, dx, dy, pressure);
+                public override void TextEditing(string text, int start, int end) => behc.OnTextEditing?.Invoke(text, start, end);
+                public override void TextInput(string text) => behc.OnTextInput?.Invoke(text);
+                public override void WindowFocus(bool focus) => behc.OnWindowFocus?.Invoke(focus);
+                public override void WindowVisible(bool visible) => behc.OnWindowVisible?.Invoke(visible);
+                public override void WindowResize(int w, int h) => behc.OnWindowResize?.Invoke(w, h);
+                public override void DirectoryDropped(string path) => behc.OnDirectoryDropped?.Invoke(path);
+                public override void FileDropped(string fileFilePath) => behc.OnFileDropped?.Invoke(fileFilePath);
+                public override bool Quit() => behc.OnQuit?.Invoke() ?? true;
+                public override void LowMemory() => behc.OnLowMemory?.Invoke();
+                public override void Load() => behc.OnLoad?.Invoke();
+                public override void Update(float dt) => behc.OnUpdate?.Invoke(dt);
+                public override void Draw() => behc.OnDraw?.Invoke();
+                public override bool ErrorHandler(Exception e) => behc.OnErrorHandler?.Invoke(e) ?? false;
+            }
+
+        }
+        class NoneScene : Scene { }
+
         /// <summary>
         /// you should not manual call this function, Unless you know what you're doing
         /// <para>event poll</para>
@@ -765,12 +915,22 @@ namespace Love
             Love.Misc.InputBoost.Step();
         }
 
+        public static void SystemStep(SystemStepConfig config)
+        {
+            SystemStep(config?.GenScen() ?? new NoneScene());
+        }
+
+        public static void SystemStep()
+        {
+            SystemStep(new NoneScene());
+        }
+
         static void Loop(BootConfig bootConfig, Scene scene)
         {
             scene.InvokeLoad();
             Timer.Step(); // fix large delta on first frame
 
-            while (true)
+            while (!Boot.QuitFlag)
             {
                 SystemStep(scene);
 

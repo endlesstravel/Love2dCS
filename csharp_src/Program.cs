@@ -1702,16 +1702,36 @@ namespace LoveTest
 
         static void Main(string[] args)
         {
-                Boot.Init(new BootConfig
-                {
-                    WindowX = 100,
-                    WindowY = 100,
-                    //WindowFullscreen = true,
-                    //WindowFullscreenType = FullscreenType.DeskTop,
-                    WindowResizable = true,
-                    WindowTitle = "test",
-                });
-                Boot.Run(new Program());
+            //Boot.Init(new BootConfig
+            //{
+            //    WindowX = 100,
+            //    WindowY = 100,
+            //    //WindowFullscreen = true,
+            //    //WindowFullscreenType = FullscreenType.DeskTop,
+            //    WindowResizable = true,
+            //    WindowTitle = "test",
+            //});
+            //Boot.Run(new Program());
+
+            Boot.Init();
+            while (!Boot.QuitFlag)
+            {
+                Boot.SystemStep();
+                // or do this .....
+                //Boot.SystemStep(new Boot.SystemStepConfig(){
+                //    OnKeyPressed = (k, s, i) => Console.WriteLine(k),
+                //});
+
+                Graphics.Clear();
+                Graphics.Line(Vector2.Zero, Mouse.GetPosition());
+                Graphics.Present();
+
+                if (Keyboard.IsPressed(KeyConstant.Space))
+                    Boot.QuitFlag = true;
+
+                Window.SetTitle("fps:" + FPSCounter.GetFPS());
+            }
+            Console.WriteLine("-end-");
         }
     }
 
