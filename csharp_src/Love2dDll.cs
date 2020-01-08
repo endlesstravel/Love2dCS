@@ -10530,7 +10530,47 @@ namespace Love
 
         public static Pixel FromColor(Color color, PixelFormat format)
         {
-            return FromFloat4(new Vector4(color.Rf, color.Gf, color.Bf, color.Af), format) ;
+            Pixel pixel = new Pixel();
+            if (format == PixelFormat.RGBA8)
+            {
+                unchecked
+                {
+                    pixel.rgba8.r = color.r;
+                    pixel.rgba8.g = color.g;
+                    pixel.rgba8.b = color.b;
+                    pixel.rgba8.a = color.a;
+                }
+            }
+            else if (format == PixelFormat.RGBA16)
+            {
+                unchecked
+                {
+                    pixel.rgba16.r = (ushort)(color.r * 256); // 255*256=65280   <   65535
+                    pixel.rgba16.g = (ushort)(color.g * 256);
+                    pixel.rgba16.b = (ushort)(color.b * 256);
+                    pixel.rgba16.a = (ushort)(color.a * 256);
+                }
+            }
+            else if (format == PixelFormat.RGBA16F)
+            {
+                pixel.rgba16f.r = Half.FromFloat(color.Rf);
+                pixel.rgba16f.g = Half.FromFloat(color.Gf);
+                pixel.rgba16f.b = Half.FromFloat(color.Bf);
+                pixel.rgba16f.a = Half.FromFloat(color.Af);
+            }
+            else if (format == PixelFormat.RGBA32F)
+            {
+                pixel.rgba32f.r = color.Rf;
+                pixel.rgba32f.g = color.Gf;
+                pixel.rgba32f.b = color.Bf;
+                pixel.rgba32f.a = color.Af;
+            }
+            else
+            {
+                throw new Exception($"Unsupported format {format} convert from (Rf, Gf, Bf, Af) to {nameof(Pixel)} object");
+            }
+
+            return pixel;
         }
 
         /// <summary>
