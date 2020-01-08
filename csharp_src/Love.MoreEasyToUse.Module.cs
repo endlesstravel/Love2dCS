@@ -192,7 +192,7 @@ namespace Love
             return imageData;
         }
 
-        static void CheckTDA<T>(T[][] rawData, out int w, out int h)
+        internal static void CheckTDA<T>(T[][] rawData, out int w, out int h)
         {
             if (rawData == null)
                 throw new ArgumentNullException(nameof(rawData));
@@ -234,19 +234,8 @@ namespace Love
         public static ImageData NewImageData(Color[][] rawData, ImageDataPixelFormat format)
         {
             CheckTDA(rawData, out int W, out int H);
-
             var imageData = NewImageData(W, H, format);
-            var fmt = imageData.GetFormat();
-            var pixelData = new Pixel[W * H];
-            for (int y = 0; y < H; y++)
-            {
-                for (int x = 0; x < W; x++)
-                {
-                    int i = x + y * W;
-                    pixelData[i] = Pixel.FromColor(rawData[x][y], fmt);
-                }
-            }
-            imageData.SetPixelsRaw(pixelData);
+            imageData.SetPixelsUncheck(rawData, W, H);
             return imageData;
         }
 
@@ -265,17 +254,7 @@ namespace Love
             int H = rawData.GetLength(1);
 
             var imageData = NewImageData(W, H, format);
-            var fmt = imageData.GetFormat();
-            var pixelData = new Pixel[W * H];
-            for (int y = 0; y < H; y++)
-            {
-                for (int x = 0; x < W; x++)
-                {
-                    int i = x + y * W;
-                    pixelData[i] = Pixel.FromColor(rawData[x, y], fmt);
-                }
-            }
-            imageData.SetPixelsRaw(pixelData);
+            imageData.SetPixels(rawData);
             return imageData;
         }
 
@@ -609,6 +588,41 @@ namespace Love
             for (int i = 0; i < pixelData.Length; i++)
             {
                 pixelData[i] = Pixel.FromColor(colorData[i], fmt);
+            }
+            SetPixelsRaw(pixelData);
+        }
+        internal void SetPixelsUncheck(Color[][] rawData, int W, int H)
+        {
+            var fmt = GetFormat();
+            var pixelData = new Pixel[W * H];
+            for (int y = 0; y < H; y++)
+            {
+                for (int x = 0; x < W; x++)
+                {
+                    int i = x + y * W;
+                    pixelData[i] = Pixel.FromColor(rawData[x][y], fmt);
+                }
+            }
+            SetPixelsRaw(pixelData);
+        }
+        public void SetPixels(Color[][] rawData)
+        {
+            Image.CheckTDA(rawData, out int W, out int H);
+            SetPixelsUncheck(rawData, W, H);
+        }
+        public void SetPixels(Color[,] rawData)
+        {
+            int W = rawData.GetLength(0);
+            int H = rawData.GetLength(1);
+            var fmt = GetFormat();
+            var pixelData = new Pixel[W * H];
+            for (int y = 0; y < H; y++)
+            {
+                for (int x = 0; x < W; x++)
+                {
+                    int i = x + y * W;
+                    pixelData[i] = Pixel.FromColor(rawData[x, y], fmt);
+                }
             }
             SetPixelsRaw(pixelData);
         }
