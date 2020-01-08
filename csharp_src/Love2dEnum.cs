@@ -1,5 +1,48 @@
 ﻿namespace Love
 {
+    public enum MouseButton: int
+    {
+        /// <summary>
+        /// The mouse left button
+        /// </summary>
+        LeftButton = 0,
+
+        /// <summary>
+        /// The mouse right button
+        /// </summary>
+        RightButton,
+
+        /// <summary>
+        /// The mouse middle button
+        /// </summary>
+        MiddleButton,
+
+        /// <summary>
+        /// The first extended button
+        /// </summary>
+        ExtendedButton1,
+
+        /// <summary>
+        /// The second extended button
+        /// </summary>
+        ExtendedButton2,
+
+        /// <summary>
+        /// The third extended button
+        /// </summary>
+        ExtendedButton3,
+
+        /// <summary>
+        /// The Fourth extended button
+        /// </summary>
+        ExtendedButton4,
+
+        /// <summary>
+        /// The Fifth extended button
+        /// </summary>
+        ExtendedButton5,
+    }
+
     public enum VertexDataType: int
     {
         UNORM8,

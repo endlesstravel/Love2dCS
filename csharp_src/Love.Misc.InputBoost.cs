@@ -6,18 +6,6 @@ namespace Love.Misc
 {
     public static class InputBoost
     {
-        public enum MouseButton
-        {
-            LeftButton = 0,
-            RightButton = 1,
-            MiddleButton = 2,
-            ExtendedButton1 = 3,
-            ExtendedButton2 = 4,
-            ExtendedButton3 = 5,
-            ExtendedButton4 = 6,
-            ExtendedButton5 = 7,
-        }
-
         #region Mouse
         const int RememberButtonCount = 32;
         static bool[] lastBtnDown = new bool[RememberButtonCount];

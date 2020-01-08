@@ -273,6 +273,10 @@ namespace Love
             Love2dDll.wrap_love_dll_mouse_getRelativeMode(out out_result);
             return out_result;
         }
+
+        public bool IsDown(MouseButton btn) => IsDown((int)btn);
+        public bool IsPressed(MouseButton btn) => IsPressed((int)btn);
+        public bool IsReleased(MouseButton btn) => IsReleased((int)btn);
     }
 
     public partial class Mouse
