@@ -274,9 +274,9 @@ namespace Love
             return out_result;
         }
 
-        public bool IsDown(MouseButton btn) => IsDown((int)btn);
-        public bool IsPressed(MouseButton btn) => IsPressed((int)btn);
-        public bool IsReleased(MouseButton btn) => IsReleased((int)btn);
+        public static bool IsDown(MouseButton btn) => IsDown((int)btn);
+        public static bool IsPressed(MouseButton btn) => IsPressed((int)btn);
+        public static bool IsReleased(MouseButton btn) => IsReleased((int)btn);
     }
 
     public partial class Mouse
