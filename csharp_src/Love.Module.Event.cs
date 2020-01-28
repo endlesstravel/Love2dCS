@@ -138,9 +138,9 @@ namespace Love
                 key = KeyConstant.Unknown;
                 scancode = Scancode.Unknow;
                 joystick = null;
-                direction = JoystickHat.Invalid;
-                gamepadButton = GamepadButton.Invalid;
-                gamepadAxis = GamepadAxis.Invalid;
+                direction = JoystickHat.Centered;
+                gamepadButton = GamepadButton.A;
+                gamepadAxis = GamepadAxis.LeftX;
                 text = null;
                 flag = false;
                 fx = 0;

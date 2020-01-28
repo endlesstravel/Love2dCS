@@ -102,7 +102,15 @@ Test
 
 Distribute
 ---
-*WIP*
+*
+* (recommand) on .net 2.2  : use tool https://github.com/Hubert-Rybak/dotnet-warp to publish single executable.
+* (recommand) on .net 3.0+ : Self-contained can be used to publish single executable
+
+* ref: https://www.hanselman.com/blog/MakingATinyNETCore30EntirelySelfcontainedSingleExecutable.aspx
+* publish ref: https://executecommands.com/publishing-single-executable-exe-in-net-core-3-0/
+* msdn ref: https://docs.microsoft.com/en-us/dotnet/core/whats-new/dotnet-core-3-0#single-file-executables
+* msdn ref `<PublishTrimmed/>` : https://docs.microsoft.com/en-us/dotnet/core/whats-new/dotnet-core-3-0#assembly-linking
+* designs file: https://github.com/dotnet/designs/blob/master/accepted/single-file/design.md
 
 Development
 ---

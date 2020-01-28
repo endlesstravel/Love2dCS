@@ -354,5 +354,65 @@ namespace Love
             Check.ArgumentNull(canvas, "canvas");
             EncodeToFile(path, canvas.NewImageData(), format);
         }
+
+
+
+        /// <summary>
+        /// convert image to imageData, it render canvas to `new canvase`, and get the image data form the `new canvas`
+        /// </summary>
+        public static ImageData ToImageData(Image img)
+        {
+            if (img == null) throw new ArgumentNullException(nameof(img));
+
+            var w = img.GetWidth();
+            var h = img.GetHeight();
+            var canvas = Graphics.NewCanvas(w, h, new Graphics.Settings
+            {
+                format = PixelFormat.RGBA8
+            });
+
+            var oldTarget = Graphics.GetCanvas();
+            var oldShader = Graphics.GetShader();
+
+            Graphics.SetCanvas(canvas);
+            Graphics.Draw(img);
+
+            Graphics.SetCanvas(oldTarget);
+            Graphics.SetShader(oldShader);
+
+            var imgData = canvas.NewImageData();
+            canvas.Dispose();
+            canvas = null;
+            return imgData;
+        }
+
+        /// <summary>
+        /// convert canvas to imageData, it render canvas to `new canvase`, and get the image data form the `new canvas`
+        /// </summary>
+        public static ImageData ToImageData(Canvas cas)
+        {
+            if (cas == null) throw new ArgumentNullException(nameof(cas));
+
+            var w = cas.GetWidth();
+            var h = cas.GetHeight();
+            var canvas = Graphics.NewCanvas(w, h, new Graphics.Settings
+            {
+                format = PixelFormat.RGBA8
+            });
+
+            var oldTarget = Graphics.GetCanvas();
+            var oldShader = Graphics.GetShader();
+
+            Graphics.SetCanvas(canvas);
+            Graphics.Draw(cas);
+            Graphics.SetCanvas(oldTarget);
+            Graphics.SetShader(oldShader);
+
+            var imgData = canvas.NewImageData();
+            canvas.Dispose();
+            canvas = null;
+            return imgData;
+        }
+
     }
 }

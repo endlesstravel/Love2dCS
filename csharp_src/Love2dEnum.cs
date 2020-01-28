@@ -69,8 +69,6 @@
     /// </summary>
     public enum BodyType
     {
-        Invalid,
-
         /// <summary>
         /// Static bodies do not move.
         /// </summary>
@@ -92,8 +90,6 @@
     /// </summary>
     public enum JointType
     {
-        Invalid,
-
         Distance = 1,
 
         Revolute,
@@ -123,8 +119,6 @@
     /// </summary>
     public enum ShapeType
     {
-        Invalid,
-
         Circle = 1,
 
         Polygon,
@@ -150,8 +144,7 @@
     /// </summary>
     public enum GamepadButton
     {
-        Invalid,
-        A,
+        A = 1,
         B,
         X,
         Y,
@@ -205,8 +198,7 @@
     /// </summary>
     public enum GamepadAxis
     {
-        Invalid,
-        LeftX,
+        LeftX = 1,
         LeftY,
         RightX,
         RightY,
@@ -217,8 +209,7 @@
     // Joystick hat values.
     public enum JoystickHat
     {
-        Invalid,
-        Centered,
+        Centered = 1,
         Up,
         Right,
         Down,

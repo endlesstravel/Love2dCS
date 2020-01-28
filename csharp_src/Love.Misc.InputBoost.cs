@@ -203,7 +203,6 @@ namespace Love.Misc
             {
                 switch (axis)
                 {
-                    case GamepadAxis.Invalid: return false;
                     case GamepadAxis.LeftX: return currValue.LeftX != lastValue.LeftX;
                     case GamepadAxis.LeftY: return currValue.LeftY != lastValue.LeftY;
                     case GamepadAxis.RightX: return currValue.RightX != lastValue.RightX;
