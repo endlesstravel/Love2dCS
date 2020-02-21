@@ -100,6 +100,49 @@ namespace Love
             return new RectangleF(right - r.Width, r.Y, r.Width, r.Height);
         }
 
+        /// <summary>
+        /// Generate a new RectangleF with new width on the left part of old rectangle
+        /// </summary>
+        /// <param name="r"></param>
+        /// <param name="width">width of new RectangleF</param>
+        /// <returns></returns>
+        public static RectangleF DefWidthLeft(this RectangleF r, float width)
+        {
+            return new RectangleF(r.X, r.Y, width, r.Height);
+        }
+
+        /// <summary>
+        /// Generate a new RectangleF with new width on the right part of old rectangle
+        /// </summary>
+        /// <param name="r"></param>
+        /// <param name="width">width of new RectangleF</param>
+        /// <returns></returns>
+        public static RectangleF DefWidthRight(this RectangleF r, float width)
+        {
+            return new RectangleF(r.X + (r.Right - width), r.Y, width, r.Height);
+        }
+
+        /// <summary>
+        /// Generate a new RectangleF with new hgithon the top part of old rectangle
+        /// </summary>
+        /// <param name="r"></param>
+        /// <param name="height">hgith of new RectangleF</param>
+        /// <returns></returns>
+        public static RectangleF DefHeightTop(this RectangleF r, float height)
+        {
+            return new RectangleF(r.X, r.Y, r.Width, height);
+        }
+
+        /// <summary>
+        /// Generate a new RectangleF with new height the bottom part of old rectangle
+        /// </summary>
+        /// <param name="r"></param>
+        /// <param name="height">hgith of new RectangleF</param>
+        /// <returns></returns>
+        public static RectangleF DefHeightBottom(this RectangleF r, float height)
+        {
+            return new RectangleF(r.X, r.Bottom - height, r.Width, height);
+        }
 
         /// <summary>
         /// Generate a new RectangleF with new top

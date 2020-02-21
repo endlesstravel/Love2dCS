@@ -5198,6 +5198,7 @@ namespace wrap
 			size_t stride = t->getVertexStride();
 			size_t byteoffset = vertOffset * stride;
 			char *bytedata = (char *)t->mapVertexData() + byteoffset;
+			memcpy(bytedata, inputData, dataSize);
 			t->unmapVertexData(byteoffset, dataSize);
 			return true;
 		});
