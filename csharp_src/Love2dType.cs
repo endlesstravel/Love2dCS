@@ -2414,11 +2414,10 @@ namespace Love
         /// <param name="x">The position of the pixel on the x-axis.</param>
         /// <param name="y">The position of the pixel on the y-axis.</param>
         /// <returns></returns>
-        public Pixel GetPixelRaw(int x, int y)
+        public Color GetPixel(int x, int y)
         {
-            Pixel out_pixel;
-            Love2dDll.wrap_love_dll_type_ImageData_getPixel(p, x, y, out out_pixel);
-            return out_pixel;
+            Love2dDll.wrap_love_dll_type_ImageData_getPixel(p, x, y, out var out_pixel);
+            return new Color(out_pixel.r, out_pixel.g, out_pixel.b, out_pixel.a);
         }
 
         /// <summary>
@@ -2426,10 +2425,9 @@ namespace Love
         /// </summary>
         /// <param name="x">The position of the pixel on the x-axis.</param>
         /// <param name="y">The position of the pixel on the y-axis.</param>
-        /// <param name="pixel"></param>
-        public void SetPixelRaw(int x, int y, Pixel pixel)
+        public void SetPixel(int x, int y, Color pixel)
         {
-            Love2dDll.wrap_love_dll_type_ImageData_setPixel(p, x, y, pixel);
+            Love2dDll.wrap_love_dll_type_ImageData_setPixel(p, x, y, new Vector4(pixel.Rf, pixel.Gf, pixel.Bf, pixel.Af));
         }
 
         /// <summary>

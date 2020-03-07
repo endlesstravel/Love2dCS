@@ -160,7 +160,8 @@ namespace wrap
 	Event *eventInstance = nullptr;
 	Filesystem *fsInstance = nullptr;
 	Sound* soundInstance = nullptr;
-	Audio *audioInstance = nullptr;
+    Audio* audioInstance = nullptr;
+    Math* mathInstance = nullptr;
 	image::Image *imageInstance = nullptr;
 	font::Font *fontInstance = nullptr;
 	video::Video *videoInstance = nullptr;
@@ -1020,7 +1021,7 @@ namespace wrap
 
     bool4 wrap_love_dll_math_newRandomGenerator(RandomGenerator** out_RandomGenerator)
     {
-        return wrap_catchexcept([&]() { *out_RandomGenerator = Math::instance.newRandomGenerator();});
+        return wrap_catchexcept([&]() { *out_RandomGenerator = mathInstance->newRandomGenerator();});
     }
 
     void wrap_love_dll_math_newBezierCurve(Float2* pointsList, int pointsList_lenght, BezierCurve** out_BezierCurve)
@@ -1031,7 +1032,7 @@ namespace wrap
         {
             points.push_back(Vector2(pointsList[i].x, pointsList[i].y));
         }
-        *out_BezierCurve = Math::instance.newBezierCurve(points);
+        *out_BezierCurve = mathInstance->newBezierCurve(points);
     }
 
     bool4 wrap_love_dll_type_Canvas_newImageData_xywh(graphics::Canvas *canvas, int slice, int mipmap, int x, int y, int w, int h, love::image::ImageData **out_img)
@@ -3155,9 +3156,17 @@ namespace wrap
 
 #pragma region math
 
-    void wrap_love_dll_open_love_math()
+    bool4 wrap_love_dll_open_love_math()
     {
-        Math::instance.retain();
+        if (mathInstance == nullptr)
+        {
+            return wrap_catchexcept([&]() {
+                mathInstance = new Math();
+                Module::registerInstance(mathInstance);
+            });
+        }
+
+        return mathInstance != nullptr;
     }
 
     bool4 wrap_love_dll_math_triangulate(Float2* pointsList, int pointsList_lenght, float **out_triArray, int *out_triCount)
@@ -6483,20 +6492,30 @@ namespace wrap
         *out_h = t->getHeight();
     }
 
-    bool4 wrap_love_dll_type_ImageData_getPixel(ImageData *t, int x, int y, Pixel *out_pixel)
+    bool4 wrap_love_dll_type_ImageData_getPixel(ImageData *t, int x, int y, Float4 *out_pixel)
     {
         return wrap_catchexcept([&]() {
 			t->getMutex()->lock();
-            t->getPixel(x, y, *out_pixel);
+            Colorf c;
+            t->getPixel(x, y, c);
+            out_pixel->r = c.r;
+            out_pixel->g = c.g;
+            out_pixel->b = c.b;
+            out_pixel->a = c.a;
 			t->getMutex()->unlock();
         });
     }
 
-    bool4 wrap_love_dll_type_ImageData_setPixel(ImageData *t, int x, int y, Pixel pixel)
+    bool4 wrap_love_dll_type_ImageData_setPixel(ImageData *t, int x, int y, Float4 pixel)
     {
         return wrap_catchexcept([&]() {
 			t->getMutex()->lock();
-			t->setPixel(x, y, pixel);
+            Colorf c;
+            c.r = pixel.r;
+            c.g = pixel.g;
+            c.b = pixel.b;
+            c.a = pixel.a;
+			t->setPixel(x, y, c);
 			t->getMutex()->unlock();
 		});
     }
@@ -6528,135 +6547,20 @@ namespace wrap
 		*out_pixelSize = t->getPixelSize();
 	}
 
-	void inner_wrap_love_dll_type_ImageData_lock(ImageData *t)
+
+	bool4 inner_wrap_love_dll_type_ImageData_setPixels_float4(ImageData *t, int x, int y, int w, int h, Float4* src)
 	{
-		t->getMutex()->lock();
+        return wrap_catchexcept([&]() {
+            throw love::Exception("unfinished function !");
+         });
 	}
 
-	void inner_wrap_love_dll_type_ImageData_unlock(ImageData *t)
-	{
-		t->getMutex()->unlock();
-	}
-
-	void inner_wrap_love_dll_type_ImageData_setPixels(ImageData *t, void* src, int bytesLength)
-	{
-		thread::Lock(t->getMutex());
-		memcpy(t->getData(), src, bytesLength);
-	}
-
-	void inner_wrap_love_dll_type_ImageData_getPixels_float4(ImageData *t, Float4* dest)
-	{
-		int w = t->getWidth();
-		int h = t->getHeight();
-		int size = w * h;
-		auto format = t->getFormat();
-		int pixelSize = t->getPixelSize();
-
-		thread::Lock(t->getMutex());
-		uint8* data = (uint8*)t->getData();
-		if (format == PixelFormat::PIXELFORMAT_RGBA8)
-		{
-			for (int i = 0; i < size; i++)
-			{
-				Float4& f = dest[i];
-				uint8* pointer = (uint8*)(data + i * pixelSize);
-
-				f.r = ((int)pointer[0]) / 255.0;
-				f.g = ((int)pointer[1]) / 255.0;
-				f.b = ((int)pointer[2]) / 255.0;
-				f.a = ((int)pointer[3]) / 255.0;
-			}
-		}
-		else if (format == PixelFormat::PIXELFORMAT_RGBA16)
-		{
-			for (int i = 0; i < size; i++)
-			{
-				Float4& f = dest[i];
-				uint16* pointer = (uint16*)(data + i * pixelSize);
-				f.r = ((int)pointer[0]) / 65535.0;
-				f.g = ((int)pointer[1]) / 65535.0;
-				f.b = ((int)pointer[2]) / 65535.0;
-				f.a = ((int)pointer[3]) / 65535.0;
-			}
-		}
-		else if (format == PixelFormat::PIXELFORMAT_RGBA16F)
-		{
-			for (int i = 0; i < size; i++)
-			{
-				Float4& f = dest[i];
-				uint16* pointer = (uint16*)(data + i * pixelSize);
-				f.r = halfToFloat(pointer[0]);
-				f.g = halfToFloat(pointer[1]);
-				f.b = halfToFloat(pointer[2]);
-				f.a = halfToFloat(pointer[3]);
-			}
-		}
-		else if (format == PixelFormat::PIXELFORMAT_RGBA32F)
-		{
-			for (int i = 0; i < size; i++)
-			{
-				Float4& f = dest[i];
-				float* pointer = (float*)(data + i * pixelSize);
-				f.r = pointer[0];
-				f.g = pointer[1];
-				f.b = pointer[2];
-				f.a = pointer[3];
-			}
-		}
-	}
-
-
-	void inner_wrap_love_dll_type_ImageData_setPixels_float4(ImageData *t, Float4* src)
-	{
-		int w = t->getWidth();
-		int h = t->getHeight();
-		int size = w * h;
-		auto format = t->getFormat();
-		int pixelSize = t->getPixelSize();
-
-		thread::Lock(t->getMutex());
-		uint8* data = (uint8*)t->getData();
-		if (format == PixelFormat::PIXELFORMAT_RGBA8)
-		{
-			for (int i = 0; i < size; i++)
-			{
-				Float4& f = src[i];
-				uint8* pointer = (uint8*)(data + i * pixelSize);
-				pointer[0] = f.r * 255;
-				pointer[1] = f.g * 255;
-				pointer[2] = f.b * 255;
-				pointer[3] = f.a * 255;
-			}
-		}
-		else if (format == PixelFormat::PIXELFORMAT_RGBA16)
-		{
-			for (int i = 0; i < size; i++)
-			{
-				Float4& f = src[i];
-				uint16* pointer = (uint16*)(data + i * pixelSize);
-				pointer[0] = f.r * 65535;
-				pointer[1] = f.g * 65535;
-				pointer[2] = f.b * 65535;
-				pointer[3] = f.a * 65535;
-			}
-		}
-		else if (format == PixelFormat::PIXELFORMAT_RGBA16F)
-		{
-			for (int i = 0; i < size; i++)
-			{
-				Float4& f = src[i];
-				uint16* pointer = (uint16*)(data + i * pixelSize);
-				pointer[0] = floatToHalf(f.r);
-				pointer[1] = floatToHalf(f.g);
-				pointer[2] = floatToHalf(f.b);
-				pointer[3] = floatToHalf(f.a);
-			}
-		}
-		else if (format == PixelFormat::PIXELFORMAT_RGBA32F)
-		{
-			memcpy(data, src, size * pixelSize);
-		}
-	}
+    bool4 inner_wrap_love_dll_type_ImageData_getPixels_float4(ImageData* t, int x, int y, int w, int h, Float4* dest, int* out_len)
+    {
+        return wrap_catchexcept([&]() {
+            throw love::Exception("unfinished function !");
+        });
+    }
 
 
 #pragma endregion
@@ -7362,7 +7266,7 @@ namespace wrap
 			{
 				if (!f)
 					break;
-				Fixture *fixture = (Fixture *)Memoizer::find(f);
+				Fixture *fixture = (Fixture *)t->getWorld()->findObject(f);
 				if (!fixture)
 					throw love::Exception("A fixture has escaped Memoizer!");
 
@@ -7391,7 +7295,7 @@ namespace wrap
 				if (!je)
 					break;
 
-				Joint *joint = (Joint *)Memoizer::find(je->joint);
+				Joint *joint = (Joint *)t->getWorld()->findObject(je->joint);
 				if (!joint)
 					throw love::Exception("A joint has escaped Memoizer!");
 
@@ -7419,9 +7323,9 @@ namespace wrap
 				if (!ce)
 					break;
 
-				Contact *contact = (Contact *)Memoizer::find(ce->contact);
+				Contact *contact = (Contact *)t->getWorld()->findObject(ce->contact);
 				if (!contact)
-					contact = new Contact(ce->contact);
+					contact = new Contact(t->getWorld(), ce->contact);
 				else
 					contact->retain();
 
@@ -9048,6 +8952,7 @@ namespace wrap
 	class WrapWorldCallBackClass: public b2ContactListener, public b2ContactFilter
 	{
 	public:
+        World* world;
 		WrapContactCallbackFunc beginContact;
 		WrapContactCallbackFunc endContact;
 		WrapContactCallbackFunc preSolve;
@@ -9055,12 +8960,14 @@ namespace wrap
 		WrapContactFilterFunc filter;
 
 		WrapWorldCallBackClass(
+            World* world,
 			WrapContactCallbackFunc beginContact,
 			WrapContactCallbackFunc endContact,
 			WrapContactCallbackFunc preSolve,
 			WrapContactCallbackFunc postSolve,
 			WrapContactFilterFunc filter
 			):
+            world(world),
 			beginContact(beginContact),
 			endContact(endContact),
 			preSolve(preSolve),
@@ -9079,7 +8986,7 @@ namespace wrap
 			ProcessContactOrSolve(contact, NULL, endContact);
 
 			// Letting the Contact know that the b2Contact will be destroyed any second.
-			Contact *c = (Contact *)Memoizer::find(contact);
+			Contact *c = (Contact *)world->findObject(contact);
 			if (c != NULL)
 				c->invalidate();
 		}
@@ -9099,14 +9006,14 @@ namespace wrap
 				return;
 
 			// Fixtures should be memoized, if we created them
-			Fixture *a = (Fixture *)Memoizer::find(contact->GetFixtureA());
-			Fixture *b = (Fixture *)Memoizer::find(contact->GetFixtureB());
+			Fixture *a = (Fixture *)world->findObject(contact->GetFixtureA());
+			Fixture *b = (Fixture *)world->findObject(contact->GetFixtureB());
 			if (!a || !b)
 				throw love::Exception("A fixture has escaped Memoizer!");
 
-			Contact *cobj = (Contact *)Memoizer::find(contact);
+			Contact *cobj = (Contact *)world->findObject(contact);
 			if (!cobj)
-				cobj = new Contact(contact);
+				cobj = new Contact(world, contact);
 			else
 				cobj->retain();
 
@@ -9132,8 +9039,8 @@ namespace wrap
 		bool ShouldCollide(b2Fixture *fixtureA, b2Fixture *fixtureB)
 		{
 			// Fixtures should be memoized, if we created them
-			Fixture *a = (Fixture *)Memoizer::find(fixtureA);
-			Fixture *b = (Fixture *)Memoizer::find(fixtureB);
+			Fixture *a = (Fixture *)world->findObject(fixtureA);
+			Fixture *b = (Fixture *)world->findObject(fixtureB);
 			if (!a || !b)
 				throw love::Exception("A fixture has escaped Memoizer!");
 
@@ -9251,7 +9158,7 @@ namespace wrap
 		)
 	{
 		return wrap_catchexcept([&]() {
-			WrapWorldCallBackClass callBack(beginContact, endContact, preSolve, postSolve, filter);
+			WrapWorldCallBackClass callBack(t, beginContact, endContact, preSolve, postSolve, filter);
 			auto b2w = World_wrap_getWorld(t);
 			b2w->SetContactFilter(&callBack);
 			b2w->SetContactListener(&callBack);
@@ -9284,7 +9191,7 @@ namespace wrap
 					break;
 				if (b == t->getGroundBody())
 					continue;
-				Body *body = (Body *)Memoizer::find(b);
+				Body *body = (Body *)t->findObject(b);
 				if (!body)
 					throw love::Exception("A body has escaped Memoizer!");
 
@@ -9312,7 +9219,7 @@ namespace wrap
 			do
 			{
 				if (!j) break;
-				Joint *joint = (Joint *)Memoizer::find(j);
+				Joint *joint = (Joint *)t->findObject(j);
 				if (!joint) throw love::Exception("A joint has escaped Memoizer!");
 
 				jointList.push_back(joint);
@@ -9339,9 +9246,9 @@ namespace wrap
 			do
 			{
 				if (!c) break;
-				Contact *contact = (Contact *)Memoizer::find(c);
+				Contact *contact = (Contact *)t->findObject(c);
 				if (!contact)
-					contact = new Contact(c);
+					contact = new Contact(t, c);
 				else
 					contact->retain();
 				contactList.push_back(contact);
@@ -9359,12 +9266,13 @@ namespace wrap
 	class WrapQueryBoundingBoxCallback : public b2QueryCallback
 	{
 		WrapQueryBoundingBoxCallbackFunc callBackFunc;
+        World* world;
 	public:
-		WrapQueryBoundingBoxCallback(WrapQueryBoundingBoxCallbackFunc f)
-			:callBackFunc(f) {}
+		WrapQueryBoundingBoxCallback(World *world, WrapQueryBoundingBoxCallbackFunc f)
+			: world(world), callBackFunc(f) {}
 		bool ReportFixture(b2Fixture* fixture)
 		{
-			Fixture *f = (Fixture *)Memoizer::find(fixture);
+			Fixture *f = (Fixture *)world->findObject(fixture);
 			if (!f)
 				throw love::Exception("A fixture has escaped Memoizer!");
 
@@ -9382,20 +9290,21 @@ namespace wrap
 			b2AABB box;
 			box.lowerBound = Physics::scaleDown(b2Vec2(topLeftX, topLeftY));
 			box.upperBound = Physics::scaleDown(b2Vec2(bottomRightX, bottomRightY));
-			WrapQueryBoundingBoxCallback query(callback);
+			WrapQueryBoundingBoxCallback query(t, callback);
 			b2w->QueryAABB(&query, box);
 		});
 	}
 
 	class WrapRayCastCallback : public b2RayCastCallback
 	{
+        World* world;
 		WrapRayCastCallbackFunc callBackFunc;
 	public:
-		WrapRayCastCallback(WrapRayCastCallbackFunc f)
-			:callBackFunc(f) {}
+		WrapRayCastCallback(World* world, WrapRayCastCallbackFunc f)
+			:world(world), callBackFunc(f) {}
 		float32 ReportFixture(b2Fixture *fixture, const b2Vec2 &point, const b2Vec2 &normal, float32 fraction)
 		{
-			Fixture *f = (Fixture *)Memoizer::find(fixture);
+			Fixture *f = (Fixture *)world->findObject(fixture);
 			if (!f)
 				throw love::Exception("A fixture has escaped Memoizer!");
 			b2Vec2 scaledPoint = Physics::scaleUp(point);
@@ -9412,7 +9321,7 @@ namespace wrap
 			auto b2w = World_wrap_getWorld(t);
 			b2Vec2 v1 = Physics::scaleDown(b2Vec2(x1, y1));
 			b2Vec2 v2 = Physics::scaleDown(b2Vec2(x2, y2));
-			WrapRayCastCallback raycast(callback);
+			WrapRayCastCallback raycast(t, callback);
 			b2w->RayCast(&raycast, v1, v2);
 		});
 	}

@@ -39,7 +39,6 @@
 #include "modules/audio/null/Source.h"
 #include "modules/math/BezierCurve.h"
 #include "modules/physics/box2d/Physics.h"
-#include "common/Memoizer.h"
 
 #include "lua.h"
 
@@ -83,7 +82,6 @@ using love::physics::box2d::WeldJoint;
 using love::physics::box2d::WheelJoint;
 using love::physics::box2d::RopeJoint;
 using love::physics::box2d::PrismaticJoint;
-using love::Memoizer;
 
 namespace love
 {
@@ -527,7 +525,7 @@ namespace wrap
 
 #pragma region math
 
-    extern "C" LOVE_EXPORT void wrap_love_dll_open_love_math();
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_open_love_math();
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_math_triangulate(Float2* pointsList, int pointsList_lenght, float **out_triArray, int *out_triCount);
     extern "C" LOVE_EXPORT void wrap_love_dll_math_isConvex(Float2* pointsList, int pointsList_lenght, bool4 *out_result);
     extern "C" LOVE_EXPORT void wrap_love_dll_math_gammaToLinear(float gama, float *out_liner);
@@ -1000,16 +998,15 @@ namespace wrap
     extern "C" LOVE_EXPORT void wrap_love_dll_type_ImageData_getWidth(ImageData *t, int *out_w);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_ImageData_getHeight(ImageData *t, int *out_h);
 	extern "C" LOVE_EXPORT void wrap_love_dll_type_ImageData_GetFormat(ImageData *t, int *out_pixelFormat);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_ImageData_getPixel(ImageData *t, int x, int y, Pixel *out_pixel);
-    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_ImageData_setPixel(ImageData *t, int x, int y, Pixel pixel);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_ImageData_getPixel(ImageData *t, int x, int y, Float4 *out_pixel);
+    extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_ImageData_setPixel(ImageData *t, int x, int y, Float4 pixel);
     extern "C" LOVE_EXPORT void wrap_love_dll_type_ImageData_paste(ImageData *t, ImageData* src, int dx, int dy, int sx, int sy, int sw, int sh);
     extern "C" LOVE_EXPORT bool4 wrap_love_dll_type_ImageData_encode(ImageData *t, int format_type, bool4 writeToFile, const char* filename, FileData** out_fileData);
 	extern "C" LOVE_EXPORT void inner_wrap_love_dll_type_ImageData_getPixelSize(ImageData *t, int *out_pixelSize);
-	extern "C" LOVE_EXPORT void inner_wrap_love_dll_type_ImageData_lock(ImageData *t);
-	extern "C" LOVE_EXPORT void inner_wrap_love_dll_type_ImageData_unlock(ImageData *t);
-	extern "C" LOVE_EXPORT void inner_wrap_love_dll_type_ImageData_setPixels(ImageData *t, void* src, int bytesLength);
-	extern "C" LOVE_EXPORT void inner_wrap_love_dll_type_ImageData_setPixels_float4(ImageData *t, Float4* src);
-	extern "C" LOVE_EXPORT void inner_wrap_love_dll_type_ImageData_getPixels_float4(ImageData *t, Float4* dest);
+
+
+	extern "C" LOVE_EXPORT bool4 inner_wrap_love_dll_type_ImageData_setPixels_float4(ImageData *t, int x, int y, int w, int h, Float4 *src);
+	extern "C" LOVE_EXPORT bool4 inner_wrap_love_dll_type_ImageData_getPixels_float4(ImageData *t, int x, int y, int w, int h, Float4 *dest, int *out_len);
 
 #pragma endregion
 

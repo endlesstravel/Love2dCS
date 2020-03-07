@@ -1067,9 +1067,9 @@ namespace Love
         internal static delegateFunc_wrap_love_dll_video_open_love_video wrap_love_dll_video_open_love_video = () => CheckCAPIException(wrap_love_dll_video_open_love_video_value());
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        internal delegate void delegateFunc_wrap_love_dll_open_love_math();
+        internal delegate bool delegateFunc_wrap_love_dll_open_love_math();
         internal static delegateFunc_wrap_love_dll_open_love_math wrap_love_dll_open_love_math_value = LoadFunction<delegateFunc_wrap_love_dll_open_love_math>("wrap_love_dll_open_love_math");
-        internal static delegateFunc_wrap_love_dll_open_love_math wrap_love_dll_open_love_math = wrap_love_dll_open_love_math_value;
+        internal static delegateFunc_wrap_love_dll_open_love_math wrap_love_dll_open_love_math = () => CheckCAPIException(wrap_love_dll_open_love_math_value());
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate bool delegateFunc_wrap_love_dll_math_triangulate(Vector2[] pointsList, int pointsList_lenght, out IntPtr out_triArray, out int out_triCount);
@@ -2732,14 +2732,14 @@ namespace Love
         internal static delegateFunc_wrap_love_dll_type_ImageData_getHeight wrap_love_dll_type_ImageData_getHeight = wrap_love_dll_type_ImageData_getHeight_value;
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        internal delegate bool delegateFunc_wrap_love_dll_type_ImageData_getPixel(IntPtr p, int x, int y, out Pixel out_pixel);
+        internal delegate bool delegateFunc_wrap_love_dll_type_ImageData_getPixel(IntPtr p, int x, int y, out Vector4 out_pixel);
         internal static delegateFunc_wrap_love_dll_type_ImageData_getPixel wrap_love_dll_type_ImageData_getPixel_value = LoadFunction<delegateFunc_wrap_love_dll_type_ImageData_getPixel>("wrap_love_dll_type_ImageData_getPixel");
-        internal static delegateFunc_wrap_love_dll_type_ImageData_getPixel wrap_love_dll_type_ImageData_getPixel = (IntPtr p, int x, int y, out Pixel out_pixel) => CheckCAPIException(wrap_love_dll_type_ImageData_getPixel_value(p, x, y, out out_pixel));
+        internal static delegateFunc_wrap_love_dll_type_ImageData_getPixel wrap_love_dll_type_ImageData_getPixel = (IntPtr p, int x, int y, out Vector4 out_pixel) => CheckCAPIException(wrap_love_dll_type_ImageData_getPixel_value(p, x, y, out out_pixel));
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        internal delegate bool delegateFunc_wrap_love_dll_type_ImageData_setPixel(IntPtr p, int x, int y, Pixel pixel);
+        internal delegate bool delegateFunc_wrap_love_dll_type_ImageData_setPixel(IntPtr p, int x, int y, Vector4 pixel);
         internal static delegateFunc_wrap_love_dll_type_ImageData_setPixel wrap_love_dll_type_ImageData_setPixel_value = LoadFunction<delegateFunc_wrap_love_dll_type_ImageData_setPixel>("wrap_love_dll_type_ImageData_setPixel");
-        internal static delegateFunc_wrap_love_dll_type_ImageData_setPixel wrap_love_dll_type_ImageData_setPixel = (IntPtr p, int x, int y, Pixel pixel) => CheckCAPIException(wrap_love_dll_type_ImageData_setPixel_value(p, x, y, pixel));
+        internal static delegateFunc_wrap_love_dll_type_ImageData_setPixel wrap_love_dll_type_ImageData_setPixel = (IntPtr p, int x, int y, Vector4 pixel) => CheckCAPIException(wrap_love_dll_type_ImageData_setPixel_value(p, x, y, pixel));
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate void delegateFunc_wrap_love_dll_type_ImageData_GetFormat(IntPtr p, out int out_pixelFormat);
@@ -2762,27 +2762,12 @@ namespace Love
         internal static delegateFunc_inner_wrap_love_dll_type_ImageData_getPixelSize inner_wrap_love_dll_type_ImageData_getPixelSize = inner_wrap_love_dll_type_ImageData_getPixelSize_value;
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        internal delegate void delegateFunc_inner_wrap_love_dll_type_ImageData_lock(IntPtr p);
-        internal static delegateFunc_inner_wrap_love_dll_type_ImageData_lock inner_wrap_love_dll_type_ImageData_lock_value = LoadFunction<delegateFunc_inner_wrap_love_dll_type_ImageData_lock>("inner_wrap_love_dll_type_ImageData_lock");
-        internal static delegateFunc_inner_wrap_love_dll_type_ImageData_lock inner_wrap_love_dll_type_ImageData_lock = inner_wrap_love_dll_type_ImageData_lock_value;
-
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        internal delegate void delegateFunc_inner_wrap_love_dll_type_ImageData_unlock(IntPtr p);
-        internal static delegateFunc_inner_wrap_love_dll_type_ImageData_unlock inner_wrap_love_dll_type_ImageData_unlock_value = LoadFunction<delegateFunc_inner_wrap_love_dll_type_ImageData_unlock>("inner_wrap_love_dll_type_ImageData_unlock");
-        internal static delegateFunc_inner_wrap_love_dll_type_ImageData_unlock inner_wrap_love_dll_type_ImageData_unlock = inner_wrap_love_dll_type_ImageData_unlock_value;
-
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        internal delegate void delegateFunc_inner_wrap_love_dll_type_ImageData_setPixels(IntPtr p, IntPtr data, int byteLenght);
-        internal static delegateFunc_inner_wrap_love_dll_type_ImageData_setPixels inner_wrap_love_dll_type_ImageData_setPixels_value = LoadFunction<delegateFunc_inner_wrap_love_dll_type_ImageData_setPixels>("inner_wrap_love_dll_type_ImageData_setPixels");
-        internal static delegateFunc_inner_wrap_love_dll_type_ImageData_setPixels inner_wrap_love_dll_type_ImageData_setPixels = inner_wrap_love_dll_type_ImageData_setPixels_value;
-
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        internal delegate void delegateFunc_inner_wrap_love_dll_type_ImageData_setPixels_float4(IntPtr p, Vector4[] src);
+        internal delegate void delegateFunc_inner_wrap_love_dll_type_ImageData_setPixels_float4(IntPtr p, int x, int y, int w, int h, Vector4[] src);
         internal static delegateFunc_inner_wrap_love_dll_type_ImageData_setPixels_float4 inner_wrap_love_dll_type_ImageData_setPixels_float4_value = LoadFunction<delegateFunc_inner_wrap_love_dll_type_ImageData_setPixels_float4>("inner_wrap_love_dll_type_ImageData_setPixels_float4");
         internal static delegateFunc_inner_wrap_love_dll_type_ImageData_setPixels_float4 inner_wrap_love_dll_type_ImageData_setPixels_float4 = inner_wrap_love_dll_type_ImageData_setPixels_float4_value;
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        internal delegate void delegateFunc_inner_wrap_love_dll_type_ImageData_getPixels_float4(IntPtr p, IntPtr dest);
+        internal delegate void delegateFunc_inner_wrap_love_dll_type_ImageData_getPixels_float4(IntPtr p, int x, int y, int w, int h, IntPtr dest, out int out_len);
         internal static delegateFunc_inner_wrap_love_dll_type_ImageData_getPixels_float4 inner_wrap_love_dll_type_ImageData_getPixels_float4_value = LoadFunction<delegateFunc_inner_wrap_love_dll_type_ImageData_getPixels_float4>("inner_wrap_love_dll_type_ImageData_getPixels_float4");
         internal static delegateFunc_inner_wrap_love_dll_type_ImageData_getPixels_float4 inner_wrap_love_dll_type_ImageData_getPixels_float4 = inner_wrap_love_dll_type_ImageData_getPixels_float4_value;
 

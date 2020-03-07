@@ -555,18 +555,6 @@ namespace Love
 
         #endregion
 
-        public void SetPixel(int x, int y, Color color)
-        {
-            var pixel = Pixel.FromColor(color, GetFormat());
-            SetPixelRaw(x, y, pixel);
-        }
-
-        public Color GetPixel(int x, int y)
-        {
-            var pixel = GetPixelRaw(x, y);
-            return Pixel.ToColor(pixel, GetFormat());
-        }
-
         public Color[] GetPixels()
         {
             var fmt = GetFormat();
