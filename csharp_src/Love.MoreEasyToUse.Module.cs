@@ -284,9 +284,7 @@ namespace Love
         /// <param name="func">Function to apply to every pixel.</param>
         public void MapPixel(MapColorDelegate func)
         {
-            int w = GetWidth();
-            int h = GetHeight();
-            MapPixel(func, 0, 0, w, h);
+            MapPixel(func, 0, 0, GetWidth(), GetHeight());
         }
 
 
@@ -314,6 +312,7 @@ namespace Love
                 for (int x = sx; x <= ex; x++)
                 {
                     fdata[idx] = func(x, y, fdata[idx]);
+                    idx++;
                 }
             }
 
@@ -329,9 +328,7 @@ namespace Love
         /// <param name="func">Function to apply to every pixel.</param>
         public void MapPixel(MapVectorDelegate func)
         {
-            int w = GetWidth();
-            int h = GetHeight();
-            MapPixel(func, 0, 0, w, h);
+            MapPixel(func, 0, 0, GetWidth(), GetHeight());
         }
 
         /// <summary>
@@ -358,6 +355,7 @@ namespace Love
                 for (int x = sx; x <= ex; x++)
                 {
                     fdata[idx] = func(x, y, fdata[idx]);
+                    idx++;
                 }
             }
 
