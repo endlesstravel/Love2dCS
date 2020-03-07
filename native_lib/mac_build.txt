@@ -1,3 +1,6 @@
+## framework 添加注意事项
+### 必须在 macosx 中解压缩(love-osx-frameworks-0.10.zip)，在windows中解压缩会有问题
+
 cd /Users/yx/Documents/work_space/love-11.2/platform/xcode/
 
 curl https://gitee.com/endlesstravel/love2dCS/raw/master/c_api_src/wrap_love_dll.cpp > wrap_love_dll.cpp
