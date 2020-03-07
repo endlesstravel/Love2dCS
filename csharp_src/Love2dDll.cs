@@ -2762,14 +2762,14 @@ namespace Love
         internal static delegateFunc_inner_wrap_love_dll_type_ImageData_getPixelSize inner_wrap_love_dll_type_ImageData_getPixelSize = inner_wrap_love_dll_type_ImageData_getPixelSize_value;
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        internal delegate void delegateFunc_inner_wrap_love_dll_type_ImageData_setPixels_float4(IntPtr p, int x, int y, int w, int h, Vector4[] src);
+        internal delegate bool delegateFunc_inner_wrap_love_dll_type_ImageData_setPixels_float4(IntPtr p, int x, int y, int w, int h, Vector4[] src);
         internal static delegateFunc_inner_wrap_love_dll_type_ImageData_setPixels_float4 inner_wrap_love_dll_type_ImageData_setPixels_float4_value = LoadFunction<delegateFunc_inner_wrap_love_dll_type_ImageData_setPixels_float4>("inner_wrap_love_dll_type_ImageData_setPixels_float4");
-        internal static delegateFunc_inner_wrap_love_dll_type_ImageData_setPixels_float4 inner_wrap_love_dll_type_ImageData_setPixels_float4 = inner_wrap_love_dll_type_ImageData_setPixels_float4_value;
+        internal static delegateFunc_inner_wrap_love_dll_type_ImageData_setPixels_float4 inner_wrap_love_dll_type_ImageData_setPixels_float4 = (p, x, y, w, h, src) => CheckCAPIException(inner_wrap_love_dll_type_ImageData_setPixels_float4_value(p, x, y, w, h, src));
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        internal delegate void delegateFunc_inner_wrap_love_dll_type_ImageData_getPixels_float4(IntPtr p, int x, int y, int w, int h, IntPtr dest, out int out_len);
+        internal delegate bool delegateFunc_inner_wrap_love_dll_type_ImageData_getPixels_float4(IntPtr p, int x, int y, int w, int h, out IntPtr out_dest);
         internal static delegateFunc_inner_wrap_love_dll_type_ImageData_getPixels_float4 inner_wrap_love_dll_type_ImageData_getPixels_float4_value = LoadFunction<delegateFunc_inner_wrap_love_dll_type_ImageData_getPixels_float4>("inner_wrap_love_dll_type_ImageData_getPixels_float4");
-        internal static delegateFunc_inner_wrap_love_dll_type_ImageData_getPixels_float4 inner_wrap_love_dll_type_ImageData_getPixels_float4 = inner_wrap_love_dll_type_ImageData_getPixels_float4_value;
+        internal static delegateFunc_inner_wrap_love_dll_type_ImageData_getPixels_float4 inner_wrap_love_dll_type_ImageData_getPixels_float4 = (IntPtr p, int x, int y, int w, int h, out IntPtr out_dest) => CheckCAPIException(inner_wrap_love_dll_type_ImageData_getPixels_float4_value(p, x, y, w, h, out out_dest));
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         internal delegate void delegateFunc_wrap_love_dll_type_Cursor_getType(IntPtr p, out int out_cursortype_type, out bool out_custom);
@@ -10476,193 +10476,193 @@ namespace Love
 
 
 
-    /// <summary>
-    /// <code>
-    /// union Pixel
-    /// {
-    ///     uint8 rgba8 [4];
-    ///     uint16 rgba16 [4];
-    ///     half rgba16f [4];
-    ///     float  rgba32f [4];
-    /// };
-    /// </code>
-    /// </summary>
-    [StructLayout(LayoutKind.Explicit)]
-    public struct Pixel
-    {
-        [FieldOffset(0)] public RGBA8I rgba8;
-        [FieldOffset(0)] public RGBA16I rgba16;
-        [FieldOffset(0)] public RGBA16F rgba16f;
-        [FieldOffset(0)] public RGBA32F rgba32f;
+    ///// <summary>
+    ///// <code>
+    ///// union Pixel
+    ///// {
+    /////     uint8 rgba8 [4];
+    /////     uint16 rgba16 [4];
+    /////     half rgba16f [4];
+    /////     float  rgba32f [4];
+    ///// };
+    ///// </code>
+    ///// </summary>
+    //[StructLayout(LayoutKind.Explicit)]
+    //public struct Pixel
+    //{
+    //    [FieldOffset(0)] public RGBA8I rgba8;
+    //    [FieldOffset(0)] public RGBA16I rgba16;
+    //    [FieldOffset(0)] public RGBA16F rgba16f;
+    //    [FieldOffset(0)] public RGBA32F rgba32f;
 
-        [FieldOffset(0)] public int intValue0;
-        [FieldOffset(4)] public int intValue1;
-        [FieldOffset(8)] public int intValue2;
-        [FieldOffset(12)] public int intValue3;
-        [FieldOffset(0)] public long longValue0;
-        [FieldOffset(8)] public long longValue1;
-        [FieldOffset(0)] public double doubleValue0;
-        [FieldOffset(8)] public double doubleValue1;
+    //    [FieldOffset(0)] public int intValue0;
+    //    [FieldOffset(4)] public int intValue1;
+    //    [FieldOffset(8)] public int intValue2;
+    //    [FieldOffset(12)] public int intValue3;
+    //    [FieldOffset(0)] public long longValue0;
+    //    [FieldOffset(8)] public long longValue1;
+    //    [FieldOffset(0)] public double doubleValue0;
+    //    [FieldOffset(8)] public double doubleValue1;
 
-        public static string StrRGBA8(Pixel p)
-        {
-            return $"({p.rgba8.r},{p.rgba8.g},{p.rgba8.b},{p.rgba8.a})";
-        }
-        public static string StrRGBA32F(Pixel p)
-        {
-            return $"({p.rgba32f.r},{p.rgba32f.g},{p.rgba32f.b},{p.rgba32f.a})";
-        }
+    //    public static string StrRGBA8(Pixel p)
+    //    {
+    //        return $"({p.rgba8.r},{p.rgba8.g},{p.rgba8.b},{p.rgba8.a})";
+    //    }
+    //    public static string StrRGBA32F(Pixel p)
+    //    {
+    //        return $"({p.rgba32f.r},{p.rgba32f.g},{p.rgba32f.b},{p.rgba32f.a})";
+    //    }
 
-        public static Pixel FromColor(Color color, PixelFormat format)
-        {
-            Pixel pixel = new Pixel();
-            if (format == PixelFormat.RGBA8)
-            {
-                unchecked
-                {
-                    pixel.rgba8.r = color.r;
-                    pixel.rgba8.g = color.g;
-                    pixel.rgba8.b = color.b;
-                    pixel.rgba8.a = color.a;
-                }
-            }
-            else if (format == PixelFormat.RGBA16)
-            {
-                unchecked
-                {
-                    pixel.rgba16.r = (ushort)(color.r * 256); // 255*256=65280   <   65535
-                    pixel.rgba16.g = (ushort)(color.g * 256);
-                    pixel.rgba16.b = (ushort)(color.b * 256);
-                    pixel.rgba16.a = (ushort)(color.a * 256);
-                }
-            }
-            else if (format == PixelFormat.RGBA16F)
-            {
-                pixel.rgba16f.r = Half.FromFloat(color.Rf);
-                pixel.rgba16f.g = Half.FromFloat(color.Gf);
-                pixel.rgba16f.b = Half.FromFloat(color.Bf);
-                pixel.rgba16f.a = Half.FromFloat(color.Af);
-            }
-            else if (format == PixelFormat.RGBA32F)
-            {
-                pixel.rgba32f.r = color.Rf;
-                pixel.rgba32f.g = color.Gf;
-                pixel.rgba32f.b = color.Bf;
-                pixel.rgba32f.a = color.Af;
-            }
-            else
-            {
-                throw new Exception($"Unsupported format {format} convert from (Rf, Gf, Bf, Af) to {nameof(Pixel)} object");
-            }
+    //    public static Pixel FromColor(Color color, PixelFormat format)
+    //    {
+    //        Pixel pixel = new Pixel();
+    //        if (format == PixelFormat.RGBA8)
+    //        {
+    //            unchecked
+    //            {
+    //                pixel.rgba8.r = color.r;
+    //                pixel.rgba8.g = color.g;
+    //                pixel.rgba8.b = color.b;
+    //                pixel.rgba8.a = color.a;
+    //            }
+    //        }
+    //        else if (format == PixelFormat.RGBA16)
+    //        {
+    //            unchecked
+    //            {
+    //                pixel.rgba16.r = (ushort)(color.r * 256); // 255*256=65280   <   65535
+    //                pixel.rgba16.g = (ushort)(color.g * 256);
+    //                pixel.rgba16.b = (ushort)(color.b * 256);
+    //                pixel.rgba16.a = (ushort)(color.a * 256);
+    //            }
+    //        }
+    //        else if (format == PixelFormat.RGBA16F)
+    //        {
+    //            pixel.rgba16f.r = Half.FromFloat(color.Rf);
+    //            pixel.rgba16f.g = Half.FromFloat(color.Gf);
+    //            pixel.rgba16f.b = Half.FromFloat(color.Bf);
+    //            pixel.rgba16f.a = Half.FromFloat(color.Af);
+    //        }
+    //        else if (format == PixelFormat.RGBA32F)
+    //        {
+    //            pixel.rgba32f.r = color.Rf;
+    //            pixel.rgba32f.g = color.Gf;
+    //            pixel.rgba32f.b = color.Bf;
+    //            pixel.rgba32f.a = color.Af;
+    //        }
+    //        else
+    //        {
+    //            throw new Exception($"Unsupported format {format} convert from (Rf, Gf, Bf, Af) to {nameof(Pixel)} object");
+    //        }
 
-            return pixel;
-        }
+    //        return pixel;
+    //    }
 
-        /// <summary>
-        /// Create pixel with given Float4 value and format
-        /// </summary>
-        /// <returns></returns>
-        public static Pixel FromFloat4(Vector4 value, PixelFormat format)
-        {
-            Pixel pixel = new Pixel();
-            if (format == PixelFormat.RGBA8)
-            {
-                unchecked
-                {
-                    pixel.rgba8.r = (byte)(value.r * byte.MaxValue);
-                    pixel.rgba8.g = (byte)(value.g * byte.MaxValue);
-                    pixel.rgba8.b = (byte)(value.b * byte.MaxValue);
-                    pixel.rgba8.a = (byte)(value.a * byte.MaxValue);
-                }
-            }
-            else if (format == PixelFormat.RGBA16)
-            {
-                unchecked
-                {
-                    pixel.rgba16.r = (ushort)(value.r * ushort.MaxValue);
-                    pixel.rgba16.g = (ushort)(value.g * ushort.MaxValue);
-                    pixel.rgba16.b = (ushort)(value.b * ushort.MaxValue);
-                    pixel.rgba16.a = (ushort)(value.a * ushort.MaxValue);
-                }
-            }
-            else if (format == PixelFormat.RGBA16F)
-            {
-                pixel.rgba16f.r = Half.FromFloat(value.r);
-                pixel.rgba16f.g = Half.FromFloat(value.g);
-                pixel.rgba16f.b = Half.FromFloat(value.b);
-                pixel.rgba16f.a = Half.FromFloat(value.a);
-            }
-            else if (format == PixelFormat.RGBA32F)
-            {
-                pixel.rgba32f.r = value.r;
-                pixel.rgba32f.g = value.g;
-                pixel.rgba32f.b = value.b;
-                pixel.rgba32f.a = value.a;
-            }
-            else
-            {
-                throw new Exception($"Unsupported format {format} convert from (Rf, Gf, Bf, Af) to {nameof(Pixel)} object");
-            }
+    //    /// <summary>
+    //    /// Create pixel with given Float4 value and format
+    //    /// </summary>
+    //    /// <returns></returns>
+    //    public static Pixel FromFloat4(Vector4 value, PixelFormat format)
+    //    {
+    //        Pixel pixel = new Pixel();
+    //        if (format == PixelFormat.RGBA8)
+    //        {
+    //            unchecked
+    //            {
+    //                pixel.rgba8.r = (byte)(value.r * byte.MaxValue);
+    //                pixel.rgba8.g = (byte)(value.g * byte.MaxValue);
+    //                pixel.rgba8.b = (byte)(value.b * byte.MaxValue);
+    //                pixel.rgba8.a = (byte)(value.a * byte.MaxValue);
+    //            }
+    //        }
+    //        else if (format == PixelFormat.RGBA16)
+    //        {
+    //            unchecked
+    //            {
+    //                pixel.rgba16.r = (ushort)(value.r * ushort.MaxValue);
+    //                pixel.rgba16.g = (ushort)(value.g * ushort.MaxValue);
+    //                pixel.rgba16.b = (ushort)(value.b * ushort.MaxValue);
+    //                pixel.rgba16.a = (ushort)(value.a * ushort.MaxValue);
+    //            }
+    //        }
+    //        else if (format == PixelFormat.RGBA16F)
+    //        {
+    //            pixel.rgba16f.r = Half.FromFloat(value.r);
+    //            pixel.rgba16f.g = Half.FromFloat(value.g);
+    //            pixel.rgba16f.b = Half.FromFloat(value.b);
+    //            pixel.rgba16f.a = Half.FromFloat(value.a);
+    //        }
+    //        else if (format == PixelFormat.RGBA32F)
+    //        {
+    //            pixel.rgba32f.r = value.r;
+    //            pixel.rgba32f.g = value.g;
+    //            pixel.rgba32f.b = value.b;
+    //            pixel.rgba32f.a = value.a;
+    //        }
+    //        else
+    //        {
+    //            throw new Exception($"Unsupported format {format} convert from (Rf, Gf, Bf, Af) to {nameof(Pixel)} object");
+    //        }
 
-            return pixel;
-        }
+    //        return pixel;
+    //    }
 
 
-        public static Vector4 FromFloat4(Pixel pixel, PixelFormat format)
-        {
-            var color = ToColor(pixel, format);
-            return new Vector4(color.Rf, color.Gf, color.Bf, color.Af);
-        }
+    //    public static Vector4 FromFloat4(Pixel pixel, PixelFormat format)
+    //    {
+    //        var color = ToColor(pixel, format);
+    //        return new Vector4(color.Rf, color.Gf, color.Bf, color.Af);
+    //    }
 
-        /// <summary>
-        /// Create pixel with given Float4 value and format
-        /// </summary>
-        /// <returns></returns>
-        public static Color ToColor(Pixel pixel, PixelFormat format)
-        {
-            Color color = new Color();
-            if (format == PixelFormat.RGBA8)
-            {
-                unchecked
-                {
-                    color.r = pixel.rgba8.r;
-                    color.g = pixel.rgba8.g;
-                    color.b = pixel.rgba8.b;
-                    color.a = pixel.rgba8.a;
-                }
-            }
-            else if (format == PixelFormat.RGBA16)
-            {
-                unchecked
-                {
-                    color.Rf = pixel.rgba16.r / (float)ushort.MaxValue;
-                    color.Gf = pixel.rgba16.g / (float)ushort.MaxValue;
-                    color.Bf = pixel.rgba16.b / (float)ushort.MaxValue;
-                    color.Af = pixel.rgba16.a / (float)ushort.MaxValue;
-                }
-            }
-            else if (format == PixelFormat.RGBA16F)
-            {
-                color.Rf = pixel.rgba16f.r.ToFloat();
-                color.Gf = pixel.rgba16f.g.ToFloat();
-                color.Bf = pixel.rgba16f.b.ToFloat();
-                color.Af = pixel.rgba16f.a.ToFloat();
-            }
-            else if (format == PixelFormat.RGBA32F)
-            {
-                color.Rf = pixel.rgba32f.r;
-                color.Gf = pixel.rgba32f.g;
-                color.Bf = pixel.rgba32f.b;
-                color.Af = pixel.rgba32f.a;
-            }
-            else
-            {
-                throw new Exception($"Unsupported format {format} convert from (Rf, Gf, Bf, Af) to {nameof(Pixel)} object");
-            }
+    //    /// <summary>
+    //    /// Create pixel with given Float4 value and format
+    //    /// </summary>
+    //    /// <returns></returns>
+    //    public static Color ToColor(Pixel pixel, PixelFormat format)
+    //    {
+    //        Color color = new Color();
+    //        if (format == PixelFormat.RGBA8)
+    //        {
+    //            unchecked
+    //            {
+    //                color.r = pixel.rgba8.r;
+    //                color.g = pixel.rgba8.g;
+    //                color.b = pixel.rgba8.b;
+    //                color.a = pixel.rgba8.a;
+    //            }
+    //        }
+    //        else if (format == PixelFormat.RGBA16)
+    //        {
+    //            unchecked
+    //            {
+    //                color.Rf = pixel.rgba16.r / (float)ushort.MaxValue;
+    //                color.Gf = pixel.rgba16.g / (float)ushort.MaxValue;
+    //                color.Bf = pixel.rgba16.b / (float)ushort.MaxValue;
+    //                color.Af = pixel.rgba16.a / (float)ushort.MaxValue;
+    //            }
+    //        }
+    //        else if (format == PixelFormat.RGBA16F)
+    //        {
+    //            color.Rf = pixel.rgba16f.r.ToFloat();
+    //            color.Gf = pixel.rgba16f.g.ToFloat();
+    //            color.Bf = pixel.rgba16f.b.ToFloat();
+    //            color.Af = pixel.rgba16f.a.ToFloat();
+    //        }
+    //        else if (format == PixelFormat.RGBA32F)
+    //        {
+    //            color.Rf = pixel.rgba32f.r;
+    //            color.Gf = pixel.rgba32f.g;
+    //            color.Bf = pixel.rgba32f.b;
+    //            color.Af = pixel.rgba32f.a;
+    //        }
+    //        else
+    //        {
+    //            throw new Exception($"Unsupported format {format} convert from (Rf, Gf, Bf, Af) to {nameof(Pixel)} object");
+    //        }
 
-            return color;
-        }
-    }
+    //        return color;
+    //    }
+    //}
 
 
     [StructLayout(LayoutKind.Sequential)]

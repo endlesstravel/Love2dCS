@@ -1005,8 +1005,8 @@ namespace wrap
 	extern "C" LOVE_EXPORT void inner_wrap_love_dll_type_ImageData_getPixelSize(ImageData *t, int *out_pixelSize);
 
 
-	extern "C" LOVE_EXPORT bool4 inner_wrap_love_dll_type_ImageData_setPixels_float4(ImageData *t, int x, int y, int w, int h, Float4 *src);
-	extern "C" LOVE_EXPORT bool4 inner_wrap_love_dll_type_ImageData_getPixels_float4(ImageData *t, int x, int y, int w, int h, Float4 *dest, int *out_len);
+	extern "C" LOVE_EXPORT bool4 inner_wrap_love_dll_type_ImageData_setPixels_float4(ImageData *t, int x, int y, int w, int h, Float4* src);
+	extern "C" LOVE_EXPORT bool4 inner_wrap_love_dll_type_ImageData_getPixels_float4(ImageData *t, int x, int y, int w, int h, Float4** out_dest);
 
 #pragma endregion
 

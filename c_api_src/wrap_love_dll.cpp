@@ -6548,17 +6548,100 @@ namespace wrap
 	}
 
 
-	bool4 inner_wrap_love_dll_type_ImageData_setPixels_float4(ImageData *t, int x, int y, int w, int h, Float4* src)
+	bool4 inner_wrap_love_dll_type_ImageData_setPixels_float4(ImageData *t, int sx, int sy, int w, int h, Float4* src)
 	{
         return wrap_catchexcept([&]() {
-            throw love::Exception("unfinished function !");
+            if (!(t->inside(sx, sy) && t->inside(sx + w - 1, sy + h - 1)))
+                throw love::Exception("Invalid rectangle dimensions.");
+
+            love::thread::Lock lock(t->getMutex());
+
+            int iw = t->getWidth();
+
+            PixelFormat format = t->getFormat();
+            int components = getPixelFormatColorComponents(format);
+
+            auto pixelsetfunction = t->getPixelSetFunction();
+            //auto pixelgetfunction = t->getPixelGetFunction();
+
+            uint8* data = (uint8*)t->getData();
+            size_t pixelsize = t->getPixelSize();
+
+            int srcIdx = 0;
+
+            for (int y = sy; y < sy + h; y++)
+            {
+                for (int x = sx; x < sx + w; x++)
+                {
+                    auto pixeldata = (ImageData::Pixel*) (data + (y * iw + x) * pixelsize);
+
+                    Colorf c;
+                    //pixelgetfunction(pixeldata, c);
+                    Float4* srcData = src + srcIdx;
+                    c.r = srcData->r;
+                    if (components > 1)
+                        c.g = srcData->g;
+                    if (components > 2)
+                        c.b = srcData->b;
+                    if (components > 3)
+                        c.a = srcData->a;
+
+                    srcIdx++;
+                    pixelsetfunction(c, pixeldata);
+                }
+            }
+
          });
 	}
 
-    bool4 inner_wrap_love_dll_type_ImageData_getPixels_float4(ImageData* t, int x, int y, int w, int h, Float4* dest, int* out_len)
+    bool4 inner_wrap_love_dll_type_ImageData_getPixels_float4(ImageData* t, int sx, int sy, int w, int h, Float4** out_dest)
     {
         return wrap_catchexcept([&]() {
-            throw love::Exception("unfinished function !");
+            if (!(t->inside(sx, sy) && t->inside(sx + w - 1, sy + h - 1)))
+                throw love::Exception("Invalid rectangle dimensions.");
+
+            love::thread::Lock lock(t->getMutex());
+
+            int iw = t->getWidth();
+
+            PixelFormat format = t->getFormat();
+            int components = getPixelFormatColorComponents(format);
+
+            //auto pixelsetfunction = t->getPixelSetFunction();
+            auto pixelgetfunction = t->getPixelGetFunction();
+
+            uint8* data = (uint8*)t->getData();
+            size_t pixelsize = t->getPixelSize();
+
+            int destIdx = 0;
+
+            Float4* dest = new Float4[w * h];
+            *out_dest = dest;
+
+            for (int y = sy; y < sy + h; y++)
+            {
+                for (int x = sx; x < sx + w; x++)
+                {
+                    auto pixeldata = (ImageData::Pixel*) (data + (y * iw + x) * pixelsize);
+
+                    Colorf c;
+                    pixelgetfunction(pixeldata, c);
+                    Float4* dc = dest + destIdx;
+                    //dc->r = c.r;
+                    //if (components > 1)
+                    //    dc->g = c.g;
+                    //if (components > 2)
+                    //    dc->b = c.b;
+                    //if (components > 3)
+                    //    dc->a = c.a;
+                    dc->r = c.r;
+                    dc->g = c.g;
+                    dc->b = c.b;
+                    dc->a = c.a;
+
+                    destIdx++;
+                }
+            }
         });
     }
 

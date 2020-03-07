@@ -95,42 +95,42 @@ namespace LoveTest
             var col = new Color(x / (float)W, y / (float)H, 1f, 1f);
             return new Vector4(col.Rf, col.Gf, col.Bf, col.Af);
         }
-        private Pixel MapPixel_03(int x, int y, Pixel p)
-        {
-            var col = new Color(x / (float)W, y / (float)H, 1f, 1f);
+        //private Pixel MapPixel_03(int x, int y, Pixel p)
+        //{
+        //    var col = new Color(x / (float)W, y / (float)H, 1f, 1f);
 
 
-            if (pixelFormat == PixelFormat.RGBA8)
-            {
-                p.rgba8.r = (byte)(col.Rf * byte.MaxValue);
-                p.rgba8.g = (byte)(col.Gf * byte.MaxValue);
-                p.rgba8.b = (byte)(col.Bf * byte.MaxValue);
-                p.rgba8.a = (byte)(col.Af * byte.MaxValue);
-            }
-            else if (pixelFormat == PixelFormat.RGBA16)
-            {
-                p.rgba16.r = (ushort)(col.Rf * ushort.MaxValue);
-                p.rgba16.g = (ushort)(col.Gf * ushort.MaxValue);
-                p.rgba16.b = (ushort)(col.Bf * ushort.MaxValue);
-                p.rgba16.a = (ushort)(col.Af * ushort.MaxValue);
-            }
-            else if (pixelFormat == PixelFormat.RGBA16F)
-            {
-                p.rgba16f.r = Half.FromFloat(col.Rf);
-                p.rgba16f.g = Half.FromFloat(col.Gf);
-                p.rgba16f.b = Half.FromFloat(col.Bf);
-                p.rgba16f.a = Half.FromFloat(col.Af);
-            }
-            else if (pixelFormat == PixelFormat.RGBA32F)
-            {
-                p.rgba32f.r = col.Rf;
-                p.rgba32f.g = col.Gf;
-                p.rgba32f.b = col.Bf;
-                p.rgba32f.a = col.Af;
-            }
+        //    if (pixelFormat == PixelFormat.RGBA8)
+        //    {
+        //        p.rgba8.r = (byte)(col.Rf * byte.MaxValue);
+        //        p.rgba8.g = (byte)(col.Gf * byte.MaxValue);
+        //        p.rgba8.b = (byte)(col.Bf * byte.MaxValue);
+        //        p.rgba8.a = (byte)(col.Af * byte.MaxValue);
+        //    }
+        //    else if (pixelFormat == PixelFormat.RGBA16)
+        //    {
+        //        p.rgba16.r = (ushort)(col.Rf * ushort.MaxValue);
+        //        p.rgba16.g = (ushort)(col.Gf * ushort.MaxValue);
+        //        p.rgba16.b = (ushort)(col.Bf * ushort.MaxValue);
+        //        p.rgba16.a = (ushort)(col.Af * ushort.MaxValue);
+        //    }
+        //    else if (pixelFormat == PixelFormat.RGBA16F)
+        //    {
+        //        p.rgba16f.r = Half.FromFloat(col.Rf);
+        //        p.rgba16f.g = Half.FromFloat(col.Gf);
+        //        p.rgba16f.b = Half.FromFloat(col.Bf);
+        //        p.rgba16f.a = Half.FromFloat(col.Af);
+        //    }
+        //    else if (pixelFormat == PixelFormat.RGBA32F)
+        //    {
+        //        p.rgba32f.r = col.Rf;
+        //        p.rgba32f.g = col.Gf;
+        //        p.rgba32f.b = col.Bf;
+        //        p.rgba32f.a = col.Af;
+        //    }
 
-            return p;
-        }
+        //    return p;
+        //}
 
 
         public T[] GenData<T>(Func<int, int, T, T> func, T rawT)
@@ -155,8 +155,8 @@ namespace LoveTest
             var imgd02 = Image.NewImageData(W, H, imageDataPixelFormat);
             imgd02.MapPixel(MapPixel_02);
 
-            var imgd03 = Image.NewImageData(W, H, imageDataPixelFormat);
-            imgd03.MapPixel(MapPixel_03);
+            //var imgd03 = Image.NewImageData(W, H, imageDataPixelFormat);
+            //imgd03.MapPixel(MapPixel_03);
 
             //var imgd04 = Image.NewImageData(W, H, imageDataPixelFormat);
             //imgd04.SetPixel(GenData(MapPixel_01, Color.White));
@@ -182,7 +182,7 @@ namespace LoveTest
             {
                 Graphics.NewImage(imgd01),
                 Graphics.NewImage(imgd02),
-                Graphics.NewImage(imgd03),
+                // Graphics.NewImage(imgd03),
                 Graphics.NewImage(imgd04),
             };
         }
@@ -265,79 +265,79 @@ namespace LoveTest
                 });
             });
 
-            PrintExecTime("imageData.MapPixel((int x, int y, Pixel p), x, y, w, h ) =>  ", () =>
-            {
-                imageData.MapPixel((int x, int y, Pixel p) =>
-                {
-                    if (format == PixelFormat.RGBA8)
-                    {
-                        p.rgba8.r = 145;
-                        p.rgba8.g = 0;
-                        p.rgba8.b = 255;
-                        p.rgba8.a = 255;
-                    }
-                    else if (format == PixelFormat.RGBA16)
-                    {
-                        p.rgba16.r = 0;
-                        p.rgba16.g = 0;
-                        p.rgba16.b = (ushort)(0.9f * ushort.MaxValue);
-                        p.rgba16.a = (ushort)(0.99f * ushort.MaxValue);
-                    }
-                    else if (format == PixelFormat.RGBA16F)
-                    {
-                        p.rgba16f.r = Half.FromFloat(0.2f);
-                        p.rgba16f.g = Half.FromFloat(1);
-                        p.rgba16f.b = Half.FromFloat(0);
-                        p.rgba16f.a = Half.FromFloat(1);
-                    }
-                    else if (format == PixelFormat.RGBA32F)
-                    {
-                        p.rgba32f.r = 0.9f;
-                        p.rgba32f.g = 0.3f;
-                        p.rgba32f.b = 0.6f;
-                        p.rgba32f.a = 0.9f;
-                    }
+            //PrintExecTime("imageData.MapPixel((int x, int y, Pixel p), x, y, w, h ) =>  ", () =>
+            //{
+            //    imageData.MapPixel((int x, int y, Pixel p) =>
+            //    {
+            //        if (format == PixelFormat.RGBA8)
+            //        {
+            //            p.rgba8.r = 145;
+            //            p.rgba8.g = 0;
+            //            p.rgba8.b = 255;
+            //            p.rgba8.a = 255;
+            //        }
+            //        else if (format == PixelFormat.RGBA16)
+            //        {
+            //            p.rgba16.r = 0;
+            //            p.rgba16.g = 0;
+            //            p.rgba16.b = (ushort)(0.9f * ushort.MaxValue);
+            //            p.rgba16.a = (ushort)(0.99f * ushort.MaxValue);
+            //        }
+            //        else if (format == PixelFormat.RGBA16F)
+            //        {
+            //            p.rgba16f.r = Half.FromFloat(0.2f);
+            //            p.rgba16f.g = Half.FromFloat(1);
+            //            p.rgba16f.b = Half.FromFloat(0);
+            //            p.rgba16f.a = Half.FromFloat(1);
+            //        }
+            //        else if (format == PixelFormat.RGBA32F)
+            //        {
+            //            p.rgba32f.r = 0.9f;
+            //            p.rgba32f.g = 0.3f;
+            //            p.rgba32f.b = 0.6f;
+            //            p.rgba32f.a = 0.9f;
+            //        }
 
-                    return p;
-                }, 0, 0, W, H);
-            });
+            //        return p;
+            //    }, 0, 0, W, H);
+            //});
 
-            PrintExecTime("imageData.MapPixel((int x, int y, Pixel p) =>  ", () =>
-            {
-                imageData.MapPixel((int x, int y, Pixel p) =>
-                {
-                    if (format == PixelFormat.RGBA8)
-                    {
-                        p.rgba8.r = 145;
-                        p.rgba8.g = 0;
-                        p.rgba8.b = 255;
-                        p.rgba8.a = 255;
-                    }
-                    else if (format == PixelFormat.RGBA16)
-                    {
-                        p.rgba16.r = 0;
-                        p.rgba16.g = 0;
-                        p.rgba16.b = (ushort)(0.9f * ushort.MaxValue);
-                        p.rgba16.a = (ushort)(0.99f * ushort.MaxValue);
-                    }
-                    else if (format == PixelFormat.RGBA16F)
-                    {
-                        p.rgba16f.r = Half.FromFloat(0.2f);
-                        p.rgba16f.g = Half.FromFloat(1);
-                        p.rgba16f.b = Half.FromFloat(0);
-                        p.rgba16f.a = Half.FromFloat(1);
-                    }
-                    else if (format == PixelFormat.RGBA32F)
-                    {
-                        p.rgba32f.r = 0.9f;
-                        p.rgba32f.g = 0.3f;
-                        p.rgba32f.b = 0.6f;
-                        p.rgba32f.a = 0.9f;
-                    }
+            //PrintExecTime("imageData.MapPixel((int x, int y, Pixel p) =>  ", () =>
+            //{
+            //    imageData.MapPixel((int x, int y, Pixel p) =>
+            //    {
+            //        if (format == PixelFormat.RGBA8)
+            //        {
+            //            p.rgba8.r = 145;
+            //            p.rgba8.g = 0;
+            //            p.rgba8.b = 255;
+            //            p.rgba8.a = 255;
+            //        }
+            //        else if (format == PixelFormat.RGBA16)
+            //        {
+            //            p.rgba16.r = 0;
+            //            p.rgba16.g = 0;
+            //            p.rgba16.b = (ushort)(0.9f * ushort.MaxValue);
+            //            p.rgba16.a = (ushort)(0.99f * ushort.MaxValue);
+            //        }
+            //        else if (format == PixelFormat.RGBA16F)
+            //        {
+            //            p.rgba16f.r = Half.FromFloat(0.2f);
+            //            p.rgba16f.g = Half.FromFloat(1);
+            //            p.rgba16f.b = Half.FromFloat(0);
+            //            p.rgba16f.a = Half.FromFloat(1);
+            //        }
+            //        else if (format == PixelFormat.RGBA32F)
+            //        {
+            //            p.rgba32f.r = 0.9f;
+            //            p.rgba32f.g = 0.3f;
+            //            p.rgba32f.b = 0.6f;
+            //            p.rgba32f.a = 0.9f;
+            //        }
 
-                    return p;
-                });
-            });
+            //        return p;
+            //    });
+            //});
 
             PrintExecTime("Float[] imageData.GetPixelsFloat() =>  ", () =>
             {
@@ -362,53 +362,53 @@ namespace LoveTest
                 imageData.SetPixelsFloat(pixelBuffer);
             });
 
-            PrintExecTime("Pixel[] imageData.GetPixels() =>  ", () =>
-            {
-                var p = imageData.GetPixelsRaw();
-            });
+            //PrintExecTime("Pixel[] imageData.GetPixels() =>  ", () =>
+            //{
+            //    var p = imageData.GetPixelsRaw();
+            //});
 
-            PrintExecTime("imageData.SetPixels( Pixel[] p) =>  ", () =>
-            {
-                Pixel[] pixelBuffer = new Pixel[w * h];
-                for (int x = 0; x < w; x++)
-                {
-                    for (int y = 0; y < h; y++)
-                    {
-                        Pixel p = new Pixel();
-                        if (format == PixelFormat.RGBA8)
-                        {
-                            p.rgba8.r = 145;
-                            p.rgba8.g = 0;
-                            p.rgba8.b = 255;
-                            p.rgba8.a = 255;
-                        }
-                        else if (format == PixelFormat.RGBA16)
-                        {
-                            p.rgba16.r = 0;
-                            p.rgba16.g = 0;
-                            p.rgba16.b = (ushort)(0.9f * ushort.MaxValue);
-                            p.rgba16.a = (ushort)(0.99f * ushort.MaxValue);
-                        }
-                        else if (format == PixelFormat.RGBA16F)
-                        {
-                            p.rgba16f.r = Half.FromFloat(0.2f);
-                            p.rgba16f.g = Half.FromFloat(1);
-                            p.rgba16f.b = Half.FromFloat(0);
-                            p.rgba16f.a = Half.FromFloat(1);
-                        }
-                        else if (format == PixelFormat.RGBA32F)
-                        {
-                            p.rgba32f.r = 0.9f;
-                            p.rgba32f.g = 0.3f;
-                            p.rgba32f.b = 0.6f;
-                            p.rgba32f.a = 0.9f;
-                        }
+            //PrintExecTime("imageData.SetPixels( Pixel[] p) =>  ", () =>
+            //{
+            //    Pixel[] pixelBuffer = new Pixel[w * h];
+            //    for (int x = 0; x < w; x++)
+            //    {
+            //        for (int y = 0; y < h; y++)
+            //        {
+            //            Pixel p = new Pixel();
+            //            if (format == PixelFormat.RGBA8)
+            //            {
+            //                p.rgba8.r = 145;
+            //                p.rgba8.g = 0;
+            //                p.rgba8.b = 255;
+            //                p.rgba8.a = 255;
+            //            }
+            //            else if (format == PixelFormat.RGBA16)
+            //            {
+            //                p.rgba16.r = 0;
+            //                p.rgba16.g = 0;
+            //                p.rgba16.b = (ushort)(0.9f * ushort.MaxValue);
+            //                p.rgba16.a = (ushort)(0.99f * ushort.MaxValue);
+            //            }
+            //            else if (format == PixelFormat.RGBA16F)
+            //            {
+            //                p.rgba16f.r = Half.FromFloat(0.2f);
+            //                p.rgba16f.g = Half.FromFloat(1);
+            //                p.rgba16f.b = Half.FromFloat(0);
+            //                p.rgba16f.a = Half.FromFloat(1);
+            //            }
+            //            else if (format == PixelFormat.RGBA32F)
+            //            {
+            //                p.rgba32f.r = 0.9f;
+            //                p.rgba32f.g = 0.3f;
+            //                p.rgba32f.b = 0.6f;
+            //                p.rgba32f.a = 0.9f;
+            //            }
 
-                        pixelBuffer[y * w + x] = p;
-                    }
-                }
-                imageData.SetPixelsRaw(pixelBuffer);
-            });
+            //            pixelBuffer[y * w + x] = p;
+            //        }
+            //    }
+            //    imageData.SetPixelsRaw(pixelBuffer);
+            //});
 
             image = Graphics.NewImage(imageData);
         }

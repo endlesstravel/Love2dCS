@@ -697,15 +697,14 @@ namespace Love.Misc
             static FilmGrain()
             {
                 var imgData = Image.NewImageData(256, 256, ImageDataPixelFormat.RGBA8);
-                imgData.MapPixel((int x, int y, Pixel p) =>
+                imgData.MapPixel((int x, int y, Vector4 v) =>
                 {
-                    var pixel = new Pixel();
-                    var v = (byte)(Mathf.Random() * 255);
-                    pixel.rgba8.r = v;
-                    pixel.rgba8.g = v;
-                    pixel.rgba8.b = v;
-                    pixel.rgba8.a = v;
-                    return pixel;
+                    var rf = Mathf.Random();
+                    v.r = rf;
+                    v.g = rf;
+                    v.b = rf;
+                    v.a = rf;
+                    return v;
                 });
 
                 nosiseTex = Graphics.NewImage(imgData);
@@ -1101,14 +1100,13 @@ namespace Love.Misc
             static Sketch()
             {
                 var imgData = Image.NewImageData(256, 256, ImageDataPixelFormat.RGBA8);
-                imgData.MapPixel((x, y, input) =>
+                imgData.MapPixel((int x, int y, Vector4 v) =>
                 {
-                    var p = new Pixel();
-                    p.rgba8.r = (byte)(Mathf.Random() * 255);
-                    p.rgba8.g = (byte)(Mathf.Random() * 255);
-                    p.rgba8.b = 0;
-                    p.rgba8.a = 0;
-                    return p;
+                    v.r = Mathf.Random();
+                    v.g = Mathf.Random();
+                    v.b = 0;
+                    v.a = 0;
+                    return v;
                 });
                 NoiseTex = Graphics.NewImage(imgData);
                 NoiseTex.SetWrap(WrapMode.Repeat, WrapMode.Repeat);
