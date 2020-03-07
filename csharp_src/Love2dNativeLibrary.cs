@@ -381,7 +381,7 @@ namespace Love
 
             // 2. load the native library
             {
-                var libLove2d_so_filename = $"usr/lib/liblove-11.2.so";
+                var libLove2d_so_filename = $"usr/lib/liblove-11.3.so";
                 var linuxLibTableArray = new string[]
                 {
                     "libstdc++/libstdc++.so.6",

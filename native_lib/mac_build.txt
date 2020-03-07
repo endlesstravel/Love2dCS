@@ -1,7 +1,10 @@
 ## framework 添加注意事项
 ### 必须在 macosx 中解压缩(love-osx-frameworks-0.10.zip)，在windows中解压缩会有问题
 
-cd /Users/yx/Documents/work_space/love-11.2/platform/xcode/
+cd /Users/yx/App/love/platform/xcode/
+
+rm wrap_love_dll.cpp
+rm wrap_love_dll.h
 
 curl https://gitee.com/endlesstravel/love2dCS/raw/master/c_api_src/wrap_love_dll.cpp > wrap_love_dll.cpp
 curl https://gitee.com/endlesstravel/love2dCS/raw/master/c_api_src/wrap_love_dll.h > wrap_love_dll.h
@@ -13,8 +16,8 @@ xcodebuild -project love.xcodeproj -configuration Release -scheme love-macosx
 #--------- 减少体积
 cd ./DerivedData/Build/Products/Release/love.app/Contents/Frameworks/love.framework/Versions/A/
 strip -s love
-cd /Users/yx/Documents/work_space/love-11.2/platform/xcode
+cd /Users/yx/App/love/platform/xcode
 
 #--------- 拷贝
-/Users/yx/Documents/work_space/love-11.2/platform/xcode/DerivedData/Build/Products/Release/
+/Users/yx/App/love/platform/xcode/DerivedData/Build/Products/Release/
 D:\Love2DCS_Dev\mac_os_build

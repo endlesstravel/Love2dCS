@@ -4,7 +4,7 @@
 rm native_lib_win_x86.zip
 mkdir workspace-x86
 cd workspace-x86
-cp /d/Love2DCS_Dev/LOVE2D_CS_DLL/build/love/Release/*.dll        ./
+cp /d/Love2DCS_Dev/LOVE2D_CS_DLL_git/megasource/build/love/Release/*.dll        ./
 #mv  love.dll    liblove-11.2
 zip -r native_lib_win_x86.zip ./*
 mv native_lib_win_x86.zip ../
@@ -16,7 +16,7 @@ rm -rf workspace-x86
 rm native_lib_win_x64.zip
 mkdir workspace-x64
 cd workspace-x64
-cp /d/Love2DCS_Dev/LOVE2D_CS_DLL_64/build/love/Release/*.dll        ./
+cp /d/Love2DCS_Dev/LOVE2D_CS_DLL_git_64/megasource/build/love/Release/*.dll        ./
 #mv  love.dll    liblove-11.2
 zip -r native_lib_win_x64.zip ./*
 mv native_lib_win_x64.zip ../
