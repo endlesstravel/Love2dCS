@@ -1,6 +1,23 @@
 ## framework 添加注意事项
 ### 必须在 macosx 中解压缩(love-osx-frameworks-0.10.zip)，在windows中解压缩会有问题
 
+## 黑苹果 更改键盘 Karabiner
+###  1.Karabiner官网下载地址
+###  Karabiner
+###  
+###  2.键盘映射，
+###  windows -> command
+###  alt -> option
+######   left_command --->  left_option
+######   left_option --->  left_command
+
+## 工程设置
+### 1. 关闭强化运行时 ：  Hardened Runtime    https://developer.apple.com/documentation/security/hardened_runtime
+### 2. 删除签名：Go to Build Setting --> Code Signing Identity --> Select Don't Code Sign. 
+###    https://stackoverflow.com/questions/7373199/code-signing-in-xcode
+
+## 修改输出目录 / 修改 Xcode 全局设置
+## 在 Preferences -> Location -> DerivedData 选择 Custom，然后按 Advanced 按钮。Build Location 将 Custom 选为 Relative to Workspac
 cd /Users/yx/App/love/platform/xcode/
 
 rm wrap_love_dll.cpp
@@ -14,7 +31,8 @@ xcodebuild -project love.xcodeproj -configuration Release -scheme love-macosx
 
 
 #--------- 减少体积
-cd ./DerivedData/Build/Products/Release/love.app/Contents/Frameworks/love.framework/Versions/A/
+### cd ./DerivedData/Build/Products/Release/love.app/Contents/Frameworks/love.framework/Versions/A/
+cd ./DerivedData/love/Build/Products/Release/love.app/Contents/Frameworks/love.framework/Versions/A/
 strip -s love
 cd /Users/yx/App/love/platform/xcode
 
