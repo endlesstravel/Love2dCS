@@ -18,18 +18,21 @@ namespace Love.Misc
             /// <summary>
             /// The position of the vertex .
             /// </summary>
-            [Name("VertexPosition")] public float x, y;
+            [MeshAttributeName("VertexPosition")] public float x, y;
 
             /// <summary>
             /// The u and v texture coordinate of the vertex. Texture coordinates are normally in the range of [0, 1], but can be greater or less (see WrapMode.)
             /// </summary>
-            [Name("VertexTexCoord")] public float u, v;
+            [MeshAttributeName("VertexTexCoord")] public float u, v;
 
             /// <summary>
             /// The vertex color.
             /// </summary>
-            [Name("VertexColor")] public byte r, g, b, a;
+            [MeshAttributeName("VertexColor")] public byte r, g, b, a;
 
+            public Vertex()
+            {
+            }
 
             /// Mesh vertex.
             /// </summary>
@@ -53,25 +56,10 @@ namespace Love.Misc
             }
         }
 
-
-        static Misc.MeshUtils.Info<Vertex> vertexInfo = Parse<Vertex>();
-
-        public static Vertex GetVertexFromData(byte[] data)
-        {
-            var vobj = new Vertex();
-            vertexInfo.GetObject(ref vobj, data, 0);
-            return vobj;
-        }
-
-        public static byte[] GetVertexData(IEnumerable<Vertex> list)
-        {
-            return vertexInfo.GetData(list.ToArray());
-        }
-
-        public static List<MeshFormatDescribe.Entry> GetVertexFormat()
-        {
-            return vertexInfo.formatList;
-        }
+        /// <summary>
+        /// MeshFormatDescribe info of Vertex
+        /// </summary>
+        public readonly static MeshFormatDescribe<Vertex> StandardVertex = MeshFormatDescribe.New<Vertex>();
 
         ///// <summary>
         ///// Creates a new Mesh.
@@ -298,17 +286,6 @@ namespace Love.Misc
             return 0;
         }
 
-        [AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
-        public class NameAttribute: System.Attribute
-        {
-            public readonly string name;
-
-            public NameAttribute(string name)
-            {
-                this.name = name;
-            }
-        }
-
         public static bool TryConvertToType(System.Type type, out VertexDataType dataType)
         {
             if (type == typeof(byte))
@@ -373,9 +350,9 @@ namespace Love.Misc
             {
                 foreach(var attr in fi.GetCustomAttributes(true))
                 {
-                    if (attr is NameAttribute && TryConvertToType(fi.FieldType, out var dataType))
+                    if (attr is MeshAttributeNameAttribute && TryConvertToType(fi.FieldType, out var dataType))
                     {
-                        var vfname = ((NameAttribute)attr).name;
+                        var vfname = ((MeshAttributeNameAttribute)attr).name;
                         var format = list.Find(item => item.name == vfname);
                         if (format == null)
                         {

@@ -160,7 +160,8 @@ namespace LovePhysicsTestBed
                         new Vertex(pp[3].X, pp[3].Y),
                     };
 
-                    var m = Graphics.NewMesh(Love.Misc.MeshUtils.GetVertexFormat(), Love.Misc.MeshUtils.GetVertexData(rawData), MeshDrawMode.Fan, SpriteBatchUsage.Dynamic);
+                    var sinfo = Love.Misc.MeshUtils.StandardVertex;
+                    var m = Graphics.NewMesh(sinfo, sinfo.TransToByte(rawData), MeshDrawMode.Fan, SpriteBatchUsage.Dynamic);
 
                     //Console.WriteLine("------------------------");
                     //Console.WriteLine(Love.Misc.MeshUtils.GetVertexFromData(m.GetVertex(0)));

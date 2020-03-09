@@ -1098,7 +1098,7 @@ namespace Love
             Love2dDll.wrap_love_dll_type_Mesh_setVertex(p, index, data, data.Length);
         }
 
-        public List<MeshFormatDescribe.Entry> GetVertexFormat(string name)
+        public MeshFormatDescribe GetVertexFormat()
         {
             Love2dDll.wrap_love_dll_type_Mesh_getVertexFormat(p, out IntPtr wss, out IntPtr typeListPtr, out IntPtr comCountListPtr, out int len);
             string[] strList = DllTool.WSSToStringListAndRelease(wss);
@@ -1111,7 +1111,7 @@ namespace Love
             {
                 list.Add(new MeshFormatDescribe.Entry(strList[i], (VertexDataType)typeList[i], comCountList[i]));
             }
-            return list;
+            return MeshFormatDescribe.New(list);
         }
 
         public bool IsAttributeEnabled(string name)

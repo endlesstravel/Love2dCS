@@ -294,6 +294,26 @@ namespace Love
         public double? refreshrate;
     }
 
+
+    /// <summary>
+    /// If a Mesh wasn't created with a custom vertex format, it will have 3 vertex attributes named VertexPosition, VertexTexCoord, and VertexColor.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
+    public class MeshAttributeNameAttribute : System.Attribute
+    {
+        /// <summary>
+        /// Custom named attributes can be accessed in a vertex shader by declaring them as attribute vec4 MyCustomAttributeName; 
+        /// at the top-level of the vertex shader code. The name must match what was specified in the Mesh's vertex format 
+        /// and in the name argument of Mesh:attachAttribute.
+        /// </summary>
+        public readonly string name;
+
+        public MeshAttributeNameAttribute(string name)
+        {
+            this.name = name;
+        }
+    }
+
     /// <summary>
     /// describe of custom mesh format
     /// </summary>
@@ -326,23 +346,49 @@ namespace Love
             entry = new List<Entry>(formatList);
         }
 
+        /// <summary>
+        /// If a Mesh wasn't created with a custom vertex format, it will have 3 vertex attributes named VertexPosition, VertexTexCoord, and VertexColor.
+        /// <para>Custom named attributes can be accessed in a vertex shader by declaring them as attribute vec4 MyCustomAttributeName; at the top-level of the vertex shader code. The name must match what was specified in the Mesh's vertex format and in the name argument of Mesh:attachAttribute.</para>
+        /// </summary>
+        public static MeshFormatDescribe New(IEnumerable<Entry> entries)
+        {
+            return new MeshFormatDescribe(entries);
+        }
+
+        /// <summary>
+        /// If a Mesh wasn't created with a custom vertex format, it will have 3 vertex attributes named VertexPosition, VertexTexCoord, and VertexColor.
+        /// <para>Custom named attributes can be accessed in a vertex shader by declaring them as attribute vec4 MyCustomAttributeName; at the top-level of the vertex shader code. The name must match what was specified in the Mesh's vertex format and in the name argument of Mesh:attachAttribute.</para>
+        /// </summary>
         public static MeshFormatDescribe New(params Entry[] entries)
         {
             return new MeshFormatDescribe(entries);
         }
 
-        public static MeshFormatDescribe<T> New<T>(params Entry[] entries) where T : new()
+        /// <summary>
+        /// If a Mesh wasn't created with a custom vertex format, it will have 3 vertex attributes named VertexPosition, VertexTexCoord, and VertexColor.
+        /// <para>use MeshAttributeNameAttribute auto parse MeshFormatDescribe on specified type</para>
+        /// </summary>
+        public static MeshFormatDescribe<T> New<T>() where T : new()
         {
             return new MeshFormatDescribe<T>();
         }
     }
 
-
     /// <summary>
-    /// describe of custom mesh format
+    /// describe of custom mesh format, require MeshAttributeNameAttribute
+    /// <para>If a Mesh wasn't created with a custom vertex format, it will have 3 vertex attributes named VertexPosition, VertexTexCoord, and VertexColor.</para>
     /// </summary>
     public class MeshFormatDescribe<T> : MeshFormatDescribe where T: new()
     {
+        /// <summary>
+        /// If a Mesh wasn't created with a custom vertex format, it will have 3 vertex attributes named VertexPosition, VertexTexCoord, and VertexColor.
+        /// <para>use MeshAttributeNameAttribute auto parse MeshFormatDescribe on specified type</para>
+        /// </summary>
+        public static MeshFormatDescribe<T> New()
+        {
+            return new MeshFormatDescribe<T>();
+        }
+
         readonly Misc.MeshUtils.Info<T> vertexInfo;
         internal MeshFormatDescribe(): base(new Entry[0])
         {
@@ -371,11 +417,17 @@ namespace Love
         /// <summary>
         /// trans byte array  to  object
         /// </summary>
-        public T TransToObject(byte[] data)
+        public T[] TransToObject(byte[] data)
         {
-            var obj = new T();
-            vertexInfo.GetObject(ref obj, data, 0);
-            return obj;
+            return TransToObject(data, 0);
+        }
+
+        /// <summary>
+        /// trans byte array  to  object
+        /// </summary>
+        public T[] TransToObject(byte[] data, int offset)
+        {
+            return TransToObject(data, offset, (data.Length - offset) / ByteCount);
         }
 
         /// <summary>
@@ -402,14 +454,6 @@ namespace Love
             }
 
             return targetList;
-        }
-
-        /// <summary>
-        /// trans byte array  to  object
-        /// </summary>
-        public T[] TransToObject(byte[] data, int offset)
-        {
-            return TransToObject(data, );
         }
     }
 

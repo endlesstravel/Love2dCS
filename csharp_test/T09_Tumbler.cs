@@ -62,9 +62,10 @@ namespace LovePhysicsTestBed
                 new Vertex(pp[2].X, pp[2].Y),
                 new Vertex(pp[3].X, pp[3].Y),
             };
+            var sinfo = Love.Misc.MeshUtils.StandardVertex;
             listToDraw.Add(new KeyValuePair<Body, Mesh>(body, Graphics.NewMesh(
-                Love.Misc.MeshUtils.GetVertexFormat(),
-                Love.Misc.MeshUtils.GetVertexData(rawData),
+                sinfo,
+                sinfo.TransToByte(rawData),
                 MeshDrawMode.Fan, SpriteBatchUsage.Static)));
             return rr;
         }
