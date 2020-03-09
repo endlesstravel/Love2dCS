@@ -294,25 +294,125 @@ namespace Love
         public double? refreshrate;
     }
 
-    public class MeshAttribFormat
+    /// <summary>
+    /// describe of custom mesh format
+    /// </summary>
+    public class MeshFormatDescribe
     {
-        public readonly string name;
-        public readonly VertexDataType type;
-        public readonly int componentCount;
-
-        public MeshAttribFormat(string name, VertexDataType type, int componentCount)
+        public class Entry
         {
-            if (!(0 <= componentCount && componentCount <= 4))
+            public readonly string name;
+            public readonly VertexDataType type;
+            public readonly int componentCount;
+
+            public Entry(string name, VertexDataType type, int componentCount)
             {
-                throw new ArgumentOutOfRangeException("componentCount should <= 4");
+                if (!(0 <= componentCount && componentCount <= 4))
+                {
+                    throw new ArgumentOutOfRangeException("componentCount should <= 4");
+                }
+
+                this.name = name;
+                this.type = type;
+                this.componentCount = componentCount;
+
             }
+        }
 
-            this.name = name;
-            this.type = type;
-            this.componentCount = componentCount;
+        readonly internal List<Entry> entry;
 
+        internal MeshFormatDescribe(IEnumerable<Entry> formatList)
+        {
+            entry = new List<Entry>(formatList);
+        }
+
+        public static MeshFormatDescribe New(params Entry[] entries)
+        {
+            return new MeshFormatDescribe(entries);
+        }
+
+        public static MeshFormatDescribe<T> New<T>(params Entry[] entries) where T : new()
+        {
+            return new MeshFormatDescribe<T>();
         }
     }
+
+
+    /// <summary>
+    /// describe of custom mesh format
+    /// </summary>
+    public class MeshFormatDescribe<T> : MeshFormatDescribe where T: new()
+    {
+        readonly Misc.MeshUtils.Info<T> vertexInfo;
+        internal MeshFormatDescribe(): base(new Entry[0])
+        {
+            vertexInfo = Love.Misc.MeshUtils.Parse<T>();
+            entry.Clear();
+            entry.AddRange(vertexInfo.formatList);
+        }
+
+        /// <summary>
+        /// readonly entry array
+        /// </summary>
+        public Entry[] Entries => entry.ToArray();
+
+        /// <summary>
+        /// each btyes in object
+        /// </summary>
+        public int ByteCount => vertexInfo.GetBytePreVertex();
+
+        /// <summary>
+        /// trans object array to bytes
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public byte[] TransToByte(params T[] data) => vertexInfo.GetData(data);
+
+        /// <summary>
+        /// trans byte array  to  object
+        /// </summary>
+        public T TransToObject(byte[] data)
+        {
+            var obj = new T();
+            vertexInfo.GetObject(ref obj, data, 0);
+            return obj;
+        }
+
+        /// <summary>
+        /// trans byte array  to  object
+        /// </summary>
+        public T[] TransToObject(byte[] data, int offset, int objectCount)
+        {
+            if (offset < 0)
+                throw new Exception("offset less then 0 !");
+
+            if (offset >= data.Length)
+                throw new Exception("offset  outof data of index !");
+
+            var bc = ByteCount;
+            if (bc * objectCount < data.Length - offset)
+                throw new Exception("byte is not enough !");
+
+            var targetList = new T[objectCount];
+            var idx = offset;
+            for (int i = 0; i < objectCount; i++)
+            {
+                vertexInfo.GetObject(ref targetList[i], data, offset);
+                offset += bc;
+            }
+
+            return targetList;
+        }
+
+        /// <summary>
+        /// trans byte array  to  object
+        /// </summary>
+        public T[] TransToObject(byte[] data, int offset)
+        {
+            return TransToObject(data, );
+        }
+    }
+
 
     public class RenderTarget
     {

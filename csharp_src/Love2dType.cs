@@ -1098,7 +1098,7 @@ namespace Love
             Love2dDll.wrap_love_dll_type_Mesh_setVertex(p, index, data, data.Length);
         }
 
-        public List<MeshAttribFormat> GetVertexFormat(string name)
+        public List<MeshFormatDescribe.Entry> GetVertexFormat(string name)
         {
             Love2dDll.wrap_love_dll_type_Mesh_getVertexFormat(p, out IntPtr wss, out IntPtr typeListPtr, out IntPtr comCountListPtr, out int len);
             string[] strList = DllTool.WSSToStringListAndRelease(wss);
@@ -1106,10 +1106,10 @@ namespace Love
             int[] comCountList = DllTool.ReadInt32sAndRelease(comCountListPtr, len);
 
 
-            List<MeshAttribFormat> list = new List<MeshAttribFormat>();
+            List<MeshFormatDescribe.Entry> list = new List<MeshFormatDescribe.Entry>();
             for (int i = 0; i < len; i++)
             {
-                list.Add(new MeshAttribFormat(strList[i], (VertexDataType)typeList[i], comCountList[i]));
+                list.Add(new MeshFormatDescribe.Entry(strList[i], (VertexDataType)typeList[i], comCountList[i]));
             }
             return list;
         }

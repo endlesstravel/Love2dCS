@@ -58,7 +58,9 @@ namespace Love.Misc
 
         public static Vertex GetVertexFromData(byte[] data)
         {
-            return vertexInfo.GetObject(new Vertex(), data);
+            var vobj = new Vertex();
+            vertexInfo.GetObject(ref vobj, data, 0);
+            return vobj;
         }
 
         public static byte[] GetVertexData(IEnumerable<Vertex> list)
@@ -66,7 +68,7 @@ namespace Love.Misc
             return vertexInfo.GetData(list.ToArray());
         }
 
-        public static List<MeshAttribFormat> GetVertexFormat()
+        public static List<MeshFormatDescribe.Entry> GetVertexFormat()
         {
             return vertexInfo.formatList;
         }
@@ -117,10 +119,10 @@ namespace Love.Misc
         public class Info<T>
         {
             readonly System.Type type;
-            public readonly List<MeshAttribFormat> formatList;
+            public readonly List<MeshFormatDescribe.Entry> formatList;
             readonly List<Tuple<FieldInfo, VertexDataType>> orderList;
 
-            public Info(Type type, List<MeshAttribFormat> formatList, List<Tuple<FieldInfo, VertexDataType>> orderList)
+            public Info(Type type, List<MeshFormatDescribe.Entry> formatList, List<Tuple<FieldInfo, VertexDataType>> orderList)
             {
                 this.type = type;
                 this.formatList = formatList;
@@ -137,15 +139,19 @@ namespace Love.Misc
                 return sum;
             }
 
-            public T GetObject(T target, byte[] data)
+            public void GetObject(ref T target, byte[] data, int offset)
             {
-                if (data.Length < GetBytePreVertex())
-                {
+                if (offset < 0)
+                    throw new Exception("offset less then 0 !");
+
+                if (offset >= data.Length)
+                    throw new Exception("offset  outof data of index !");
+
+                if (data.Length - offset < GetBytePreVertex())
                     throw new Exception("byte is not enough !");
-                }
 
                 UnitStruct unitStruct = new UnitStruct();
-                int byteInUnit = 0;
+                int byteInUnit = offset;
                 foreach (var item in orderList)
                 {
                     var fi = item.Item1;
@@ -206,7 +212,6 @@ namespace Love.Misc
 
                     byteInUnit += VertexDataTypeToByteCount(item.Item2);
                 }
-                return target;
             }
 
             public byte[] GetData(T[] objList)
@@ -396,7 +401,7 @@ namespace Love.Misc
             }
 
             return new Info<T>(typeof(T),
-                list.Select(item => new MeshAttribFormat(item.name, item.type, item.componentCount)).ToList(),
+                list.Select(item => new MeshFormatDescribe.Entry(item.name, item.type, item.componentCount)).ToList(),
                 orderList.Select(item => Tuple.Create(item.Item1, item.Item2.type)).ToList()
                 );
         }

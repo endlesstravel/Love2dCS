@@ -891,9 +891,10 @@ namespace Love
             Discard(dc, discardStencil);
         }
 
-        public static Mesh NewMesh(IEnumerable<MeshAttribFormat> formatList, byte[] data, 
+        public static Mesh NewMesh(MeshFormatDescribe desc, byte[] data, 
             MeshDrawMode drawMode = MeshDrawMode.Fan, SpriteBatchUsage usage = SpriteBatchUsage.Dynamic)
         {
+            IEnumerable<MeshFormatDescribe.Entry> formatList = desc.entry;
             string[] strList = formatList.Select(item => item.name).ToArray();
             int[] typeList = formatList.Select(item => (int)item.type).ToArray();
             int[] comCountList = formatList.Select(item => item.componentCount).ToArray();
@@ -906,8 +907,9 @@ namespace Love
             });
             return LoveObject.NewObject<Mesh>(meshPtr);
         }
-        public static Mesh NewMesh(IEnumerable<MeshAttribFormat> formatList, int count, MeshDrawMode drawMode = MeshDrawMode.Fan, SpriteBatchUsage usage = SpriteBatchUsage.Dynamic)
+        public static Mesh NewMesh(MeshFormatDescribe desc, int count, MeshDrawMode drawMode = MeshDrawMode.Fan, SpriteBatchUsage usage = SpriteBatchUsage.Dynamic)
         {
+            IEnumerable<MeshFormatDescribe.Entry> formatList = desc.entry;
             string[] strList = formatList.Select(item => item.name).ToArray();
             int[] typeList = formatList.Select(item => (int)item.type).ToArray();
             int[] comCountList = formatList.Select(item => item.componentCount).ToArray();
