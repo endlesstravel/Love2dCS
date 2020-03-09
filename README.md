@@ -3,7 +3,7 @@
 
 Love2dCS - C# Wrapper for LÖVE
 ---
-[中文版](README-zh.md) |
+[中文版](README-zh.md) | [gitee-国内访问速度较快](https://gitee.com/endlesstravel/love2dCS)
 
 Love2dCS is a C#/F# Wrapper for [LÖVE game engine](https://love2d.org/), it can be used your C#/F# based Application.
 
