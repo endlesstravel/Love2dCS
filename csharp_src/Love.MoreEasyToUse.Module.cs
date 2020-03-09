@@ -891,6 +891,11 @@ namespace Love
             Discard(dc, discardStencil);
         }
 
+        /// <summary>
+        /// Each vertex attribute component is initialized to 0 if its data type is "float", or 1 if its data type is "byte". Mesh:setVertices or Mesh:setVertex and Mesh:setDrawRange can be used to specify vertex information once the Mesh is created.
+        /// <para> If the data type of an attribute is "float", components can be in the range 1 to 4, if the data type is "byte" it must be 4. </para>
+        /// <para> If a custom vertex attribute uses the name "VertexPosition", "VertexTexCoord", or "VertexColor", then the vertex data for that vertex attribute will be used for the standard vertex positions, texture coordinates, or vertex colors respectively, when drawing the Mesh.Otherwise a Vertex Shader is required in order to make use of the vertex attribute when the Mesh is drawn. </para>
+        /// </summary>
         public static Mesh NewMesh(MeshFormatDescribe desc, byte[] data, 
             MeshDrawMode drawMode = MeshDrawMode.Fan, SpriteBatchUsage usage = SpriteBatchUsage.Dynamic)
         {
@@ -907,6 +912,12 @@ namespace Love
             });
             return LoveObject.NewObject<Mesh>(meshPtr);
         }
+
+        /// <summary>
+        /// Each vertex attribute component is initialized to 0 if its data type is "float", or 1 if its data type is "byte". Mesh:setVertices or Mesh:setVertex and Mesh:setDrawRange can be used to specify vertex information once the Mesh is created.
+        /// <para> If the data type of an attribute is "float", components can be in the range 1 to 4, if the data type is "byte" it must be 4. </para>
+        /// <para> If a custom vertex attribute uses the name "VertexPosition", "VertexTexCoord", or "VertexColor", then the vertex data for that vertex attribute will be used for the standard vertex positions, texture coordinates, or vertex colors respectively, when drawing the Mesh.Otherwise a Vertex Shader is required in order to make use of the vertex attribute when the Mesh is drawn. </para>
+        /// </summary>
         public static Mesh NewMesh(MeshFormatDescribe desc, int count, MeshDrawMode drawMode = MeshDrawMode.Fan, SpriteBatchUsage usage = SpriteBatchUsage.Dynamic)
         {
             IEnumerable<MeshFormatDescribe.Entry> formatList = desc.entry;

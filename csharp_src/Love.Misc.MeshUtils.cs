@@ -59,7 +59,7 @@ namespace Love.Misc
         /// <summary>
         /// MeshFormatDescribe info of Vertex
         /// </summary>
-        public readonly static MeshFormatDescribe<Vertex> StandardVertex = MeshFormatDescribe.New<Vertex>();
+        public readonly static MeshFormatDescribe<Vertex> StandardVertexDescribe = MeshFormatDescribe.New<Vertex>();
 
         ///// <summary>
         ///// Creates a new Mesh.

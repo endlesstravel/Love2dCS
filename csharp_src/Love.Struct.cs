@@ -296,7 +296,7 @@ namespace Love
 
 
     /// <summary>
-    /// If a Mesh wasn't created with a custom vertex format, it will have 3 vertex attributes named VertexPosition, VertexTexCoord, and VertexColor.
+    /// A Mesh must have a "VertexPosition" attribute in order to be drawn, but it can be attached from a different Mesh via Mesh:attachAttribute. checkout: https://love2d.org/wiki/love.graphics.newMesh
     /// </summary>
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
     public class MeshAttributeNameAttribute : System.Attribute
@@ -315,7 +315,10 @@ namespace Love
     }
 
     /// <summary>
-    /// describe of custom mesh format
+    /// <para>create it by MeshFormatDescribe.New / MeshFormatDescribe.New&lt;T&gt; / MeshFormatDescribe&lt;T&gt;.New </para>
+    /// <para>Each vertex attribute component is initialized to 0 if its data type is "float", or 1 if its data type is "byte". Mesh:setVertices or Mesh:setVertex and Mesh:setDrawRange can be used to specify vertex information once the Mesh is created.</para>
+    /// <para> If the data type of an attribute is "float", components can be in the range 1 to 4, if the data type is "byte" it must be 4. </para>
+    /// <para> If a custom vertex attribute uses the name "VertexPosition", "VertexTexCoord", or "VertexColor", then the vertex data for that vertex attribute will be used for the standard vertex positions, texture coordinates, or vertex colors respectively, when drawing the Mesh.Otherwise a Vertex Shader is required in order to make use of the vertex attribute when the Mesh is drawn. </para>
     /// </summary>
     public class MeshFormatDescribe
     {
@@ -347,7 +350,7 @@ namespace Love
         }
 
         /// <summary>
-        /// If a Mesh wasn't created with a custom vertex format, it will have 3 vertex attributes named VertexPosition, VertexTexCoord, and VertexColor.
+        /// A Mesh must have a "VertexPosition" attribute in order to be drawn, but it can be attached from a different Mesh via Mesh:attachAttribute. checkout: https://love2d.org/wiki/love.graphics.newMesh
         /// <para>Custom named attributes can be accessed in a vertex shader by declaring them as attribute vec4 MyCustomAttributeName; at the top-level of the vertex shader code. The name must match what was specified in the Mesh's vertex format and in the name argument of Mesh:attachAttribute.</para>
         /// </summary>
         public static MeshFormatDescribe New(IEnumerable<Entry> entries)
@@ -356,7 +359,7 @@ namespace Love
         }
 
         /// <summary>
-        /// If a Mesh wasn't created with a custom vertex format, it will have 3 vertex attributes named VertexPosition, VertexTexCoord, and VertexColor.
+        /// A Mesh must have a "VertexPosition" attribute in order to be drawn, but it can be attached from a different Mesh via Mesh:attachAttribute. checkout: https://love2d.org/wiki/love.graphics.newMesh
         /// <para>Custom named attributes can be accessed in a vertex shader by declaring them as attribute vec4 MyCustomAttributeName; at the top-level of the vertex shader code. The name must match what was specified in the Mesh's vertex format and in the name argument of Mesh:attachAttribute.</para>
         /// </summary>
         public static MeshFormatDescribe New(params Entry[] entries)
@@ -365,7 +368,7 @@ namespace Love
         }
 
         /// <summary>
-        /// If a Mesh wasn't created with a custom vertex format, it will have 3 vertex attributes named VertexPosition, VertexTexCoord, and VertexColor.
+        /// A Mesh must have a "VertexPosition" attribute in order to be drawn, but it can be attached from a different Mesh via Mesh:attachAttribute. checkout: https://love2d.org/wiki/love.graphics.newMesh
         /// <para>use MeshAttributeNameAttribute auto parse MeshFormatDescribe on specified type</para>
         /// </summary>
         public static MeshFormatDescribe<T> New<T>() where T : new()
@@ -376,12 +379,12 @@ namespace Love
 
     /// <summary>
     /// describe of custom mesh format, require MeshAttributeNameAttribute
-    /// <para>If a Mesh wasn't created with a custom vertex format, it will have 3 vertex attributes named VertexPosition, VertexTexCoord, and VertexColor.</para>
+    /// <para>A Mesh must have a "VertexPosition" attribute in order to be drawn, but it can be attached from a different Mesh via Mesh:attachAttribute. checkout: https://love2d.org/wiki/love.graphics.newMesh</para>
     /// </summary>
     public class MeshFormatDescribe<T> : MeshFormatDescribe where T: new()
     {
         /// <summary>
-        /// If a Mesh wasn't created with a custom vertex format, it will have 3 vertex attributes named VertexPosition, VertexTexCoord, and VertexColor.
+        /// A Mesh must have a "VertexPosition" attribute in order to be drawn, but it can be attached from a different Mesh via Mesh:attachAttribute. checkout: https://love2d.org/wiki/love.graphics.newMesh
         /// <para>use MeshAttributeNameAttribute auto parse MeshFormatDescribe on specified type</para>
         /// </summary>
         public static MeshFormatDescribe<T> New()
