@@ -13,7 +13,8 @@ Love2dCS - C# Wrapper for LÖVE
 
 链接
 ---
-* 📃 [文档 https://endlesstravel.github.io](https://endlesstravel.github.io)
+* 📃 [英文文档 https://endlesstravel.github.io](https://endlesstravel.github.io)
+* 📃 [中文文档-还没写完 https://endlesstravel.gitee.io/lovesharpdocument/](https://endlesstravel.gitee.io/lovesharpdocument/)
 * 📕 [love wiki](https://love2d.org/wiki/love)
 * [安装介绍](https://endlesstravel.github.io/#/tutorial/01.install)
 * [Aseprite 支持库](https://gitee.com/endlesstravel/LoveMetaSprite)

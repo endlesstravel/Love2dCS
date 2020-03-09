@@ -5,7 +5,7 @@ Love2dCS - C# Wrapper for LÖVE
 ---
 [中文版](README-zh.md) |
 
-Love2dCS is a C# Wrapper for [LÖVE game engine](https://love2d.org/), it can be used your C# based Application.
+Love2dCS is a C#/F# Wrapper for [LÖVE game engine](https://love2d.org/), it can be used your C#/F# based Application.
 
 * Nuget Package - ~17MB: https://www.nuget.org/packages/Love2dCS
 * Windows(x64/x86) Only Nuget Package - ~6MB: https://www.nuget.org/packages/Love2dCS-win
@@ -14,7 +14,7 @@ Love2dCS is a C# Wrapper for [LÖVE game engine](https://love2d.org/), it can be
 
 Links
 ---
-* 📃 [Document at https://endlesstravel.github.io](https://endlesstravel.github.io)
+* 📃 [Document at https://endlesstravel.github.io](https://endlesstravel.github.io) | [中文文档（还没写完）](https://endlesstravel.gitee.io/lovesharpdocument/)
 * 📕 [love wiki](https://love2d.org/wiki/love)
 * [ImGui](https://github.com/ocornut/imgui) Support: [here](https://gitee.com/endlesstravel/DearLoveGUI), based on [ImGui.NET](https://github.com/mellinoe/ImGui.NET)
 * [Aseprite](https://www.aseprite.org/) Runtime Support : [here](https://gitee.com/endlesstravel/LoveMetaSprite)
