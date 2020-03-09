@@ -5393,17 +5393,15 @@ namespace wrap
 
     bool4 wrap_love_dll_type_Mesh_getDrawRange(Mesh *t, int *out_rangemin, int *out_rangemax)
     {
-        int rangemin = -1;
-        int rangemax = -1;
-        t->getDrawRange(rangemin, rangemax);
+        return wrap_catchexcept([&]() {
+            int start = 0;
+            int count = 1;
+            if (!t->getDrawRange(start, count))
+                throw love::Exception("range not set yet !");
 
-        if (rangemin < 0 || rangemax < 0)
-            return false;
-
-        *out_rangemin = rangemin;
-        *out_rangemax = rangemax;
-
-        return true;
+            *out_rangemin = start;
+            *out_rangemax = count;
+        });
     }
 
 #pragma endregion

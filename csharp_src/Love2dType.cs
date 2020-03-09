@@ -1194,13 +1194,13 @@ namespace Love
         {
             Love2dDll.wrap_love_dll_type_Mesh_setDrawRange(p);
         }
-        public void SetDrawRange(int rangemin, int rangemax)
+        public void SetDrawRange(int start, int count)
         {
-            Love2dDll.wrap_love_dll_type_Mesh_setDrawRange_minmax(p, rangemin, rangemax);
+            Love2dDll.wrap_love_dll_type_Mesh_setDrawRange_minmax(p, start, count);
         }
-        public void GetDrawRange(out int out_rangemin, out int out_rangemax)
+        public void GetDrawRange(out int out_start, out int out_count)
         {
-            Love2dDll.wrap_love_dll_type_Mesh_getDrawRange(p, out out_rangemin, out out_rangemax);
+            Love2dDll.wrap_love_dll_type_Mesh_getDrawRange(p, out out_start, out out_count);
         }
     }
 
