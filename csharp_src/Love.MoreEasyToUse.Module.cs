@@ -394,7 +394,7 @@ namespace Love
 
         public void SetPixels(Color[] data)
         {
-            SetPixels(0, 0, GetHeight(), GetWidth(), data);
+            SetPixels(0, 0, GetWidth(), GetHeight(), data);
         }
 
         public void SetPixels(Rectangle area, Color[] data)
