@@ -102,7 +102,8 @@ namespace Love
                 Mac64 = macLibTableArray.Select(libPath => new LibraryContent(libPath, () => Load("native_lib_mac_x64", libPath))).ToArray(),
             });
 
-            switch (LibraryLoader.GetPlatform(out var ixoader))
+            var pt = LibraryLoader.GetPlatform(out var ixoader);
+            switch (pt)
             {
                 case LibraryLoaderPlatform.Win32: functionAddrLoader = loader.GetFunctionLoader(winLibTableArray.Last()); break;
                 case LibraryLoaderPlatform.Win64: functionAddrLoader = loader.GetFunctionLoader(winLibTableArray.Last()); break;
@@ -111,6 +112,8 @@ namespace Love
                 case LibraryLoaderPlatform.Mac64: functionAddrLoader = loader.GetFunctionLoader(macLibTableArray.Last()); break;
                 default: throw new Exception("unsupport platform !");
             }
+
+            Log.Info("Work on platform : " + pt);
         }
     }
 
