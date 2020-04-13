@@ -2,6 +2,9 @@
 ![logo](https://github.com/endlesstravel/Love2dCS/raw/master/img/logo.png "logo")
 
 Love2dCS - C# Wrapper for LÖVE
+
+<!-- [discord channel](https://discord.gg/nF9wMkK) -->
+
 ---
 [中文版](README-zh.md) | [gitee-国内访问速度较快](https://gitee.com/endlesstravel/love2dCS)
 

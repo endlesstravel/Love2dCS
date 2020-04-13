@@ -11,13 +11,12 @@ using System.Threading.Tasks;
 using File = System.IO.File;
 using FileInfo = System.IO.FileInfo;
 using System.Text;
-using NativeLibraryUtil;
 
 namespace Love
 {
     static public partial class Boot
     {
-        static FunctionAddrLoaderDelegate functionAddrLoader;
+        static NativeLibraryUtil.FunctionAddrLoaderDelegate functionAddrLoader;
         public static IntPtr GetLibraryFunc(string name)
         {
             if (functionAddrLoader(name, out var funcPtr, out var errorInfo) == false)
@@ -30,7 +29,7 @@ namespace Love
 
         public static void InitNativeLibrary()
         {
-#if DEBUG
+#if DEBUGXX
             var debug_loader = LibraryLoader.Load(new LibraryConfig()
             {
                 Win32 = new LibraryContent[]
@@ -94,26 +93,28 @@ namespace Love
                     "love",
             };
 
-            var loader =  LibraryLoader.Load(new LibraryConfig()
-            {
-                Linux64 = linuxLibTableArray.Select(libPath => new LibraryContent(libPath, () => Load("native_lib_linux_x64", libPath))).ToArray(),
-                Win32 = winLibTableArray.Select(libPath => new LibraryContent(libPath, () => Load("native_lib_win_x86", libPath))).ToArray(),
-                Win64 = winLibTableArray.Select(libPath => new LibraryContent(libPath, () => Load("native_lib_win_x64", libPath))).ToArray(),
-                Mac64 = macLibTableArray.Select(libPath => new LibraryContent(libPath, () => Load("native_lib_mac_x64", libPath))).ToArray(),
-            });
+            var pt = NativeLibraryUtil.LibraryLoader.GetPlatform(out var ixoader);
+            Log.Info("Work on platform : " + pt);
 
-            var pt = LibraryLoader.GetPlatform(out var ixoader);
+            var config = new NativeLibraryUtil.LibraryConfig()
+            {
+                Linux64 = linuxLibTableArray.Select(libPath => new NativeLibraryUtil.LibraryContent(libPath, () => Load("native_lib_linux_x64", libPath))).ToArray(),
+                Win32 = winLibTableArray.Select(libPath => new NativeLibraryUtil.LibraryContent(libPath, () => Load("native_lib_win_x86", libPath))).ToArray(),
+                Win64 = winLibTableArray.Select(libPath => new NativeLibraryUtil.LibraryContent(libPath, () => Load("native_lib_win_x64", libPath))).ToArray(),
+                Mac64 = macLibTableArray.Select(libPath => new NativeLibraryUtil.LibraryContent(libPath, () => Load("native_lib_mac_x64", libPath))).ToArray(),
+            };
+
+            var loader = NativeLibraryUtil.LibraryLoader.Load(config);
+
             switch (pt)
             {
-                case LibraryLoaderPlatform.Win32: functionAddrLoader = loader.GetFunctionLoader(winLibTableArray.Last()); break;
-                case LibraryLoaderPlatform.Win64: functionAddrLoader = loader.GetFunctionLoader(winLibTableArray.Last()); break;
-                case LibraryLoaderPlatform.Linux32: throw new Exception("unsupport platform : linux - 32 bit !");
-                case LibraryLoaderPlatform.Linux64: functionAddrLoader = loader.GetFunctionLoader(linuxLibTableArray.Last()); break;
-                case LibraryLoaderPlatform.Mac64: functionAddrLoader = loader.GetFunctionLoader(macLibTableArray.Last()); break;
+                case NativeLibraryUtil.LibraryLoaderPlatform.Win32: functionAddrLoader = loader.GetFunctionLoader(winLibTableArray.Last()); break;
+                case NativeLibraryUtil.LibraryLoaderPlatform.Win64: functionAddrLoader = loader.GetFunctionLoader(winLibTableArray.Last()); break;
+                case NativeLibraryUtil.LibraryLoaderPlatform.Linux32: throw new Exception("unsupport platform : linux - 32 bit !");
+                case NativeLibraryUtil.LibraryLoaderPlatform.Linux64: functionAddrLoader = loader.GetFunctionLoader(linuxLibTableArray.Last()); break;
+                case NativeLibraryUtil.LibraryLoaderPlatform.Mac64: functionAddrLoader = loader.GetFunctionLoader(macLibTableArray.Last()); break;
                 default: throw new Exception("unsupport platform !");
             }
-
-            Log.Info("Work on platform : " + pt);
         }
     }
 

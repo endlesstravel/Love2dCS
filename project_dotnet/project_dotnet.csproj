@@ -1,0 +1,182 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.IO.Compression" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\csharp_src\Love.Color.cs">
+      <Link>Love.Color.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.FPSCounter.cs">
+      <Link>Love.FPSCounter.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Log.cs">
+      <Link>Love.Log.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.MathUtils.cs">
+      <Link>Love.MathUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Matrix22.cs">
+      <Link>Love.Matrix22.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Matrix33.cs">
+      <Link>Love.Matrix33.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Matrix44.cs">
+      <Link>Love.Matrix44.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Matrix4x4.cs">
+      <Link>Love.Matrix4x4.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Misc.FPSGraph.cs">
+      <Link>Love.Misc.FPSGraph.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Misc.InputBoost.cs">
+      <Link>Love.Misc.InputBoost.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Misc.MeshUtils.cs">
+      <Link>Love.Misc.MeshUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Misc.Moonshine.cs">
+      <Link>Love.Misc.Moonshine.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Misc.QuadTree.cs">
+      <Link>Love.Misc.QuadTree.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Misc.RectangBoost.cs">
+      <Link>Love.Misc.RectangBoost.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Misc.TransformStack.cs">
+      <Link>Love.Misc.TransformStack.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Module.Event.cs">
+      <Link>Love.Module.Event.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Module.Keyboard.cs">
+      <Link>Love.Module.Keyboard.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Module.Lua.cs">
+      <Link>Love.Module.Lua.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Module.Mouse.cs">
+      <Link>Love.Module.Mouse.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Module.Special.cs">
+      <Link>Love.Module.Special.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.MoreEasyToUse.Module.cs">
+      <Link>Love.MoreEasyToUse.Module.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.MoreEasyToUse.Type.cs">
+      <Link>Love.MoreEasyToUse.Type.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Physics.DebugView.cs">
+      <Link>Love.Physics.DebugView.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Point.cs">
+      <Link>Love.Point.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Quaternion.cs">
+      <Link>Love.Quaternion.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Ray2D.cs">
+      <Link>Love.Ray2D.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Rectangle.cs">
+      <Link>Love.Rectangle.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.RectangleF.cs">
+      <Link>Love.RectangleF.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Resource.cs">
+      <Link>Love.Resource.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Size.cs">
+      <Link>Love.Size.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.SizeF.cs">
+      <Link>Love.SizeF.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Struct.cs">
+      <Link>Love.Struct.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Type.Physics.cs">
+      <Link>Love.Type.Physics.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Vector2.cs">
+      <Link>Love.Vector2.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Vector3.cs">
+      <Link>Love.Vector3.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love.Vector4.cs">
+      <Link>Love.Vector4.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love2dBasePart.cs">
+      <Link>Love2dBasePart.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love2dBoot.cs">
+      <Link>Love2dBoot.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love2dCheck.cs">
+      <Link>Love2dCheck.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love2dDll.cs">
+      <Link>Love2dDll.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love2dEnum.cs">
+      <Link>Love2dEnum.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love2dGraphicsShaderBoot.cs">
+      <Link>Love2dGraphicsShaderBoot.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love2dMathfBoost.cs">
+      <Link>Love2dMathfBoost.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love2dNativeLibrary.cs">
+      <Link>Love2dNativeLibrary.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love2dNoGame.cs">
+      <Link>Love2dNoGame.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love2dNoGameImages.cs">
+      <Link>Love2dNoGameImages.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love2dType.cs">
+      <Link>Love2dType.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\Love2dUtf8Part.cs">
+      <Link>Love2dUtf8Part.cs</Link>
+    </Compile>
+    <Compile Include="..\csharp_src\NativeLibraryUtil.cs">
+      <Link>NativeLibraryUtil.cs</Link>
+    </Compile>
+    <!-- <Compile Include="..\csharp_src\Program.cs">
+      <Link>Program.cs</Link>
+    </Compile> -->
+    <!-- <Compile Include="Properties\AssemblyInfo.cs" /> -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\native_lib\native_lib_linux_x64.zip">
+      <Link>native_lib_linux_x64.zip</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\native_lib\native_lib_win_x64.zip">
+      <Link>native_lib_win_x64.zip</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\native_lib\native_lib_win_x86.zip">
+      <Link>native_lib_win_x86.zip</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\native_lib\native_lib_mac_x64.zip">
+      <Link>native_lib_mac_x64.zip</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>
