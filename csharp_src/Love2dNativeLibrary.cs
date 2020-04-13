@@ -29,7 +29,7 @@ namespace Love
 
         public static void InitNativeLibrary()
         {
-#if DEBUGXX
+#if DEBUG
             var debug_loader = LibraryLoader.Load(new LibraryConfig()
             {
                 Win32 = new LibraryContent[]

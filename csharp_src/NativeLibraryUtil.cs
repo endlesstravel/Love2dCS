@@ -109,14 +109,13 @@ namespace Love
 
             public Arch GetArch()
             {
+                // FIXME:
+                // need use RuntimeInformation.ProcessArchitecture in at least .NET Framework 4.7.1 or .NET Core 1.0
                 if (IntPtr.Size == 4)
-                {
                     return Arch.X86_32;
-                }
-                else if (IntPtr.Size == 8)
-                {
+
+                if (IntPtr.Size == 8)
                     return Arch.X86_64;
-                }
 
                 return Arch.Unknow;
             }
