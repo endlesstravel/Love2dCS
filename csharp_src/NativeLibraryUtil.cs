@@ -376,7 +376,7 @@ namespace Love
                 }
                 else
                 {
-                    throw new Exception("Pkcs11Interop is not supported on this platform");
+                    throw new Exception("LoveShparp is not supported on this platform");
                 }
             }
         }
