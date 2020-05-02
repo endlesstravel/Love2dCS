@@ -29,7 +29,7 @@ namespace Love
 
         public static void InitNativeLibrary()
         {
-#if DEBUG
+#if _LOVE_SHARP_DEBUG_SELF_GUID_f320fj032jf2j3fj2039
             var debug_loader = LibraryLoader.Load(new LibraryConfig()
             {
                 Win32 = new LibraryContent[]

@@ -180,7 +180,7 @@ namespace Love
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception("error on load " + lib.FullPath + " " + ex);
+                        throw new Exception("error on load " + Path.Combine(tempDir, lib.FullPath) + " " + ex);
                     }
                 }
             }
@@ -269,54 +269,120 @@ namespace Love
             Unknow,
         }
 
-        static public partial class LibraryLoader
+        /// <summary>
+        /// https://github.com/Pkcs11Interop/Pkcs11Interop/blob/3.2.0/src/Pkcs11Interop/Pkcs11Interop/Common/Platform.cs#L228-L254
+        /// </summary>
+        static public class PlatformDetecter
         {
-            static bool IsMacOSFlag = false;
-            static bool IsMacOSFlagChecked = false;
 
             /// <summary>
-            /// 判断是否为 macos
+            /// True if runtime platform is Windows
             /// </summary>
-            /// <returns></returns>
-            static bool TestIsMacOS()
+            private static bool _isWindows = false;
+
+            /// <summary>
+            /// True if runtime platform is Windows
+            /// </summary>
+            public static bool IsWindows
             {
-                if (IsMacOSFlagChecked)
-                    return IsMacOSFlag;
-
-                bool isMacFlag = false;
-                var thg = new Thread(() =>
+                get
                 {
-                    var proc = new Process
-                    {
-                        StartInfo = new ProcessStartInfo
-                        {
-                            FileName = "uname",
-                            Arguments = "-a",
-                            UseShellExecute = false,
-                            RedirectStandardOutput = true,
-                            CreateNoWindow = true
-                        }
-                    };
-                    proc.Start();
-                    List<char> list = new List<char>();
-                    while (!proc.StandardOutput.EndOfStream && (list.Count < 20))
-                    {
-                        unchecked
-                        {
-                            list.Add((char)proc.StandardOutput.Read());
-                        }
-                    }
-
-                    var info = new string(list.ToArray());
-                    isMacFlag = info.ToLower().Contains("darwin");
-                });
-
-                thg.Start();
-                thg.Join(10 * 1000); // time out failed !
-                IsMacOSFlagChecked = true;
-                return isMacFlag;
+                    DetectPlatform();
+                    return _isWindows;
+                }
             }
 
+            /// <summary>
+            /// True if runtime platform is Linux
+            /// </summary>
+            private static bool _isLinux = false;
+
+            /// <summary>
+            /// True if runtime platform is Linux
+            /// </summary>
+            public static bool IsLinux
+            {
+                get
+                {
+                    DetectPlatform();
+                    return _isLinux;
+                }
+            }
+
+            /// <summary>
+            /// True if runtime platform is Mac OS X
+            /// </summary>
+            private static bool _isMacOsX = false;
+
+            /// <summary>
+            /// True if runtime platform is Mac OS X
+            /// </summary>
+            public static bool IsMacOsX
+            {
+                get
+                {
+                    DetectPlatform();
+                    return _isMacOsX;
+                }
+            }
+
+            static void DetectPlatform()
+            {
+                // Supported platform has already been detected
+                if (_isWindows || _isLinux || _isMacOsX)
+                    return;
+
+                // Detect platform
+                //
+                // System.Environment.OSVersion.Platform is not used because:
+                // - Mac OS X detection almost never works under Mono
+                // - it is not implemented by .NET Core
+                //
+                // System.Runtime.InteropServices.RuntimeInformation is not used because:
+                // - it is not implemented by full .NET and Mono
+                // - it does not perform platform detection in runtime but uses hardcoded information instead
+                //   See https://github.com/dotnet/corefx/issues/3032 for more info
+                //
+                // Pinvoking of platform specific unmanaged functions is not used because:
+                // - it may cause segmentation fault on unknown platforms
+                //
+                // Following code may look silly but:
+                // - it is 100% managed code
+                // - it works under .NET, Mono and .NET Core
+                // - it works like a charm so far
+
+                string windir = Environment.GetEnvironmentVariable("windir");
+                if (!string.IsNullOrEmpty(windir) && windir.Contains(@"\") && Directory.Exists(windir))
+                {
+                    _isWindows = true;
+                }
+                else if (System.IO.File.Exists(@"/proc/sys/kernel/ostype"))
+                {
+                    string osType = System.IO.File.ReadAllText(@"/proc/sys/kernel/ostype");
+                    if (osType.StartsWith("Linux", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Note: Android gets here too
+                        _isLinux = true;
+                    }
+                    else
+                    {
+                        throw new Exception(string.Format("LoveShparp is not supported on \"{0}\" platform", osType));
+                    }
+                }
+                else if (System.IO.File.Exists(@"/System/Library/CoreServices/SystemVersion.plist"))
+                {
+                    // Note: iOS gets here too
+                    _isMacOsX = true;
+                }
+                else
+                {
+                    throw new Exception("Pkcs11Interop is not supported on this platform");
+                }
+            }
+        }
+
+        static public partial class LibraryLoader
+        {
             public static string TempFolderPrefix =>
                  new DirectoryInfo(Path.Combine(Path.GetTempPath(), $"{NativlibTool.GetHashAssembly()}"))
                 .FullName;
@@ -374,7 +440,7 @@ namespace Love
                     case PlatformID.Unix:
                         loader = new UnixNativeLibraryLoader();
                         bool is64 = loader.GetArch() == Arch.X86_64;
-                        if (TestIsMacOS())
+                        if (PlatformDetecter.IsMacOsX)
                         {
                             return LibraryLoaderPlatform.Mac64;
                         }
