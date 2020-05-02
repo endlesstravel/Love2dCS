@@ -137,7 +137,7 @@ namespace Love
                 {
                     foreach (var entry in archive.Entries)
                     {
-                        if (entry.Name == entryName) // skip dictionary
+                        if (entry.FullName == entryName)
                         {
                             using (var es = entry.Open())
                             {
