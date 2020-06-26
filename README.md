@@ -19,9 +19,9 @@ Links
 ---
 * 📃 [Document at https://endlesstravel.github.io](https://endlesstravel.github.io) | [中文文档（还没写完）](https://endlesstravel.gitee.io/lovesharpdocument/)
 * 📕 [love wiki](https://love2d.org/wiki/love)
-* [ImGui](https://github.com/ocornut/imgui) Support: [here](https://gitee.com/endlesstravel/DearLoveGUI), based on [ImGui.NET](https://github.com/mellinoe/ImGui.NET)
-* [Aseprite](https://www.aseprite.org/) Runtime Support : [here](https://gitee.com/endlesstravel/LoveMetaSprite)
-* [Spine](http://esotericsoftware.com/) Runtime Support : [here](https://gitee.com/endlesstravel/spine-lovecs)
+* [ImGui](https://github.com/ocornut/imgui) Support: [here](https://github.com/endlesstravel/DearLoveGUI), based on [ImGui.NET](https://github.com/mellinoe/ImGui.NET)
+* [Aseprite](https://www.aseprite.org/) Runtime Support : [here](https://github.com/endlesstravel/LoveMetaSprite)
+* [Spine](http://esotericsoftware.com/) Runtime Support : [here](https://github.com/endlesstravel/spine-lovecs)
 * [Test file example](csharp_src/Program.cs) / [Physics Test example](csharp_test/README.md)
 * [Easy to install with Visual Studio/MonoDevelop (install introduce)](https://endlesstravel.github.io/#/tutorial/01.install)
 
