@@ -10,18 +10,25 @@ Love2dCS - C# Wrapper for LÖVE
 
 Love2dCS is a C#/F# Wrapper for [LÖVE game engine](https://love2d.org/), it can be used your C#/F# based Application.
 
-* Nuget Package - ~17MB: https://www.nuget.org/packages/Love2dCS
-* Windows(x64/x86) Only Nuget Package - ~6MB: https://www.nuget.org/packages/Love2dCS-win
-* Ubuntu(x64) Only Nuget Package - ~6MB: https://www.nuget.org/packages/Love2dCS-ubuntu
-* MacOS(x64) Only Nuget Package - ~6MB: https://www.nuget.org/packages/Love2dCS-mac
+* Nuget Package - ~17MB: https://www.nuget.org/packages/LoveSharp
+<a href="https://www.nuget.org/packages/LoveSharp">
+	<img src="https://img.shields.io/badge/nuget-LoveSharp%2011.0.51-blue" alt="nuget">
+</a>
+
+* Nuget Package (old) - ~17MB: https://www.nuget.org/packages/Love2dCS                                (old)
+* Windows(x64/x86) Only Nuget Package  (old)- ~6MB: https://www.nuget.org/packages/Love2dCS-win       (old)
+* Ubuntu(x64) Only Nuget Package (old) - ~6MB: https://www.nuget.org/packages/Love2dCS-ubuntu         (old)
+* MacOS(x64) Only Nuget Package (old) - ~6MB: https://www.nuget.org/packages/Love2dCS-mac             (old)
 
 Links
 ---
 * 📃 [Document at https://endlesstravel.github.io](https://endlesstravel.github.io) | [中文文档（还没写完）](https://endlesstravel.gitee.io/lovesharpdocument/)
 * 📕 [love wiki](https://love2d.org/wiki/love)
-* [ImGui](https://github.com/ocornut/imgui) Support: [here](https://github.com/endlesstravel/DearLoveGUI), based on [ImGui.NET](https://github.com/mellinoe/ImGui.NET)
+* [ImGui](https://github.com/ocornut/imgui) Support: [here](https://github.com/endlesstravel/DearLoveGUI), based on [ImGui.NET](https://github.com/mellinoe/ImGui.NET) , with nuget:
+    <a href="https://www.nuget.org/packages/LoveSharp.Imgui"><img src="https://img.shields.io/badge/nuget-LoveSharp.Imgui-blue" alt="nuget"></a>
 * [Aseprite](https://www.aseprite.org/) Runtime Support : [here](https://github.com/endlesstravel/LoveMetaSprite)
-* [Spine](http://esotericsoftware.com/) Runtime Support : [here](https://github.com/endlesstravel/spine-lovecs)
+* [Spine](http://esotericsoftware.com/) Runtime Support : [here](https://github.com/endlesstravel/spine-lovecs) , with nuget:
+    <a href="https://www.nuget.org/packages/LoveSharp.Spine"> <img src="https://img.shields.io/badge/nuget-LoveSharp.Spine-blue" alt="nuget"></a>
 * [Test file example](csharp_src/Program.cs) / [Physics Test example](csharp_test/README.md)
 * [Easy to install with Visual Studio/MonoDevelop (install introduce)](https://endlesstravel.github.io/#/tutorial/01.install)
 

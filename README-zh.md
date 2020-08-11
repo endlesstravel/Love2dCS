@@ -19,9 +19,14 @@ Love2dCS - C# Wrapper for LÖVE
 * 📃 [英文文档 https://endlesstravel.github.io](https://endlesstravel.github.io)
 * 📃 [中文文档-还没写完 https://endlesstravel.gitee.io/lovesharpdocument/](https://endlesstravel.gitee.io/lovesharpdocument/)
 * 📕 [love wiki](https://love2d.org/wiki/love)
+* [ImGui](https://github.com/ocornut/imgui) 支持: [here](https://github.com/endlesstravel/DearLoveGUI), based on [ImGui.NET](https://github.com/mellinoe/ImGui.NET)
+    <a href="https://www.nuget.org/packages/LoveSharp.Imgui"><img src="https://img.shields.io/badge/nuget-LoveSharp.Imgui-blue" alt="nuget"></a>
 * [安装介绍](https://endlesstravel.github.io/#/tutorial/01.install)
 * [Aseprite 支持库](https://gitee.com/endlesstravel/LoveMetaSprite)
 * [Spine 支持库](https://gitee.com/endlesstravel/spine-lovecs)
+    <a href="https://www.nuget.org/packages/LoveSharp.Spine">
+        <img src="https://img.shields.io/badge/nuget-LoveSharp.Spine-blue" alt="nuget">
+    </a>
 * [与Lua同时工作](https://endlesstravel.github.io/#/tutorial/05.use-lua)
 * [测试文件示例](csharp_src/Program.cs) / [物理模块测试文件示例](csharp_test/README.md)
 
