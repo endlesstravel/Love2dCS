@@ -21,10 +21,10 @@ Links
 ---
 * 📃 [Document at https://endlesstravel.github.io](https://endlesstravel.github.io) | [中文文档（还没写完）](https://endlesstravel.gitee.io/lovesharpdocument/)
 * 📕 [love wiki](https://love2d.org/wiki/love)
-* [ImGui](https://github.com/ocornut/imgui) Support: [here](https://github.com/endlesstravel/DearLoveGUI), based on [ImGui.NET](https://github.com/mellinoe/ImGui.NET) , with nuget:
+* [ImGui](https://github.com/ocornut/imgui) Support: [LoveSharp.Imgui](https://github.com/endlesstravel/LoveSharp.Imgui), based on [ImGui.NET](https://github.com/mellinoe/ImGui.NET) , with nuget:
     <a href="https://www.nuget.org/packages/LoveSharp.Imgui"><img src="https://img.shields.io/badge/nuget-LoveSharp.Imgui-blue" alt="nuget"></a>
-* [Aseprite](https://www.aseprite.org/) Runtime Support : [here](https://github.com/endlesstravel/LoveMetaSprite)
-* [Spine](http://esotericsoftware.com/) Runtime Support : [here](https://github.com/endlesstravel/spine-lovecs) , with nuget:
+* [Aseprite](https://www.aseprite.org/) Runtime Support : [LoveSharp.MetaSprite](https://github.com/endlesstravel/LoveSharp.MetaSprite)
+* [Spine](http://esotericsoftware.com/) Runtime Support : [LoveSharp.Spine](https://github.com/endlesstravel/LoveSharp.Spine) , with nuget:
     <a href="https://www.nuget.org/packages/LoveSharp.Spine"> <img src="https://img.shields.io/badge/nuget-LoveSharp.Spine-blue" alt="nuget"></a>
 * [Test file example](csharp_src/Program.cs) / [Physics Test example](csharp_test/README.md)
 * [Easy to install with Visual Studio/MonoDevelop (install introduce)](https://endlesstravel.github.io/#/tutorial/01.install)
