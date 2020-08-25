@@ -3,12 +3,11 @@
 
 Love2dCS - C# Wrapper for LÖVE
 
-[discord channel here:](https://discord.gg/nF9wMkK) https://discord.gg/nF9wMkK
+[discord channel here:](https://discord.gg/nF9wMkK) https://discord.gg/nF9wMkK     |  [gitee-国内访问速度较快](https://gitee.com/endlesstravel/love2dCS)
 
 ---
-[中文版](README-zh.md) | [gitee-国内访问速度较快](https://gitee.com/endlesstravel/love2dCS)
 
-Love2dCS is a C#/F# Wrapper for [LÖVE game engine](https://love2d.org/), it can be used your C#/F# based Application.
+LoveSharp(Love2dCS) is a C#/F# Wrapper for [LÖVE game engine](https://love2d.org/), it can be used your C#/F# based Application.
 
 <a href="https://www.nuget.org/packages/LoveSharp"> <img src="https://img.shields.io/badge/nuget-LoveSharp%2011.0.51-blue" alt="nuget"></a>
 * Nuget Package - ~17MB: https://www.nuget.org/packages/LoveSharp 
