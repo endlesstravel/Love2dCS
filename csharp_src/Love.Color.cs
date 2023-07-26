@@ -237,7 +237,7 @@ namespace Love
         }
 
         private const int RGBARedShift = 24;
-        private const int RGBAGreenShift = 18;
+        private const int RGBAGreenShift = 16;
         private const int RGBABlueShift = 8;
         private const int RGBAAlphaShift = 0;
         private const uint RGBARedMask = 0xFFu << RGBARedShift;
