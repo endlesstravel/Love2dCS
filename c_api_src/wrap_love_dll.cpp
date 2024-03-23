@@ -6057,15 +6057,26 @@ namespace wrap
 			return false;
 		}
 
+        if (matrix_count <= 0)
+        {
+            wrap_ee("no matrix was supplied for uniform variable '%s'", name);
+            return false;
+        }
+
 		int columns = info->matrix.columns;
 		int rows = info->matrix.rows;
-		if (columns_lenght != columns || rows_length != rows_length)
+		if (columns_lenght != columns || rows_length != rows)
 		{
 			wrap_ee("matrix columns or rows error, uniform variable %s send type error", name);
 			return false;
 		}
 
-		int count = inline_type_Shader_getCount(info, matrix_count);
+        int count = inline_type_Shader_getCount(info, matrix_count);
+        int components = rows * columns;
+        float* values = info->floats;
+
+        memcpy(values, valueArray, components * count * sizeof(float));
+
 		return wrap_catchexcept([&]() { shader->updateUniform(info, count); });
     }
 
